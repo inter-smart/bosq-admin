@@ -13,11 +13,7 @@ export const commonValidations = {
   
   // Number validations
   sortOrder: z
-    .string()
-    .refine((val) => {
-      const num = parseInt(val);
-      return !isNaN(num) && num >= 0;
-    }, "Sort order must be 0 or greater")
+    .number().min(0, "Sort order must be 0 or greater")
     .optional(),
   
   requiredNumber: (fieldName: string) => 

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { isAuthenticated } from "@/services/auth/authApi";
 
 // Core pages that exist
 import Index from "./pages/Index";
@@ -19,12 +20,15 @@ import CommonFaqForm from "./pages/common/CommonFaqForm";
 import { MetaTagsList } from "./pages/common/MetaTagsList";
 
 // Home pages that exist
+import HomeCmsForm from "./pages/home/HomeCmsForm";
+import HomeBannerSliderList from "./pages/home/HomeBannerSliderList";
+import HomeBannerSliderForm from "./pages/home/HomeBannerSliderForm";
 
 const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = localStorage.getItem("goec_auth") === "true";
-  if (!isAuthenticated) {
+  const authenticated = isAuthenticated();
+  if (!authenticated) {
     return <Navigate to="/login" replace />;
   }
   return <DashboardLayout>{children}</DashboardLayout>;
@@ -119,6 +123,44 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <MetaTagsList />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Home CMS Routes */}
+          <Route
+            path="/home-cms"
+            element={
+              <ProtectedRoute>
+                <HomeCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Home Banner Slider Routes */}
+          <Route
+            path="/home-banner-slider"
+            element={
+              <ProtectedRoute>
+                <HomeBannerSliderList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/home-banner-slider/create"
+            element={
+              <ProtectedRoute>
+                <HomeBannerSliderForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/home-banner-slider/edit/:id"
+            element={
+              <ProtectedRoute>
+                <HomeBannerSliderForm />
               </ProtectedRoute>
             }
           />

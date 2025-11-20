@@ -6,7 +6,8 @@ import {
   ChevronRight,
   Share2,
   Tags,
-  
+  Home,
+  Image,
 } from "lucide-react";
 
 import {
@@ -28,7 +29,10 @@ const bosqLogo =
   "/bosq-logo-light.png";
 const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 
-
+const cmsSection = [
+  { title: "Home CMS", url: "/home-cms", icon: Home },
+  { title: "Home Banner", url: "/home-banner-slider", icon: Image },
+];
 
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
@@ -40,6 +44,7 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
 
+  const [cmsOpen, setCmsOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -47,6 +52,15 @@ export function AppSidebar() {
   // Auto-open based on current path
   useEffect(() => {
     const path = location.pathname;
+
+    if (
+      [
+        "/home-cms",
+        "/home-banner-slider",
+      ].some((r) => path.includes(r))
+    ) {
+      setCmsOpen(true);
+    }
 
     if (
       [
@@ -106,9 +120,17 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
 
-    
+        {/* CMS Section */}
+        <SidebarCollapsibleSection
+          title="CMS"
+          icon={Home}
+          open={cmsOpen}
+          setOpen={setCmsOpen}
+          items={cmsSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
 
-    
         {/* Settings */}
         <SidebarCollapsibleSection
           title="Settings & Content"

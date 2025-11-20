@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/backend";
+import { apiCall } from '@/utils/apiUtils';
 
 export interface SiteSettings {
   id?: number;
@@ -55,27 +55,15 @@ export interface CreateSiteSettingsData {
 
 // Fetch Site Settings data
 export const fetchSiteSettings = async (): Promise<SiteSettingsResponse> => {
-  const response = await fetch(`${API_BASE_URL}/site-settings`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch Site Settings data");
-  }
-
-  return response.json();
+  return apiCall('/site-settings');
 };
 
 // Create or Update Site Settings data
 export const saveSiteSettings = async (
   formData: FormData
 ): Promise<SiteSettings> => {
-  const response = await fetch(`${API_BASE_URL}/site-settings`, {
-    method: "POST",
-    body: formData,
+  return apiCall('/site-settings', {
+    method: 'POST',
+    data: formData,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to save Site Settings data");
-  }
-
-  return response.json();
 };

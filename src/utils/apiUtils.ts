@@ -1,5 +1,5 @@
 // Standardized API utilities for forms
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/backend";
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/backend` || "http://localhost:3000/api/backend";
 
 // Get authentication token
 export const getAuthToken = (): string => {
@@ -67,18 +67,19 @@ export const apiCall = async (
   
   let body: BodyInit | undefined;
   
-  // Handle request body based on data type
-  if (data && ['POST', 'PUT', 'PATCH'].includes(method)) {
-    if (hasFileUploads(data)) {
-      // For file uploads, use FormData and DON'T set Content-Type
-      // Browser will automatically set multipart/form-data with boundary
-      body = createFormData(data);
-    } else {
-      // For JSON data, set Content-Type and stringify
-      headers['Content-Type'] = 'application/json';
-      body = JSON.stringify(data);
-    }
+ if (data && ['POST', 'PUT', 'PATCH'].includes(method)) {
+
+  // --- NEW: If data is FormData, send it directly ---
+  if (data instanceof FormData) {
+    body = data; 
+  } 
+  // JSON case
+  else {
+    headers['Content-Type'] = 'application/json';
+    body = JSON.stringify(data);
   }
+}
+
   
   const response = await fetch(url, {
     method,

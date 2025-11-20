@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/backend";
+import { apiCall } from '@/utils/apiUtils';
 
 export interface SocialMedia {
   id?: number;
@@ -53,47 +53,29 @@ export const fetchSocialMediaList = async (
   limit: number = 10,
   search?: string
 ): Promise<SocialMediaResponse> => {
-  const params = new URLSearchParams({
-    page: page.toString(),
-    limit: limit.toString(),
-  });
-  
+  const params: Record<string, string | number> = {
+    page,
+    limit,
+  };
+
   if (search) {
-    params.append('search', search);
+    params.search = search;
   }
 
-  const response = await fetch(`${API_BASE_URL}/social-media?${params}`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch social media data");
-  }
-
-  return response.json();
+  return apiCall('/social-media', { params });
 };
 
 // Fetch single social media item
 export const fetchSocialMediaById = async (id: number): Promise<SocialMediaItemResponse> => {
-  const response = await fetch(`${API_BASE_URL}/social-media/${id}`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch social media item");
-  }
-
-  return response.json();
+  return apiCall(`/social-media/${id}`);
 };
 
 // Create social media item
 export const createSocialMedia = async (formData: FormData): Promise<SocialMediaItemResponse> => {
-  const response = await fetch(`${API_BASE_URL}/social-media`, {
-    method: "POST",
-    body: formData,
+  return apiCall('/social-media', {
+    method: 'POST',
+    data: formData,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to create social media item");
-  }
-
-  return response.json();
 };
 
 // Update social media item
@@ -101,38 +83,22 @@ export const updateSocialMedia = async (
   id: number,
   formData: FormData
 ): Promise<SocialMediaItemResponse> => {
-  const response = await fetch(`${API_BASE_URL}/social-media/${id}`, {
-    method: "PUT",
-    body: formData,
+  return apiCall(`/social-media/${id}`, {
+    method: 'PUT',
+    data: formData,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to update social media item");
-  }
-
-  return response.json();
 };
 
 // Delete social media item
 export const deleteSocialMedia = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/social-media/${id}`, {
-    method: "DELETE",
+  return apiCall(`/social-media/${id}`, {
+    method: 'DELETE',
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to delete social media item");
-  }
 };
 
 // Toggle status
 export const toggleSocialMediaStatus = async (id: number): Promise<SocialMediaItemResponse> => {
-  const response = await fetch(`${API_BASE_URL}/social-media/${id}/toggle-status`, {
-    method: "PATCH",
+  return apiCall(`/social-media/${id}/toggle-status`, {
+    method: 'PATCH',
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to toggle social media status");
-  }
-
-  return response.json();
 };

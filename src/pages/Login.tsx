@@ -7,10 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { login } from "@/services/auth/authApi";
 const goecLogo = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMTIwIDMyIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8Y2lyY2xlIGN4PSIxMCIgY3k9IjE2IiByPSIxMCIgZmlsbD0iIzEwYjk4MSIvPgo8Y2lyY2xlIGN4PSIyNiIgY3k9IjE2IiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjIiLz4KPHRleHQgeD0iNDQiIHk9IjIyIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMWYyOTM3Ij5HT0VDPC90ZXh0Pgo8L3N2Zz4K";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -23,19 +24,22 @@ export default function Login() {
     setIsLoading(true);
     setError("");
 
-    // Simulate authentication
-    setTimeout(() => {
-      if (email === "admin@goec.com" && password === "admin123") {
-        setIsAuthenticated(true);
-        localStorage.setItem("goec_auth", "true");
+    try {
+      const response = await login({ username, password });
+
+      if (response.success) {
         if (rememberMe) {
           localStorage.setItem("goec_remember", "true");
         }
+        setIsAuthenticated(true);
       } else {
-        setError("Invalid email or password. Use admin@goec.com / admin123");
+        setError(response.message || "Login failed");
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid username or password");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   if (isAuthenticated) {
@@ -77,15 +81,15 @@ export default function Login() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="admin@goec.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="username"
+                    type="text"
+                    placeholder="Enter your username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="pl-10"
                     required
                   />
@@ -150,7 +154,7 @@ export default function Login() {
 
             <div className="mt-6 text-center">
               <p className="text-xs text-muted-foreground">
-                Demo credentials: admin@goec.com / admin123
+                Sign in with your credentials
               </p>
             </div>
           </CardContent>
