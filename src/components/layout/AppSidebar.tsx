@@ -9,6 +9,7 @@ import {
   Home,
   Image,
   FileText,
+  HelpCircle,
 } from "lucide-react";
 
 import {
@@ -41,6 +42,13 @@ const cmsSection = [
       { title: "Home Banner", url: "/home-banner-slider", icon: Image },
     ],
   },
+  {
+    title: "FAQ",
+    icon: HelpCircle,
+    subItems: [
+      { title: "FAQ CMS", url: "/faq-cms", icon: FileText },
+    ],
+  },
 ];
 
 const commonSection = [
@@ -55,6 +63,7 @@ export function AppSidebar() {
 
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
+  const [faqOpen, setFaqOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -71,6 +80,14 @@ export function AppSidebar() {
       setHomeOpen(true);
     }
 
+    // Auto-open FAQ section if any FAQ route is active
+    if (
+      ["/faq-cms"].some((r) => path.includes(r))
+    ) {
+      setCmsOpen(true);
+      setFaqOpen(true);
+    }
+
     // Auto-open Common section if any common route is active
     if (
       [
@@ -78,7 +95,6 @@ export function AppSidebar() {
         "/social-media",
         "/meta-tags",
         "/policy",
-        "/common-faq",
       ].some((r) => path.includes(r))
     ) {
       setCommonOpen(true);
@@ -153,8 +169,8 @@ export function AppSidebar() {
                     key={section.title}
                     title={section.title}
                     icon={section.icon}
-                    open={homeOpen}
-                    setOpen={setHomeOpen}
+                    open={section.title === "Home" ? homeOpen : faqOpen}
+                    setOpen={section.title === "Home" ? setHomeOpen : setFaqOpen}
                     items={section.subItems}
                     getNavCls={getNavCls}
                   />

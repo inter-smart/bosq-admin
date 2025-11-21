@@ -24,6 +24,9 @@ import HomeCmsForm from "./pages/home/HomeCmsForm";
 import HomeBannerSliderList from "./pages/home/HomeBannerSliderList";
 import HomeBannerSliderForm from "./pages/home/HomeBannerSliderForm";
 
+// FAQ pages
+import FaqCmsForm from "./pages/faq/FaqCmsForm";
+
 const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -161,6 +164,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <HomeBannerSliderForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* FAQ CMS Route */}
+          <Route
+            path="/faq-cms"
+            element={
+              <ProtectedRoute>
+                <FaqCmsForm />
               </ProtectedRoute>
             }
           />

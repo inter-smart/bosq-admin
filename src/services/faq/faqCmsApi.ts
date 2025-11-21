@@ -1,0 +1,46 @@
+import { apiCall } from '@/utils/apiUtils';
+
+export interface FaqCms {
+  id?: number;
+
+  // BANNER SECTION
+  banner_title?: string | null;
+  banner_media_desktop_path?: string | null;
+  banner_media_mobile_path?: string | null;
+  banner_media_alt?: string | null;
+
+  // FAQ SECTION TITLES
+  general_title?: string | null;
+  payment_title?: string | null;
+  refund_title?: string | null;
+  product_title?: string | null;
+  warrenty_title?: string | null;
+
+  // QUESTION SECTION
+  question_title?: string | null;
+  question_description?: string | null;
+
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface FaqCmsResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  statusCode: number;
+  data: FaqCms;
+}
+
+// Fetch FAQ CMS data
+export const fetchFaqCms = async (): Promise<FaqCmsResponse> => {
+  return apiCall('/faq/faq-cms');
+};
+
+// Update FAQ CMS data
+export const saveFaqCms = async (formData: FormData): Promise<FaqCmsResponse> => {
+  return apiCall('/faq/faq-cms', {
+    method: 'POST',
+    data: formData,
+  });
+};
