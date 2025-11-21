@@ -61,12 +61,12 @@ export interface HomeCmsResponse {
 
 // Fetch home CMS data
 export const fetchHomeCms = async (): Promise<HomeCmsResponse> => {
-  return apiCall('/home/home-cms');
+  return apiCall('/cms/home/home-cms');
 };
 
 // Update home CMS data
 export const saveHomeCms = async (formData: FormData): Promise<HomeCmsResponse> => {
-  return apiCall('/home/home-cms', {
+  return apiCall('/cms/home/home-cms', {
     method: 'POST',
     data: formData,
   });

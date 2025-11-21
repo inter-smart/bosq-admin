@@ -24,72 +24,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchHomeCms, saveHomeCms } from "@/services/home/homeCmsApi";
+import { fetchHomeCms, saveHomeCms } from "@/services/cms/home/homeCmsApi";
 import { commonValidations } from "@/utils/formUtils";
+import { homeSchema, HomeCmsFormData } from "@/schemas/homeSchema";
 
-const formSchema = z.object({
-  // About Section
-  about_media_path: commonValidations.fileUpload,
-  about_media_alt: commonValidations.optionalString("About Media Alt Text"),
-  about_title: commonValidations.requiredString("About Title"),
-  about_description: commonValidations.requiredString("About Description"),
-
-  // FEATURED PRODUCTS
-  featured_title: commonValidations.requiredString("Featured Title"),
-
-  // JOURNEY SECTION
-  journy_title: commonValidations.requiredString("Journey Title"),
-  journy_description: commonValidations.requiredString("Journey Description"),
-  journey_media_type: commonValidations.requiredString("Media Type"),
-  journy_media_path: commonValidations.fileUpload,
-  journy_media_alt: commonValidations.optionalString("Journey Media Alt Text"),
-
-  // PROJECT SECTION
-  project_title: commonValidations.requiredString("Project Title"),
-
-  // CALCULATOR SECTION
-  calculator_title: commonValidations.requiredString("Calculator Title"),
-  calculator_description: commonValidations.requiredString(
-    "Calculator Description"
-  ),
-  calculator_media_path: commonValidations.fileUpload,
-  calculator_media_alt: commonValidations.optionalString(
-    "Calculator Media Alt Text"
-  ),
-
-  // CUSTOMIZE SECTION
-  customize_title: commonValidations.requiredString("Customize Title"),
-  customize_description: commonValidations.requiredString(
-    "Customize Description"
-  ),
-  customize_media_path: commonValidations.fileUpload,
-  customize_media_alt: commonValidations.optionalString(
-    "Customize Media Alt Text"
-  ),
-
-  // FITS SECTION
-  fits_title: commonValidations.requiredString("Fits Title"),
-  fits_description: commonValidations.requiredString("Fits Description"),
-
-  // BRANDS SECTION
-  brands_title: commonValidations.requiredString("Brands Title"),
-
-  // FORM SECTION
-  form_title: commonValidations.requiredString("Form Title"),
-  form_description: commonValidations.requiredString("Form Description"),
-  form_media_path: commonValidations.fileUpload,
-  form_media_alt: commonValidations.requiredString("Form Media Alt Text"),
-});
-
-type FormData = z.infer<typeof formSchema>;
 
 export default function HomeCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<HomeCmsFormData>({
+    resolver: zodResolver(homeSchema),
     defaultValues: {
       about_media_path: null,
       about_media_alt: "",
@@ -169,7 +115,7 @@ export default function HomeCmsForm() {
     }
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: HomeCmsFormData) => {
     try {
       setLoading(true);
       const formData = new FormData();

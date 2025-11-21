@@ -28,7 +28,7 @@ import {
   deleteHomeBanner,
   HomeBanner,
   updateHomeBanner,
-} from "@/services/home/homeBannerApi";
+} from "@/services/cms/home/homeBannerApi";
 import { useToast } from "@/hooks/use-toast";
 
 export default function HomeBannerSliderList() {

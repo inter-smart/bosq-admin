@@ -30,11 +30,11 @@ import {
   fetchHomeBannerById,
   createHomeBanner,
   updateHomeBanner,
-} from "@/services/home/homeBannerApi";
+} from "@/services/cms/home/homeBannerApi";
 import {
   homeBannerSchema,
   HomeBannerFormData,
-} from "@/schemas/homeBannerSchema";
+} from "@/schemas/homeSchema";
 import { Switch } from "@/components/ui/switch";
 
 export default function HomeBannerSliderForm() {

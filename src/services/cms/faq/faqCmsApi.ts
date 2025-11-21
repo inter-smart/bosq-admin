@@ -34,12 +34,12 @@ export interface FaqCmsResponse {
 
 // Fetch FAQ CMS data
 export const fetchFaqCms = async (): Promise<FaqCmsResponse> => {
-  return apiCall('/faq/faq-cms');
+  return apiCall('/cms/faq/faq-cms');
 };
 
 // Update FAQ CMS data
 export const saveFaqCms = async (formData: FormData): Promise<FaqCmsResponse> => {
-  return apiCall('/faq/faq-cms', {
+  return apiCall('/cms/faq/faq-cms', {
     method: 'POST',
     data: formData,
   });

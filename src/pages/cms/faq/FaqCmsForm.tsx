@@ -16,8 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchFaqCms, saveFaqCms } from "@/services/faq/faqCmsApi";
-import { faqCmsSchema, type FaqCmsFormData } from "@/schemas/faqCmsSchema";
+import { fetchFaqCms, saveFaqCms } from "@/services/cms/faq/faqCmsApi";
+import { faqCmsSchema, type FaqCmsFormData } from "@/schemas/faqSchema";
 
 export default function FaqCmsForm() {
   const { toast } = useToast();

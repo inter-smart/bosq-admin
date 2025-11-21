@@ -9,6 +9,7 @@ export interface ContactCms {
   form_description?: string | null;
   media_path?: string | null;
   media_alt?: string | null;
+  media_title?: string | null;
   media_description?: string | null;
 
   createdAt?: string;
@@ -25,14 +26,14 @@ export interface ContactCmsResponse {
 
 // Fetch contact CMS data
 export const fetchContactCms = async (): Promise<ContactCmsResponse> => {
-  return apiCall("/contact/contact-cms");
+  return apiCall("/cms/contact/contact-cms");
 };
 
 // Update contact CMS data
 export const saveContactCms = async (
   formData: FormData
 ): Promise<ContactCmsResponse> => {
-  return apiCall("/contact/contact-cms", {
+  return apiCall("/cms/contact/contact-cms", {
     method: "POST",
     data: formData,
   });

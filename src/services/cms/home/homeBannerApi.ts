@@ -56,17 +56,17 @@ export const fetchHomeBannerList = async (
     params.search = search;
   }
 
-  return apiCall('/home/home-banner', { params });
+  return apiCall('/cms/home/home-banner', { params });
 };
 
 // Fetch single home banner item
 export const fetchHomeBannerById = async (id: number): Promise<HomeBannerItemResponse> => {
-  return apiCall(`/home/home-banner/${id}`);
+  return apiCall(`/cms/home/home-banner/${id}`);
 };
 
 // Create home banner item
 export const createHomeBanner = async (formData: FormData): Promise<HomeBannerItemResponse> => {
-  return apiCall('/home/home-banner', {
+  return apiCall('/cms/home/home-banner', {
     method: 'POST',
     data: formData,
   });
@@ -77,7 +77,7 @@ export const updateHomeBanner = async (
   id: number,
   formData: FormData
 ): Promise<HomeBannerItemResponse> => {
-  return apiCall(`/home/home-banner/${id}`, {
+  return apiCall(`/cms/home/home-banner/${id}`, {
     method: 'PUT',
     data: formData,
   });
@@ -85,7 +85,7 @@ export const updateHomeBanner = async (
 
 // Delete home banner item
 export const deleteHomeBanner = async (id: number): Promise<void> => {
-  return apiCall(`/home/home-banner/${id}`, {
+  return apiCall(`/cms/home/home-banner/${id}`, {
     method: 'DELETE',
   });
 };

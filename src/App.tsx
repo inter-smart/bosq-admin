@@ -18,15 +18,15 @@ import SocialMediaForm from "./pages/common/SocialMediaForm";
 import { MetaTagsList } from "./pages/common/MetaTagsList";
 
 // Home pages that exist
-import HomeCmsForm from "./pages/home/HomeCmsForm";
-import HomeBannerSliderList from "./pages/home/HomeBannerSliderList";
-import HomeBannerSliderForm from "./pages/home/HomeBannerSliderForm";
+import HomeCmsForm from "./pages/cms/home/HomeCmsForm";
+import HomeBannerSliderList from "./pages/cms/home/HomeBannerSliderList";
+import HomeBannerSliderForm from "./pages/cms/home/HomeBannerSliderForm";
 
 // FAQ pages
-import FaqCmsForm from "./pages/faq/FaqCmsForm";
+import FaqCmsForm from "./pages/cms/faq/FaqCmsForm";
 
 // Contact pages
-import ContactCmsForm from "./pages/contact/ContactCmsForm";
+import ContactCmsForm from "./pages/cms/contact/ContactCmsForm";
 
 const queryClient = new QueryClient();
 // Protected Route Component

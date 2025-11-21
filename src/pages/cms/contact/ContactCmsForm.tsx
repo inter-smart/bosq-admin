@@ -20,33 +20,25 @@ import { useToast } from "@/hooks/use-toast";
 import {
   fetchContactCms,
   saveContactCms,
-} from "@/services/contact/contactCmsApi";
-import { commonValidations } from "@/utils/formUtils";
+} from "@/services/cms/contact/contactCmsApi";
+import { contactCmsSchema, ContactCmsFormData } from "@/schemas/contactSchema";
 
-const formSchema = z.object({
-  title: commonValidations.requiredString("Featured Products Title"),
-  form_title: commonValidations.requiredString("Form Title"),
-  form_description: commonValidations.requiredString("Form Description"),
-  media_path: commonValidations.fileUpload,
-  media_alt: commonValidations.optionalString("Form Media Alt Text"),
-  media_description: commonValidations.requiredString("Form Media Description"),
-});
 
-type FormData = z.infer<typeof formSchema>;
 
 export default function ContactCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ContactCmsFormData>({
+    resolver: zodResolver(contactCmsSchema),
     defaultValues: {
       title: "",
       form_title: "",
       form_description: "",
       media_path: null,
       media_alt: "",
+      media_title: "",
       media_description: "",
     },
   });
@@ -68,6 +60,7 @@ export default function ContactCmsForm() {
           form_description: data.form_description || "",
           media_path: data.media_path || null,
           media_alt: data.media_alt || "",
+          media_title: data.media_title || "",
           media_description: data.media_description || "",
         });
       }
@@ -78,10 +71,10 @@ export default function ContactCmsForm() {
     }
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: ContactCmsFormData) => {
     try {
       setLoading(true);
-        const formData = new FormData();
+      const formData = new FormData();
       for (let key in data) {
         if (data.hasOwnProperty(key)) {
           formData.append(key, data[key]);
@@ -129,19 +122,22 @@ export default function ContactCmsForm() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Featured Products Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter featured products title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Featured Products Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter featured products title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="form_title"
@@ -173,23 +169,39 @@ export default function ContactCmsForm() {
                   )}
                 />
 
-              <FormField
-                control={form.control}
-                name="media_description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Media Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter media description"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="media_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Title</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter media title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
+                <FormField
+                  control={form.control}
+                  name="media_description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter media description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="media_path"
@@ -223,7 +235,6 @@ export default function ContactCmsForm() {
                   )}
                 />
               </div>
-
             </CardContent>
           </Card>
 
