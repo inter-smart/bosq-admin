@@ -11,6 +11,7 @@ import {
   FileText,
   HelpCircle,
   Mail,
+  Info,
 } from "lucide-react";
 
 import {
@@ -44,6 +45,13 @@ const cmsSection = [
     ],
   },
   {
+    title: "About",
+    icon: Info,
+    subItems: [
+      { title: "About CMS", url: "/about-cms", icon: FileText },
+    ],
+  },
+  {
     title: "FAQ",
     icon: HelpCircle,
     subItems: [
@@ -71,6 +79,7 @@ export function AppSidebar() {
 
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
@@ -85,6 +94,12 @@ export function AppSidebar() {
     if (["/home-cms", "/home-banner-slider"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setHomeOpen(true);
+    }
+
+    // Auto-open About section
+    if (["/about-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setAboutOpen(true);
     }
 
     // Auto-open FAQ section
@@ -176,7 +191,10 @@ export function AppSidebar() {
                   let sectionOpen = homeOpen;
                   let setSectionOpen = setHomeOpen;
 
-                  if (section.title === "FAQ") {
+                  if (section.title === "About") {
+                    sectionOpen = aboutOpen;
+                    setSectionOpen = setAboutOpen;
+                  } else if (section.title === "FAQ") {
                     sectionOpen = faqOpen;
                     setSectionOpen = setFaqOpen;
                   } else if (section.title === "Contact") {

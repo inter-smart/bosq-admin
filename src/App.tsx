@@ -28,6 +28,9 @@ import FaqCmsForm from "./pages/cms/faq/FaqCmsForm";
 // Contact pages
 import ContactCmsForm from "./pages/cms/contact/ContactCmsForm";
 
+// About pages
+import AboutCmsForm from "./pages/cms/about/aboutCmsForm";
+
 const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -161,7 +164,15 @@ const App = () => (
             }
           />
 
-
+          {/* ABOUT CMS Route */}
+          <Route
+            path="/about-cms"
+            element={
+              <ProtectedRoute>
+                <AboutCmsForm />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Catch all route - must be last */}
           <Route path="*" element={<NotFound />} />
