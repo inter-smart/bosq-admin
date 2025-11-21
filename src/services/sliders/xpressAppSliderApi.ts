@@ -1,4 +1,4 @@
-// GOEC App Slider API service
+// BOSQ App Slider API service
 export interface GoecAppSliderData {
   id?: number;
   description: string;

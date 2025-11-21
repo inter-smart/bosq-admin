@@ -69,7 +69,7 @@ export function AppHeader() {
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">{currentUser?.username || 'Admin'}</p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    {currentUser?.email || 'admin@goec.com'}
+                    {currentUser?.email || 'admin@bosq.com'}
                   </p>
                 </div>
               </DropdownMenuLabel>

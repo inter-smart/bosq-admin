@@ -8,8 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login } from "@/services/auth/authApi";
-const goecLogo = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMTIwIDMyIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8Y2lyY2xlIGN4PSIxMCIgY3k9IjE2IiByPSIxMCIgZmlsbD0iIzEwYjk4MSIvPgo8Y2lyY2xlIGN4PSIyNiIgY3k9IjE2IiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTBiOTgxIiBzdHJva2Utd2lkdGg9IjIiLz4KPHRleHQgeD0iNDQiIHk9IjIyIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMWYyOTM3Ij5HT0VDPC90ZXh0Pgo8L3N2Zz4K";
-
+const goecLogo = "/bosq-logo-light.png";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -53,14 +52,14 @@ export default function Login() {
         <div className="text-center">
           <img 
             src={goecLogo} 
-            alt="GOEC" 
+            alt="BOSQ" 
             className="mx-auto h-12 w-auto mb-6"
           />
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Admin Dashboard
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to manage your GOEC content
+            Sign in to manage your BOSQ content
           </p>
         </div>
 
@@ -162,7 +161,7 @@ export default function Login() {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground">
-          <p>© 2024 GOEC. All rights reserved.</p>
+          <p>© 2024 BOSQ. All rights reserved.</p>
           <p className="mt-1">Content Management System</p>
         </div>
       </div>
