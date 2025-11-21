@@ -1,5 +1,7 @@
 // Standardized API utilities for forms
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/backend` || "http://localhost:3000/api/backend";
+export const IMAGE_URL = `${import.meta.env.VITE_API_BASE_URL}`
+
 
 // Get authentication token
 export const getAuthToken = (): string => {

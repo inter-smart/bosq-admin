@@ -486,7 +486,7 @@ const App = () => (
           />
 
           <Route
-            path="/xpress-app-sliders"
+            path="/bosq-app-sliders"
             element={
               <ProtectedRoute>
                 <XpressAppSliderList />
@@ -495,7 +495,7 @@ const App = () => (
           />
 
           <Route
-            path="/xpress-app-sliders/new"
+            path="/bosq-app-sliders/new"
             element={
               <ProtectedRoute>
                 <XpressAppSliderForm />
@@ -504,7 +504,7 @@ const App = () => (
           />
 
           <Route
-            path="/xpress-app-sliders/:id/edit"
+            path="/bosq-app-sliders/:id/edit"
             element={
               <ProtectedRoute>
                 <XpressAppSliderForm />
@@ -513,7 +513,7 @@ const App = () => (
           />
 
           <Route
-            path="/xpress-rota"
+            path="/bosq-rota"
             element={
               <ProtectedRoute>
                 <XpressRotaList />
@@ -522,7 +522,7 @@ const App = () => (
           />
 
           <Route
-            path="/xpress-rota/new"
+            path="/bosq-rota/new"
             element={
               <ProtectedRoute>
                 <XpressRotaForm />
@@ -531,7 +531,7 @@ const App = () => (
           />
 
           <Route
-            path="/xpress-rota/:id/edit"
+            path="/bosq-rota/:id/edit"
             element={
               <ProtectedRoute>
                 <XpressRotaForm />
@@ -860,9 +860,9 @@ const App = () => (
             }
           />
 
-          {/* App Feature Provider Xpress Rota Routes */}
+          {/* App Feature Provider bosq Rota Routes */}
           <Route
-            path="/app-feature/provider-xpress-rota"
+            path="/app-feature/provider-bosq-rota"
             element={
               <ProtectedRoute>
                 <AppFeatureProviderXpressRotaList />
@@ -871,7 +871,7 @@ const App = () => (
           />
 
           <Route
-            path="/app-feature/provider-xpress-rota/new"
+            path="/app-feature/provider-bosq-rota/new"
             element={
               <ProtectedRoute>
                 <AppFeatureProviderXpressRotaForm />
@@ -880,7 +880,7 @@ const App = () => (
           />
 
           <Route
-            path="/app-feature/provider-xpress-rota/:id/edit"
+            path="/app-feature/provider-bosq-rota/:id/edit"
             element={
               <ProtectedRoute>
                 <AppFeatureProviderXpressRotaForm />
@@ -1344,9 +1344,9 @@ const App = () => (
             }
           />
 
-          {/* Home Xpress Work For U Routes */}
+          {/* Home bosq Work For U Routes */}
           <Route
-            path="/home-xpress-work-for-u"
+            path="/home-bosq-work-for-u"
             element={
               <ProtectedRoute>
                 <HomeXpressWorkForUList />
@@ -1354,7 +1354,7 @@ const App = () => (
             }
           />
           <Route
-            path="/home-xpress-work-for-u/new"
+            path="/home-bosq-work-for-u/new"
             element={
               <ProtectedRoute>
                 <HomeXpressWorkForUForm />
@@ -1362,7 +1362,7 @@ const App = () => (
             }
           />
           <Route
-            path="/home-xpress-work-for-u/:id/edit"
+            path="/home-bosq-work-for-u/:id/edit"
             element={
               <ProtectedRoute>
                 <HomeXpressWorkForUForm />

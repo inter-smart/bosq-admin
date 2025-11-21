@@ -17,7 +17,7 @@ const API_BASE_URL =
 
 // Get all app sliders
 export const getGoecAppSliders = async (): Promise<GoecAppSliderData[]> => {
-  const response = await fetch(`${API_BASE_URL}/xpress-health-app`);
+  const response = await fetch(`${API_BASE_URL}/bosq-app`);
   if (!response.ok) {
     throw new Error("Failed to fetch app sliders");
   }
@@ -31,7 +31,7 @@ export const getGoecAppSliders = async (): Promise<GoecAppSliderData[]> => {
 export const getGoecAppSlider = async (
   id: number
 ): Promise<GoecAppSliderData> => {
-  const response = await fetch(`${API_BASE_URL}/xpress-health-app/${id}`);
+  const response = await fetch(`${API_BASE_URL}/bosq-app/${id}`);
   if (!response.ok) {
     throw new Error("Failed to fetch app slider");
   }
@@ -60,7 +60,7 @@ export const createGoecAppSlider = async (
     formData.append("media_path", data.media_path);
   }
 
-  const response = await fetch(`${API_BASE_URL}/xpress-health-app`, {
+  const response = await fetch(`${API_BASE_URL}/bosq-app`, {
     method: "POST",
     body: formData,
   });
@@ -95,7 +95,7 @@ export const updateGoecAppSlider = async (
     formData.append("media_path", data.media_path);
   }
 
-  const response = await fetch(`${API_BASE_URL}/xpress-health-app/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/bosq-app/${id}`, {
     method: "PUT",
     body: formData,
   });
@@ -110,7 +110,7 @@ export const updateGoecAppSlider = async (
 
 // Delete app slider
 export const deleteGoecAppSlider = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/xpress-health-app/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/bosq-app/${id}`, {
     method: "DELETE",
   });
 
@@ -124,7 +124,7 @@ export const toggleGoecAppSliderStatus = async (
   id: number
 ): Promise<GoecAppSliderData> => {
   const response = await fetch(
-    `${API_BASE_URL}/xpress-health-app/${id}/toggle-status`,
+    `${API_BASE_URL}/bosq-app/${id}/toggle-status`,
     {
       method: "PATCH",
     }
