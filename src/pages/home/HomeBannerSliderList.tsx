@@ -125,64 +125,6 @@ export default function HomeBannerSliderList() {
     }
   };
 
-  const handleSortOrderChange = (id: number, value: string) => {
-    // Update the local editing state immediately
-    setEditingSortOrder((prev) => ({ ...prev, [id]: value }));
-
-    // Clear existing timeout for this item
-    if (updateTimeouts[id]) {
-      clearTimeout(updateTimeouts[id]);
-    }
-
-    // Set new timeout for debounced update
-    const timeout = setTimeout(() => {
-      updateSortOrder(id, value);
-    }, 300);
-
-    setUpdateTimeouts((prev) => ({ ...prev, [id]: timeout }));
-  };
-
-  const updateSortOrder = async (id: number, sortOrder: string) => {
-    try {
-      const formData = new FormData();
-      formData.append("sort_order", sortOrder);
-
-      await updateHomeBanner(id, formData);
-
-      // Update local state
-      setBannerItems((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, sort_order: sortOrder } : item
-        )
-      );
-
-      // Clear editing state
-      setEditingSortOrder((prev) => {
-        const newState = { ...prev };
-        delete newState[id];
-        return newState;
-      });
-
-      toast({
-        title: "Success",
-        description: "Sort order updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update sort order",
-        variant: "destructive",
-      });
-
-      // Revert to original value on error
-      setEditingSortOrder((prev) => {
-        const newState = { ...prev };
-        delete newState[id];
-        return newState;
-      });
-    }
-  };
-
   const columns: ColumnDef<HomeBanner>[] = [
     {
       accessorKey: "id",
@@ -195,8 +137,11 @@ export default function HomeBannerSliderList() {
       accessorKey: "media_desktop_path",
       header: "Image",
       cell: ({ row }) => {
-
-        console.log(`${import.meta.env.VITE_IMAGE_URL}/${row.getValue("media_desktop_path")}`);
+        console.log(
+          `${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
+            "media_desktop_path"
+          )}`
+        );
         return (
           <>
             <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center">
@@ -228,37 +173,7 @@ export default function HomeBannerSliderList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => {
-        const id = row.original.id!;
-        const sortOrder = row.getValue("sort_order") as string | number;
-        const editingValue = editingSortOrder[id];
-        const displayValue =
-          editingValue !== undefined ? editingValue : String(sortOrder || "");
-
-        return (
-          <div className="flex justify-center">
-            <Input
-              type="number"
-              value={displayValue}
-              onChange={(e) => handleSortOrderChange(id, e.target.value)}
-              onBlur={() => {
-                // Trigger immediate update on blur
-                if (updateTimeouts[id]) {
-                  clearTimeout(updateTimeouts[id]);
-                  updateSortOrder(id, editingValue || String(sortOrder || ""));
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.currentTarget.blur();
-                }
-              }}
-              className="w-20 text-center"
-              min="0"
-            />
-          </div>
-        );
-      },
+      cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
     },
     {
       accessorKey: "status",
@@ -266,20 +181,9 @@ export default function HomeBannerSliderList() {
       cell: ({ row }) => {
         const status = row.getValue("status") as boolean;
         return (
-          <div className="flex items-center space-x-2">
-            <Switch
-              checked={status}
-              onCheckedChange={(checked) =>
-                setStatusToggleItem({
-                  id: row.original.id!,
-                  newStatus: checked,
-                })
-              }
-            />
             <Badge variant={status ? "default" : "secondary"}>
               {status ? "active" : "inactive"}
             </Badge>
-          </div>
         );
       },
     },

@@ -31,18 +31,11 @@ import {
   createHomeBanner,
   updateHomeBanner,
 } from "@/services/home/homeBannerApi";
-import { homeBannerSchema, HomeBannerFormData } from "@/schemas/homeBannerSchema";
+import {
+  homeBannerSchema,
+  HomeBannerFormData,
+} from "@/schemas/homeBannerSchema";
 import { Switch } from "@/components/ui/switch";
-
-const HOmebann = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().optional(),
-  media_alt: z.string().optional(),
-  button_text: z.string().optional(),
-  link: z.string().optional(),
-  sort_order: z.number().min(0, "Sort order must be 0 or greater").optional(),
-  status: z.boolean().optional(),
-});
 
 export default function HomeBannerSliderForm() {
   const { toast } = useToast();
@@ -53,7 +46,9 @@ export default function HomeBannerSliderForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
   const [imageFile, setImageFile] = useState<File | string | null>(null);
-  const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(null);
+  const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
+    null
+  );
 
   const form = useForm<HomeBannerFormData>({
     resolver: zodResolver(homeBannerSchema),
@@ -92,10 +87,14 @@ export default function HomeBannerSliderForm() {
         });
 
         if (data.media_desktop_path) {
-          setImageFile(`${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path}`);
+          setImageFile(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path}`
+          );
         }
         if (data.media_mobile_path) {
-          setMobileImageFile(`${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`);
+          setMobileImageFile(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`
+          );
         }
       }
     } catch (error) {
@@ -113,7 +112,7 @@ export default function HomeBannerSliderForm() {
     try {
       setLoading(true);
 
-      console.log(data)
+      console.log(data);
       const formData = new FormData();
       formData.append("title", data.title);
       if (data.description) formData.append("description", data.description);
@@ -191,48 +190,35 @@ export default function HomeBannerSliderForm() {
               <CardTitle>Banner Content</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter banner title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter banner title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Enter description" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="media_alt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image Alt Text</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter image alt text for accessibility" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Enter description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -256,6 +242,23 @@ export default function HomeBannerSliderForm() {
                       <FormLabel>Button Link</FormLabel>
                       <FormControl>
                         <Input placeholder="https://..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_alt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Alt Text</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter image alt text for accessibility"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -313,7 +316,9 @@ export default function HomeBannerSliderForm() {
                           type="number"
                           placeholder="1"
                           {...field}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value) || 1)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -321,7 +326,7 @@ export default function HomeBannerSliderForm() {
                   )}
                 />
 
-                 <FormField
+                <FormField
                   control={form.control}
                   name="status"
                   render={({ field }) => (

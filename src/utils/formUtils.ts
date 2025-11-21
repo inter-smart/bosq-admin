@@ -6,7 +6,8 @@ export const commonValidations = {
   requiredString: (fieldName: string) => 
     z.string().min(1, `${fieldName} is required`),
   
-  optionalString: z.string().optional(),
+  optionalString: (fieldName: string) => 
+    z.string().optional(),
   
   requiredText: (fieldName: string) => 
     z.string().min(1, `${fieldName} is required`),
@@ -19,6 +20,7 @@ export const commonValidations = {
   requiredNumber: (fieldName: string) => 
     z.number().min(0, `${fieldName} must be 0 or greater`),
   
+
   optionalNumber: z.number().optional(),
   
   // Status validations

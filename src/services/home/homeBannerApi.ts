@@ -9,7 +9,7 @@ export interface HomeBanner {
   media_alt?: string;
   button_text?: string;
   link?: string;
-  sort_order?: string | number;
+  sort_order?: number;
   status?: boolean;
   deleted_at?: string | null;
   createdAt?: string;
