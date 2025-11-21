@@ -15,8 +15,6 @@ import NotFound from "./pages/NotFound";
 import SiteSettingsForm from "./pages/common/SiteSettingsForm";
 import SocialMediaList from "./pages/common/SocialMediaList";
 import SocialMediaForm from "./pages/common/SocialMediaForm";
-import CommonFaqList from "./pages/common/CommonFaqList";
-import CommonFaqForm from "./pages/common/CommonFaqForm";
 import { MetaTagsList } from "./pages/common/MetaTagsList";
 
 // Home pages that exist
@@ -88,34 +86,6 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <SocialMediaForm />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Common FAQ Management Routes */}
-          <Route
-            path="/common-faq"
-            element={
-              <ProtectedRoute>
-                <CommonFaqList />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/common-faq/new"
-            element={
-              <ProtectedRoute>
-                <CommonFaqForm />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/common-faq/:id/edit"
-            element={
-              <ProtectedRoute>
-                <CommonFaqForm />
               </ProtectedRoute>
             }
           />
