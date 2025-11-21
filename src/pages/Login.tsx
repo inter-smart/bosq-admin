@@ -136,7 +136,7 @@ export default function Login() {
                     Remember me
                   </Label>
                 </div>
-                <Button variant="link" className="px-0 text-sm">
+                <Button type="button" variant="link" className="px-0 text-sm">
                   Forgot password?
                 </Button>
               </div>
