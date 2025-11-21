@@ -25,87 +25,62 @@ import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchHomeCms, saveHomeCms } from "@/services/home/homeCmsApi";
+import { commonValidations } from "@/utils/formUtils";
 
 const formSchema = z.object({
   // About Section
-  about_media_path: z.any().refine((file) => file, {
-    message: "About media is required",
-  }),
-  about_media_alt: z
-    .string()
-    .min(1, { message: "About media alt text is required" }),
-  about_title: z.string().min(1, { message: "About title is required" }),
-  about_description: z
-    .string()
-    .min(1, { message: "About description is required" }),
+  about_media_path: commonValidations.fileUpload,
+  about_media_alt: commonValidations.optionalString("About Media Alt Text"),
+  about_title: commonValidations.requiredString("About Title"),
+  about_description: commonValidations.requiredString("About Description"),
 
-  // Featured Products
-  featured_title: z.string().min(1, { message: "Featured title is required" }),
+  // FEATURED PRODUCTS
+  featured_title: commonValidations.requiredString("Featured Title"),
 
-  // Journey Section
-  journy_title: z.string().min(1, { message: "Journey title is required" }),
-  journy_description: z
-    .string()
-    .min(1, { message: "Journey description is required" }),
-  journey_media_type: z.string().min(1, { message: "Media type is required" }),
-  journy_media_path: z.any().refine((file) => file, {
-    message: "Journey media is required",
-  }),
-  journy_media_alt: z
-    .string()
-    .min(1, { message: "Journey media alt text is required" }),
+  // JOURNEY SECTION
+  journy_title: commonValidations.requiredString("Journey Title"),
+  journy_description: commonValidations.requiredString("Journey Description"),
+  journey_media_type: commonValidations.requiredString("Media Type"),
+  journy_media_path: commonValidations.fileUpload,
+  journy_media_alt: commonValidations.optionalString(
+    "Journey Media Alt Text"
+  ),
 
-  // Project Section
-  project_title: z.string().min(1, { message: "Project title is required" }),
+  // PROJECT SECTION
+  project_title: commonValidations.requiredString("Project Title"),
 
-  // Calculator Section
-  calculator_title: z
-    .string()
-    .min(1, { message: "Calculator title is required" }),
-  calculator_description: z
-    .string()
-    .min(1, { message: "Calculator description is required" }),
-  calculator_media_path: z.any().refine((file) => file, {
-    message: "Calculator media is required",
-  }),
-  calculator_media_alt: z
-    .string()
-    .min(1, { message: "Calculator media alt text is required" }),
+  // CALCULATOR SECTION
+  calculator_title: commonValidations.requiredString("Calculator Title"),
+  calculator_description: commonValidations.requiredString(
+    "Calculator Description"
+  ),
+  calculator_media_path: commonValidations.fileUpload,
+  calculator_media_alt: commonValidations.optionalString(
+    "Calculator Media Alt Text"
+  ),
 
-  // Customize Section
-  customize_title: z
-    .string()
-    .min(1, { message: "Customize title is required" }),
-  customize_description: z
-    .string()
-    .min(1, { message: "Customize description is required" }),
-  customize_media_path: z.any().refine((file) => file, {
-    message: "Customize media is required",
-  }),
-  customize_media_alt: z
-    .string()
-    .min(1, { message: "Customize media alt text is required" }),
+  // CUSTOMIZE SECTION
+  customize_title: commonValidations.requiredString("Customize Title"),
+  customize_description: commonValidations.requiredString(
+    "Customize Description"
+  ),
+  customize_media_path: commonValidations.fileUpload,
+  customize_media_alt: commonValidations.optionalString(
+    "Customize Media Alt Text"
+  ),
 
-  // Fits Section
-  fits_title: z.string().min(1, { message: "Fits title is required" }),
-  fits_description: z
-    .string()
-    .min(1, { message: "Fits description is required" }),
+  // FITS SECTION
+  fits_title: commonValidations.requiredString("Fits Title"),
+  fits_description: commonValidations.requiredString("Fits Description"),
 
-  // Brands Section
-  brands_title: z.string().min(1, { message: "Brands title is required" }),
+  // BRANDS SECTION
+  brands_title: commonValidations.requiredString("Brands Title"),
 
-  // Form Section
-  form_title: z.string().min(1, { message: "Form title is required" }),
-  form_description: z
-    .string()
-    .min(1, { message: "Form description is required" }),
-  form_media_path: z.any().refine((file) => file, {
-    message: "Form media is required",
-  }),
-  form_media_alt: z
-    .string()
-    .min(1, { message: "Form media alt text is required" }),
+  // FORM SECTION
+  form_title: commonValidations.requiredString("Form Title"),
+  form_description: commonValidations.requiredString("Form Description"),
+  form_media_path: commonValidations.fileUpload,
+  form_media_alt: commonValidations.requiredString("Form Media Alt Text"),
 });
 
 type FormData = z.infer<typeof formSchema>;
