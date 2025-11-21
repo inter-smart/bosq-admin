@@ -8,6 +8,7 @@ import {
   Tags,
   Home,
   Image,
+  FileText,
 } from "lucide-react";
 
 import {
@@ -25,13 +26,21 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-const bosqLogo =
-  "/bosq-logo-light.png";
-const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
+const bosqLogo = "/bosq-logo-light.png";
+
+const mainNavItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard }
+];
 
 const cmsSection = [
-  { title: "Home CMS", url: "/home-cms", icon: Home },
-  { title: "Home Banner", url: "/home-banner-slider", icon: Image },
+  {
+    title: "Home",
+    icon: Home,
+    subItems: [
+      { title: "Home CMS", url: "/home-cms", icon: FileText },
+      { title: "Home Banner", url: "/home-banner-slider", icon: Image },
+    ],
+  },
 ];
 
 const commonSection = [
@@ -45,6 +54,7 @@ export function AppSidebar() {
   const location = useLocation();
 
   const [cmsOpen, setCmsOpen] = useState(false);
+  const [homeOpen, setHomeOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -53,15 +63,15 @@ export function AppSidebar() {
   useEffect(() => {
     const path = location.pathname;
 
+    // Auto-open CMS section if any CMS route is active
     if (
-      [
-        "/home-cms",
-        "/home-banner-slider",
-      ].some((r) => path.includes(r))
+      ["/home-cms", "/home-banner-slider"].some((r) => path.includes(r))
     ) {
       setCmsOpen(true);
+      setHomeOpen(true);
     }
 
+    // Auto-open Common section if any common route is active
     if (
       [
         "/site-settings",
@@ -120,16 +130,39 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
 
-        {/* CMS Section */}
-        <SidebarCollapsibleSection
-          title="CMS"
-          icon={Home}
-          open={cmsOpen}
-          setOpen={setCmsOpen}
-          items={cmsSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+        {/* CMS Section with Nested Structure */}
+        <SidebarGroup>
+          <Collapsible open={!isCollapsed && cmsOpen} onOpenChange={setCmsOpen}>
+            <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
+              <FileText className="h-4 w-4" />
+              {!isCollapsed && (
+                <>
+                  <span className="ml-2">CMS</span>
+                  <ChevronRight
+                    className={`h-4 w-4 ml-auto transition-transform ${
+                      cmsOpen ? "rotate-90" : ""
+                    }`}
+                  />
+                </>
+              )}
+            </CollapsibleTrigger>
+            {!isCollapsed && (
+              <CollapsibleContent className="ml-4 mt-1 space-y-1">
+                {cmsSection.map((section) => (
+                  <NestedSection
+                    key={section.title}
+                    title={section.title}
+                    icon={section.icon}
+                    open={homeOpen}
+                    setOpen={setHomeOpen}
+                    items={section.subItems}
+                    getNavCls={getNavCls}
+                  />
+                ))}
+              </CollapsibleContent>
+            )}
+          </Collapsible>
+        </SidebarGroup>
 
         {/* Settings */}
         <SidebarCollapsibleSection
@@ -147,6 +180,46 @@ export function AppSidebar() {
 }
 
 /**
+ * 🧱 Nested Section Component (for Home under CMS)
+ */
+function NestedSection({
+  title,
+  icon: Icon,
+  open,
+  setOpen,
+  items,
+  getNavCls,
+}: any) {
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger className="flex items-center w-full p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
+        <Icon className="h-4 w-4" />
+        <span className="ml-2">{title}</span>
+        <ChevronRight
+          className={`h-4 w-4 ml-auto transition-transform ${
+            open ? "rotate-90" : ""
+          }`}
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent className="ml-6 mt-1 space-y-1">
+        <SidebarMenu>
+          {items.map((item: any) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild size="sm">
+                <NavLink to={item.url} className={getNavCls}>
+                  <item.icon className="h-4 w-4" />
+                  <span className="ml-2">{item.title}</span>
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
+
+/**
  * 🧱 Reusable Sidebar Section Component
  */
 function SidebarCollapsibleSection({
@@ -157,7 +230,7 @@ function SidebarCollapsibleSection({
   items,
   isCollapsed,
   getNavCls,
-} ) {
+}: any) {
   return (
     <SidebarGroup>
       <Collapsible open={!isCollapsed && open} onOpenChange={setOpen}>
@@ -177,7 +250,7 @@ function SidebarCollapsibleSection({
         {!isCollapsed && (
           <CollapsibleContent className="ml-6 mt-1 space-y-1">
             <SidebarMenu>
-              {items.map((item) => (
+              {items.map((item: any) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild size="sm">
                     <NavLink to={item.url} className={getNavCls}>
