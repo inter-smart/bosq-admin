@@ -42,9 +42,7 @@ const formSchema = z.object({
   journy_description: commonValidations.requiredString("Journey Description"),
   journey_media_type: commonValidations.requiredString("Media Type"),
   journy_media_path: commonValidations.fileUpload,
-  journy_media_alt: commonValidations.optionalString(
-    "Journey Media Alt Text"
-  ),
+  journy_media_alt: commonValidations.optionalString("Journey Media Alt Text"),
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),
@@ -174,7 +172,13 @@ export default function HomeCmsForm() {
   const onSubmit = async (data: FormData) => {
     try {
       setLoading(true);
-      await saveHomeCms(data);
+      const formData = new FormData();
+      for (let key in data) {
+        if (data.hasOwnProperty(key)) {
+          formData.append(key, data[key]);
+        }
+      }
+      await saveHomeCms(formData);
       toast({
         title: "Success",
         description: "Home CMS data saved successfully",

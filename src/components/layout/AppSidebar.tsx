@@ -10,6 +10,7 @@ import {
   Image,
   FileText,
   HelpCircle,
+  Mail,
 } from "lucide-react";
 
 import {
@@ -49,6 +50,13 @@ const cmsSection = [
       { title: "FAQ CMS", url: "/faq-cms", icon: FileText },
     ],
   },
+  {
+    title: "Contact",
+    icon: Mail,
+    subItems: [
+      { title: "Contact CMS", url: "/contact-cms", icon: FileText },
+    ],
+  },
 ];
 
 const commonSection = [
@@ -64,6 +72,7 @@ export function AppSidebar() {
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -72,30 +81,29 @@ export function AppSidebar() {
   useEffect(() => {
     const path = location.pathname;
 
-    // Auto-open CMS section if any CMS route is active
-    if (
-      ["/home-cms", "/home-banner-slider"].some((r) => path.includes(r))
-    ) {
+    // Auto-open Home section
+    if (["/home-cms", "/home-banner-slider"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setHomeOpen(true);
     }
 
-    // Auto-open FAQ section if any FAQ route is active
-    if (
-      ["/faq-cms"].some((r) => path.includes(r))
-    ) {
+    // Auto-open FAQ section
+    if (["/faq-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setFaqOpen(true);
     }
 
-    // Auto-open Common section if any common route is active
+    // Auto-open Contact section
+    if (["/contact-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setContactOpen(true);
+    }
+
+    // Auto-open Common section
     if (
-      [
-        "/site-settings",
-        "/social-media",
-        "/meta-tags",
-        "/policy",
-      ].some((r) => path.includes(r))
+      ["/site-settings", "/social-media", "/meta-tags", "/policy"].some((r) =>
+        path.includes(r)
+      )
     ) {
       setCommonOpen(true);
     }
@@ -164,17 +172,30 @@ export function AppSidebar() {
             </CollapsibleTrigger>
             {!isCollapsed && (
               <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                {cmsSection.map((section) => (
-                  <NestedSection
-                    key={section.title}
-                    title={section.title}
-                    icon={section.icon}
-                    open={section.title === "Home" ? homeOpen : faqOpen}
-                    setOpen={section.title === "Home" ? setHomeOpen : setFaqOpen}
-                    items={section.subItems}
-                    getNavCls={getNavCls}
-                  />
-                ))}
+                {cmsSection.map((section) => {
+                  let sectionOpen = homeOpen;
+                  let setSectionOpen = setHomeOpen;
+
+                  if (section.title === "FAQ") {
+                    sectionOpen = faqOpen;
+                    setSectionOpen = setFaqOpen;
+                  } else if (section.title === "Contact") {
+                    sectionOpen = contactOpen;
+                    setSectionOpen = setContactOpen;
+                  }
+
+                  return (
+                    <NestedSection
+                      key={section.title}
+                      title={section.title}
+                      icon={section.icon}
+                      open={sectionOpen}
+                      setOpen={setSectionOpen}
+                      items={section.subItems}
+                      getNavCls={getNavCls}
+                    />
+                  );
+                })}
               </CollapsibleContent>
             )}
           </Collapsible>
@@ -196,7 +217,7 @@ export function AppSidebar() {
 }
 
 /**
- * 🧱 Nested Section Component (for Home under CMS)
+ * 🧱 Nested Section Component (for Home, FAQ, Contact under CMS)
  */
 function NestedSection({
   title,
