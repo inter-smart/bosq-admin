@@ -35,6 +35,11 @@ import ContactCmsForm from "./pages/cms/contact/ContactCmsForm";
 // About pages
 import AboutCmsForm from "./pages/cms/about/aboutCmsForm";
 
+// Blog pages
+import BlogCmsForm from "./pages/blog/BlogCmsForm";
+import BlogsList from "./pages/blog/BlogsList";
+import BlogsForm from "./pages/blog/BlogsForm";
+
 const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -230,6 +235,44 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AboutCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Blog CMS Route */}
+          <Route
+            path="/blog-cms"
+            element={
+              <ProtectedRoute>
+                <BlogCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Blogs Routes */}
+          <Route
+            path="/blogs"
+            element={
+              <ProtectedRoute>
+                <BlogsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/blogs/create"
+            element={
+              <ProtectedRoute>
+                <BlogsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/blogs/edit/:id"
+            element={
+              <ProtectedRoute>
+                <BlogsForm />
               </ProtectedRoute>
             }
           />

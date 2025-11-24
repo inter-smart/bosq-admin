@@ -14,6 +14,7 @@ import {
   Info,
   List,
   FolderOpen,
+  BookOpen,
 } from "lucide-react";
 
 import {
@@ -71,6 +72,11 @@ const cmsSection = [
   },
 ];
 
+const blogsSection = [
+  { title: "Blog CMS", url: "/blog-cms", icon: FileText },
+  { title: "Blogs", url: "/blogs", icon: List },
+];
+
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
   { title: "Social Media", url: "/social-media", icon: Share2 },
@@ -86,6 +92,7 @@ export function AppSidebar() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [blogOpen, setBlogOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -116,6 +123,11 @@ export function AppSidebar() {
     if (["/contact-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setContactOpen(true);
+    }
+
+    // Auto-open Blog section
+    if (["/blog-cms", "/blogs"].some((r) => path.includes(r))) {
+      setBlogOpen(true);
     }
 
     // Auto-open Common section
@@ -222,6 +234,17 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
+
+        {/* Blog Section - Standalone */}
+        <SidebarCollapsibleSection
+          title="Blog"
+          icon={BookOpen}
+          open={blogOpen}
+          setOpen={setBlogOpen}
+          items={blogsSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
 
         {/* Settings */}
         <SidebarCollapsibleSection
