@@ -4,16 +4,9 @@ import { commonValidations } from "@/utils/formUtils";
 export const faqCmsSchema = z.object({
   // Banner Section
   banner_title: commonValidations.requiredString("Banner Title"),
-  banner_media_desktop_path: commonValidations.fileUpload.optional(),
-  banner_media_mobile_path: commonValidations.fileUpload.optional(),
-  banner_media_alt: commonValidations.optionalString("Banner Media Alt Text"),
-
-  // FAQ Section Titles
-  general_title: commonValidations.requiredString("General Title"),
-  payment_title: commonValidations.requiredString("Payment Title"),
-  refund_title: commonValidations.requiredString("Refund Title"),
-  product_title: commonValidations.requiredString("Product Title"),
-  warrenty_title: commonValidations.requiredString("Warranty Title"),
+  banner_media_desktop_path: commonValidations.fileUpload,
+  banner_media_mobile_path: commonValidations.fileUpload,
+  banner_media_alt: commonValidations.requiredString("Banner Media Alt Text"),
 
   // Question Section
   question_title: commonValidations.requiredString("Question Title"),

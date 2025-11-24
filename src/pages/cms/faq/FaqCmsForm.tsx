@@ -18,6 +18,7 @@ import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchFaqCms, saveFaqCms } from "@/services/cms/faq/faqCmsApi";
 import { faqCmsSchema, type FaqCmsFormData } from "@/schemas/faqSchema";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 
 export default function FaqCmsForm() {
   const { toast } = useToast();
@@ -31,11 +32,6 @@ export default function FaqCmsForm() {
       banner_media_desktop_path: null,
       banner_media_mobile_path: null,
       banner_media_alt: "",
-      general_title: "",
-      payment_title: "",
-      refund_title: "",
-      product_title: "",
-      warrenty_title: "",
       question_title: "",
       question_description: "",
     },
@@ -57,11 +53,6 @@ export default function FaqCmsForm() {
           banner_media_desktop_path: data.banner_media_desktop_path || null,
           banner_media_mobile_path: data.banner_media_mobile_path || null,
           banner_media_alt: data.banner_media_alt || "",
-          general_title: data.general_title || "",
-          payment_title: data.payment_title || "",
-          refund_title: data.refund_title || "",
-          product_title: data.product_title || "",
-          warrenty_title: data.warrenty_title || "",
           question_title: data.question_title || "",
           question_description: data.question_description || "",
         });
@@ -213,76 +204,6 @@ export default function FaqCmsForm() {
               <CardTitle>FAQ Section Titles</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="general_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>General Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter general title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="payment_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Payment Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter payment title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="refund_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Refund Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter refund title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="product_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Product Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter product title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="warrenty_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Warranty Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter warranty title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                  <FormField
                 control={form.control}
                 name="question_title"
@@ -304,9 +225,8 @@ export default function FaqCmsForm() {
                   <FormItem>
                     <FormLabel>Question Description</FormLabel>
                     <FormControl>
-                      <Textarea
+                      <RichTextEditor
                         placeholder="Enter question description"
-                        rows={4}
                         {...field}
                       />
                     </FormControl>
@@ -314,7 +234,6 @@ export default function FaqCmsForm() {
                   </FormItem>
                 )}
               />
-              </div>
 
             </CardContent>
           </Card>
