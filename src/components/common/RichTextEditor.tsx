@@ -28,7 +28,8 @@ import {
   Image as ImageIcon,
   Smile,
   Link as LinkIcon,
-  Palette
+  Palette,
+  CornerDownLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IconSelector } from "./IconSelector";
@@ -51,7 +52,7 @@ export function RichTextEditor({
   placeholder = "Start typing...",
   className,
   required = false,
-  maxLength
+  maxLength,
 }: RichTextEditorProps) {
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -85,14 +86,14 @@ export function RichTextEditor({
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
       const textContent = editor.getText();
-      
+
       if (maxLength && textContent.length > maxLength) {
         // Truncate content to maxLength
         const truncatedText = textContent.substring(0, maxLength);
         editor.commands.setContent(truncatedText);
         return;
       }
-      
+
       onChange(content);
     },
     editorProps: {
@@ -109,24 +110,39 @@ export function RichTextEditor({
       handleKeyDown: (view, event) => {
         if (maxLength) {
           const currentLength = editor?.getText().length || 0;
-          
+          if (event.key === "Enter") {
+            event.preventDefault();
+            editor?.chain().focus().setHardBreak().run();
+            return true;
+          }
           // Allow backspace, delete, and navigation keys
-          if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) {
+          if (
+            [
+              "Backspace",
+              "Delete",
+              "ArrowLeft",
+              "ArrowRight",
+              "ArrowUp",
+              "ArrowDown",
+              "Home",
+              "End",
+            ].includes(event.key)
+          ) {
             return false;
           }
-          
+
           // Allow Ctrl/Cmd shortcuts
           if (event.ctrlKey || event.metaKey) {
             return false;
           }
-          
+
           // Prevent new characters if at max length
           if (currentLength >= maxLength && event.key.length === 1) {
             event.preventDefault();
             return true;
           }
         }
-        
+
         return false;
       },
     },
@@ -178,11 +194,18 @@ export function RichTextEditor({
     return null;
   }
 
-  const ToolbarButton = ({ onClick, isActive, disabled, children }: {
+  const ToolbarButton = ({
+    onClick,
+    isActive,
+    disabled,
+    children,
+    title,
+  }: {
     onClick: () => void;
     isActive?: boolean;
     disabled?: boolean;
     children: React.ReactNode;
+    title?: string;
   }) => (
     <Button
       type="button"
@@ -191,6 +214,7 @@ export function RichTextEditor({
       onClick={onClick}
       disabled={disabled}
       className="h-8 w-8 p-0"
+      title={title}
     >
       {children}
     </Button>
@@ -204,7 +228,7 @@ export function RichTextEditor({
           {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
-      
+
       <div className="border rounded-md">
         {/* Toolbar */}
         <div className="border-b bg-muted/50 p-2">
@@ -216,14 +240,14 @@ export function RichTextEditor({
             >
               <Bold className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleItalic().run()}
               isActive={editor.isActive("italic")}
             >
               <Italic className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleStrike().run()}
               isActive={editor.isActive("strike")}
@@ -241,10 +265,13 @@ export function RichTextEditor({
                   className="h-8 w-8 p-0 relative"
                 >
                   <Palette className="h-4 w-4" />
-                  {editor.getAttributes('textStyle').color && (
+                  {editor.getAttributes("textStyle").color && (
                     <div
                       className="absolute bottom-0 right-0 w-2 h-2 rounded-full border border-white"
-                      style={{ backgroundColor: editor.getAttributes('textStyle').color }}
+                      style={{
+                        backgroundColor:
+                          editor.getAttributes("textStyle").color,
+                      }}
                     />
                   )}
                 </Button>
@@ -252,22 +279,32 @@ export function RichTextEditor({
               <PopoverContent className="w-64 p-3">
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">Color Picker</Label>
+                    <Label className="text-sm font-medium mb-2 block">
+                      Color Picker
+                    </Label>
                     <input
                       type="color"
-                      value={editor.getAttributes('textStyle').color || '#000000'}
+                      value={
+                        editor.getAttributes("textStyle").color || "#000000"
+                      }
                       className="w-full h-10 rounded border border-input bg-background cursor-pointer"
-                      onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+                      onChange={(e) =>
+                        editor.chain().focus().setColor(e.target.value).run()
+                      }
                       title="Select color"
                     />
                   </div>
-                  
+
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">Hex Color</Label>
+                    <Label className="text-sm font-medium mb-2 block">
+                      Hex Color
+                    </Label>
                     <input
                       type="text"
                       placeholder="#000000"
-                      defaultValue={editor.getAttributes('textStyle').color || ''}
+                      defaultValue={
+                        editor.getAttributes("textStyle").color || ""
+                      }
                       className="w-full px-3 py-2 text-sm rounded border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                       onChange={(e) => {
                         const color = e.target.value;
@@ -277,13 +314,13 @@ export function RichTextEditor({
                       }}
                       onBlur={(e) => {
                         const color = e.target.value;
-                        if (color && !color.startsWith('#')) {
-                          e.target.value = '#' + color;
+                        if (color && !color.startsWith("#")) {
+                          e.target.value = "#" + color;
                         }
                       }}
                     />
                   </div>
-                  
+
                   <Button
                     type="button"
                     variant="outline"
@@ -301,19 +338,23 @@ export function RichTextEditor({
 
             {/* Headings */}
             <ToolbarButton
-              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 2 }).run()
+              }
               isActive={editor.isActive("heading", { level: 2 })}
             >
               <Heading2 className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
-              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+              onClick={() =>
+                editor.chain().focus().toggleHeading({ level: 3 }).run()
+              }
               isActive={editor.isActive("heading", { level: 3 })}
             >
               <Heading3 className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
               onClick={() => editor.chain().focus().setParagraph().run()}
               isActive={editor.isActive("paragraph")}
@@ -330,14 +371,14 @@ export function RichTextEditor({
             >
               <List className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
               isActive={editor.isActive("orderedList")}
             >
               <ListOrdered className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
               isActive={editor.isActive("blockquote")}
@@ -349,14 +390,17 @@ export function RichTextEditor({
 
             {/* Media & Links */}
             <ToolbarButton
-              onClick={() => setShowImageModal(true)}
+              onClick={() => editor.chain().focus().setHardBreak().run()}
+              title="Insert line break"
             >
+              <CornerDownLeft className="h-4 w-4" />
+            </ToolbarButton>
+
+            <ToolbarButton onClick={() => setShowImageModal(true)}>
               <ImageIcon className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => setShowIconSelector(true)}
-            >
+            <ToolbarButton onClick={() => setShowIconSelector(true)}>
               <Smile className="h-4 w-4" />
             </ToolbarButton>
 
@@ -376,7 +420,7 @@ export function RichTextEditor({
             >
               <Undo className="h-4 w-4" />
             </ToolbarButton>
-            
+
             <ToolbarButton
               onClick={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().redo()}
@@ -387,12 +431,12 @@ export function RichTextEditor({
         </div>
 
         {/* Editor */}
-        <EditorContent 
-          editor={editor} 
+        <EditorContent
+          editor={editor}
           className="min-h-[120px]"
           placeholder={placeholder}
         />
-        
+
         {/* Character counter */}
         {maxLength && (
           <div className="px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground text-right">

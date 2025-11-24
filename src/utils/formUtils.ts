@@ -3,68 +3,77 @@ import { z } from "zod";
 // Common validation patterns
 export const commonValidations = {
   // String validations
-  requiredString: (fieldName: string) => 
+  requiredString: (fieldName: string) =>
+    z
+      .string()
+      .min(1, `${fieldName} is required`)
+      .max(255, `${fieldName} must be at most 255 characters`),
+
+  optionalString: (fieldName: string) =>
+    z
+      .string()
+      .max(255, `${fieldName} must be at most 255 characters`)
+      .optional(),
+
+  requiredText: (fieldName: string) =>
     z.string().min(1, `${fieldName} is required`),
-  
-  optionalString: (fieldName: string) => 
-    z.string().optional(),
-  
-  requiredText: (fieldName: string) => 
-    z.string().min(1, `${fieldName} is required`),
-  
+
   // Number validations
-  sortOrder: z
-    .number().min(0, "Sort order must be 0 or greater")
-    .optional(),
-  
-  requiredNumber: (fieldName: string) => 
+  sortOrder: z.number().min(0, "Sort order must be 0 or greater").optional(),
+
+  requiredNumber: (fieldName: string) =>
     z.number().min(0, `${fieldName} must be 0 or greater`),
-  
 
   optionalNumber: z.number().optional(),
-  
+
   // Status validations
   booleanStatus: z.boolean(),
-  
+
   statusEnum: z.enum(["active", "inactive"]),
-  
+
   publishStatus: z.enum(["published", "draft"]),
-  
+
   // Media validations
   mediaType: z.enum(["image", "video"]),
-  
+
   fileUpload: z.any().optional(),
-  
+
   // URL validations
-  optionalUrl: z.string().regex(/^\/.*/, "Must start with /").optional().or(z.literal("")),
-  
-  requiredUrl: (fieldName: string) => 
+  optionalUrl: z
+    .string()
+    .regex(/^\/.*/, "Must start with /")
+    .optional()
+    .or(z.literal("")),
+
+  requiredUrl: (fieldName: string) =>
     z.string().regex(/^\/.*/, `${fieldName} must start with /`),
-  
+
   // Date validations
   dateString: z.string().min(1, "Date is required"),
-  
+
   optionalDate: z.string().optional(),
-  
+
   // Array validations
   tagArray: z.array(z.number()).optional(),
-  
-  categoryArray: z.array(z.number()).min(1, "At least one category is required"),
-  
+
+  categoryArray: z
+    .array(z.number())
+    .min(1, "At least one category is required"),
+
   // Rich text validation
-  richText: (fieldName: string) => 
+  richText: (fieldName: string) =>
     z.string().min(1, `${fieldName} is required`),
-  
+
   optionalRichText: z.string().optional(),
 };
 
 // Form data construction utilities
 export const createFormDataWithFiles = (
-  data: Record<string, any>, 
+  data: Record<string, any>,
   files: Record<string, File | string | null> = {}
 ): FormData => {
   const formData = new FormData();
-  
+
   // Add regular fields
   Object.entries(data).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -77,22 +86,22 @@ export const createFormDataWithFiles = (
       }
     }
   });
-  
+
   // Add file fields
   Object.entries(files).forEach(([key, file]) => {
     if (file instanceof File) {
       formData.append(key, file);
-    } else if (typeof file === 'string' && file) {
+    } else if (typeof file === "string" && file) {
       formData.append(key, file);
     }
   });
-  
+
   return formData;
 };
 
 // Check if form data contains files
 export const hasFileUploads = (data: Record<string, any>): boolean => {
-  return Object.values(data).some(value => value instanceof File);
+  return Object.values(data).some((value) => value instanceof File);
 };
 
 // API submission helper that automatically handles content-type
@@ -100,32 +109,32 @@ export const submitFormData = async (
   url: string,
   data: Record<string, any>,
   options: {
-    method?: 'POST' | 'PUT' | 'PATCH';
+    method?: "POST" | "PUT" | "PATCH";
     token?: string;
   } = {}
 ): Promise<Response> => {
-  const { method = 'POST', token } = options;
-  
+  const { method = "POST", token } = options;
+
   const hasFiles = hasFileUploads(data);
   const headers: HeadersInit = {};
-  
+
   // Add authorization if token provided
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  
+
   let body: BodyInit;
-  
+
   if (hasFiles) {
     // For file uploads, use FormData and let browser set Content-Type
     body = createFormDataWithFiles(data);
     // DON'T set Content-Type - browser will set it automatically with boundary
   } else {
     // For regular JSON data
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
     body = JSON.stringify(data);
   }
-  
+
   return fetch(url, {
     method,
     headers,
@@ -153,7 +162,7 @@ export const createDefaultFormValues = <T extends Record<string, any>>(
 
 // Form field error extractors
 export const getFieldError = (
-  errors: Record<string, any>, 
+  errors: Record<string, any>,
   fieldName: string
 ): string | undefined => {
   return errors[fieldName]?.message;
@@ -161,14 +170,14 @@ export const getFieldError = (
 
 // File validation utilities
 export const validateFileType = (
-  file: File, 
+  file: File,
   allowedTypes: string[]
 ): boolean => {
-  return allowedTypes.some(type => file.type.startsWith(type));
+  return allowedTypes.some((type) => file.type.startsWith(type));
 };
 
 export const validateFileSize = (
-  file: File, 
+  file: File,
   maxSizeInBytes: number
 ): boolean => {
   return file.size <= maxSizeInBytes;

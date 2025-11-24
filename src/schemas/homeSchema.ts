@@ -7,14 +7,14 @@ export const homeSchema = z.object({
   about_media_path: commonValidations.fileUpload,
   about_media_alt: commonValidations.optionalString("About Media Alt Text"),
   about_title: commonValidations.requiredString("About Title"),
-  about_description: commonValidations.requiredString("About Description"),
+  about_description: commonValidations.requiredText("About Description"),
 
   // FEATURED PRODUCTS
   featured_title: commonValidations.requiredString("Featured Title"),
 
   // JOURNEY SECTION
   journy_title: commonValidations.requiredString("Journey Title"),
-  journy_description: commonValidations.requiredString("Journey Description"),
+  journy_description: commonValidations.requiredText("Journey Description"),
   journey_media_type: commonValidations.requiredString("Media Type"),
   journy_media_path: commonValidations.fileUpload,
   journy_media_alt: commonValidations.optionalString("Journey Media Alt Text"),
@@ -24,7 +24,7 @@ export const homeSchema = z.object({
 
   // CALCULATOR SECTION
   calculator_title: commonValidations.requiredString("Calculator Title"),
-  calculator_description: commonValidations.requiredString(
+  calculator_description: commonValidations.requiredText(
     "Calculator Description"
   ),
   calculator_media_path: commonValidations.fileUpload,
@@ -34,7 +34,7 @@ export const homeSchema = z.object({
 
   // CUSTOMIZE SECTION
   customize_title: commonValidations.requiredString("Customize Title"),
-  customize_description: commonValidations.requiredString(
+  customize_description: commonValidations.requiredText(
     "Customize Description"
   ),
   customize_media_path: commonValidations.fileUpload,
@@ -44,14 +44,14 @@ export const homeSchema = z.object({
 
   // FITS SECTION
   fits_title: commonValidations.requiredString("Fits Title"),
-  fits_description: commonValidations.requiredString("Fits Description"),
+  fits_description: commonValidations.requiredText("Fits Description"),
 
   // BRANDS SECTION
   brands_title: commonValidations.requiredString("Brands Title"),
 
   // FORM SECTION
   form_title: commonValidations.requiredString("Form Title"),
-  form_description: commonValidations.requiredString("Form Description"),
+  form_description: commonValidations.requiredText("Form Description"),
   form_media_path: commonValidations.fileUpload,
   form_media_alt: commonValidations.requiredString("Form Media Alt Text"),
 });
@@ -63,7 +63,7 @@ export const homeBannerSchema = z.object({
   title: commonValidations.requiredString("Title"),
 
   // Optional string fields (backend allows empty strings)
-  description: commonValidations.requiredString("Description"),
+  description: commonValidations.requiredText("Description"),
 
   link: commonValidations.requiredString("Link"),
 
