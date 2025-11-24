@@ -36,16 +36,7 @@ export default function FaqCategoryList() {
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [statusToggleItem, setStatusToggleItem] = useState<{
-    id: number;
-    newStatus: boolean;
-  } | null>(null);
-  const [editingSortOrder, setEditingSortOrder] = useState<{
-    [key: number]: string;
-  }>({});
-  const [updateTimeouts, setUpdateTimeouts] = useState<{
-    [key: number]: NodeJS.Timeout;
-  }>({});
+ 
 
   useEffect(() => {
     loadCategories();
@@ -70,38 +61,6 @@ export default function FaqCategoryList() {
     }
   };
 
-  const confirmStatusToggle = async () => {
-    if (!statusToggleItem) return;
-
-    try {
-      const { id, newStatus } = statusToggleItem;
-      const formData = new FormData();
-      formData.append("status", String(newStatus));
-
-      await updateFaqCategory(id, formData);
-
-      setCategories((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? { ...item, status: statusToggleItem.newStatus }
-            : item
-        )
-      );
-
-      toast({
-        title: "Success",
-        description: "Category status updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update category status",
-        variant: "destructive",
-      });
-    } finally {
-      setStatusToggleItem(null);
-    }
-  };
 
   const confirmDelete = async () => {
     if (!deleteItemId) return;
@@ -124,47 +83,7 @@ export default function FaqCategoryList() {
     }
   };
 
-  const handleSortOrderChange = (id: number, value: string) => {
-    setEditingSortOrder((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-
-    if (updateTimeouts[id]) {
-      clearTimeout(updateTimeouts[id]);
-    }
-
-    const timeoutId = setTimeout(async () => {
-      try {
-        const formData = new FormData();
-        formData.append("sort_order", value);
-
-        await updateFaqCategory(id, formData);
-
-        setCategories((prev) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, sort_order: parseInt(value) } : item
-          )
-        );
-
-        toast({
-          title: "Success",
-          description: "Sort order updated successfully",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to update sort order",
-          variant: "destructive",
-        });
-      }
-    }, 1000);
-
-    setUpdateTimeouts((prev) => ({
-      ...prev,
-      [id]: timeoutId,
-    }));
-  };
+ 
 
   const columns: ColumnDef<FaqCategory>[] = [
     {
@@ -186,22 +105,7 @@ export default function FaqCategoryList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => {
-        const id = row.original.id!;
-        const currentValue =
-          editingSortOrder[id] !== undefined
-            ? editingSortOrder[id]
-            : String(row.getValue("sort_order") || 0);
-
-        return (
-          <Input
-            type="number"
-            value={currentValue}
-            onChange={(e) => handleSortOrderChange(id, e.target.value)}
-            className="w-20 h-8"
-          />
-        );
-      },
+       cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
     },
     {
       accessorKey: "status",
@@ -293,29 +197,6 @@ export default function FaqCategoryList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Status Toggle Confirmation Dialog */}
-      <AlertDialog
-        open={!!statusToggleItem}
-        onOpenChange={() => setStatusToggleItem(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
-              category?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmStatusToggle}>
-              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

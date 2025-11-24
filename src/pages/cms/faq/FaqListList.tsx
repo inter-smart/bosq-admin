@@ -49,16 +49,6 @@ export default function FaqListList() {
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [statusToggleItem, setStatusToggleItem] = useState<{
-    id: number;
-    newStatus: boolean;
-  } | null>(null);
-  const [editingSortOrder, setEditingSortOrder] = useState<{
-    [key: number]: string;
-  }>({});
-  const [updateTimeouts, setUpdateTimeouts] = useState<{
-    [key: number]: NodeJS.Timeout;
-  }>({});
 
   useEffect(() => {
     loadCategories();
@@ -103,39 +93,6 @@ export default function FaqListList() {
     }
   };
 
-  const confirmStatusToggle = async () => {
-    if (!statusToggleItem) return;
-
-    try {
-      const { id, newStatus } = statusToggleItem;
-      const formData = new FormData();
-      formData.append("status", String(newStatus));
-
-      await updateFaqList(id, formData);
-
-      setFaqItems((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? { ...item, status: statusToggleItem.newStatus }
-            : item
-        )
-      );
-
-      toast({
-        title: "Success",
-        description: "FAQ status updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update FAQ status",
-        variant: "destructive",
-      });
-    } finally {
-      setStatusToggleItem(null);
-    }
-  };
-
   const confirmDelete = async () => {
     if (!deleteItemId) return;
 
@@ -155,48 +112,6 @@ export default function FaqListList() {
     } finally {
       setDeleteItemId(null);
     }
-  };
-
-  const handleSortOrderChange = (id: number, value: string) => {
-    setEditingSortOrder((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-
-    if (updateTimeouts[id]) {
-      clearTimeout(updateTimeouts[id]);
-    }
-
-    const timeoutId = setTimeout(async () => {
-      try {
-        const formData = new FormData();
-        formData.append("sort_order", value);
-
-        await updateFaqList(id, formData);
-
-        setFaqItems((prev) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, sort_order: parseInt(value) } : item
-          )
-        );
-
-        toast({
-          title: "Success",
-          description: "Sort order updated successfully",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to update sort order",
-          variant: "destructive",
-        });
-      }
-    }, 1000);
-
-    setUpdateTimeouts((prev) => ({
-      ...prev,
-      [id]: timeoutId,
-    }));
   };
 
   const columns: ColumnDef<FaqList>[] = [
@@ -231,31 +146,14 @@ export default function FaqListList() {
       cell: ({ row }) => {
         const category = row.original.faq_category;
         return (
-          <Badge variant="outline">
-            {category?.title || "No Category"}
-          </Badge>
+          <Badge variant="outline">{category?.title || "No Category"}</Badge>
         );
       },
     },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => {
-        const id = row.original.id!;
-        const currentValue =
-          editingSortOrder[id] !== undefined
-            ? editingSortOrder[id]
-            : String(row.getValue("sort_order") || 0);
-
-        return (
-          <Input
-            type="number"
-            value={currentValue}
-            onChange={(e) => handleSortOrderChange(id, e.target.value)}
-            className="w-20 h-8"
-          />
-        );
-      },
+      cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
     },
     {
       accessorKey: "status",
@@ -367,8 +265,8 @@ export default function FaqListList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              FAQ and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the FAQ
+              and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -378,29 +276,6 @@ export default function FaqListList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Status Toggle Confirmation Dialog */}
-      <AlertDialog
-        open={!!statusToggleItem}
-        onOpenChange={() => setStatusToggleItem(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
-              FAQ?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmStatusToggle}>
-              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
