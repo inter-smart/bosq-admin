@@ -19,7 +19,8 @@ export const commonValidations = {
     z.string().min(1, `${fieldName} is required`),
 
   // Number validations
-  sortOrder: z.number().min(0, "Sort order must be 0 or greater").optional(),
+  sortOrder: () =>
+  z.number().min(1, "Sort order must be 0 or greater").optional(),
 
   requiredNumber: (fieldName: string) =>
     z.number().min(0, `${fieldName} must be 0 or greater`),
@@ -27,7 +28,7 @@ export const commonValidations = {
   optionalNumber: z.number().optional(),
 
   // Status validations
-  booleanStatus: z.boolean(),
+  booleanStatus:()=>  z.boolean(),
 
   statusEnum: z.enum(["active", "inactive"]),
 

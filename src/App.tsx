@@ -24,6 +24,10 @@ import HomeBannerSliderForm from "./pages/cms/home/HomeBannerSliderForm";
 
 // FAQ pages
 import FaqCmsForm from "./pages/cms/faq/FaqCmsForm";
+import FaqCategoryList from "./pages/cms/faq/FaqCategoryList";
+import FaqCategoryForm from "./pages/cms/faq/FaqCategoryForm";
+import FaqListList from "./pages/cms/faq/FaqListList";
+import FaqListForm from "./pages/cms/faq/FaqListForm";
 
 // Contact pages
 import ContactCmsForm from "./pages/cms/contact/ContactCmsForm";
@@ -150,6 +154,62 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <FaqCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* FAQ Category Routes */}
+          <Route
+            path="/faq-category"
+            element={
+              <ProtectedRoute>
+                <FaqCategoryList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/faq-category/create"
+            element={
+              <ProtectedRoute>
+                <FaqCategoryForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/faq-category/edit/:id"
+            element={
+              <ProtectedRoute>
+                <FaqCategoryForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* FAQ List Routes */}
+          <Route
+            path="/faq-list"
+            element={
+              <ProtectedRoute>
+                <FaqListList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/faq-list/create"
+            element={
+              <ProtectedRoute>
+                <FaqListForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/faq-list/edit/:id"
+            element={
+              <ProtectedRoute>
+                <FaqListForm />
               </ProtectedRoute>
             }
           />

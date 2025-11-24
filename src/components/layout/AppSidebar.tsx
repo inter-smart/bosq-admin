@@ -12,6 +12,8 @@ import {
   HelpCircle,
   Mail,
   Info,
+  List,
+  FolderOpen,
 } from "lucide-react";
 
 import {
@@ -56,6 +58,8 @@ const cmsSection = [
     icon: HelpCircle,
     subItems: [
       { title: "FAQ CMS", url: "/faq-cms", icon: FileText },
+      { title: "FAQ Category", url: "/faq-category", icon: FolderOpen },
+      { title: "FAQ List", url: "/faq-list", icon: List },
     ],
   },
   {
@@ -103,7 +107,7 @@ export function AppSidebar() {
     }
 
     // Auto-open FAQ section
-    if (["/faq-cms"].some((r) => path.includes(r))) {
+    if (["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setFaqOpen(true);
     }

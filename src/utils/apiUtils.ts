@@ -89,11 +89,18 @@ export const apiCall = async (
     body,
   });
   
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
-  }
-  
+if (!response.ok) {
+  const errorData = await response.json().catch(() => ({}));
+
+  throw {
+    message: errorData.message || errorData.error?.message || "Unknown error",
+    ...errorData,
+    status: response.status,
+    statusText: response.statusText,
+  };
+}
+
+
   return response.json();
 };
 
