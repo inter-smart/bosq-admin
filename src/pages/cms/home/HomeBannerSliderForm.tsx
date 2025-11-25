@@ -22,6 +22,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -54,9 +60,13 @@ export default function HomeBannerSliderForm() {
     resolver: zodResolver(homeBannerSchema),
     defaultValues: {
       title: "",
+      title_ar: "",
       description: "",
+      description_ar: "",
       media_alt: "",
+      media_alt_ar: "",
       button_text: "",
+      button_text_ar: "",
       link: "",
       sort_order: 1,
       status: true,
@@ -78,9 +88,13 @@ export default function HomeBannerSliderForm() {
       if (data) {
         form.reset({
           title: data.title || "",
+          title_ar: data.title_ar || "",
           description: data.description || "",
+          description_ar: data.description_ar || "",
           media_alt: data.media_alt || "",
+          media_alt_ar: data.media_alt_ar || "",
           button_text: data.button_text || "",
+          button_text_ar: data.button_text_ar || "",
           link: data.link || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -114,11 +128,20 @@ export default function HomeBannerSliderForm() {
 
       console.log(data);
       const formData = new FormData();
+
+      // English fields
       formData.append("title", data.title);
       if (data.description) formData.append("description", data.description);
       if (data.media_alt) formData.append("media_alt", data.media_alt);
       if (data.button_text) formData.append("button_text", data.button_text);
       if (data.link) formData.append("link", data.link);
+
+      // Arabic fields
+      if (data.title_ar) formData.append("title_ar", data.title_ar);
+      if (data.description_ar) formData.append("description_ar", data.description_ar);
+      if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
+      if (data.button_text_ar) formData.append("button_text_ar", data.button_text_ar);
+
       formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -189,82 +212,168 @@ export default function HomeBannerSliderForm() {
             <CardHeader>
               <CardTitle>Banner Content</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter banner title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <CardContent>
+              <Tabs defaultValue="en" className="w-full">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="en">English</TabsTrigger>
+                  <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
+                </TabsList>
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter description" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="button_text"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Button Text</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Learn More" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <TabsContent value="en" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter banner title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Button Link</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Enter description" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="button_text"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Button Text</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g., Learn More" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="media_alt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Alt Text</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter image alt text for accessibility"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                    <FormField
+                      control={form.control}
+                      name="link"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Button Link</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Alt Text</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter image alt text for accessibility"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="ar" className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="title_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>العنوان (Title)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل عنوان البانر"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="description_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>الوصف (Description)</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="أدخل الوصف"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="button_text_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>نص الزر (Button Text)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="مثال: اعرف المزيد"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>النص البديل (Alt Text)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل للصورة"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 

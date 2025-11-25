@@ -69,8 +69,8 @@ export const logout = (): void => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('user_data');
   localStorage.removeItem('token_expires_at');
-  localStorage.removeItem('goec_auth'); // Remove old mock auth
-  localStorage.removeItem('goec_remember');
+  localStorage.removeItem('bosq_auth'); // Remove old mock auth
+  localStorage.removeItem('bosq_remember');
 };
 
 /**

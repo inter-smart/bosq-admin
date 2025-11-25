@@ -3,11 +3,15 @@ import { apiCall } from '@/utils/apiUtils';
 export interface HomeBanner {
   id?: number;
   title: string;
+  title_ar?: string;
   description?: string;
+  description_ar?: string;
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt?: string;
+  media_alt_ar?: string;
   button_text?: string;
+  button_text_ar?: string;
   link?: string;
   sort_order?: number;
   status?: boolean;

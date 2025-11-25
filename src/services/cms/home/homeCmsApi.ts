@@ -6,46 +6,66 @@ export interface HomeCms {
   // ABOUT
   about_media_path?: string | null;
   about_media_alt?: string | null;
+  about_media_alt_ar?: string | null;
   about_title?: string | null;
+  about_title_ar?: string | null;
   about_description?: string | null;
+  about_description_ar?: string | null;
 
   // FEATURED PRODUCTS
   featured_title?: string | null;
+  featured_title_ar?: string | null;
 
   // JOURNY
   journy_title?: string | null;
+  journy_title_ar?: string | null;
   journy_description?: string | null;
+  journy_description_ar?: string | null;
   journey_media_type?: "image" | "video" | null;
   journy_media_path?: string | null;
   journy_media_alt?: string | null;
+  journy_media_alt_ar?: string | null;
 
   // PROJECT
   project_title?: string | null;
+  project_title_ar?: string | null;
 
   // CALCULATOR
   calculator_title?: string | null;
+  calculator_title_ar?: string | null;
   calculator_description?: string | null;
+  calculator_description_ar?: string | null;
   calculator_media_path?: string | null;
   calculator_media_alt?: string | null;
+  calculator_media_alt_ar?: string | null;
 
   // CUSTOMIZE
   customize_title?: string | null;
+  customize_title_ar?: string | null;
   customize_description?: string | null;
+  customize_description_ar?: string | null;
   customize_media_path?: string | null;
   customize_media_alt?: string | null;
+  customize_media_alt_ar?: string | null;
 
   // FITS
   fits_title?: string | null;
+  fits_title_ar?: string | null;
   fits_description?: string | null;
+  fits_description_ar?: string | null;
 
   // BRANDS
   brands_title?: string | null;
+  brands_title_ar?: string | null;
 
   // FORM
   form_title?: string | null;
+  form_title_ar?: string | null;
   form_description?: string | null;
+  form_description_ar?: string | null;
   form_media_path?: string | null;
   form_media_alt?: string | null;
+  form_media_alt_ar?: string | null;
 
   createdAt?: string;
   updatedAt?: string;

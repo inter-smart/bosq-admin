@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login } from "@/services/auth/authApi";
-const goecLogo = "/bosq-logo-light.png";
+const bosqLogo = "/bosq-logo-light.png";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +28,7 @@ export default function Login() {
 
       if (response.success) {
         if (rememberMe) {
-          localStorage.setItem("goec_remember", "true");
+          localStorage.setItem("bosq_remember", "true");
         }
         setIsAuthenticated(true);
       } else {
@@ -51,7 +51,7 @@ export default function Login() {
         {/* Logo and Header */}
         <div className="text-center">
           <img 
-            src={goecLogo} 
+            src={bosqLogo} 
             alt="BOSQ" 
             className="mx-auto h-12 w-auto mb-6"
           />
