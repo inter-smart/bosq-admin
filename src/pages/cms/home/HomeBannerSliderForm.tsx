@@ -22,12 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -37,10 +32,7 @@ import {
   createHomeBanner,
   updateHomeBanner,
 } from "@/services/cms/home/homeBannerApi";
-import {
-  homeBannerSchema,
-  HomeBannerFormData,
-} from "@/schemas/homeSchema";
+import { homeBannerSchema, HomeBannerFormData } from "@/schemas/homeSchema";
 import { Switch } from "@/components/ui/switch";
 
 export default function HomeBannerSliderForm() {
@@ -138,9 +130,11 @@ export default function HomeBannerSliderForm() {
 
       // Arabic fields
       if (data.title_ar) formData.append("title_ar", data.title_ar);
-      if (data.description_ar) formData.append("description_ar", data.description_ar);
+      if (data.description_ar)
+        formData.append("description_ar", data.description_ar);
       if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
-      if (data.button_text_ar) formData.append("button_text_ar", data.button_text_ar);
+      if (data.button_text_ar)
+        formData.append("button_text_ar", data.button_text_ar);
 
       formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
@@ -228,7 +222,10 @@ export default function HomeBannerSliderForm() {
                         <FormItem>
                           <FormLabel>Title</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter banner title" {...field} />
+                            <Input
+                              placeholder="Enter banner title"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -242,7 +239,10 @@ export default function HomeBannerSliderForm() {
                         <FormItem>
                           <FormLabel>Description</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Enter description" {...field} />
+                            <Textarea
+                              placeholder="Enter description"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -383,27 +383,53 @@ export default function HomeBannerSliderForm() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Desktop Image</label>
-                  <FileUpload
-                    value={imageFile}
-                    onChange={setImageFile}
-                    accept="image/*"
-                    placeholder="Upload desktop banner image"
-                    preview={true}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Image</FormLabel>
 
-                <div>
-                  <label className="text-sm font-medium">Mobile Image</label>
-                  <FileUpload
-                    value={mobileImageFile}
-                    onChange={setMobileImageFile}
-                    accept="image/*"
-                    placeholder="Upload mobile banner image"
-                    preview={true}
-                  />
-                </div>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file); // <-- important!!
+                            setImageFile(file); // if you still need local preview
+                          }}
+                          accept="image/*"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Image</FormLabel>
+
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMobileImageFile(file);
+                          }}
+                          accept="image/*"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </CardContent>
           </Card>
