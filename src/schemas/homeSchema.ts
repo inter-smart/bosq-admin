@@ -57,7 +57,7 @@ export const homeBannerSchema = z.object({
   // English fields (required)
   title: commonValidations.requiredString("Title"),
   description: commonValidations.requiredText("Description"),
-  link: commonValidations.requiredString("Link"),
+  link: commonValidations.requiredUrl("Link"),
   button_text: commonValidations.requiredString("Button Text"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
 
@@ -68,8 +68,8 @@ export const homeBannerSchema = z.object({
   media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
 
   // File uploads
-  media_desktop_path: commonValidations.requiredFileUploadOrExistingFile("Desktop Media"),
-  media_mobile_path: commonValidations.requiredFileUploadOrExistingFile("Mobile Media"),
+  media_desktop_path: commonValidations.validateFileUpload("Desktop Media"),
+  media_mobile_path: commonValidations.validateFileUpload("Mobile Media"),
 
   // Sort order + status
   sort_order: commonValidations.sortOrder(),
@@ -88,7 +88,29 @@ export const homeBrandSchema = z.object({
   title_ar: commonValidations.requiredString("Arabic Title"),
 
   // File upload (required)
-  media_path: commonValidations.requiredFileUploadOrExistingFile("Brand Logo"),
+  media_path: commonValidations.validateFileUpload("Brand Logo"),
+
+  // Sort order + status
+  sort_order: commonValidations.sortOrder(),
+  status: commonValidations.booleanStatus(),
+});
+
+export const smartSpaceCalculatorSchema = z.object({
+  // English fields (required)
+  title: commonValidations.requiredString("Title"),
+  description: commonValidations.requiredText("Description"),
+  link: commonValidations.requiredUrl("Link"),
+  button_text: commonValidations.requiredString("Button Text"),
+  media_alt: commonValidations.requiredString("Media Alt Text"),
+
+  // Arabic fields (required)
+  title_ar: commonValidations.requiredString("Arabic Title"),
+  description_ar: commonValidations.requiredString("Arabic Description"),
+  button_text_ar: commonValidations.requiredString("Arabic Button Text"),
+  media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
+
+  // File upload (single image)
+  media_path: commonValidations.validateFileUpload("Calculator Image"),
 
   // Sort order + status
   sort_order: commonValidations.sortOrder(),
@@ -97,4 +119,5 @@ export const homeBrandSchema = z.object({
 
 export type HomeBannerFormData = z.infer<typeof homeBannerSchema>;
 export type HomeBrandFormData = z.infer<typeof homeBrandSchema>;
+export type SmartSpaceCalculatorFormData = z.infer<typeof smartSpaceCalculatorSchema>;
 export type HomeCmsFormData = z.infer<typeof homeSchema>;

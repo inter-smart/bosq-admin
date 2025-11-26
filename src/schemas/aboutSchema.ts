@@ -18,7 +18,7 @@ export const aboutCmsSchema = z.object({
   banner_media_alt_ar: commonValidations.optionalString("Banner Media Alt Text (Arabic)"),
   banner_button_text: commonValidations.requiredString("Banner Button Text"),
   banner_button_text_ar: commonValidations.optionalString("Banner Button Text (Arabic)"),
-  banner_button_link: commonValidations.requiredString("Banner Button Link"),
+  banner_button_link: commonValidations.requiredUrl("Banner Button Link"),
 
   // Journey Section
   journey_title: commonValidations.requiredString("Journey Title"),

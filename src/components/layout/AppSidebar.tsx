@@ -47,6 +47,8 @@ const cmsSection = [
       { title: "Home CMS", url: "/home-cms", icon: FileText },
       { title: "Home Banner", url: "/home-banner-slider", icon: Image },
       { title: "Home Brands", url: "/home-brands", icon: Award },
+      { title: "Smart Calculator", url: "/smart-space-calculator", icon: BookOpen },
+      
     ],
   },
   {

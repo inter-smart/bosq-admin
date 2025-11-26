@@ -23,6 +23,8 @@ import HomeBannerSliderList from "./pages/cms/home/HomeBannerSliderList";
 import HomeBannerSliderForm from "./pages/cms/home/HomeBannerSliderForm";
 import HomeBrandsList from "./pages/cms/home/HomeBrandsList";
 import HomeBrandsForm from "./pages/cms/home/HomeBrandsForm";
+import SmartSpaceCalculatorList from "./pages/cms/home/SmartSpaceCalculatorList";
+import SmartSpaceCalculatorForm from "./pages/cms/home/SmartSpaceCalculatorForm";
 
 // FAQ pages
 import FaqCmsForm from "./pages/cms/faq/FaqCmsForm";
@@ -179,6 +181,34 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <HomeBrandsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Smart Space Calculator Routes */}
+          <Route
+            path="/smart-space-calculator"
+            element={
+              <ProtectedRoute>
+                <SmartSpaceCalculatorList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/smart-space-calculator/create"
+            element={
+              <ProtectedRoute>
+                <SmartSpaceCalculatorForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/smart-space-calculator/edit/:id"
+            element={
+              <ProtectedRoute>
+                <SmartSpaceCalculatorForm />
               </ProtectedRoute>
             }
           />
