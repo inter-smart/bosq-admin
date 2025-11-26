@@ -90,6 +90,8 @@ export default function HomeBannerSliderForm() {
           link: data.link || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
+          media_desktop_path: data.media_desktop_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path}` : null,
+          media_mobile_path: data.media_mobile_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}` : null,
         });
 
         if (data.media_desktop_path) {
@@ -139,11 +141,11 @@ export default function HomeBannerSliderForm() {
       formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
 
-      if (imageFile instanceof File) {
-        formData.append("media_desktop_path", imageFile);
+      if (data.media_desktop_path instanceof File) {
+        formData.append("media_desktop_path", data.media_desktop_path);
       }
-      if (mobileImageFile instanceof File) {
-        formData.append("media_mobile_path", mobileImageFile);
+      if (data.media_mobile_path instanceof File) {
+        formData.append("media_mobile_path", data.media_mobile_path);
       }
 
       if (isEditing && id) {

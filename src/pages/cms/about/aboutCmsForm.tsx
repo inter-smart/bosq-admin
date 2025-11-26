@@ -115,9 +115,9 @@ export default function AboutCmsForm() {
           journey_title_ar: data.journey_title_ar || "",
           journey_description: data.journey_description || "",
           journey_description_ar: data.journey_description_ar || "",
-          journey_one_media_path: data.journey_one_media_path || null,
-          journey_two_media_path: data.journey_two_media_path || null,
-          journey_three_media_path: data.journey_three_media_path || null,
+          journey_one_media_path: data.journey_one_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_one_media_path}` : null,
+          journey_two_media_path: data.journey_two_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_two_media_path}` : null,
+          journey_three_media_path: data.journey_three_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_three_media_path}` : null,
           journey_one_media_alt: data.journey_one_media_alt || "",
           journey_one_media_alt_ar: data.journey_one_media_alt_ar || "",
           journey_two_media_alt: data.journey_two_media_alt || "",
@@ -135,17 +135,6 @@ export default function AboutCmsForm() {
           news_title: data.news_title || "",
           news_title_ar: data.news_title_ar || "",
         });
-
-        // Set media file states with full URLs
-        if (data.journey_one_media_path) {
-          setJourneyOneMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journey_one_media_path}`);
-        }
-        if (data.journey_two_media_path) {
-          setJourneyTwoMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journey_two_media_path}`);
-        }
-        if (data.journey_three_media_path) {
-          setJourneyThreeMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journey_three_media_path}`);
-        }
       }
     } catch (error) {
       console.log("No existing data found, starting with empty form");
@@ -210,14 +199,14 @@ export default function AboutCmsForm() {
       }
 
       // Add journey image uploads
-      if (journeyOneMediaFile instanceof File) {
-        formData.append("journey_one_media_path", journeyOneMediaFile);
+      if (data.journey_one_media_path instanceof File) {
+        formData.append("journey_one_media_path", data.journey_one_media_path);
       }
-      if (journeyTwoMediaFile instanceof File) {
-        formData.append("journey_two_media_path", journeyTwoMediaFile);
+      if (data.journey_two_media_path instanceof File) {
+        formData.append("journey_two_media_path", data.journey_two_media_path);
       }
-      if (journeyThreeMediaFile instanceof File) {
-        formData.append("journey_three_media_path", journeyThreeMediaFile);
+      if (data.journey_three_media_path instanceof File) {
+        formData.append("journey_three_media_path", data.journey_three_media_path);
       }
 
       await saveAboutCms(formData);
@@ -888,38 +877,74 @@ export default function AboutCmsForm() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Journey Section Media</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Journey Image 1</label>
-                    <FileUpload
-                      value={journeyOneMediaFile}
-                      onChange={setJourneyOneMediaFile}
-                      accept="image/*"
-                      placeholder="Upload journey image 1"
-                      preview={true}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="journey_one_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Journey Image 1</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={(file) => {
+                              field.onChange(file);
+                              setJourneyOneMediaFile(file);
+                            }}
+                            accept="image/*"
+                            placeholder="Upload journey image 1"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                  <div>
-                    <label className="text-sm font-medium">Journey Image 2</label>
-                    <FileUpload
-                      value={journeyTwoMediaFile}
-                      onChange={setJourneyTwoMediaFile}
-                      accept="image/*"
-                      placeholder="Upload journey image 2"
-                      preview={true}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="journey_two_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Journey Image 2</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={(file) => {
+                              field.onChange(file);
+                              setJourneyTwoMediaFile(file);
+                            }}
+                            accept="image/*"
+                            placeholder="Upload journey image 2"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                  <div>
-                    <label className="text-sm font-medium">Journey Image 3</label>
-                    <FileUpload
-                      value={journeyThreeMediaFile}
-                      onChange={setJourneyThreeMediaFile}
-                      accept="image/*"
-                      placeholder="Upload journey image 3"
-                      preview={true}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="journey_three_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Journey Image 3</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={(file) => {
+                              field.onChange(file);
+                              setJourneyThreeMediaFile(file);
+                            }}
+                            accept="image/*"
+                            placeholder="Upload journey image 3"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

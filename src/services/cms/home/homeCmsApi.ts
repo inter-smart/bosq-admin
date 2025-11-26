@@ -16,15 +16,15 @@ export interface HomeCms {
   featured_title?: string | null;
   featured_title_ar?: string | null;
 
-  // JOURNY
-  journy_title?: string | null;
-  journy_title_ar?: string | null;
-  journy_description?: string | null;
-  journy_description_ar?: string | null;
+  // journey
+  journey_title?: string | null;
+  journey_title_ar?: string | null;
+  journey_description?: string | null;
+  journey_description_ar?: string | null;
   journey_media_type?: "image" | "video" | null;
-  journy_media_path?: File | null;
-  journy_media_alt?: string | null;
-  journy_media_alt_ar?: string | null;
+  journey_media_path?: File | null;
+  journey_media_alt?: string | null;
+  journey_media_alt_ar?: string | null;
 
   // PROJECT
   project_title?: string | null;

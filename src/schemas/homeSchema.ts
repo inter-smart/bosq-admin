@@ -4,7 +4,7 @@ import { commonValidations } from "@/utils/formUtils";
 
 export const homeSchema = z.object({
   // About Section
-  about_media_path: commonValidations.requiredFileUpload,
+  about_media_path: commonValidations.optionalFileUploadWithValidation("About Media"),
   about_media_alt: commonValidations.requiredString("About Media Alt Text"),
   about_media_alt_ar: commonValidations.requiredString("About Media Alt Text (Arabic)"),
   about_title: commonValidations.requiredString("About Title"),
@@ -17,14 +17,14 @@ export const homeSchema = z.object({
   featured_title_ar: commonValidations.requiredString("Featured Title (Arabic)"),
 
   // JOURNEY SECTION
-  journy_title: commonValidations.requiredString("Journey Title"),
-  journy_title_ar: commonValidations.requiredString("Journey Title (Arabic)"),
-  journy_description: commonValidations.requiredText("Journey Description"),
-  journy_description_ar: commonValidations.requiredString("Journey Description (Arabic)"),
+  journey_title: commonValidations.requiredString("Journey Title"),
+  journey_title_ar: commonValidations.requiredString("Journey Title (Arabic)"),
+  journey_description: commonValidations.requiredText("Journey Description"),
+  journey_description_ar: commonValidations.requiredString("Journey Description (Arabic)"),
   journey_media_type: commonValidations.requiredString("Media Type"),
-  journy_media_path: commonValidations.requiredFileUpload,
-  journy_media_alt: commonValidations.requiredString("Journey Media Alt Text"),
-  journy_media_alt_ar: commonValidations.requiredString("Journey Media Alt Text (Arabic)"),
+  journey_media_path: commonValidations.optionalFileUploadWithValidation("Journey Media"),
+  journey_media_alt: commonValidations.requiredString("Journey Media Alt Text"),
+  journey_media_alt_ar: commonValidations.requiredString("Journey Media Alt Text (Arabic)"),
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),
@@ -37,7 +37,7 @@ export const homeSchema = z.object({
     "Calculator Description"
   ),
   calculator_description_ar: commonValidations.requiredString("Calculator Description (Arabic)"),
-  calculator_media_path: commonValidations.requiredFileUpload,
+  calculator_media_path: commonValidations.optionalFileUploadWithValidation("Calculator Media"),
   calculator_media_alt: commonValidations.requiredString(
     "Calculator Media Alt Text"
   ),
@@ -50,7 +50,7 @@ export const homeSchema = z.object({
     "Customize Description"
   ),
   customize_description_ar: commonValidations.requiredString("Customize Description (Arabic)"),
-  customize_media_path: commonValidations.requiredFileUpload,
+  customize_media_path: commonValidations.optionalFileUploadWithValidation("Customize Media"),
   customize_media_alt: commonValidations.requiredString(
     "Customize Media Alt Text"
   ),
@@ -71,7 +71,7 @@ export const homeSchema = z.object({
   form_title_ar: commonValidations.requiredString("Form Title (Arabic)"),
   form_description: commonValidations.requiredText("Form Description"),
   form_description_ar: commonValidations.requiredString("Form Description (Arabic)"),
-  form_media_path: commonValidations.requiredFileUpload,
+  form_media_path: commonValidations.optionalFileUploadWithValidation("Form Media"),
   form_media_alt: commonValidations.requiredString("Form Media Alt Text"),
   form_media_alt_ar: commonValidations.requiredString("Form Media Alt Text (Arabic)"),
 });
@@ -93,8 +93,8 @@ export const homeBannerSchema = z.object({
   media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
 
   // File uploads
-  media_desktop_path: commonValidations.requiredFileUpload,
-  media_mobile_path: commonValidations.requiredFileUpload,
+  media_desktop_path: commonValidations.optionalFileUploadWithValidation("Desktop Media"),
+  media_mobile_path: commonValidations.optionalFileUploadWithValidation("Mobile Media"),
 
   // Sort order + status
   sort_order: commonValidations.sortOrder(),

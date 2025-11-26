@@ -39,7 +39,7 @@ export default function HomeCmsForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [aboutMediaFile, setAboutMediaFile] = useState<File | string | null>(null);
-  const [journyMediaFile, setJournyMediaFile] = useState<File | string | null>(null);
+  const [journeyMediaFile, setjourneyMediaFile] = useState<File | string | null>(null);
   const [calculatorMediaFile, setCalculatorMediaFile] = useState<File | string | null>(null);
   const [customizeMediaFile, setCustomizeMediaFile] = useState<File | string | null>(null);
   const [formMediaFile, setFormMediaFile] = useState<File | string | null>(null);
@@ -56,14 +56,14 @@ export default function HomeCmsForm() {
       about_description_ar: "",
       featured_title: "",
       featured_title_ar: "",
-      journy_title: "",
-      journy_title_ar: "",
-      journy_description: "",
-      journy_description_ar: "",
+      journey_title: "",
+      journey_title_ar: "",
+      journey_description: "",
+      journey_description_ar: "",
       journey_media_type: "image",
-      journy_media_path: null,
-      journy_media_alt: "",
-      journy_media_alt_ar: "",
+      journey_media_path: null,
+      journey_media_alt: "",
+      journey_media_alt_ar: "",
       project_title: "",
       project_title_ar: "",
       calculator_title: "",
@@ -110,7 +110,7 @@ export default function HomeCmsForm() {
 
       if (data) {
         form.reset({
-          about_media_path: data.about_media_path || null,
+          about_media_path: data.about_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.about_media_path}` : null,
           about_media_alt: data.about_media_alt || "",
           about_media_alt_ar: data.about_media_alt_ar || "",
           about_title: data.about_title || "",
@@ -119,28 +119,28 @@ export default function HomeCmsForm() {
           about_description_ar: data.about_description_ar || "",
           featured_title: data.featured_title || "",
           featured_title_ar: data.featured_title_ar || "",
-          journy_title: data.journy_title || "",
-          journy_title_ar: data.journy_title_ar || "",
-          journy_description: data.journy_description || "",
-          journy_description_ar: data.journy_description_ar || "",
+          journey_title: data.journey_title || "",
+          journey_title_ar: data.journey_title_ar || "",
+          journey_description: data.journey_description || "",
+          journey_description_ar: data.journey_description_ar || "",
           journey_media_type: data.journey_media_type || "image",
-          journy_media_path: data.journy_media_path || null,
-          journy_media_alt: data.journy_media_alt || "",
-          journy_media_alt_ar: data.journy_media_alt_ar || "",
+          journey_media_path: data.journey_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}` : null,
+          journey_media_alt: data.journey_media_alt || "",
+          journey_media_alt_ar: data.journey_media_alt_ar || "",
           project_title: data.project_title || "",
           project_title_ar: data.project_title_ar || "",
           calculator_title: data.calculator_title || "",
           calculator_title_ar: data.calculator_title_ar || "",
           calculator_description: data.calculator_description || "",
           calculator_description_ar: data.calculator_description_ar || "",
-          calculator_media_path: data.calculator_media_path || null,
+          calculator_media_path: data.calculator_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.calculator_media_path}` : null,
           calculator_media_alt: data.calculator_media_alt || "",
           calculator_media_alt_ar: data.calculator_media_alt_ar || "",
           customize_title: data.customize_title || "",
           customize_title_ar: data.customize_title_ar || "",
           customize_description: data.customize_description || "",
           customize_description_ar: data.customize_description_ar || "",
-          customize_media_path: data.customize_media_path || null,
+          customize_media_path: data.customize_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.customize_media_path}` : null,
           customize_media_alt: data.customize_media_alt || "",
           customize_media_alt_ar: data.customize_media_alt_ar || "",
           fits_title: data.fits_title || "",
@@ -153,7 +153,7 @@ export default function HomeCmsForm() {
           form_title_ar: data.form_title_ar || "",
           form_description: data.form_description || "",
           form_description_ar: data.form_description_ar || "",
-          form_media_path: data.form_media_path || null,
+          form_media_path: data.form_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.form_media_path}` : null,
           form_media_alt: data.form_media_alt || "",
           form_media_alt_ar: data.form_media_alt_ar || "",
         });
@@ -162,8 +162,8 @@ export default function HomeCmsForm() {
         if (data.about_media_path) {
           setAboutMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.about_media_path}`);
         }
-        if (data.journy_media_path) {
-          setJournyMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journy_media_path}`);
+        if (data.journey_media_path) {
+          setjourneyMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}`);
         }
         if (data.calculator_media_path) {
           setCalculatorMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.calculator_media_path}`);
@@ -201,14 +201,14 @@ export default function HomeCmsForm() {
       if (data.featured_title_ar) formData.append("featured_title_ar", data.featured_title_ar);
 
       // Journey Section
-      if (data.journy_title) formData.append("journy_title", data.journy_title);
-      if (data.journy_title_ar) formData.append("journy_title_ar", data.journy_title_ar);
-      if (data.journy_description) formData.append("journy_description", data.journy_description);
-      if (data.journy_description_ar) formData.append("journy_description_ar", data.journy_description_ar);
+      if (data.journey_title) formData.append("journey_title", data.journey_title);
+      if (data.journey_title_ar) formData.append("journey_title_ar", data.journey_title_ar);
+      if (data.journey_description) formData.append("journey_description", data.journey_description);
+      if (data.journey_description_ar) formData.append("journey_description_ar", data.journey_description_ar);
       if (data.journey_media_type) formData.append("journey_media_type", data.journey_media_type);
-      if (data.journy_media_alt) formData.append("journy_media_alt", data.journy_media_alt);
-      if (data.journy_media_alt_ar) formData.append("journy_media_alt_ar", data.journy_media_alt_ar);
-      if (journyMediaFile instanceof File) formData.append("journy_media_path", journyMediaFile);
+      if (data.journey_media_alt) formData.append("journey_media_alt", data.journey_media_alt);
+      if (data.journey_media_alt_ar) formData.append("journey_media_alt_ar", data.journey_media_alt_ar);
+      if (journeyMediaFile instanceof File) formData.append("journey_media_path", journeyMediaFile);
 
       // Project Section
       if (data.project_title) formData.append("project_title", data.project_title);
@@ -363,7 +363,7 @@ export default function HomeCmsForm() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="journy_title"
+                      name="journey_title"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Title</FormLabel>
@@ -377,7 +377,7 @@ export default function HomeCmsForm() {
 
                     <FormField
                       control={form.control}
-                      name="journy_description"
+                      name="journey_description"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Description</FormLabel>
@@ -660,7 +660,7 @@ export default function HomeCmsForm() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="journy_title_ar"
+                      name="journey_title_ar"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>العنوان</FormLabel>
@@ -674,7 +674,7 @@ export default function HomeCmsForm() {
 
                     <FormField
                       control={form.control}
-                      name="journy_description_ar"
+                      name="journey_description_ar"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>الوصف</FormLabel>
@@ -974,8 +974,8 @@ export default function HomeCmsForm() {
                       Journey {watchJourneyMediaType === "image" ? "Image" : "Video"}
                     </label>
                     <FileUpload
-                      value={journyMediaFile}
-                      onChange={setJournyMediaFile}
+                      value={journeyMediaFile}
+                      onChange={setjourneyMediaFile}
                       accept={watchJourneyMediaType === "image" ? "image/*" : "video/*"}
                       placeholder={`Upload journey ${watchJourneyMediaType}`}
                       preview={true}
@@ -986,7 +986,7 @@ export default function HomeCmsForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="journy_media_alt"
+                    name="journey_media_alt"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Media Alt Text (English)</FormLabel>
@@ -1000,7 +1000,7 @@ export default function HomeCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="journy_media_alt_ar"
+                    name="journey_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>

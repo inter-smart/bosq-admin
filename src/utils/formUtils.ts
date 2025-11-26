@@ -39,9 +39,22 @@ export const commonValidations = {
 
   fileUpload: z.any().optional(),
 
-  requiredFileUpload: z
-  .instanceof(File, { message: "Desktop image is required" })
+  requiredFileUpload: (fieldName: string)=>
+  z
+  .instanceof(File, { message: `${fieldName}` })
   .refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB" }),
+
+  optionalFileUploadWithValidation: (fieldName: string) =>
+    z
+      .union([
+        z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, {
+          message: "Max 5MB"
+        }),
+        z.string(), // Allow existing image URLs
+        z.null(),
+        z.undefined()
+      ])
+      .optional(),
 
 
   // URL validations
