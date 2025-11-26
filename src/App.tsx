@@ -21,6 +21,8 @@ import { MetaTagsList } from "./pages/common/MetaTagsList";
 import HomeCmsForm from "./pages/cms/home/HomeCmsForm";
 import HomeBannerSliderList from "./pages/cms/home/HomeBannerSliderList";
 import HomeBannerSliderForm from "./pages/cms/home/HomeBannerSliderForm";
+import HomeBrandsList from "./pages/cms/home/HomeBrandsList";
+import HomeBrandsForm from "./pages/cms/home/HomeBrandsForm";
 
 // FAQ pages
 import FaqCmsForm from "./pages/cms/faq/FaqCmsForm";
@@ -149,6 +151,34 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <HomeBannerSliderForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Home Brands Routes */}
+          <Route
+            path="/home-brands"
+            element={
+              <ProtectedRoute>
+                <HomeBrandsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/home-brands/create"
+            element={
+              <ProtectedRoute>
+                <HomeBrandsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/home-brands/edit/:id"
+            element={
+              <ProtectedRoute>
+                <HomeBrandsForm />
               </ProtectedRoute>
             }
           />

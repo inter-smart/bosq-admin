@@ -40,8 +40,6 @@ export default function HomeCmsForm() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [aboutMediaFile, setAboutMediaFile] = useState<File | string | null>(null);
   const [journeyMediaFile, setjourneyMediaFile] = useState<File | string | null>(null);
-  const [calculatorMediaFile, setCalculatorMediaFile] = useState<File | string | null>(null);
-  const [customizeMediaFile, setCustomizeMediaFile] = useState<File | string | null>(null);
   const [formMediaFile, setFormMediaFile] = useState<File | string | null>(null);
 
   const form = useForm<HomeCmsFormData>({
@@ -66,20 +64,6 @@ export default function HomeCmsForm() {
       journey_media_alt_ar: "",
       project_title: "",
       project_title_ar: "",
-      calculator_title: "",
-      calculator_title_ar: "",
-      calculator_description: "",
-      calculator_description_ar: "",
-      calculator_media_path: null,
-      calculator_media_alt: "",
-      calculator_media_alt_ar: "",
-      customize_title: "",
-      customize_title_ar: "",
-      customize_description: "",
-      customize_description_ar: "",
-      customize_media_path: null,
-      customize_media_alt: "",
-      customize_media_alt_ar: "",
       fits_title: "",
       fits_title_ar: "",
       fits_description: "",
@@ -129,20 +113,6 @@ export default function HomeCmsForm() {
           journey_media_alt_ar: data.journey_media_alt_ar || "",
           project_title: data.project_title || "",
           project_title_ar: data.project_title_ar || "",
-          calculator_title: data.calculator_title || "",
-          calculator_title_ar: data.calculator_title_ar || "",
-          calculator_description: data.calculator_description || "",
-          calculator_description_ar: data.calculator_description_ar || "",
-          calculator_media_path: data.calculator_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.calculator_media_path}` : null,
-          calculator_media_alt: data.calculator_media_alt || "",
-          calculator_media_alt_ar: data.calculator_media_alt_ar || "",
-          customize_title: data.customize_title || "",
-          customize_title_ar: data.customize_title_ar || "",
-          customize_description: data.customize_description || "",
-          customize_description_ar: data.customize_description_ar || "",
-          customize_media_path: data.customize_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.customize_media_path}` : null,
-          customize_media_alt: data.customize_media_alt || "",
-          customize_media_alt_ar: data.customize_media_alt_ar || "",
           fits_title: data.fits_title || "",
           fits_title_ar: data.fits_title_ar || "",
           fits_description: data.fits_description || "",
@@ -164,12 +134,6 @@ export default function HomeCmsForm() {
         }
         if (data.journey_media_path) {
           setjourneyMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}`);
-        }
-        if (data.calculator_media_path) {
-          setCalculatorMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.calculator_media_path}`);
-        }
-        if (data.customize_media_path) {
-          setCustomizeMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.customize_media_path}`);
         }
         if (data.form_media_path) {
           setFormMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.form_media_path}`);
@@ -213,24 +177,6 @@ export default function HomeCmsForm() {
       // Project Section
       if (data.project_title) formData.append("project_title", data.project_title);
       if (data.project_title_ar) formData.append("project_title_ar", data.project_title_ar);
-
-      // Calculator Section
-      if (data.calculator_title) formData.append("calculator_title", data.calculator_title);
-      if (data.calculator_title_ar) formData.append("calculator_title_ar", data.calculator_title_ar);
-      if (data.calculator_description) formData.append("calculator_description", data.calculator_description);
-      if (data.calculator_description_ar) formData.append("calculator_description_ar", data.calculator_description_ar);
-      if (data.calculator_media_alt) formData.append("calculator_media_alt", data.calculator_media_alt);
-      if (data.calculator_media_alt_ar) formData.append("calculator_media_alt_ar", data.calculator_media_alt_ar);
-      if (calculatorMediaFile instanceof File) formData.append("calculator_media_path", calculatorMediaFile);
-
-      // Customize Section
-      if (data.customize_title) formData.append("customize_title", data.customize_title);
-      if (data.customize_title_ar) formData.append("customize_title_ar", data.customize_title_ar);
-      if (data.customize_description) formData.append("customize_description", data.customize_description);
-      if (data.customize_description_ar) formData.append("customize_description_ar", data.customize_description_ar);
-      if (data.customize_media_alt) formData.append("customize_media_alt", data.customize_media_alt);
-      if (data.customize_media_alt_ar) formData.append("customize_media_alt_ar", data.customize_media_alt_ar);
-      if (customizeMediaFile instanceof File) formData.append("customize_media_path", customizeMediaFile);
 
       // Fits Section
       if (data.fits_title) formData.append("fits_title", data.fits_title);
@@ -285,7 +231,9 @@ export default function HomeCmsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit, (err)=>{
+          console.log(err)
+        })} className="space-y-6">
           <Tabs defaultValue="en" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="en">English</TabsTrigger>
@@ -411,82 +359,6 @@ export default function HomeCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-
-              {/* Calculator Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Calculator Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="calculator_title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter calculator title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="calculator_description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Enter calculator description" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Customize Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Customize Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="customize_title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter customize title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="customize_description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Enter customize description" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                 </CardContent>
               </Card>
 
@@ -708,82 +580,6 @@ export default function HomeCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-
-              {/* Calculator Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم الحاسبة (Calculator Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="calculator_title_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>العنوان</FormLabel>
-                          <FormControl>
-                            <Input placeholder="أدخل عنوان الحاسبة" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="calculator_description_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>الوصف</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="أدخل وصف الحاسبة" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Customize Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم التخصيص (Customize Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="customize_title_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>العنوان</FormLabel>
-                          <FormControl>
-                            <Input placeholder="أدخل عنوان التخصيص" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="customize_description_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>الوصف</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="أدخل وصف التخصيص" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                 </CardContent>
               </Card>
 
@@ -1011,100 +807,6 @@ export default function HomeCmsForm() {
                       </FormItem>
                     )}
                   />
-                </div>
-              </div>
-
-              {/* Calculator Media */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Calculator Section Media</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Calculator Media</label>
-                    <FileUpload
-                      value={calculatorMediaFile}
-                      onChange={setCalculatorMediaFile}
-                      accept="image/*"
-                      placeholder="Upload calculator media"
-                      preview={true}
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="calculator_media_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Media Alt Text (English)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter media alt text" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="calculator_media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Customize Media */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Customize Section Media</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Customize Media</label>
-                    <FileUpload
-                      value={customizeMediaFile}
-                      onChange={setCustomizeMediaFile}
-                      accept="image/*"
-                      placeholder="Upload customize media"
-                      preview={true}
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="customize_media_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Media Alt Text (English)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter media alt text" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="customize_media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
                 </div>
               </div>
 

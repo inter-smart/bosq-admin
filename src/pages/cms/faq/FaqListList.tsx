@@ -52,12 +52,9 @@ export default function FaqListList() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const {
-    statusToggleItem,
-    setStatusToggleItem,
     editingSortOrder,
     handleStatusChange,
     handleSortOrderChange,
-    confirmStatusToggle,
   } = useCommonTableActions<FaqList>({
     modelName: "FaqList",
     data: faqItems,
@@ -312,29 +309,6 @@ export default function FaqListList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-         {/* Status Toggle Confirmation Dialog */}
-      <AlertDialog
-        open={!!statusToggleItem}
-        onOpenChange={() => setStatusToggleItem(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
-              banner? This will change its visibility on the home page.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmStatusToggle}>
-              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

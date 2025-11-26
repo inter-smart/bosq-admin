@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -23,52 +24,43 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchFaqCategoryList,
-  deleteFaqCategory,
-  FaqCategory,
-  updateFaqCategory,
-} from "@/services/cms/faq/faqCategoryApi";
+  fetchHomeBrandsList,
+  deleteHomeBrand,
+  HomeBrand,
+} from "@/services/cms/home/homeBrandsApi";
 import { useToast } from "@/hooks/use-toast";
-import { updateSortOrder, updateStatus } from "@/services/commonApi";
-import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function FaqCategoryList() {
+export default function HomeBrandsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [categories, setCategories] = useState<FaqCategory[]>([]);
+  const [brandItems, setBrandItems] = useState<HomeBrand[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [updateTimeouts, setUpdateTimeouts] = useState<{
-    [key: number]: NodeJS.Timeout;
-  }>({});
 
   const {
     editingSortOrder,
     handleStatusChange,
     handleSortOrderChange,
-  } = useCommonTableActions<FaqCategory>({
-    modelName: "FaqCategory",
-    data: categories,
-    setData: setCategories,
+  } = useCommonTableActions<HomeBrand>({
+    modelName: "HomeBrands",
+    data: brandItems,
+    setData: setBrandItems,
   });
 
   useEffect(() => {
-    loadCategories();
+    loadBrandItems();
   }, []);
 
-  const loadCategories = async () => {
+  const loadBrandItems = async () => {
     try {
       setLoading(true);
-      const response = await fetchFaqCategoryList(1, 100);
-
-      console.log(response.data);
-
-      setCategories(response.data.list);
+      const response = await fetchHomeBrandsList(1, 100);
+      setBrandItems(response.data.list);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load FAQ categories",
+        description: "Failed to load home brands",
         variant: "destructive",
       });
     } finally {
@@ -80,16 +72,16 @@ export default function FaqCategoryList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteFaqCategory(deleteItemId);
-      setCategories((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteHomeBrand(deleteItemId);
+      setBrandItems((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "Category deleted successfully",
+        description: "Brand deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete category",
+        description: "Failed to delete brand",
         variant: "destructive",
       });
     } finally {
@@ -97,7 +89,7 @@ export default function FaqCategoryList() {
     }
   };
 
-  const columns: ColumnDef<FaqCategory>[] = [
+  const columns: ColumnDef<HomeBrand>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -106,10 +98,31 @@ export default function FaqCategoryList() {
       ),
     },
     {
+      accessorKey: "media_path",
+      header: "Logo",
+      cell: ({ row }) => {
+        return (
+          <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center">
+            {row.getValue("media_path") ? (
+              <img
+                src={`${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
+                  "media_path"
+                )}`}
+                alt={row.original.title}
+                className="w-full h-full rounded object-contain p-1"
+              />
+            ) : (
+              <div className="w-full h-full rounded bg-muted-foreground/20" />
+            )}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[300px] truncate">
+        <div className="font-medium max-w-[200px] truncate">
           {row.getValue("title")}
         </div>
       ),
@@ -128,7 +141,9 @@ export default function FaqCategoryList() {
                 ? editingSortOrder[item.id!]
                 : row.getValue("sort_order") || 0
             }
-            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            onChange={(e) =>
+              handleSortOrderChange(item.id!, e.target.value)
+            }
             className="w-20"
           />
         );
@@ -156,7 +171,6 @@ export default function FaqCategoryList() {
     {
       accessorKey: "createdAt",
       header: "Created At",
-      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -178,7 +192,7 @@ export default function FaqCategoryList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/faq-category/edit/${item.id}`)}
+                onClick={() => navigate(`/home-brands/edit/${item.id}`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -198,18 +212,18 @@ export default function FaqCategoryList() {
   ];
 
   if (loading) {
-    return <div>Loading FAQ categories...</div>;
+    return <div>Loading home brands...</div>;
   }
 
   return (
     <>
       <DataTable
         columns={columns}
-        data={categories}
-        title="FAQ Categories"
-        searchPlaceholder="Search categories..."
-        onAdd={() => navigate("/faq-category/create")}
-        addButtonText="Add Category"
+        data={brandItems}
+        title="Home Brands"
+        searchPlaceholder="Search brands..."
+        onAdd={() => navigate("/home-brands/create")}
+        addButtonText="Add Brand"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -222,7 +236,7 @@ export default function FaqCategoryList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              category and remove its data from the servers.
+              brand and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -42,13 +42,10 @@ export default function HomeBannerSliderList() {
     [key: number]: NodeJS.Timeout;
   }>({});
 
-    const {
-    statusToggleItem,
-    setStatusToggleItem,
+  const {
     editingSortOrder,
     handleStatusChange,
     handleSortOrderChange,
-    confirmStatusToggle,
   } = useCommonTableActions<HomeBanner>({
     modelName: "HomeBanner",
     data: bannerItems,
@@ -275,50 +272,6 @@ export default function HomeBannerSliderList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Status Toggle Confirmation Dialog */}
-      <AlertDialog
-        open={!!statusToggleItem}
-        onOpenChange={() => setStatusToggleItem(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
-              banner? This will change its visibility on the home page.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmStatusToggle}>
-              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>  {/* Status Toggle Confirmation Dialog */}
-      <AlertDialog
-        open={!!statusToggleItem}
-        onOpenChange={() => setStatusToggleItem(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
-              banner? This will change its visibility on the home page.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmStatusToggle}>
-              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

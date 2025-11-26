@@ -34,8 +34,7 @@ import {
 import { fetchFaqCategoryList } from "@/services/cms/faq/faqCategoryApi";
 import { Switch } from "@/components/ui/switch";
 import { FaqListFormData, faqListSchema } from "@/schemas/faqSchema";
-
-
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 
 export default function FaqListForm() {
   const { toast } = useToast();
@@ -117,7 +116,6 @@ export default function FaqListForm() {
     try {
       setLoading(true);
 
-
       const payload = {
         question: data.question,
         question_ar: data.question_ar,
@@ -126,7 +124,7 @@ export default function FaqListForm() {
         category: data.category,
         sort_order: data.sort_order,
         status: data.status,
-      }
+      };
 
       if (isEditing && id) {
         await updateFaqList(parseInt(id), payload);
@@ -146,7 +144,8 @@ export default function FaqListForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description:error.message || `Failed to ${isEditing ? "update" : "create"} FAQ`,
+        description:
+          error.message || `Failed to ${isEditing ? "update" : "create"} FAQ`,
         variant: "destructive",
       });
     } finally {
@@ -217,9 +216,8 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>Answer</FormLabel>
                         <FormControl>
-                          <Textarea
+                          <RichTextEditor
                             placeholder="Enter FAQ answer"
-                            rows={6}
                             {...field}
                           />
                         </FormControl>
@@ -235,7 +233,9 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>Category</FormLabel>
                         <Select
-                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          onValueChange={(value) =>
+                            field.onChange(parseInt(value))
+                          }
                           value={field.value ? String(field.value) : ""}
                         >
                           <FormControl>
@@ -293,11 +293,9 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>الإجابة</FormLabel>
                         <FormControl>
-                          <Textarea
+                          <RichTextEditor
                             placeholder="أدخل إجابة الأسئلة الشائعة"
-                            rows={6}
                             {...field}
-                            dir="rtl"
                           />
                         </FormControl>
                         <FormMessage />
@@ -312,7 +310,9 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>الفئة</FormLabel>
                         <Select
-                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          onValueChange={(value) =>
+                            field.onChange(parseInt(value))
+                          }
                           value={field.value ? String(field.value) : ""}
                         >
                           <FormControl>

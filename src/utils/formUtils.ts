@@ -44,7 +44,7 @@ export const commonValidations = {
   .instanceof(File, { message: `${fieldName}` })
   .refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB" }),
 
-  optionalFileUploadWithValidation: (fieldName: string) =>
+  validateFileUpload: (fieldName: string) =>
     z
       .union([
         z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, {
@@ -56,6 +56,28 @@ export const commonValidations = {
       ])
       .optional(),
 
+requiredFileUploadOrExistingFile: (fieldName: string) =>
+  z
+    .union([
+      z
+        .instanceof(File)
+        .refine((f) => f.size <= 5 * 1024 * 1024, {
+          message: "Max 5MB allowed",
+        }),
+      z.string().min(1), // existing file URL
+      z.null(), // allow null so union doesn't BREAK
+      z.undefined()
+    ])
+    .refine(
+      (value) => {
+        if (value instanceof File) return true;          // Newly uploaded
+        if (typeof value === "string" && value.length) return true; // Existing file
+        return false;
+      },
+      {
+        message: `${fieldName} is required. Please upload an image.`,
+      }
+    ),
 
   // URL validations
   optionalUrl: z

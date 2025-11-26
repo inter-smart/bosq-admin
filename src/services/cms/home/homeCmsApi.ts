@@ -30,24 +30,6 @@ export interface HomeCms {
   project_title?: string | null;
   project_title_ar?: string | null;
 
-  // CALCULATOR
-  calculator_title?: string | null;
-  calculator_title_ar?: string | null;
-  calculator_description?: string | null;
-  calculator_description_ar?: string | null;
-  calculator_media_path?: File | null;
-  calculator_media_alt?: string | null;
-  calculator_media_alt_ar?: string | null;
-
-  // CUSTOMIZE
-  customize_title?: string | null;
-  customize_title_ar?: string | null;
-  customize_description?: string | null;
-  customize_description_ar?: string | null;
-  customize_media_path?: File | null;
-  customize_media_alt?: string | null;
-  customize_media_alt_ar?: string | null;
-
   // FITS
   fits_title?: string | null;
   fits_title_ar?: string | null;

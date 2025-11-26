@@ -2,11 +2,6 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { updateStatus, updateSortOrder } from "@/services/commonApi";
 
-export interface StatusToggleItem {
-  id: number;
-  newStatus: boolean;
-}
-
 interface UseCommonTableActionsProps<T> {
   modelName: string;
   data: T[];
@@ -20,16 +15,13 @@ export const useCommonTableActions = <T extends { id: number }>({
 }: UseCommonTableActionsProps<T>) => {
   const { toast } = useToast();
 
-  const [statusToggleItem, setStatusToggleItem] = useState<StatusToggleItem | null>(null);
   const [editingSortOrder, setEditingSortOrder] = useState<{ [key: number]: string }>({});
   const [updateTimeouts, setUpdateTimeouts] = useState<{ [key: number]: NodeJS.Timeout }>({});
 
-  const confirmStatusToggle = async () => {
-    if (!statusToggleItem) return;
+  const handleStatusChange = async (id: number, currentStatus: boolean) => {
+    const newStatus = !currentStatus;
 
     try {
-      const { id, newStatus } = statusToggleItem;
-
       await updateStatus({
         model_name: modelName,
         row_id: id,
@@ -45,13 +37,7 @@ export const useCommonTableActions = <T extends { id: number }>({
       toast({ title: "Success", description: "Status updated successfully" });
     } catch {
       toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
-    } finally {
-      setStatusToggleItem(null);
     }
-  };
-
-  const handleStatusChange = (id: number, currentStatus: boolean) => {
-    setStatusToggleItem({ id, newStatus: !currentStatus });
   };
 
   const handleSortOrderChange = (id: number, newValue: string) => {
@@ -92,11 +78,8 @@ export const useCommonTableActions = <T extends { id: number }>({
   };
 
   return {
-    statusToggleItem,
-    setStatusToggleItem,
     editingSortOrder,
     handleStatusChange,
     handleSortOrderChange,
-    confirmStatusToggle,
   };
 };

@@ -15,6 +15,7 @@ import {
   List,
   FolderOpen,
   BookOpen,
+  Award,
 } from "lucide-react";
 
 import {
@@ -45,6 +46,7 @@ const cmsSection = [
     subItems: [
       { title: "Home CMS", url: "/home-cms", icon: FileText },
       { title: "Home Banner", url: "/home-banner-slider", icon: Image },
+      { title: "Home Brands", url: "/home-brands", icon: Award },
     ],
   },
   {
@@ -102,7 +104,7 @@ export function AppSidebar() {
     const path = location.pathname;
 
     // Auto-open Home section
-    if (["/home-cms", "/home-banner-slider"].some((r) => path.includes(r))) {
+    if (["/home-cms", "/home-banner-slider", "/home-brands"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setHomeOpen(true);
     }
