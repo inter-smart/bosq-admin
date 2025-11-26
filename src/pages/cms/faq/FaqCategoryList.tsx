@@ -29,6 +29,8 @@ import {
   updateFaqCategory,
 } from "@/services/cms/faq/faqCategoryApi";
 import { useToast } from "@/hooks/use-toast";
+import { updateSortOrder, updateStatus } from "@/services/commonApi";
+import { Switch } from "@/components/ui/switch";
 
 export default function FaqCategoryList() {
   const navigate = useNavigate();
@@ -36,7 +38,17 @@ export default function FaqCategoryList() {
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
- 
+   const [statusToggleItem, setStatusToggleItem] = useState<{
+    id: number;
+    newStatus: boolean;
+  } | null>(null);
+  const [editingSortOrder, setEditingSortOrder] = useState<{
+    [key: number]: string;
+  }>({});
+  const [updateTimeouts, setUpdateTimeouts] = useState<{
+    [key: number]: NodeJS.Timeout;
+  }>({});
+
 
   useEffect(() => {
     loadCategories();
@@ -61,7 +73,6 @@ export default function FaqCategoryList() {
     }
   };
 
-
   const confirmDelete = async () => {
     if (!deleteItemId) return;
 
@@ -82,6 +93,93 @@ export default function FaqCategoryList() {
       setDeleteItemId(null);
     }
   };
+
+      const confirmStatusToggle = async () => {
+      if (!statusToggleItem) return;
+  
+      try {
+        const { id, newStatus } = statusToggleItem;
+  
+        await updateStatus({
+          model_name: "FaqCategory",
+          row_id: id,
+          status: newStatus,
+        });
+  
+        setCategories((prev) =>
+          prev.map((item) =>
+            item.id === id
+              ? { ...item, status: statusToggleItem.newStatus }
+              : item
+          )
+        );
+  
+        toast({
+          title: "Success",
+          description: "Banner status updated successfully",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update banner status",
+          variant: "destructive",
+        });
+      } finally {
+        setStatusToggleItem(null);
+      }
+    };
+   
+    const handleStatusChange = (id: number, currentStatus: boolean) => {
+      setStatusToggleItem({ id, newStatus: !currentStatus });
+    };
+  
+    const handleSortOrderChange = (id: number, newValue: string) => {
+      setEditingSortOrder((prev) => ({ ...prev, [id]: newValue }));
+  
+      // Clear existing timeout for this item
+      if (updateTimeouts[id]) {
+        clearTimeout(updateTimeouts[id]);
+      }
+  
+      // Set new timeout to update after user stops typing
+      const timeout = setTimeout(async () => {
+        const sortOrder = parseInt(newValue, 10);
+        if (isNaN(sortOrder)) return;
+  
+        try {
+          await updateSortOrder({
+            model_name: "FaqCategory",
+            row_id: id,
+            sort_order: sortOrder,
+          });
+  
+          setCategories((prev) =>
+            prev.map((item) =>
+              item.id === id ? { ...item, sort_order: sortOrder } : item
+            )
+          );
+  
+          toast({
+            title: "Success",
+            description: "Sort order updated successfully",
+          });
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: "Failed to update sort order",
+            variant: "destructive",
+          });
+        } finally {
+          setEditingSortOrder((prev) => {
+            const updated = { ...prev };
+            delete updated[id];
+            return updated;
+          });
+        }
+      }, 1000); // Wait 1 second after user stops typing
+  
+      setUpdateTimeouts((prev) => ({ ...prev, [id]: timeout }));
+    };
 
  
 
@@ -105,17 +203,40 @@ export default function FaqCategoryList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-       cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) =>
+              handleSortOrderChange(item.id!, e.target.value)
+            }
+            className="w-20"
+          />
+        );
+      },
     },
-    {
+     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
         return (
-          <Badge variant={status ? "default" : "secondary"}>
-            {status ? "active" : "inactive"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "active" : "inactive"}
+            </Badge>
+          </div>
         );
       },
     },
@@ -201,6 +322,31 @@ export default function FaqCategoryList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+        {/* Status Toggle Confirmation Dialog */}
+      <AlertDialog
+        open={!!statusToggleItem}
+        onOpenChange={() => setStatusToggleItem(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to{" "}
+              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
+              banner? This will change its visibility on the home page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusToggle}>
+              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+
     </>
   );
 }

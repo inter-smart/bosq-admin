@@ -4,13 +4,21 @@ import { commonValidations } from "@/utils/formUtils";
 export const faqCmsSchema = z.object({
   // Banner Section
   banner_title: commonValidations.requiredString("Banner Title"),
+  banner_title_ar: commonValidations.requiredString("Banner Title (Arabic)"),
   banner_media_desktop_path: commonValidations.fileUpload,
   banner_media_mobile_path: commonValidations.fileUpload,
   banner_media_alt: commonValidations.requiredString("Banner Media Alt Text"),
+  banner_media_alt_ar: commonValidations.requiredString("Banner Media Alt Text (Arabic)"),
+
+  // Page Title
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
 
   // Question Section
   question_title: commonValidations.requiredString("Question Title"),
+  question_title_ar: commonValidations.requiredString("Question Title (Arabic)"),
   question_description: commonValidations.requiredText("Question Description"),
+  question_description_ar: commonValidations.requiredText("Question Description (Arabic)"),
 });
 
 export const faqCategorySchema = z.object({

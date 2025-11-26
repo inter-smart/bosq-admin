@@ -27,8 +27,8 @@ import {
   fetchHomeBannerList,
   deleteHomeBanner,
   HomeBanner,
-  updateHomeBanner,
 } from "@/services/cms/home/homeBannerApi";
+import { updateStatus, updateSortOrder } from "@/services/commonApi";
 import { useToast } from "@/hooks/use-toast";
 
 export default function HomeBannerSliderList() {
@@ -51,6 +51,13 @@ export default function HomeBannerSliderList() {
   useEffect(() => {
     loadBannerItems();
   }, []);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(updateTimeouts).forEach(clearTimeout);
+    };
+  }, [updateTimeouts]);
 
   const loadBannerItems = async () => {
     try {
@@ -76,10 +83,12 @@ export default function HomeBannerSliderList() {
 
     try {
       const { id, newStatus } = statusToggleItem;
-      const formData = new FormData();
-      formData.append("status", String(newStatus));
 
-      await updateHomeBanner(id, formData);
+      await updateStatus({
+        model_name: "HomeBanner",
+        row_id: id,
+        status: newStatus,
+      });
 
       setBannerItems((prev) =>
         prev.map((item) =>
@@ -123,6 +132,59 @@ export default function HomeBannerSliderList() {
     } finally {
       setDeleteItemId(null);
     }
+  };
+
+
+  const handleStatusChange = (id: number, currentStatus: boolean) => {
+    setStatusToggleItem({ id, newStatus: !currentStatus });
+  };
+
+  const handleSortOrderChange = (id: number, newValue: string) => {
+    setEditingSortOrder((prev) => ({ ...prev, [id]: newValue }));
+
+    // Clear existing timeout for this item
+    if (updateTimeouts[id]) {
+      clearTimeout(updateTimeouts[id]);
+    }
+
+    // Set new timeout to update after user stops typing
+    const timeout = setTimeout(async () => {
+      const sortOrder = parseInt(newValue, 10);
+      if (isNaN(sortOrder)) return;
+
+      try {
+        await updateSortOrder({
+          model_name: "HomeBanner",
+          row_id: id,
+          sort_order: sortOrder,
+        });
+
+        setBannerItems((prev) =>
+          prev.map((item) =>
+            item.id === id ? { ...item, sort_order: sortOrder } : item
+          )
+        );
+
+        toast({
+          title: "Success",
+          description: "Sort order updated successfully",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to update sort order",
+          variant: "destructive",
+        });
+      } finally {
+        setEditingSortOrder((prev) => {
+          const updated = { ...prev };
+          delete updated[id];
+          return updated;
+        });
+      }
+    }, 1000); // Wait 1 second after user stops typing
+
+    setUpdateTimeouts((prev) => ({ ...prev, [id]: timeout }));
   };
 
   const columns: ColumnDef<HomeBanner>[] = [
@@ -173,17 +235,40 @@ export default function HomeBannerSliderList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) =>
+              handleSortOrderChange(item.id!, e.target.value)
+            }
+            className="w-20"
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
         return (
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
             <Badge variant={status ? "default" : "secondary"}>
               {status ? "active" : "inactive"}
             </Badge>
+          </div>
         );
       },
     },
@@ -271,6 +356,27 @@ export default function HomeBannerSliderList() {
       </AlertDialog>
 
       {/* Status Toggle Confirmation Dialog */}
+      <AlertDialog
+        open={!!statusToggleItem}
+        onOpenChange={() => setStatusToggleItem(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to{" "}
+              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
+              banner? This will change its visibility on the home page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusToggle}>
+              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>  {/* Status Toggle Confirmation Dialog */}
       <AlertDialog
         open={!!statusToggleItem}
         onOpenChange={() => setStatusToggleItem(null)}
