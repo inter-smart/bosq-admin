@@ -24,8 +24,8 @@ export interface CommonResponse<T = any> {
 export const updateStatus = async (
   payload: StatusUpdatePayload
 ): Promise<CommonResponse> => {
-  return apiCall(`/status/${payload.model_name}/${payload.row_id}`, {
-    method: "POST",
+  return apiCall(`/common-actions/status/${payload.model_name}/${payload.row_id}`, {
+    method: "PUT",
     data: { status: payload.status },
   });
 };
@@ -34,8 +34,8 @@ export const updateStatus = async (
 export const updateSortOrder = async (
   payload: SortOrderUpdatePayload
 ): Promise<CommonResponse> => {
-  return apiCall(`/sort-order/${payload.model_name}/${payload.row_id}`, {
-    method: "POST",
+  return apiCall(`/common-actions/sort-order/${payload.model_name}/${payload.row_id}`, {
+    method: "PUT",
     data: { sort_order: payload.sort_order },
   });
 };
