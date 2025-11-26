@@ -30,7 +30,9 @@ export const faqCategorySchema = z.object({
 
 export const faqListSchema = z.object({
   question: commonValidations.requiredString("Question"),
+  question_ar: commonValidations.requiredString("Question (Arabic)"),
   answer: commonValidations.requiredText("Answer"),
+  answer_ar: commonValidations.requiredText("Answer (Arabic)"),
   category: commonValidations.requiredNumber("Category"),
   sort_order:commonValidations.sortOrder(),
   status: commonValidations.booleanStatus(),

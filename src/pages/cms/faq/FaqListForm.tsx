@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -52,7 +53,9 @@ export default function FaqListForm() {
     resolver: zodResolver(faqListSchema),
     defaultValues: {
       question: "",
+      question_ar: "",
       answer: "",
+      answer_ar: "",
       category: 0,
       sort_order: 0,
       status: true,
@@ -91,7 +94,9 @@ export default function FaqListForm() {
       if (data) {
         form.reset({
           question: data.question || "",
+          question_ar: data.question_ar || "",
           answer: data.answer || "",
+          answer_ar: data.answer_ar || "",
           category: data.category || 0,
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
@@ -115,7 +120,9 @@ export default function FaqListForm() {
 
       const payload = {
         question: data.question,
+        question_ar: data.question_ar,
         answer: data.answer.toString(),
+        answer_ar: data.answer_ar.toString(),
         category: data.category,
         sort_order: data.sort_order,
         status: data.status,
@@ -177,75 +184,161 @@ export default function FaqListForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>FAQ Content</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="question"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Question</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter FAQ question" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <Tabs defaultValue="en" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="en">English</TabsTrigger>
+              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
+            </TabsList>
 
-              <FormField
-                control={form.control}
-                name="answer"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Answer</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter FAQ answer"
-                        rows={6}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <TabsContent value="en" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>FAQ Content</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="question"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Question</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter FAQ question" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(parseInt(value))}
-                      value={field.value ? String(field.value) : ""}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem
-                            key={category.id}
-                            value={String(category.id)}
-                          >
-                            {category.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+                  <FormField
+                    control={form.control}
+                    name="answer"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Answer</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter FAQ answer"
+                            rows={6}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <Select
+                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          value={field.value ? String(field.value) : ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem
+                                key={category.id}
+                                value={String(category.id)}
+                              >
+                                {category.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="ar" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>محتوى الأسئلة الشائعة (FAQ Content)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="question_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>السؤال</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل سؤال الأسئلة الشائعة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="answer_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>الإجابة</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="أدخل إجابة الأسئلة الشائعة"
+                            rows={6}
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>الفئة</FormLabel>
+                        <Select
+                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          value={field.value ? String(field.value) : ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="اختر فئة" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem
+                                key={category.id}
+                                value={String(category.id)}
+                              >
+                                {category.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
 
           <Card>
             <CardHeader>

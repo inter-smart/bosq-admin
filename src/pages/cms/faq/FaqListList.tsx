@@ -40,6 +40,8 @@ import {
   FaqCategory,
 } from "@/services/cms/faq/faqCategoryApi";
 import { useToast } from "@/hooks/use-toast";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { Switch } from "@/components/ui/switch";
 
 export default function FaqListList() {
   const navigate = useNavigate();
@@ -49,6 +51,18 @@ export default function FaqListList() {
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const {
+    statusToggleItem,
+    setStatusToggleItem,
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+    confirmStatusToggle,
+  } = useCommonTableActions<FaqList>({
+    modelName: "FaqList",
+    data: faqItems,
+    setData: setFaqItems,
+  });
 
   useEffect(() => {
     loadCategories();
@@ -150,20 +164,42 @@ export default function FaqListList() {
         );
       },
     },
-    {
+  {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
+      enableSorting: true,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
         return (
-          <Badge variant={status ? "default" : "secondary"}>
-            {status ? "active" : "inactive"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "active" : "inactive"}
+            </Badge>
+          </div>
         );
       },
     },
@@ -276,6 +312,29 @@ export default function FaqListList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+         {/* Status Toggle Confirmation Dialog */}
+      <AlertDialog
+        open={!!statusToggleItem}
+        onOpenChange={() => setStatusToggleItem(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to{" "}
+              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
+              banner? This will change its visibility on the home page.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmStatusToggle}>
+              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

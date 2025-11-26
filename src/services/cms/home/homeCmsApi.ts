@@ -4,7 +4,7 @@ export interface HomeCms {
   id?: number;
 
   // ABOUT
-  about_media_path?: string | null;
+  about_media_path?: File | null;
   about_media_alt?: string | null;
   about_media_alt_ar?: string | null;
   about_title?: string | null;
@@ -22,7 +22,7 @@ export interface HomeCms {
   journy_description?: string | null;
   journy_description_ar?: string | null;
   journey_media_type?: "image" | "video" | null;
-  journy_media_path?: string | null;
+  journy_media_path?: File | null;
   journy_media_alt?: string | null;
   journy_media_alt_ar?: string | null;
 
@@ -35,7 +35,7 @@ export interface HomeCms {
   calculator_title_ar?: string | null;
   calculator_description?: string | null;
   calculator_description_ar?: string | null;
-  calculator_media_path?: string | null;
+  calculator_media_path?: File | null;
   calculator_media_alt?: string | null;
   calculator_media_alt_ar?: string | null;
 
@@ -44,7 +44,7 @@ export interface HomeCms {
   customize_title_ar?: string | null;
   customize_description?: string | null;
   customize_description_ar?: string | null;
-  customize_media_path?: string | null;
+  customize_media_path?: File | null;
   customize_media_alt?: string | null;
   customize_media_alt_ar?: string | null;
 
@@ -63,7 +63,7 @@ export interface HomeCms {
   form_title_ar?: string | null;
   form_description?: string | null;
   form_description_ar?: string | null;
-  form_media_path?: string | null;
+  form_media_path?: File | null;
   form_media_alt?: string | null;
   form_media_alt_ar?: string | null;
 

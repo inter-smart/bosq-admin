@@ -6,8 +6,8 @@ export interface HomeBanner {
   title_ar?: string;
   description?: string;
   description_ar?: string;
-  media_desktop_path?: string | null;
-  media_mobile_path?: string | null;
+  media_desktop_path?: File | null;
+  media_mobile_path?: File | null;
   media_alt?: string;
   media_alt_ar?: string;
   button_text?: string;
