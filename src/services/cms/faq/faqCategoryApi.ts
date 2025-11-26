@@ -3,6 +3,7 @@ import { apiCall } from '@/utils/apiUtils';
 export interface FaqCategory {
   id: number;
   title: string;
+  title_ar: string;
   sort_order?: number;
   status?: boolean;
   deleted_at?: string | null;

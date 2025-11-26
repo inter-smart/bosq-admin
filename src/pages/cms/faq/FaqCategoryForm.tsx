@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -41,6 +42,7 @@ export default function FaqCategoryForm() {
     resolver: zodResolver(faqCategorySchema),
     defaultValues: {
       title: "",
+      title_ar: "",
       sort_order: 0,
       status: true,
     },
@@ -61,6 +63,7 @@ export default function FaqCategoryForm() {
       if (data) {
         form.reset({
           title: data.title || "",
+          title_ar: data.title_ar || "",
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
         });
@@ -84,6 +87,7 @@ export default function FaqCategoryForm() {
 
       const payload: FaqCategory = {
         title: data.title,
+        title_ar: data.title_ar,
         sort_order: data.sort_order,
         status: data.status,
       }
@@ -146,25 +150,71 @@ export default function FaqCategoryForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Tabs defaultValue="en" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="en">English</TabsTrigger>
+              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
+            </TabsList>
+
+            {/* English Tab */}
+            <TabsContent value="en" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Category Information</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter category title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Arabic Tab */}
+            <TabsContent value="ar" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>معلومات الفئة (Category Information)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FormField
+                    control={form.control}
+                    name="title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>العنوان</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان الفئة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
+          {/* Settings Card - Outside Tabs */}
           <Card>
             <CardHeader>
-              <CardTitle>Category Information</CardTitle>
+              <CardTitle>Category Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter category title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

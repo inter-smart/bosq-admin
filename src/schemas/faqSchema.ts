@@ -23,6 +23,7 @@ export const faqCmsSchema = z.object({
 
 export const faqCategorySchema = z.object({
   title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
 });
