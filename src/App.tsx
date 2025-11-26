@@ -43,6 +43,8 @@ import AboutCmsForm from "./pages/cms/about/aboutCmsForm";
 import BlogCmsForm from "./pages/blog/BlogCmsForm";
 import BlogsList from "./pages/blog/BlogsList";
 import BlogsForm from "./pages/blog/BlogsForm";
+import FindYourFitsList from "./pages/cms/home/FindYourFitsList";
+import FindYourFitsForm from "./pages/cms/home/FindYourFitsForm";
 
 const queryClient = new QueryClient();
 // Protected Route Component
@@ -109,7 +111,7 @@ const App = () => (
             }
           />
 
-            {/* Meta Tags Routes */}
+          {/* Meta Tags Routes */}
           <Route
             path="/meta-tags"
             element={
@@ -213,6 +215,33 @@ const App = () => (
             }
           />
 
+          <Route
+            path="/find-your-fits"
+            element={
+              <ProtectedRoute>
+                <FindYourFitsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/find-your-fits/create"
+            element={
+              <ProtectedRoute>
+                <FindYourFitsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/find-your-fits/edit/:id"
+            element={
+              <ProtectedRoute>
+                <FindYourFitsForm />
+              </ProtectedRoute>
+            }
+          />
+
           {/* FAQ CMS Route */}
           <Route
             path="/faq-cms"
@@ -279,7 +308,7 @@ const App = () => (
             }
           />
 
-              {/* CONTACT CMS Route */}
+          {/* CONTACT CMS Route */}
           <Route
             path="/contact-cms"
             element={
