@@ -31,6 +31,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { updateSortOrder, updateStatus } from "@/services/commonApi";
 import { Switch } from "@/components/ui/switch";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
 export default function FaqCategoryList() {
   const navigate = useNavigate();
@@ -38,17 +39,22 @@ export default function FaqCategoryList() {
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-   const [statusToggleItem, setStatusToggleItem] = useState<{
-    id: number;
-    newStatus: boolean;
-  } | null>(null);
-  const [editingSortOrder, setEditingSortOrder] = useState<{
-    [key: number]: string;
-  }>({});
   const [updateTimeouts, setUpdateTimeouts] = useState<{
     [key: number]: NodeJS.Timeout;
   }>({});
 
+  const {
+    statusToggleItem,
+    setStatusToggleItem,
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+    confirmStatusToggle,
+  } = useCommonTableActions<FaqCategory>({
+    modelName: "FaqCategory",
+    data: categories,
+    setData: setCategories,
+  });
 
   useEffect(() => {
     loadCategories();
@@ -94,95 +100,6 @@ export default function FaqCategoryList() {
     }
   };
 
-      const confirmStatusToggle = async () => {
-      if (!statusToggleItem) return;
-  
-      try {
-        const { id, newStatus } = statusToggleItem;
-  
-        await updateStatus({
-          model_name: "FaqCategory",
-          row_id: id,
-          status: newStatus,
-        });
-  
-        setCategories((prev) =>
-          prev.map((item) =>
-            item.id === id
-              ? { ...item, status: statusToggleItem.newStatus }
-              : item
-          )
-        );
-  
-        toast({
-          title: "Success",
-          description: "Banner status updated successfully",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to update banner status",
-          variant: "destructive",
-        });
-      } finally {
-        setStatusToggleItem(null);
-      }
-    };
-   
-    const handleStatusChange = (id: number, currentStatus: boolean) => {
-      setStatusToggleItem({ id, newStatus: !currentStatus });
-    };
-  
-    const handleSortOrderChange = (id: number, newValue: string) => {
-      setEditingSortOrder((prev) => ({ ...prev, [id]: newValue }));
-  
-      // Clear existing timeout for this item
-      if (updateTimeouts[id]) {
-        clearTimeout(updateTimeouts[id]);
-      }
-  
-      // Set new timeout to update after user stops typing
-      const timeout = setTimeout(async () => {
-        const sortOrder = parseInt(newValue, 10);
-        if (isNaN(sortOrder)) return;
-  
-        try {
-          await updateSortOrder({
-            model_name: "FaqCategory",
-            row_id: id,
-            sort_order: sortOrder,
-          });
-  
-          setCategories((prev) =>
-            prev.map((item) =>
-              item.id === id ? { ...item, sort_order: sortOrder } : item
-            )
-          );
-  
-          toast({
-            title: "Success",
-            description: "Sort order updated successfully",
-          });
-        } catch (error) {
-          toast({
-            title: "Error",
-            description: "Failed to update sort order",
-            variant: "destructive",
-          });
-        } finally {
-          setEditingSortOrder((prev) => {
-            const updated = { ...prev };
-            delete updated[id];
-            return updated;
-          });
-        }
-      }, 1000); // Wait 1 second after user stops typing
-  
-      setUpdateTimeouts((prev) => ({ ...prev, [id]: timeout }));
-    };
-
- 
-
   const columns: ColumnDef<FaqCategory>[] = [
     {
       accessorKey: "id",
@@ -203,6 +120,7 @@ export default function FaqCategoryList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
+      enableSorting: true,
       cell: ({ row }) => {
         const item = row.original;
         return (
@@ -213,15 +131,13 @@ export default function FaqCategoryList() {
                 ? editingSortOrder[item.id!]
                 : row.getValue("sort_order") || 0
             }
-            onChange={(e) =>
-              handleSortOrderChange(item.id!, e.target.value)
-            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
             className="w-20"
           />
         );
       },
     },
-     {
+    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
@@ -243,6 +159,7 @@ export default function FaqCategoryList() {
     {
       accessorKey: "createdAt",
       header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -323,7 +240,7 @@ export default function FaqCategoryList() {
         </AlertDialogContent>
       </AlertDialog>
 
-        {/* Status Toggle Confirmation Dialog */}
+      {/* Status Toggle Confirmation Dialog */}
       <AlertDialog
         open={!!statusToggleItem}
         onOpenChange={() => setStatusToggleItem(null)}
@@ -345,8 +262,6 @@ export default function FaqCategoryList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-
     </>
   );
 }

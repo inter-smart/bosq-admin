@@ -30,6 +30,7 @@ import {
 } from "@/services/cms/home/homeBannerApi";
 import { updateStatus, updateSortOrder } from "@/services/commonApi";
 import { useToast } from "@/hooks/use-toast";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
 export default function HomeBannerSliderList() {
   const navigate = useNavigate();
@@ -37,16 +38,24 @@ export default function HomeBannerSliderList() {
   const [bannerItems, setBannerItems] = useState<HomeBanner[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [statusToggleItem, setStatusToggleItem] = useState<{
-    id: number;
-    newStatus: boolean;
-  } | null>(null);
-  const [editingSortOrder, setEditingSortOrder] = useState<{
-    [key: number]: string;
-  }>({});
   const [updateTimeouts, setUpdateTimeouts] = useState<{
     [key: number]: NodeJS.Timeout;
   }>({});
+
+    const {
+    statusToggleItem,
+    setStatusToggleItem,
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+    confirmStatusToggle,
+  } = useCommonTableActions<HomeBanner>({
+    modelName: "HomeBanner",
+    data: bannerItems,
+    setData: setBannerItems,
+  });
+  
+
 
   useEffect(() => {
     loadBannerItems();
@@ -78,41 +87,6 @@ export default function HomeBannerSliderList() {
     }
   };
 
-  const confirmStatusToggle = async () => {
-    if (!statusToggleItem) return;
-
-    try {
-      const { id, newStatus } = statusToggleItem;
-
-      await updateStatus({
-        model_name: "HomeBanner",
-        row_id: id,
-        status: newStatus,
-      });
-
-      setBannerItems((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? { ...item, status: statusToggleItem.newStatus }
-            : item
-        )
-      );
-
-      toast({
-        title: "Success",
-        description: "Banner status updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update banner status",
-        variant: "destructive",
-      });
-    } finally {
-      setStatusToggleItem(null);
-    }
-  };
-
   const confirmDelete = async () => {
     if (!deleteItemId) return;
 
@@ -135,57 +109,7 @@ export default function HomeBannerSliderList() {
   };
 
 
-  const handleStatusChange = (id: number, currentStatus: boolean) => {
-    setStatusToggleItem({ id, newStatus: !currentStatus });
-  };
 
-  const handleSortOrderChange = (id: number, newValue: string) => {
-    setEditingSortOrder((prev) => ({ ...prev, [id]: newValue }));
-
-    // Clear existing timeout for this item
-    if (updateTimeouts[id]) {
-      clearTimeout(updateTimeouts[id]);
-    }
-
-    // Set new timeout to update after user stops typing
-    const timeout = setTimeout(async () => {
-      const sortOrder = parseInt(newValue, 10);
-      if (isNaN(sortOrder)) return;
-
-      try {
-        await updateSortOrder({
-          model_name: "HomeBanner",
-          row_id: id,
-          sort_order: sortOrder,
-        });
-
-        setBannerItems((prev) =>
-          prev.map((item) =>
-            item.id === id ? { ...item, sort_order: sortOrder } : item
-          )
-        );
-
-        toast({
-          title: "Success",
-          description: "Sort order updated successfully",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to update sort order",
-          variant: "destructive",
-        });
-      } finally {
-        setEditingSortOrder((prev) => {
-          const updated = { ...prev };
-          delete updated[id];
-          return updated;
-        });
-      }
-    }, 1000); // Wait 1 second after user stops typing
-
-    setUpdateTimeouts((prev) => ({ ...prev, [id]: timeout }));
-  };
 
   const columns: ColumnDef<HomeBanner>[] = [
     {
@@ -235,6 +159,7 @@ export default function HomeBannerSliderList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
+      enableSorting: true,
       cell: ({ row }) => {
         const item = row.original;
         return (

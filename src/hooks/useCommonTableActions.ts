@@ -1,0 +1,102 @@
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { updateStatus, updateSortOrder } from "@/services/commonApi";
+
+export interface StatusToggleItem {
+  id: number;
+  newStatus: boolean;
+}
+
+interface UseCommonTableActionsProps<T> {
+  modelName: string;
+  data: T[];
+  setData: React.Dispatch<React.SetStateAction<T[]>>;
+}
+
+export const useCommonTableActions = <T extends { id: number }>({
+  modelName,
+  data,
+  setData,
+}: UseCommonTableActionsProps<T>) => {
+  const { toast } = useToast();
+
+  const [statusToggleItem, setStatusToggleItem] = useState<StatusToggleItem | null>(null);
+  const [editingSortOrder, setEditingSortOrder] = useState<{ [key: number]: string }>({});
+  const [updateTimeouts, setUpdateTimeouts] = useState<{ [key: number]: NodeJS.Timeout }>({});
+
+  const confirmStatusToggle = async () => {
+    if (!statusToggleItem) return;
+
+    try {
+      const { id, newStatus } = statusToggleItem;
+
+      await updateStatus({
+        model_name: modelName,
+        row_id: id,
+        status: newStatus,
+      });
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      );
+
+      toast({ title: "Success", description: "Status updated successfully" });
+    } catch {
+      toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
+    } finally {
+      setStatusToggleItem(null);
+    }
+  };
+
+  const handleStatusChange = (id: number, currentStatus: boolean) => {
+    setStatusToggleItem({ id, newStatus: !currentStatus });
+  };
+
+  const handleSortOrderChange = (id: number, newValue: string) => {
+    setEditingSortOrder((prev) => ({ ...prev, [id]: newValue }));
+
+    if (updateTimeouts[id]) clearTimeout(updateTimeouts[id]);
+
+    const timeout = setTimeout(async () => {
+      const sortOrder = parseInt(newValue, 10);
+      if (isNaN(sortOrder)) return;
+
+      try {
+        await updateSortOrder({
+          model_name: modelName,
+          row_id: id,
+          sort_order: sortOrder,
+        });
+
+        setData((prev) =>
+          prev.map((item) =>
+            item.id === id ? { ...item, sort_order: sortOrder } : item
+          )
+        );
+
+        toast({ title: "Success", description: "Sort order updated successfully" });
+      } catch {
+        toast({ title: "Error", description: "Failed to update sort order", variant: "destructive" });
+      } finally {
+        setEditingSortOrder((prev) => {
+          const updated = { ...prev };
+          delete updated[id];
+          return updated;
+        });
+      }
+    }, 1000);
+
+    setUpdateTimeouts((prev) => ({ ...prev, [id]: timeout }));
+  };
+
+  return {
+    statusToggleItem,
+    setStatusToggleItem,
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+    confirmStatusToggle,
+  };
+};

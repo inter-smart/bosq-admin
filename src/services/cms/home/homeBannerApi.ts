@@ -1,7 +1,7 @@
 import { apiCall } from '@/utils/apiUtils';
 
 export interface HomeBanner {
-  id?: number;
+  id: number;
   title: string;
   title_ar?: string;
   description?: string;
