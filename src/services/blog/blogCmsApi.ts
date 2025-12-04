@@ -3,10 +3,19 @@ import { apiCall } from '@/utils/apiUtils';
 export interface BlogCms {
   id?: number;
   title?: string | null;
-  description?: string | null;
+  title_ar?: string | null;
+  banner_title?: string | null;
+  banner_title_ar?: string | null;
+  banner_description?: string | null;
+  banner_description_ar?: string | null;
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt?: string | null;
+  media_alt_ar?: string | null;
+  popular_blogs_title?: string | null;
+  popular_blogs_title_ar?: string | null;
+  related_blogs_title?: string | null;
+  related_blogs_title_ar?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }

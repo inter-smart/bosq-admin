@@ -2,11 +2,25 @@ import { z } from "zod";
 import { commonValidations } from "@/utils/formUtils";
 
 export const blogCmsSchema = z.object({
+  // English fields
   title: commonValidations.requiredString("Title"),
-  description: commonValidations.requiredText("Description"),
+  banner_title: commonValidations.requiredString("Banner Title"),
+  banner_description: commonValidations.requiredText("Banner Description"),
+  media_alt: commonValidations.requiredString("Media Alt Text"),
+  popular_blogs_title: commonValidations.requiredString("Popular Blogs Title"),
+  related_blogs_title: commonValidations.requiredString("Related Blogs Title"),
+
+  // Arabic fields
+  title_ar: commonValidations.requiredString("Arabic Title"),
+  banner_title_ar: commonValidations.requiredString("Arabic Banner Title"),
+  banner_description_ar: commonValidations.requiredText("Arabic Banner Description"),
+  media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
+  popular_blogs_title_ar: commonValidations.requiredString("Arabic Popular Blogs Title"),
+  related_blogs_title_ar: commonValidations.requiredString("Arabic Related Blogs Title"),
+
+  // File uploads (no Arabic versions needed)
   media_desktop_path: commonValidations.validateFileUpload("Desktop media"),
   media_mobile_path: commonValidations.validateFileUpload("Mobile media"),
-  media_alt: commonValidations.optionalString("Media Alt Text"),
 });
 
 export const blogSchema = z.object({

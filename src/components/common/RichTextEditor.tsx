@@ -29,7 +29,6 @@ import {
   Smile,
   Link as LinkIcon,
   Palette,
-  CornerDownLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IconSelector } from "./IconSelector";
@@ -102,22 +101,57 @@ export function RichTextEditor({
       attributes: {
         class: cn(
           "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[120px] p-3",
-          "prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground",
-          "prose-ul:text-foreground prose-ol:text-foreground prose-li:text-foreground",
-          "prose-blockquote:text-muted-foreground prose-blockquote:border-border",
-          "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
-          "prose-img:rounded-md prose-img:border"
+          // Text styles
+          "prose-p:text-foreground prose-p:leading-7 prose-p:my-2",
+          "prose-strong:text-foreground prose-strong:font-bold",
+          "prose-em:text-foreground prose-em:italic",
+          // Headings
+          "prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight",
+          "prose-h1:text-4xl prose-h1:mt-6 prose-h1:mb-4",
+          "prose-h2:text-3xl prose-h2:mt-5 prose-h2:mb-3",
+          "prose-h3:text-2xl prose-h3:mt-4 prose-h3:mb-2",
+          "prose-h4:text-xl prose-h4:mt-3 prose-h4:mb-2",
+          // Lists
+          "prose-ul:text-foreground prose-ul:list-disc prose-ul:pl-6 prose-ul:my-3",
+          "prose-ol:text-foreground prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-3",
+          "prose-li:text-foreground prose-li:my-1 prose-li:leading-7",
+          "prose-li:marker:text-foreground",
+          // Blockquotes
+          "prose-blockquote:text-muted-foreground prose-blockquote:border-l-4",
+          "prose-blockquote:border-border prose-blockquote:pl-4 prose-blockquote:italic",
+          "prose-blockquote:my-4 prose-blockquote:py-1",
+          // Links
+          "prose-a:text-primary prose-a:underline prose-a:underline-offset-4",
+          "prose-a:decoration-primary/50 hover:prose-a:decoration-primary",
+          "prose-a:transition-colors prose-a:cursor-pointer",
+          // Images
+          "prose-img:rounded-md prose-img:border prose-img:border-border",
+          "prose-img:my-4 prose-img:shadow-sm prose-img:max-w-full prose-img:h-auto",
+          // Code
+          "prose-code:text-foreground prose-code:bg-muted prose-code:px-1.5",
+          "prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono",
+          "prose-pre:bg-muted prose-pre:text-foreground prose-pre:p-4",
+          "prose-pre:rounded-lg prose-pre:my-4 prose-pre:overflow-x-auto",
+          // Horizontal rule
+          "prose-hr:border-border prose-hr:my-6",
+          // Fallback classes for direct elements
+          "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3",
+          "[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3",
+          "[&_li]:my-1 [&_li]:leading-7",
+          "[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic",
+          "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4",
+          "[&_img]:rounded-md [&_img]:border [&_img]:max-w-full",
+          "[&_strong]:font-bold [&_em]:italic",
+          "[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-5 [&_h2]:mb-3",
+          "[&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2"
         ),
         dir: dir,
       },
+
       handleKeyDown: (view, event) => {
         if (maxLength) {
           const currentLength = editor?.getText().length || 0;
-          if (event.key === "Enter") {
-            event.preventDefault();
-            editor?.chain().focus().setHardBreak().run();
-            return true;
-          }
+
           // Allow backspace, delete, and navigation keys
           if (
             [
@@ -202,13 +236,11 @@ export function RichTextEditor({
     isActive,
     disabled,
     children,
-    title,
   }: {
     onClick: () => void;
     isActive?: boolean;
     disabled?: boolean;
     children: React.ReactNode;
-    title?: string;
   }) => (
     <Button
       type="button"
@@ -217,7 +249,6 @@ export function RichTextEditor({
       onClick={onClick}
       disabled={disabled}
       className="h-8 w-8 p-0"
-      title={title}
     >
       {children}
     </Button>
@@ -397,13 +428,6 @@ export function RichTextEditor({
             <Separator orientation="vertical" className="mx-1 h-8" />
 
             {/* Media & Links */}
-            <ToolbarButton
-              onClick={() => editor.chain().focus().setHardBreak().run()}
-              title="Insert line break"
-            >
-              <CornerDownLeft className="h-4 w-4" />
-            </ToolbarButton>
-
             <ToolbarButton onClick={() => setShowImageModal(true)}>
               <ImageIcon className="h-4 w-4" />
             </ToolbarButton>
@@ -447,10 +471,13 @@ export function RichTextEditor({
 
         {/* Character counter */}
         {maxLength && (
-         <div className={cn(
-            "px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground",
-            dir === "rtl" ? "text-left" : "text-right"
-          )}>    {editor?.getText().length || 0}/{maxLength} characters
+          <div
+            className={cn(
+              "px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground",
+              dir === "rtl" ? "text-left" : "text-right"
+            )}
+          >
+            {editor?.getText().length || 0}/{maxLength} characters
           </div>
         )}
       </div>
