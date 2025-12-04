@@ -41,6 +41,7 @@ export default function FaqListForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
@@ -55,8 +56,8 @@ export default function FaqListForm() {
       question_ar: "",
       answer: "",
       answer_ar: "",
-      category: 0,
-      sort_order: 0,
+      category: 1,
+      sort_order: 1,
       status: true,
     },
   });
@@ -73,7 +74,7 @@ export default function FaqListForm() {
       const response = await fetchFaqCategoryList(1, 100);
       const activeCategories = response.data.list.filter((cat) => cat.status);
       setCategories(
-        activeCategories.map((cat) => ({ id: cat.id!, title: cat.title }))
+        activeCategories.map((cat) => ({ id: cat?.id!, title: cat.title }))
       );
     } catch (error) {
       toast({
@@ -111,6 +112,41 @@ export default function FaqListForm() {
       setInitialLoading(false);
     }
   };
+
+
+    // Custom submit handler with validation
+    const handleFormSubmit = form.handleSubmit(
+      // Success callback
+      async (data) => {
+        await onSubmit(data);
+      },
+      // Error callback - runs when validation fails
+      (errors) => {
+        // Define Arabic fields
+        const arabicFields: (keyof FaqListFormData)[] = [
+          "question_ar",
+          "answer_ar",
+        ];
+  
+        // Get the first error field
+        const firstErrorField = Object.keys(errors)[0] as keyof FaqListFormData;
+  
+        if (firstErrorField) {
+          // Check if the error is in an Arabic field
+          if (arabicFields.includes(firstErrorField)) {
+            setActiveTab("ar");
+          } else {
+            setActiveTab("en");
+          }
+  
+          // Focus the field after tab switch
+          setTimeout(() => {
+            form.setFocus(firstErrorField);
+          }, 100);
+        }
+      }
+    );
+  
 
   const onSubmit = async (data: FaqListFormData) => {
     try {
@@ -182,8 +218,8 @@ export default function FaqListForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Tabs defaultValue="en" className="w-full">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="en">English</TabsTrigger>
               <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
@@ -296,6 +332,7 @@ export default function FaqListForm() {
                           <RichTextEditor
                             placeholder="أدخل إجابة الأسئلة الشائعة"
                             {...field}
+                            dir="rtl"
                           />
                         </FormControl>
                         <FormMessage />

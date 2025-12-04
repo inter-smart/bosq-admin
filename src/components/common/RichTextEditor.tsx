@@ -43,6 +43,7 @@ interface RichTextEditorProps {
   className?: string;
   required?: boolean;
   maxLength?: number;
+  dir?: "ltr" | "rtl";
 }
 
 export function RichTextEditor({
@@ -53,6 +54,7 @@ export function RichTextEditor({
   className,
   required = false,
   maxLength,
+  dir = "ltr",
 }: RichTextEditorProps) {
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -106,6 +108,7 @@ export function RichTextEditor({
           "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
           "prose-img:rounded-md prose-img:border"
         ),
+        dir: dir,
       },
       handleKeyDown: (view, event) => {
         if (maxLength) {
@@ -232,7 +235,12 @@ export function RichTextEditor({
       <div className="border rounded-md">
         {/* Toolbar */}
         <div className="border-b bg-muted/50 p-2">
-          <div className="flex flex-wrap gap-1">
+          <div
+            className={cn(
+              "flex flex-wrap gap-1",
+              dir === "rtl" && "flex-row-reverse"
+            )}
+          >
             {/* Text Formatting */}
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBold().run()}
@@ -439,8 +447,10 @@ export function RichTextEditor({
 
         {/* Character counter */}
         {maxLength && (
-          <div className="px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground text-right">
-            {editor?.getText().length || 0}/{maxLength} characters
+         <div className={cn(
+            "px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground",
+            dir === "rtl" ? "text-left" : "text-right"
+          )}>    {editor?.getText().length || 0}/{maxLength} characters
           </div>
         )}
       </div>

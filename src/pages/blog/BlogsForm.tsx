@@ -14,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -25,6 +26,7 @@ import {
 } from "@/services/blog/blogsApi";
 import { blogSchema, BlogFormData } from "@/schemas/blogSchema";
 import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 
 export default function BlogsForm() {
   const { toast } = useToast();
@@ -34,18 +36,30 @@ export default function BlogsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [thumbnailFile, setThumbnailFile] = useState<File | string | null>(null);
-  const [desktopImageFile, setDesktopImageFile] = useState<File | string | null>(null);
-  const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | string | null>(
+    null
+  );
+  const [desktopImageFile, setDesktopImageFile] = useState<
+    File | string | null
+  >(null);
+  const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
+    null
+  );
+  const [activeTab, setActiveTab] = useState("en");
 
   const form = useForm<BlogFormData>({
     resolver: zodResolver(blogSchema),
+    shouldFocusError: true,
     defaultValues: {
       title: "",
+      title_ar: "",
       description: "",
+      description_ar: "",
       media_alt: "",
+      media_alt_ar: "",
       thumbnail_alt: "",
-      published_date: new Date().toISOString().split('T')[0],
+      thumbnail_alt_ar: "",
+      published_date: new Date().toISOString().split("T")[0],
       sort_order: 1,
       status: true,
     },
@@ -66,10 +80,16 @@ export default function BlogsForm() {
       if (data) {
         form.reset({
           title: data.title || "",
+          title_ar: data.title_ar || "",
           description: data.description || "",
+          description_ar: data.description_ar || "",
           media_alt: data.media_alt || "",
+          media_alt_ar: data.media_alt_ar || "",
           thumbnail_alt: data.thumbnail_alt || "",
-          published_date: data.published_date ? new Date(data.published_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          thumbnail_alt_ar: data.thumbnail_alt_ar || "",
+          published_date: data.published_date
+            ? new Date(data.published_date).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
         });
@@ -93,7 +113,7 @@ export default function BlogsForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error.message||"Failed to load blog data",
+        description: error.message || "Failed to load blog data",
         variant: "destructive",
       });
     } finally {
@@ -101,15 +121,63 @@ export default function BlogsForm() {
     }
   };
 
+  // Custom submit handler with validation
+  const handleFormSubmit = form.handleSubmit(
+    // Success callback
+    async (data) => {
+      await onSubmit(data);
+    },
+    // Error callback - runs when validation fails
+    (errors) => {
+      console.log(errors);
+      // Define Arabic fields
+      const arabicFields: (keyof BlogFormData)[] = [
+        "title_ar",
+        "description_ar",
+        "media_alt_ar",
+        "thumbnail_alt_ar",
+      ];
+
+      // Get the first error field
+      const firstErrorField = Object.keys(errors)[0] as keyof BlogFormData;
+
+      if (firstErrorField) {
+        // Check if the error is in an Arabic field
+        if (arabicFields.includes(firstErrorField)) {
+          setActiveTab("ar");
+        } else {
+          setActiveTab("en");
+        }
+
+        // Focus the field after tab switch
+        setTimeout(() => {
+          form.setFocus(firstErrorField);
+        }, 100);
+      }
+    }
+  );
+
   const onSubmit = async (data: BlogFormData) => {
     try {
       setLoading(true);
 
       const formData = new FormData();
+
+      // English fields
       formData.append("title", data.title);
       formData.append("description", data.description);
       formData.append("media_alt", data.media_alt);
-      if (data.thumbnail_alt) formData.append("thumbnail_alt", data.thumbnail_alt);
+      if (data.thumbnail_alt)
+        formData.append("thumbnail_alt", data.thumbnail_alt);
+
+      // Arabic fields
+      formData.append("title_ar", data.title_ar);
+      formData.append("description_ar", data.description_ar);
+      formData.append("media_alt_ar", data.media_alt_ar);
+      if (data.thumbnail_alt_ar)
+        formData.append("thumbnail_alt_ar", data.thumbnail_alt_ar);
+
+      // Other fields
       formData.append("published_date", data.published_date);
       formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
@@ -142,7 +210,8 @@ export default function BlogsForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description:error.message || `Failed to ${isEditing ? "update" : "create"} blog`,
+        description:
+          error.message || `Failed to ${isEditing ? "update" : "create"} blog`,
         variant: "destructive",
       });
     } finally {
@@ -179,96 +248,185 @@ export default function BlogsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Blog Content</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter blog title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <CardContent>
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-full"
+              >
+                <TabsList className="mb-4">
+                  <TabsTrigger value="en">English</TabsTrigger>
+                  <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
+                </TabsList>
 
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter blog description"
-                        rows={6}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <TabsContent value="en" className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter blog title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="media_alt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Media Alt Text</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter media alt text for accessibility"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            placeholder="Enter blog description"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="thumbnail_alt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Thumbnail Alt Text</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter thumbnail alt text"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Media Alt Text</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter media alt text for accessibility"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              <FormField
-                control={form.control}
-                name="published_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Published Date</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    <FormField
+                      control={form.control}
+                      name="thumbnail_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Thumbnail Alt Text</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter thumbnail alt text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="published_date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Published Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </TabsContent>
+
+                <TabsContent value="ar" className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>العنوان (Title)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان المدونة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>الوصف (Description)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            dir="rtl"
+                            placeholder="أدخل وصف المدونة"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            النص البديل للوسائط (Media Alt Text)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل للوسائط"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="thumbnail_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            النص البديل للصورة المصغرة (Thumbnail Alt Text)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل للصورة المصغرة"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 
@@ -277,40 +435,82 @@ export default function BlogsForm() {
               <CardTitle>Blog Images</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Thumbnail Image</label>
-                <FileUpload
-                  value={thumbnailFile}
-                  onChange={setThumbnailFile}
-                  accept="image/*"
-                  placeholder="Upload thumbnail image"
-                  preview={true}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="thumbnail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Thumbnail Image</FormLabel>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Desktop Image</label>
-                  <FileUpload
-                    value={desktopImageFile}
-                    onChange={setDesktopImageFile}
-                    accept="image/*"
-                    placeholder="Upload desktop blog image"
-                    preview={true}
-                  />
-                </div>
+                    <FormControl>
+                      <FileUpload
+                        value={field.value}
+                        onChange={(file) => {
+                          field.onChange(file);
+                          setThumbnailFile(file);
+                        }}
+                        accept="image/*"
+                        placeholder="Upload thumbnail image"
+                        preview={true}
+                      />
+                    </FormControl>
 
-                <div>
-                  <label className="text-sm font-medium">Mobile Image</label>
-                  <FileUpload
-                    value={mobileImageFile}
-                    onChange={setMobileImageFile}
-                    accept="image/*"
-                    placeholder="Upload mobile blog image"
-                    preview={true}
-                  />
-                </div>
-              </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <FormField
+                control={form.control}
+                name="media_desktop_path"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Desktop Image</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        value={field.value}
+                        onChange={(file) => {
+                          field.onChange(file);
+                          setDesktopImageFile(file);
+                        }}
+                        accept="image/*"
+                        placeholder="Upload desktop blog image"
+                        preview={true}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="media_mobile_path"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Image</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        value={field.value}
+                        onChange={(file) => {
+                          field.onChange(file);
+                          setMobileImageFile(file);
+                        }}
+                        accept="image/*"
+                        placeholder="Upload mobile blog image"
+                        preview={true}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+</div>
+
             </CardContent>
           </Card>
 

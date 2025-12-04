@@ -36,6 +36,7 @@ export default function SmartSpaceCalculatorForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
   const [imageFile, setImageFile] = useState<File | string | null>(null);
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<SmartSpaceCalculatorFormData>({
     resolver: zodResolver(smartSpaceCalculatorSchema),
@@ -98,6 +99,41 @@ export default function SmartSpaceCalculatorForm() {
       setInitialLoading(false);
     }
   };
+
+    const handleFormSubmit = form.handleSubmit(
+      // Success callback
+      async (data) => {
+        await onSubmit(data);
+      },
+      // Error callback - runs when validation fails
+      (errors) => {
+        // Define Arabic fields
+        const arabicFields: (keyof SmartSpaceCalculatorFormData)[] = [
+          "title_ar",
+          "description_ar",
+          "button_text_ar",
+          "media_alt_ar",
+        ];
+  
+        // Get the first error field
+        const firstErrorField = Object.keys(errors)[0] as keyof SmartSpaceCalculatorFormData;
+  
+        if (firstErrorField) {
+          // Check if the error is in an Arabic field
+          if (arabicFields.includes(firstErrorField)) {
+            setActiveTab("ar");
+          } else {
+            setActiveTab("en");
+          }
+  
+          // Focus the field after tab switch
+          setTimeout(() => {
+            form.setFocus(firstErrorField);
+          }, 100);
+        }
+      }
+    );
+
 
   const onSubmit = async (data: SmartSpaceCalculatorFormData) => {
     try {
@@ -182,13 +218,13 @@ export default function SmartSpaceCalculatorForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Calculator Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="en" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
                 <TabsList className="mb-4">
                   <TabsTrigger value="en">English</TabsTrigger>
                   <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>

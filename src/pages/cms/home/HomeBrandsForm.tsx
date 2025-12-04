@@ -34,6 +34,8 @@ export default function HomeBrandsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
+
 
   const form = useForm<HomeBrandFormData>({
     resolver: zodResolver(homeBrandSchema),
@@ -77,6 +79,38 @@ export default function HomeBrandsForm() {
     }
   };
 
+
+
+    const handleFormSubmit = form.handleSubmit(
+      // Success callback
+      async (data) => {
+        await onSubmit(data);
+      },
+      // Error callback - runs when validation fails
+      (errors) => {
+        // Define Arabic fields
+        const arabicFields: (keyof HomeBrandFormData)[] = [
+          "title_ar",
+        ];
+  
+        // Get the first error field
+        const firstErrorField = Object.keys(errors)[0] as keyof HomeBrandFormData;
+  
+        if (firstErrorField) {
+          // Check if the error is in an Arabic field
+          if (arabicFields.includes(firstErrorField)) {
+            setActiveTab("ar");
+          } else {
+            setActiveTab("en");
+          }
+  
+          // Focus the field after tab switch
+          setTimeout(() => {
+            form.setFocus(firstErrorField);
+          }, 100);
+        }
+      }
+    );
   const onSubmit = async (data: HomeBrandFormData) => {
     try {
       setLoading(true);
@@ -151,13 +185,13 @@ export default function HomeBrandsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Brand Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="en" className="w-full">
+              <Tabs onValueChange={setActiveTab} value={activeTab} defaultValue="en" className="w-full">
                 <TabsList className="mb-4">
                   <TabsTrigger value="en">English</TabsTrigger>
                   <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>

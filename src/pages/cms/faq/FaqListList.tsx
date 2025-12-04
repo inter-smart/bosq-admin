@@ -73,7 +73,7 @@ export default function FaqListList() {
   const loadCategories = async () => {
     try {
       const response = await fetchFaqCategoryList(1, 100);
-      setCategories(response.data.list);
+      setCategories(response?.data?.list);
     } catch (error) {
       toast({
         title: "Error",
@@ -269,7 +269,7 @@ export default function FaqListList() {
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {categories.map((category) => (
-                    <SelectItem key={category.id} value={String(category.id)}>
+                    <SelectItem key={category?.id} value={String(category?.id)}>
                       {category.title}
                     </SelectItem>
                   ))}

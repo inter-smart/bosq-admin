@@ -3,13 +3,17 @@ import { apiCall } from '@/utils/apiUtils';
 export interface Blog {
   id?: number;
   title: string;
+  title_ar?: string;
   slug?: string;
   description: string;
+  description_ar?: string;
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt: string;
+  media_alt_ar?: string;
   thumbnail?: string | null;
   thumbnail_alt?: string | null;
+  thumbnail_alt_ar?: string | null;
   published_date: string;
   viewCount?: number;
   sort_order?: number;

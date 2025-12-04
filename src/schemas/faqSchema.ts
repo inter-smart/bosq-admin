@@ -5,8 +5,8 @@ export const faqCmsSchema = z.object({
   // Banner Section
   banner_title: commonValidations.requiredString("Banner Title"),
   banner_title_ar: commonValidations.requiredString("Banner Title (Arabic)"),
-  banner_media_desktop_path: commonValidations.validateFileUpload("File"),
-  banner_media_mobile_path: commonValidations.validateFileUpload("File"),
+  banner_media_desktop_path: commonValidations.validateFileUpload("Banner Image (Desktop)"),
+  banner_media_mobile_path: commonValidations.validateFileUpload("Banner Image (Mobile)"),
   banner_media_alt: commonValidations.requiredString("Banner Media Alt Text"),
   banner_media_alt_ar: commonValidations.requiredString("Banner Media Alt Text (Arabic)"),
 

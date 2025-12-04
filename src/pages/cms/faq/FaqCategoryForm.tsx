@@ -37,13 +37,14 @@ export default function FaqCategoryForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<FaqCategoryFormData>({
     resolver: zodResolver(faqCategorySchema),
     defaultValues: {
       title: "",
       title_ar: "",
-      sort_order: 0,
+      sort_order: 1,
       status: true,
     },
   });
@@ -78,6 +79,38 @@ export default function FaqCategoryForm() {
       setInitialLoading(false);
     }
   };
+
+
+   const handleFormSubmit = form.handleSubmit(
+      // Success callback
+      async (data) => {
+        await onSubmit(data);
+      },
+      // Error callback - runs when validation fails
+      (errors) => {
+        // Define Arabic fields
+        const arabicFields: (keyof FaqCategoryFormData)[] = [
+          "title_ar",
+        ];
+  
+        // Get the first error field
+        const firstErrorField = Object.keys(errors)[0] as keyof FaqCategoryFormData;
+  
+        if (firstErrorField) {
+          // Check if the error is in an Arabic field
+          if (arabicFields.includes(firstErrorField)) {
+            setActiveTab("ar");
+          } else {
+            setActiveTab("en");
+          }
+  
+          // Focus the field after tab switch
+          setTimeout(() => {
+            form.setFocus(firstErrorField);
+          }, 100);
+        }
+      }
+    );
 
   const onSubmit = async (data: FaqCategoryFormData) => {
     try {
@@ -149,8 +182,8 @@ export default function FaqCategoryForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Tabs defaultValue="en" className="w-full">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="en">English</TabsTrigger>
               <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>

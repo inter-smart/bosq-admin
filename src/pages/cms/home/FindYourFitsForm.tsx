@@ -35,7 +35,8 @@ export default function FindYourFitsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
+ 
   const form = useForm<FindYourFitFormData>({
     resolver: zodResolver(findYourFitSchema),
     defaultValues: {
@@ -89,6 +90,44 @@ export default function FindYourFitsForm() {
       setInitialLoading(false);
     }
   };
+
+
+
+    // Custom submit handler with validation
+    const handleFormSubmit = form.handleSubmit(
+      // Success callback
+      async (data) => {
+        await onSubmit(data);
+      },
+      // Error callback - runs when validation fails
+      (errors) => {
+        // Define Arabic fields
+        const arabicFields: (keyof FindYourFitFormData)[] = [
+          "title_ar",
+          "description_ar",
+          "media_alt_ar",
+        ];
+  
+        // Get the first error field
+        const firstErrorField = Object.keys(errors)[0] as keyof FindYourFitFormData;
+  
+        if (firstErrorField) {
+          // Check if the error is in an Arabic field
+          if (arabicFields.includes(firstErrorField)) {
+            setActiveTab("ar");
+          } else {
+            setActiveTab("en");
+          }
+  
+          // Focus the field after tab switch
+          setTimeout(() => {
+            form.setFocus(firstErrorField);
+          }, 100);
+        }
+      }
+    );
+  
+
 
   const onSubmit = async (data: FindYourFitFormData) => {
     try {
@@ -174,13 +213,13 @@ export default function FindYourFitsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="en" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
                 <TabsList className="mb-4">
                   <TabsTrigger value="en">English</TabsTrigger>
                   <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>

@@ -28,6 +28,7 @@ export default function ContactCmsForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [mediaFile, setMediaFile] = useState<File | string | null>(null);
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<ContactCmsFormData>({
     resolver: zodResolver(contactCmsSchema),
@@ -112,6 +113,49 @@ export default function ContactCmsForm() {
       setInitialLoading(false);
     }
   };
+
+  // Custom submit handler with validation
+  const handleFormSubmit = form.handleSubmit(
+    // Success callback
+    async (data) => {
+      await onSubmit(data);
+    },
+    // Error callback - runs when validation fails
+    (errors) => {
+      // Define Arabic fields
+      const arabicFields: (keyof ContactCmsFormData)[] = [
+        "title_ar",
+        "form_title_ar",
+        "form_description_ar",
+        "media_title_ar",
+        "media_description_ar",
+        "email_title_ar",
+        "phone_title_ar",
+        "address_title_ar",
+        "address_ar",
+        "social_media_title_ar",
+      ];
+
+      // Get the first error field
+      const firstErrorField = Object.keys(
+        errors
+      )[0] as keyof ContactCmsFormData;
+
+      if (firstErrorField) {
+        // Check if the error is in an Arabic field
+        if (arabicFields.includes(firstErrorField)) {
+          setActiveTab("ar");
+        } else {
+          setActiveTab("en");
+        }
+
+        // Focus the field after tab switch
+        setTimeout(() => {
+          form.setFocus(firstErrorField);
+        }, 100);
+      }
+    }
+  );
 
   const onSubmit = async (data: ContactCmsFormData) => {
     try {
@@ -213,8 +257,13 @@ export default function ContactCmsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Tabs defaultValue="en" className="w-full">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            defaultValue="en"
+            className="w-full"
+          >
             <TabsList className="mb-4">
               <TabsTrigger value="en">English</TabsTrigger>
               <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>

@@ -45,7 +45,7 @@ export const commonValidations = {
   .refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB" }),
 
 
-  
+
 validateFileUpload: (fieldName: string) =>
   z
     .union([
@@ -65,9 +65,38 @@ validateFileUpload: (fieldName: string) =>
         return false;
       },
       {
-        message: `${fieldName} is required. Please upload an image.`,
+        message: `${fieldName} is required. Please upload media.`,
       }
     ),
+
+  validateImageUpload: (fieldName: string) =>
+    z
+      .union([
+        z
+          .instanceof(File)
+          .refine((f) => f.size <= 5 * 1024 * 1024, {
+            message: "Image size must be less than 5MB",
+          })
+          .refine(
+            (f) => ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(f.type),
+            {
+              message: "Only JPEG, PNG, WEBP, and GIF images are allowed",
+            }
+          ),
+        z.string().min(1), // existing file URL
+        z.null(),
+        z.undefined()
+      ])
+      .refine(
+        (value) => {
+          if (value instanceof File) return true;
+          if (typeof value === "string" && value.length) return true;
+          return false;
+        },
+        {
+          message: `${fieldName} is required. Please upload an image.`,
+        }
+      ),
 
   // URL validations
   optionalUrl: z

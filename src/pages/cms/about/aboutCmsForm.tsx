@@ -12,12 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -36,9 +31,16 @@ export default function AboutCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [journeyOneMediaFile, setJourneyOneMediaFile] = useState<File | string | null>(null);
-  const [journeyTwoMediaFile, setJourneyTwoMediaFile] = useState<File | string | null>(null);
-  const [journeyThreeMediaFile, setJourneyThreeMediaFile] = useState<File | string | null>(null);
+  const [journeyOneMediaFile, setJourneyOneMediaFile] = useState<
+    File | string | null
+  >(null);
+  const [journeyTwoMediaFile, setJourneyTwoMediaFile] = useState<
+    File | string | null
+  >(null);
+  const [journeyThreeMediaFile, setJourneyThreeMediaFile] = useState<
+    File | string | null
+  >(null);
+  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<AboutCmsFormData>({
     resolver: zodResolver(aboutCmsSchema),
@@ -115,9 +117,17 @@ export default function AboutCmsForm() {
           journey_title_ar: data.journey_title_ar || "",
           journey_description: data.journey_description || "",
           journey_description_ar: data.journey_description_ar || "",
-          journey_one_media_path: data.journey_one_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_one_media_path}` : null,
-          journey_two_media_path: data.journey_two_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_two_media_path}` : null,
-          journey_three_media_path: data.journey_three_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_three_media_path}` : null,
+          journey_one_media_path: data.journey_one_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_one_media_path}`
+            : null,
+          journey_two_media_path: data.journey_two_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_two_media_path}`
+            : null,
+          journey_three_media_path: data.journey_three_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${
+                data.journey_three_media_path
+              }`
+            : null,
           journey_one_media_alt: data.journey_one_media_alt || "",
           journey_one_media_alt_ar: data.journey_one_media_alt_ar || "",
           journey_two_media_alt: data.journey_two_media_alt || "",
@@ -143,6 +153,52 @@ export default function AboutCmsForm() {
     }
   };
 
+  // Custom submit handler with validation
+  const handleFormSubmit = form.handleSubmit(
+    // Success callback
+    async (data) => {
+      await onSubmit(data);
+    },
+    // Error callback - runs when validation fails
+    (errors) => {
+      // Define Arabic fields
+      const arabicFields: (keyof AboutCmsFormData)[] = [
+        "title_ar",
+        "banner_title_ar",
+        "banner_description_ar",
+        "banner_media_alt_ar",
+        "banner_button_text_ar",
+        "journey_title_ar",
+        "journey_description_ar",
+        "journey_one_media_alt_ar",
+        "journey_two_media_alt_ar",
+        "journey_three_media_alt_ar",
+        "why_choose_us_title_ar",
+        "why_choose_us_description_ar",
+        "testimonial_title_ar",
+        "client_title_ar",
+        "news_title_ar",
+      ];
+
+      // Get the first error field
+      const firstErrorField = Object.keys(errors)[0] as keyof AboutCmsFormData;
+
+      if (firstErrorField) {
+        // Check if the error is in an Arabic field
+        if (arabicFields.includes(firstErrorField)) {
+          setActiveTab("ar");
+        } else {
+          setActiveTab("en");
+        }
+
+        // Focus the field after tab switch
+        setTimeout(() => {
+          form.setFocus(firstErrorField);
+        }, 100);
+      }
+    }
+  );
+
   const onSubmit = async (data: AboutCmsFormData) => {
     try {
       setLoading(true);
@@ -153,49 +209,100 @@ export default function AboutCmsForm() {
       if (data.title_ar) formData.append("title_ar", data.title_ar);
 
       // Banner section
-      if (data.banner_media_type) formData.append("banner_media_type", data.banner_media_type);
+      if (data.banner_media_type)
+        formData.append("banner_media_type", data.banner_media_type);
       if (data.banner_title) formData.append("banner_title", data.banner_title);
-      if (data.banner_title_ar) formData.append("banner_title_ar", data.banner_title_ar);
-      if (data.banner_description) formData.append("banner_description", data.banner_description);
-      if (data.banner_description_ar) formData.append("banner_description_ar", data.banner_description_ar);
-      if (data.banner_media_alt) formData.append("banner_media_alt", data.banner_media_alt);
-      if (data.banner_media_alt_ar) formData.append("banner_media_alt_ar", data.banner_media_alt_ar);
-      if (data.banner_button_text) formData.append("banner_button_text", data.banner_button_text);
-      if (data.banner_button_text_ar) formData.append("banner_button_text_ar", data.banner_button_text_ar);
-      if (data.banner_button_link) formData.append("banner_button_link", data.banner_button_link);
+      if (data.banner_title_ar)
+        formData.append("banner_title_ar", data.banner_title_ar);
+      if (data.banner_description)
+        formData.append("banner_description", data.banner_description);
+      if (data.banner_description_ar)
+        formData.append("banner_description_ar", data.banner_description_ar);
+      if (data.banner_media_alt)
+        formData.append("banner_media_alt", data.banner_media_alt);
+      if (data.banner_media_alt_ar)
+        formData.append("banner_media_alt_ar", data.banner_media_alt_ar);
+      if (data.banner_button_text)
+        formData.append("banner_button_text", data.banner_button_text);
+      if (data.banner_button_text_ar)
+        formData.append("banner_button_text_ar", data.banner_button_text_ar);
+      if (data.banner_button_link)
+        formData.append("banner_button_link", data.banner_button_link);
 
       // Journey section
-      if (data.journey_title) formData.append("journey_title", data.journey_title);
-      if (data.journey_title_ar) formData.append("journey_title_ar", data.journey_title_ar);
-      if (data.journey_description) formData.append("journey_description", data.journey_description);
-      if (data.journey_description_ar) formData.append("journey_description_ar", data.journey_description_ar);
-      if (data.journey_one_media_alt) formData.append("journey_one_media_alt", data.journey_one_media_alt);
-      if (data.journey_one_media_alt_ar) formData.append("journey_one_media_alt_ar", data.journey_one_media_alt_ar);
-      if (data.journey_two_media_alt) formData.append("journey_two_media_alt", data.journey_two_media_alt);
-      if (data.journey_two_media_alt_ar) formData.append("journey_two_media_alt_ar", data.journey_two_media_alt_ar);
-      if (data.journey_three_media_alt) formData.append("journey_three_media_alt", data.journey_three_media_alt);
-      if (data.journey_three_media_alt_ar) formData.append("journey_three_media_alt_ar", data.journey_three_media_alt_ar);
+      if (data.journey_title)
+        formData.append("journey_title", data.journey_title);
+      if (data.journey_title_ar)
+        formData.append("journey_title_ar", data.journey_title_ar);
+      if (data.journey_description)
+        formData.append("journey_description", data.journey_description);
+      if (data.journey_description_ar)
+        formData.append("journey_description_ar", data.journey_description_ar);
+      if (data.journey_one_media_alt)
+        formData.append("journey_one_media_alt", data.journey_one_media_alt);
+      if (data.journey_one_media_alt_ar)
+        formData.append(
+          "journey_one_media_alt_ar",
+          data.journey_one_media_alt_ar
+        );
+      if (data.journey_two_media_alt)
+        formData.append("journey_two_media_alt", data.journey_two_media_alt);
+      if (data.journey_two_media_alt_ar)
+        formData.append(
+          "journey_two_media_alt_ar",
+          data.journey_two_media_alt_ar
+        );
+      if (data.journey_three_media_alt)
+        formData.append(
+          "journey_three_media_alt",
+          data.journey_three_media_alt
+        );
+      if (data.journey_three_media_alt_ar)
+        formData.append(
+          "journey_three_media_alt_ar",
+          data.journey_three_media_alt_ar
+        );
 
       // Why Choose Us section
-      if (data.why_choose_us_title) formData.append("why_choose_us_title", data.why_choose_us_title);
-      if (data.why_choose_us_title_ar) formData.append("why_choose_us_title_ar", data.why_choose_us_title_ar);
-      if (data.why_choose_us_description) formData.append("why_choose_us_description", data.why_choose_us_description);
-      if (data.why_choose_us_description_ar) formData.append("why_choose_us_description_ar", data.why_choose_us_description_ar);
+      if (data.why_choose_us_title)
+        formData.append("why_choose_us_title", data.why_choose_us_title);
+      if (data.why_choose_us_title_ar)
+        formData.append("why_choose_us_title_ar", data.why_choose_us_title_ar);
+      if (data.why_choose_us_description)
+        formData.append(
+          "why_choose_us_description",
+          data.why_choose_us_description
+        );
+      if (data.why_choose_us_description_ar)
+        formData.append(
+          "why_choose_us_description_ar",
+          data.why_choose_us_description_ar
+        );
 
       // Section titles
-      if (data.testimonial_title) formData.append("testimonial_title", data.testimonial_title);
-      if (data.testimonial_title_ar) formData.append("testimonial_title_ar", data.testimonial_title_ar);
+      if (data.testimonial_title)
+        formData.append("testimonial_title", data.testimonial_title);
+      if (data.testimonial_title_ar)
+        formData.append("testimonial_title_ar", data.testimonial_title_ar);
       if (data.client_title) formData.append("client_title", data.client_title);
-      if (data.client_title_ar) formData.append("client_title_ar", data.client_title_ar);
+      if (data.client_title_ar)
+        formData.append("client_title_ar", data.client_title_ar);
       if (data.news_title) formData.append("news_title", data.news_title);
-      if (data.news_title_ar) formData.append("news_title_ar", data.news_title_ar);
+      if (data.news_title_ar)
+        formData.append("news_title_ar", data.news_title_ar);
 
       // Add banner file uploads
       if (data.banner_media_desktop_path instanceof File) {
-        formData.append("banner_media_desktop_path", data.banner_media_desktop_path);
+        formData.append(
+          "banner_media_desktop_path",
+          data.banner_media_desktop_path
+        );
       }
       if (data.banner_media_mobile_path instanceof File) {
-        formData.append("banner_media_mobile_path", data.banner_media_mobile_path);
+        formData.append(
+          "banner_media_mobile_path",
+          data.banner_media_mobile_path
+        );
       }
 
       // Add journey image uploads
@@ -206,7 +313,10 @@ export default function AboutCmsForm() {
         formData.append("journey_two_media_path", data.journey_two_media_path);
       }
       if (data.journey_three_media_path instanceof File) {
-        formData.append("journey_three_media_path", data.journey_three_media_path);
+        formData.append(
+          "journey_three_media_path",
+          data.journey_three_media_path
+        );
       }
 
       await saveAboutCms(formData);
@@ -246,8 +356,13 @@ export default function AboutCmsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Tabs defaultValue="en" className="w-full">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            defaultValue="en"
+            className="w-full"
+          >
             <TabsList className="mb-4">
               <TabsTrigger value="en">English</TabsTrigger>
               <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
@@ -398,7 +513,10 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter why choose us title" {...field} />
+                          <Input
+                            placeholder="Enter why choose us title"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -438,7 +556,10 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter testimonial title" {...field} />
+                          <Input
+                            placeholder="Enter testimonial title"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -507,7 +628,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان الصفحة" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان الصفحة"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -529,7 +654,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان البانر" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان البانر"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -557,26 +686,16 @@ export default function AboutCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="banner_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>النص البديل</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
                     name="banner_button_text_ar"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>نص الزر</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل نص الزر" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل نص الزر"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -598,7 +717,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان الرحلة" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان الرحلة"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -623,55 +746,15 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_one_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>النص البديل للصورة 1</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_two_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>النص البديل للصورة 2</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_three_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>النص البديل للصورة 3</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </CardContent>
               </Card>
 
               {/* Why Choose Us Section - AR */}
               <Card>
                 <CardHeader>
-                  <CardTitle>قسم لماذا تختارنا (Why Choose Us Section)</CardTitle>
+                  <CardTitle>
+                    قسم لماذا تختارنا (Why Choose Us Section)
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <FormField
@@ -681,7 +764,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل العنوان" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل العنوان"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -722,7 +809,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان الشهادات" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان الشهادات"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -744,7 +835,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان العملاء" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان العملاء"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -766,7 +861,11 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>العنوان</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان الأخبار" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان الأخبار"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -819,13 +918,18 @@ export default function AboutCmsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {watchBannerMediaType === "image" ? "Image" : "Video"} (Desktop)
+                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
+                          (Desktop)
                         </FormLabel>
                         <FormControl>
                           <FileUpload
                             value={field.value}
                             onChange={field.onChange}
-                            accept={watchBannerMediaType === "image" ? "image/*" : "video/*"}
+                            accept={
+                              watchBannerMediaType === "image"
+                                ? "image/*"
+                                : "video/*"
+                            }
                             placeholder={`Upload desktop banner ${watchBannerMediaType}`}
                           />
                         </FormControl>
@@ -840,13 +944,18 @@ export default function AboutCmsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {watchBannerMediaType === "image" ? "Image" : "Video"} (Mobile)
+                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
+                          (Mobile)
                         </FormLabel>
                         <FormControl>
                           <FileUpload
                             value={field.value}
                             onChange={field.onChange}
-                            accept={watchBannerMediaType === "image" ? "image/*" : "video/*"}
+                            accept={
+                              watchBannerMediaType === "image"
+                                ? "image/*"
+                                : "video/*"
+                            }
                             placeholder={`Upload mobile banner ${watchBannerMediaType}`}
                           />
                         </FormControl>
@@ -864,7 +973,27 @@ export default function AboutCmsForm() {
                       <FormItem>
                         <FormLabel>Media Alt Text (English)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter media alt text" {...field} />
+                          <Input
+                            placeholder="Enter media alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="banner_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>النص البديل</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -984,6 +1113,61 @@ export default function AboutCmsForm() {
                         <FormLabel>Image 3 Alt Text (English)</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter alt text" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="journey_one_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>النص البديل للصورة 1</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="journey_two_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>النص البديل للصورة 2</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="journey_three_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>النص البديل للصورة 3</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
