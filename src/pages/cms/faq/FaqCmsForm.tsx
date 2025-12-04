@@ -376,6 +376,7 @@ export default function FaqCmsForm() {
                           value={field.value}
                           onChange={field.onChange}
                           accept="image/*"
+                          recommendedDimensions="1200px x 600px"
                           placeholder="Upload desktop banner image"
                         />
                       </FormControl>
@@ -396,6 +397,7 @@ export default function FaqCmsForm() {
                           onChange={field.onChange}
                           accept="image/*"
                           placeholder="Upload mobile banner image"
+                          recommendedDimensions="600px x 600px"
                         />
                       </FormControl>
                       <FormMessage />

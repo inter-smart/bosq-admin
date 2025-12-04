@@ -396,7 +396,7 @@ export default function SmartSpaceCalculatorForm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Calculator Image</CardTitle>
+              <CardTitle>Image</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -404,7 +404,7 @@ export default function SmartSpaceCalculatorForm() {
                 name="media_path"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Calculator Image</FormLabel>
+                    <FormLabel>Image</FormLabel>
 
                     <FormControl>
                       <FileUpload
@@ -413,6 +413,7 @@ export default function SmartSpaceCalculatorForm() {
                           field.onChange(file);
                           setImageFile(file);
                         }}
+                        recommendedDimensions="300px x 300px"
                         accept="image/*"
                         preview={true}
                       />

@@ -359,6 +359,7 @@ export default function FindYourFitsForm() {
                         }}
                         accept="image/*"
                         preview={true}
+                        recommendedDimensions="1920px x 1080px"
                       />
                     </FormControl>
                     <FormDescription>

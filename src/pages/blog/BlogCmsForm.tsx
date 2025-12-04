@@ -422,6 +422,7 @@ export default function BlogCmsForm() {
                           onChange={field.onChange}
                           accept="image/*"
                           placeholder="Upload desktop media"
+                          recommendedDimensions="1920px x 1080px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -441,6 +442,7 @@ export default function BlogCmsForm() {
                           onChange={field.onChange}
                           accept="image/*"
                           placeholder="Upload mobile media"
+                          recommendedDimensions="600px x 600px"
                         />
                       </FormControl>
                       <FormMessage />

@@ -451,6 +451,7 @@ export default function BlogsForm() {
                         }}
                         accept="image/*"
                         placeholder="Upload thumbnail image"
+                        recommendedDimensions="600px x 400px"
                         preview={true}
                       />
                     </FormControl>
@@ -460,57 +461,57 @@ export default function BlogsForm() {
                 )}
               />
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Image</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setDesktopImageFile(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload desktop blog image"
+                          preview={true}
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
 
-              <FormField
-                control={form.control}
-                name="media_desktop_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Desktop Image</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        value={field.value}
-                        onChange={(file) => {
-                          field.onChange(file);
-                          setDesktopImageFile(file);
-                        }}
-                        accept="image/*"
-                        placeholder="Upload desktop blog image"
-                        preview={true}
-                      />
-                    </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Image</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMobileImageFile(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload mobile blog image"
+                          recommendedDimensions="600px x 400px"
+                          preview={true}
+                        />
+                      </FormControl>
 
-              <FormField
-                control={form.control}
-                name="media_mobile_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mobile Image</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        value={field.value}
-                        onChange={(file) => {
-                          field.onChange(file);
-                          setMobileImageFile(file);
-                        }}
-                        accept="image/*"
-                        placeholder="Upload mobile blog image"
-                        preview={true}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-</div>
-
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
           </Card>
 

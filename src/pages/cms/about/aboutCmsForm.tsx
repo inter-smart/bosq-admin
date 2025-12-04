@@ -930,6 +930,7 @@ export default function AboutCmsForm() {
                                 ? "image/*"
                                 : "video/*"
                             }
+                            recommendedDimensions="1920px x 1080px"
                             placeholder={`Upload desktop banner ${watchBannerMediaType}`}
                           />
                         </FormControl>
@@ -956,6 +957,7 @@ export default function AboutCmsForm() {
                                 ? "image/*"
                                 : "video/*"
                             }
+                            recommendedDimensions="1920px x 1080px"
                             placeholder={`Upload mobile banner ${watchBannerMediaType}`}
                           />
                         </FormControl>
@@ -1019,6 +1021,7 @@ export default function AboutCmsForm() {
                               field.onChange(file);
                               setJourneyOneMediaFile(file);
                             }}
+                            recommendedDimensions="1920px x 1080px"
                             accept="image/*"
                             placeholder="Upload journey image 1"
                             preview={true}
@@ -1044,6 +1047,7 @@ export default function AboutCmsForm() {
                             }}
                             accept="image/*"
                             placeholder="Upload journey image 2"
+                            recommendedDimensions="1920px x 1080px"
                             preview={true}
                           />
                         </FormControl>
@@ -1067,6 +1071,7 @@ export default function AboutCmsForm() {
                             }}
                             accept="image/*"
                             placeholder="Upload journey image 3"
+                            recommendedDimensions="1920px x 1080px"
                             preview={true}
                           />
                         </FormControl>

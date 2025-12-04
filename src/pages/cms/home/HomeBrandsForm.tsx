@@ -260,6 +260,7 @@ export default function HomeBrandsForm() {
                         }}
                         accept="image/*"
                         preview={true}
+                        recommendedDimensions="400px x 400px"
                       />
                     </FormControl>
                     <FormDescription>
