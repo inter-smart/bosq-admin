@@ -13,7 +13,7 @@ export const contactCmsSchema = z.object({
   form_description_ar: commonValidations.optionalString("Form Description (Arabic)"),
 
   // Media Section
-  media_path: commonValidations.fileUpload,
+  media_path: commonValidations.validateFileUpload("Media"),
   media_alt: commonValidations.optionalString("Media Alt Text"),
   media_alt_ar: commonValidations.optionalString("Media Alt Text (Arabic)"),
   media_title: commonValidations.requiredString("Media Title"),

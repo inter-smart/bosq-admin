@@ -79,6 +79,15 @@ validateFileUpload: (fieldName: string) =>
   requiredUrl: (fieldName: string) =>
     z.string().regex(/^\/.*/, `${fieldName} must start with /`),
 
+externalUrl: (fieldName: string) =>
+  z
+    .string({ required_error: `${fieldName} is required` })
+    .refine(
+      (val) => /^https?:\/\/.+/.test(val),
+      `${fieldName} must be a valid external link starting with http:// or https://`
+    ),
+
+
   // Date validations
   dateString: z.string().min(1, "Date is required"),
 

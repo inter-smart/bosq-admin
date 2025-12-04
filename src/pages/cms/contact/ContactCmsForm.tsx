@@ -749,16 +749,31 @@ export default function ContactCmsForm() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Contact Media</label>
-                  <FileUpload
-                    value={mediaFile}
-                    onChange={setMediaFile}
-                    accept="image/*"
-                    placeholder="Upload contact media"
-                    preview={true}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Media</FormLabel>
+
+                      <FormControl>
+                        <FileUpload
+                          value={mediaFile}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMediaFile(file);
+                          }}
+                          recommendedDimensions="1920x1080"
+                          accept="image/*"
+                          placeholder="Upload contact media"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="space-y-4">
                   <FormField

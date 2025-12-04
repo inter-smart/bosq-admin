@@ -38,12 +38,11 @@ export default function HomeCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [aboutMediaFile, setAboutMediaFile] = useState<File | string | null>(null);
-  const [journeyMediaFile, setjourneyMediaFile] = useState<File | string | null>(null);
-  const [formMediaFile, setFormMediaFile] = useState<File | string | null>(null);
+  const [activeTab, setActiveTab] = useState("en");
 
   const form = useForm<HomeCmsFormData>({
     resolver: zodResolver(homeSchema),
+    shouldFocusError: true,
     defaultValues: {
       about_media_path: null,
       about_media_alt: "",
@@ -127,17 +126,6 @@ export default function HomeCmsForm() {
           form_media_alt: data.form_media_alt || "",
           form_media_alt_ar: data.form_media_alt_ar || "",
         });
-
-        // Set media file states with full URLs
-        if (data.about_media_path) {
-          setAboutMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.about_media_path}`);
-        }
-        if (data.journey_media_path) {
-          setjourneyMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}`);
-        }
-        if (data.form_media_path) {
-          setFormMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.form_media_path}`);
-        }
       }
     } catch (error) {
       console.log("No existing data found, starting with empty form");
@@ -145,6 +133,47 @@ export default function HomeCmsForm() {
       setInitialLoading(false);
     }
   };
+
+  const handleFormSubmit = form.handleSubmit(
+    async (data) => {
+      await onSubmit(data);
+    },
+    (errors) => {
+      // Define Arabic fields
+      const arabicFields: (keyof HomeCmsFormData)[] = [
+        "about_title_ar",
+        "about_description_ar",
+        "about_media_alt_ar",
+        "featured_title_ar",
+        "journey_title_ar",
+        "journey_description_ar",
+        "journey_media_alt_ar",
+        "project_title_ar",
+        "fits_title_ar",
+        "fits_description_ar",
+        "brands_title_ar",
+        "form_title_ar",
+        "form_description_ar",
+        "form_media_alt_ar",
+      ];
+
+      const firstErrorField = Object.keys(errors)[0] as keyof HomeCmsFormData;
+
+      if (firstErrorField) {
+        // Switch to appropriate tab
+        if (arabicFields.includes(firstErrorField)) {
+          setActiveTab("ar");
+        } else {
+          setActiveTab("en");
+        }
+
+        // Focus field after tab switch
+        setTimeout(() => {
+          form.setFocus(firstErrorField);
+        }, 100);
+      }
+    }
+  );
 
   const onSubmit = async (data: HomeCmsFormData) => {
     try {
@@ -158,7 +187,7 @@ export default function HomeCmsForm() {
       if (data.about_description_ar) formData.append("about_description_ar", data.about_description_ar);
       if (data.about_media_alt) formData.append("about_media_alt", data.about_media_alt);
       if (data.about_media_alt_ar) formData.append("about_media_alt_ar", data.about_media_alt_ar);
-      if (aboutMediaFile instanceof File) formData.append("about_media_path", aboutMediaFile);
+      if (data.about_media_path instanceof File) formData.append("about_media_path", data.about_media_path);
 
       // Featured Products Section
       if (data.featured_title) formData.append("featured_title", data.featured_title);
@@ -172,7 +201,7 @@ export default function HomeCmsForm() {
       if (data.journey_media_type) formData.append("journey_media_type", data.journey_media_type);
       if (data.journey_media_alt) formData.append("journey_media_alt", data.journey_media_alt);
       if (data.journey_media_alt_ar) formData.append("journey_media_alt_ar", data.journey_media_alt_ar);
-      if (journeyMediaFile instanceof File) formData.append("journey_media_path", journeyMediaFile);
+      if (data.journey_media_path instanceof File) formData.append("journey_media_path", data.journey_media_path);
 
       // Project Section
       if (data.project_title) formData.append("project_title", data.project_title);
@@ -195,7 +224,7 @@ export default function HomeCmsForm() {
       if (data.form_description_ar) formData.append("form_description_ar", data.form_description_ar);
       if (data.form_media_alt) formData.append("form_media_alt", data.form_media_alt);
       if (data.form_media_alt_ar) formData.append("form_media_alt_ar", data.form_media_alt_ar);
-      if (formMediaFile instanceof File) formData.append("form_media_path", formMediaFile);
+      if (data.form_media_path instanceof File) formData.append("form_media_path", data.form_media_path);
 
       await saveHomeCms(formData);
       toast({
@@ -231,10 +260,8 @@ export default function HomeCmsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, (err)=>{
-          console.log(err)
-        })} className="space-y-6">
-          <Tabs defaultValue="en" className="w-full">
+        <form onSubmit={handleFormSubmit} className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="mb-4">
               <TabsTrigger value="en">English</TabsTrigger>
               <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
@@ -693,16 +720,25 @@ export default function HomeCmsForm() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">About Section Media</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">About Media</label>
-                    <FileUpload
-                      value={aboutMediaFile}
-                      onChange={setAboutMediaFile}
-                      accept="image/*"
-                      placeholder="Upload about section media"
-                      preview={true}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="about_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>About Media</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload about section media"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <div className="space-y-4">
                     <FormField
@@ -765,18 +801,27 @@ export default function HomeCmsForm() {
                     )}
                   />
 
-                  <div>
-                    <label className="text-sm font-medium">
-                      Journey {watchJourneyMediaType === "image" ? "Image" : "Video"}
-                    </label>
-                    <FileUpload
-                      value={journeyMediaFile}
-                      onChange={setjourneyMediaFile}
-                      accept={watchJourneyMediaType === "image" ? "image/*" : "video/*"}
-                      placeholder={`Upload journey ${watchJourneyMediaType}`}
-                      preview={true}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="journey_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Journey {watchJourneyMediaType === "image" ? "Image" : "Video"}
+                        </FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept={watchJourneyMediaType === "image" ? "image/*" : "video/*"}
+                            placeholder={`Upload journey ${watchJourneyMediaType}`}
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -814,16 +859,25 @@ export default function HomeCmsForm() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Form Section Media</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Form Media</label>
-                    <FileUpload
-                      value={formMediaFile}
-                      onChange={setFormMediaFile}
-                      accept="image/*"
-                      placeholder="Upload form media"
-                      preview={true}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="form_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Form Media</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload form media"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <div className="space-y-4">
                     <FormField
