@@ -55,3 +55,27 @@ export const aboutCmsSchema = z.object({
 });
 
 export type AboutCmsFormData = z.infer<typeof aboutCmsSchema>;
+
+export const aboutTestimonialsSchema = z.object({
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  description: commonValidations.requiredText("Description"),
+  description_ar: commonValidations.requiredText("Description (Arabic)"),
+  name: commonValidations.requiredString("Name"),
+  name_ar: commonValidations.requiredString("Name (Arabic)"),
+  designation: commonValidations.requiredString("Designation"),
+  designation_ar: commonValidations.requiredString("Designation (Arabic)"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+export type AboutTestimonialsFormData = z.infer<typeof aboutTestimonialsSchema>;
+
+export const aboutJourneysSchema = z.object({
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+export type AboutJourneysFormData = z.infer<typeof aboutJourneysSchema>;

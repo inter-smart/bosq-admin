@@ -38,6 +38,10 @@ import ContactCmsForm from "./pages/cms/contact/ContactCmsForm";
 
 // About pages
 import AboutCmsForm from "./pages/cms/about/aboutCmsForm";
+import AboutTestimonialsList from "./pages/cms/about/AboutTestimonialsList";
+import AboutTestimonialsForm from "./pages/cms/about/AboutTestimonialsForm";
+import AboutJourneysList from "./pages/cms/about/AboutJourneysList";
+import AboutJourneysForm from "./pages/cms/about/AboutJourneysForm";
 
 // Blog pages
 import BlogCmsForm from "./pages/blog/BlogCmsForm";
@@ -324,6 +328,62 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AboutCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* About Testimonials Routes */}
+          <Route
+            path="/about-testimonials"
+            element={
+              <ProtectedRoute>
+                <AboutTestimonialsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/about-testimonials/create"
+            element={
+              <ProtectedRoute>
+                <AboutTestimonialsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/about-testimonials/edit/:id"
+            element={
+              <ProtectedRoute>
+                <AboutTestimonialsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* About Journeys Routes */}
+          <Route
+            path="/about-journeys"
+            element={
+              <ProtectedRoute>
+                <AboutJourneysList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/about-journeys/create"
+            element={
+              <ProtectedRoute>
+                <AboutJourneysForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/about-journeys/edit/:id"
+            element={
+              <ProtectedRoute>
+                <AboutJourneysForm />
               </ProtectedRoute>
             }
           />

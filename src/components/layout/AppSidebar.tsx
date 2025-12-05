@@ -16,6 +16,8 @@ import {
   FolderOpen,
   BookOpen,
   Award,
+  MessageSquareQuote,
+  MapPin,
 } from "lucide-react";
 
 import {
@@ -56,6 +58,8 @@ const cmsSection = [
     icon: Info,
     subItems: [
       { title: "About CMS", url: "/about-cms", icon: FileText },
+      { title: "About Testimonials", url: "/about-testimonials", icon: MessageSquareQuote },
+      { title: "About Journeys", url: "/about-journeys", icon: MapPin },
     ],
   },
   {
@@ -112,7 +116,7 @@ export function AppSidebar() {
     }
 
     // Auto-open About section
-    if (["/about-cms"].some((r) => path.includes(r))) {
+    if (["/about-cms", "/about-testimonials", "/about-journeys"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setAboutOpen(true);
     }
