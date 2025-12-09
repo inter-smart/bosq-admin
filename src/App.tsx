@@ -42,7 +42,8 @@ import AboutTestimonialsList from "./pages/cms/about/AboutTestimonialsList";
 import AboutTestimonialsForm from "./pages/cms/about/AboutTestimonialsForm";
 import AboutJourneysList from "./pages/cms/about/AboutJourneysList";
 import AboutJourneysForm from "./pages/cms/about/AboutJourneysForm";
-
+import AboutOurClientsList from "./pages/cms/about/AboutOurClientsList";
+import AboutOurClientsForm from "./pages/cms/about/AboutOurClientsForm";
 // Blog pages
 import BlogCmsForm from "./pages/blog/BlogCmsForm";
 import BlogsList from "./pages/blog/BlogsList";
@@ -384,6 +385,33 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AboutJourneysForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* About Our Clients Routes */}
+          <Route
+            path="/about-our-clients"
+            element={
+              <ProtectedRoute>
+                <AboutOurClientsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/about-our-clients/create"
+            element={
+              <ProtectedRoute>
+                <AboutOurClientsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/about-our-clients/edit/:id"
+            element={
+              <ProtectedRoute>
+                <AboutOurClientsForm />
               </ProtectedRoute>
             }
           />

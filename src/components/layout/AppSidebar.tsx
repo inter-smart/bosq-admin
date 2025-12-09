@@ -18,6 +18,7 @@ import {
   Award,
   MessageSquareQuote,
   MapPin,
+  Users,
 } from "lucide-react";
 
 import {
@@ -60,6 +61,7 @@ const cmsSection = [
       { title: "About CMS", url: "/about-cms", icon: FileText },
       { title: "About Testimonials", url: "/about-testimonials", icon: MessageSquareQuote },
       { title: "About Journeys", url: "/about-journeys", icon: MapPin },
+      { title: "About Our Clients", url: "/about-our-clients", icon: Users },
     ],
   },
   {
@@ -116,7 +118,7 @@ export function AppSidebar() {
     }
 
     // Auto-open About section
-    if (["/about-cms", "/about-testimonials", "/about-journeys"].some((r) => path.includes(r))) {
+    if (["/about-cms", "/about-testimonials", "/about-journeys", "/about-our-clients"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setAboutOpen(true);
     }

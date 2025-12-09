@@ -69,9 +69,18 @@ export const aboutTestimonialsSchema = z.object({
   status: z.boolean(),
 });
 
-export type AboutTestimonialsFormData = z.infer<typeof aboutTestimonialsSchema>;
 
 export const aboutJourneysSchema = z.object({
+  media_path: commonValidations.validateFileUpload("Image"),
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+
+export const aboutClientsSchema = z.object({
+  media_path: commonValidations.validateFileUpload("Client Image"),
   title: commonValidations.requiredString("Title"),
   title_ar: commonValidations.requiredString("Title (Arabic)"),
   sort_order: commonValidations.sortOrder(),
@@ -79,3 +88,7 @@ export const aboutJourneysSchema = z.object({
 });
 
 export type AboutJourneysFormData = z.infer<typeof aboutJourneysSchema>;
+
+export type AboutTestimonialsFormData = z.infer<typeof aboutTestimonialsSchema>;
+
+export type AboutClientsFormData = z.infer<typeof aboutClientsSchema>;

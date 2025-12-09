@@ -1,7 +1,7 @@
 import { apiCall } from '@/utils/apiUtils';
 
 export interface AboutJourneys {
-  id?: number;
+  id: number;
   title: string;
   title_ar: string;
   sort_order: number;
