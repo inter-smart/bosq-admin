@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -35,10 +34,10 @@ export default function FindYourFitsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
  
   const form = useForm<FindYourFitFormData>({
     resolver: zodResolver(findYourFitSchema),
+    shouldFocusError: true, // Enable auto-focus on error
     defaultValues: {
       title: "",
       title_ar: "",
@@ -93,39 +92,26 @@ export default function FindYourFitsForm() {
 
 
 
-    // Custom submit handler with validation
-    const handleFormSubmit = form.handleSubmit(
-      // Success callback
-      async (data) => {
-        await onSubmit(data);
-      },
-      // Error callback - runs when validation fails
-      (errors) => {
-        // Define Arabic fields
-        const arabicFields: (keyof FindYourFitFormData)[] = [
-          "title_ar",
-          "description_ar",
-          "media_alt_ar",
-        ];
-  
-        // Get the first error field
-        const firstErrorField = Object.keys(errors)[0] as keyof FindYourFitFormData;
-  
-        if (firstErrorField) {
-          // Check if the error is in an Arabic field
-          if (arabicFields.includes(firstErrorField)) {
-            setActiveTab("ar");
-          } else {
-            setActiveTab("en");
-          }
-  
-          // Focus the field after tab switch
-          setTimeout(() => {
-            form.setFocus(firstErrorField);
-          }, 100);
-        }
+  // Custom submit handler with validation
+  const handleFormSubmit = form.handleSubmit(
+    // Success callback
+    async (data) => {
+      await onSubmit(data);
+    },
+    // Error callback - runs when validation fails
+    (errors) => {
+      // Get the first error field and focus it
+      const firstErrorField = Object.keys(
+        errors
+      )[0] as keyof FindYourFitFormData;
+
+      if (firstErrorField) {
+        setTimeout(() => {
+          form.setFocus(firstErrorField);
+        }, 100);
       }
-    );
+    }
+  );
   
 
 
@@ -218,14 +204,10 @@ export default function FindYourFitsForm() {
             <CardHeader>
               <CardTitle>Content</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="en">English</TabsTrigger>
-                  <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="en" className="space-y-4">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title"
@@ -263,10 +245,10 @@ export default function FindYourFitsForm() {
                     name="media_alt"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Image Alt Text</FormLabel>
+                        <FormLabel>Alt Text</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter image alt text"
+                            placeholder="Enter image alt text for accessibility"
                             {...field}
                           />
                         </FormControl>
@@ -274,15 +256,16 @@ export default function FindYourFitsForm() {
                       </FormItem>
                     )}
                   />
-                </TabsContent>
+                </div>
 
-                <TabsContent value="ar" className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>العنوان (Title)</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل العنوان"
@@ -300,7 +283,7 @@ export default function FindYourFitsForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>الوصف (Description)</FormLabel>
+                        <FormLabel>Description (الوصف)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل الوصف"
@@ -319,9 +302,7 @@ export default function FindYourFitsForm() {
                     name="media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          النص البديل للصورة (Image Alt Text)
-                        </FormLabel>
+                        <FormLabel>Alt Text (النص البديل للصورة)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل للصورة"
@@ -333,8 +314,8 @@ export default function FindYourFitsForm() {
                       </FormItem>
                     )}
                   />
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

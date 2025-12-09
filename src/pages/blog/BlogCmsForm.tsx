@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
@@ -24,7 +23,6 @@ export default function BlogCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("en");
 
   const form = useForm<BlogCmsFormData>({
     resolver: zodResolver(blogCmsSchema),
@@ -90,28 +88,10 @@ export default function BlogCmsForm() {
     },
     // Error callback - runs when validation fails
     (errors) => {
-      // Define Arabic fields
-      const arabicFields: (keyof BlogCmsFormData)[] = [
-        "title_ar",
-        "banner_title_ar",
-        "banner_description_ar",
-        "media_alt_ar",
-        "popular_blogs_title_ar",
-        "related_blogs_title_ar",
-      ];
-
-      // Get the first error field
+      // Get the first error field and focus it
       const firstErrorField = Object.keys(errors)[0] as keyof BlogCmsFormData;
 
       if (firstErrorField) {
-        // Check if the error is in an Arabic field
-        if (arabicFields.includes(firstErrorField)) {
-          setActiveTab("ar");
-        } else {
-          setActiveTab("en");
-        }
-
-        // Focus the field after tab switch
         setTimeout(() => {
           form.setFocus(firstErrorField);
         }, 100);
@@ -182,47 +162,72 @@ export default function BlogCmsForm() {
 
       <Form {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
+          {/* Page Title Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Blog Content</CardTitle>
+              <CardTitle>Page Title Section</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="en">English</TabsTrigger>
-                  <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-                </TabsList>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter blog title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <TabsContent value="en" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter blog title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                {/* Arabic */}
+                <FormField
+                  control={form.control}
+                  name="title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان المدونة"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-                    <FormField
-                      control={form.control}
-                      name="banner_title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Banner Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter banner title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+          {/* Banner Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Banner Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter banner title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
@@ -233,6 +238,7 @@ export default function BlogCmsForm() {
                         <FormControl>
                           <Textarea
                             placeholder="Enter banner description"
+                            rows={4}
                             {...field}
                           />
                         </FormControl>
@@ -240,100 +246,101 @@ export default function BlogCmsForm() {
                       </FormItem>
                     )}
                   />
+                </div>
 
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="media_alt"
+                    name="banner_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Alt Text</FormLabel>
+                        <FormLabel>Banner Title (عنوان البانر)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter media alt text" {...field} />
+                          <Input
+                            placeholder="أدخل عنوان البانر"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="popular_blogs_title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Popular Blogs Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter popular blogs title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="related_blogs_title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Related Blogs Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter related blogs title" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="ar" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="title_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>العنوان (Title)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل عنوان المدونة"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="banner_title_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>عنوان البانر (Banner Title)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل عنوان البانر"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
 
                   <FormField
                     control={form.control}
                     name="banner_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>وصف البانر (Banner Description)</FormLabel>
+                        <FormLabel>Banner Description (وصف البانر)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف البانر"
+                            rows={4}
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+     
+          {/* Section Titles */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Section Titles</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="popular_blogs_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Popular Blogs Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter popular blogs title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="related_blogs_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Related Blogs Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter related blogs title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Arabic Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="popular_blogs_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Popular Blogs Title (عنوان المدونات الشائعة)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان المدونات الشائعة"
                             {...field}
                             dir="rtl"
                           />
@@ -345,13 +352,13 @@ export default function BlogCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="media_alt_ar"
+                    name="related_blogs_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل (Media Alt Text)</FormLabel>
+                        <FormLabel>Related Blogs Title (عنوان المدونات ذات الصلة)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="أدخل النص البديل للصورة"
+                            placeholder="أدخل عنوان المدونات ذات الصلة"
                             {...field}
                             dir="rtl"
                           />
@@ -360,46 +367,8 @@ export default function BlogCmsForm() {
                       </FormItem>
                     )}
                   />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="popular_blogs_title_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>عنوان المدونات الشائعة (Popular Blogs Title)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل عنوان المدونات الشائعة"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="related_blogs_title_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>عنوان المدونات ذات الصلة (Related Blogs Title)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل عنوان المدونات ذات الصلة"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -449,6 +418,39 @@ export default function BlogCmsForm() {
                     </FormItem>
                   )}
                 />
+
+                   <FormField
+                  control={form.control}
+                  name="media_alt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Alt Text</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter media alt text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_alt_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل النص البديل للصورة"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
               </div>
             </CardContent>
           </Card>

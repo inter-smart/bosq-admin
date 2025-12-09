@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -40,10 +39,10 @@ export default function AboutCmsForm() {
   const [journeyThreeMediaFile, setJourneyThreeMediaFile] = useState<
     File | string | null
   >(null);
-  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<AboutCmsFormData>({
     resolver: zodResolver(aboutCmsSchema),
+    shouldFocusError: true, // Enable auto-focus on error
     defaultValues: {
       title: "",
       title_ar: "",
@@ -161,37 +160,12 @@ export default function AboutCmsForm() {
     },
     // Error callback - runs when validation fails
     (errors) => {
-      // Define Arabic fields
-      const arabicFields: (keyof AboutCmsFormData)[] = [
-        "title_ar",
-        "banner_title_ar",
-        "banner_description_ar",
-        "banner_media_alt_ar",
-        "banner_button_text_ar",
-        "journey_title_ar",
-        "journey_description_ar",
-        "journey_one_media_alt_ar",
-        "journey_two_media_alt_ar",
-        "journey_three_media_alt_ar",
-        "why_choose_us_title_ar",
-        "why_choose_us_description_ar",
-        "testimonial_title_ar",
-        "client_title_ar",
-        "news_title_ar",
-      ];
-
-      // Get the first error field
-      const firstErrorField = Object.keys(errors)[0] as keyof AboutCmsFormData;
+      // Get the first error field and focus it
+      const firstErrorField = Object.keys(
+        errors
+      )[0] as keyof AboutCmsFormData;
 
       if (firstErrorField) {
-        // Check if the error is in an Arabic field
-        if (arabicFields.includes(firstErrorField)) {
-          setActiveTab("ar");
-        } else {
-          setActiveTab("en");
-        }
-
-        // Focus the field after tab switch
         setTimeout(() => {
           form.setFocus(firstErrorField);
         }, 100);
@@ -357,47 +331,59 @@ export default function AboutCmsForm() {
 
       <Form {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            defaultValue="en"
-            className="w-full"
-          >
-            <TabsList className="mb-4">
-              <TabsTrigger value="en">English</TabsTrigger>
-              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-            </TabsList>
+          {/* Page Title Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Page Title Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter page title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* English Content */}
-            <TabsContent value="en" className="space-y-6">
-              {/* Page Title Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Page Title Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter page title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                {/* Arabic */}
+                <FormField
+                  control={form.control}
+                  name="title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الصفحة"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Banner Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Banner Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+          {/* Banner Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Banner Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="banner_title"
@@ -457,15 +443,78 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Journey Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Journey Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان البانر"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="أدخل وصف البانر"
+                            rows={4}
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_button_text_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Text (نص الزر)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل نص الزر"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Journey Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Journey Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="journey_title"
@@ -497,15 +546,60 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Why Choose Us Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Why Choose Us Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="journey_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان الرحلة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="journey_description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="أدخل وصف الرحلة"
+                            rows={4}
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Why Choose Us Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Why Choose Us Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="why_choose_us_title"
@@ -540,229 +634,16 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Testimonial Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Testimonial Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="testimonial_title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter testimonial title"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Client Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Client Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="client_title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter client title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* News Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>News Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="news_title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter news title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Arabic Content */}
-            <TabsContent value="ar" className="space-y-6">
-              {/* Page Title Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم عنوان الصفحة (Page Title Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الصفحة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Banner Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم البانر (Banner Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="banner_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان البانر"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="banner_description_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>الوصف</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف البانر"
-                            rows={4}
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="banner_button_text_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>نص الزر</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل نص الزر"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Journey Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم الرحلة (Journey Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="journey_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الرحلة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_description_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>الوصف</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف الرحلة"
-                            rows={4}
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Why Choose Us Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    قسم لماذا تختارنا (Why Choose Us Section)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="why_choose_us_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>العنوان</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل العنوان"
@@ -780,7 +661,7 @@ export default function AboutCmsForm() {
                     name="why_choose_us_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>الوصف</FormLabel>
+                        <FormLabel>Description (الوصف)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل الوصف"
@@ -793,88 +674,140 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Testimonial Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم الشهادات (Testimonial Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="testimonial_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الشهادات"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+          {/* Testimonial Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Testimonial Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="testimonial_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter testimonial title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Client Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم العملاء (Client Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="client_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان العملاء"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                <FormField
+                  control={form.control}
+                  name="testimonial_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الشهادات"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* News Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم الأخبار (News Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="news_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الأخبار"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          {/* Client Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Client Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="client_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter client title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="client_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان العملاء"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* News Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>News Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="news_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter news title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="news_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الأخبار"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
 
           {/* Media Uploads Section - Outside Tabs */}
           <Card>

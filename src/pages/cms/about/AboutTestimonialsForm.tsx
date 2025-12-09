@@ -15,7 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -38,10 +37,10 @@ export default function AboutTestimonialsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [activeTab, setActiveTab] = useState("en");
 
   const form = useForm<AboutTestimonialsFormData>({
     resolver: zodResolver(aboutTestimonialsSchema),
+    shouldFocusError: true, // Enable auto-focus on error
     defaultValues: {
       title: "",
       title_ar: "",
@@ -93,35 +92,7 @@ export default function AboutTestimonialsForm() {
     }
   };
 
-  const handleFormSubmit = form.handleSubmit(
-    // Success callback
-    async (data) => {
-      await onSubmit(data);
-    },
-    // Error callback - auto-switch to tab with error
-    (errors) => {
-      const arabicFields: (keyof AboutTestimonialsFormData)[] = [
-        "title_ar",
-        "description_ar",
-        "name_ar",
-        "designation_ar",
-      ];
 
-      const firstErrorField = Object.keys(errors)[0] as keyof AboutTestimonialsFormData;
-
-      if (firstErrorField) {
-        if (arabicFields.includes(firstErrorField)) {
-          setActiveTab("ar");
-        } else {
-          setActiveTab("en");
-        }
-
-        setTimeout(() => {
-          form.setFocus(firstErrorField);
-        }, 100);
-      }
-    }
-  );
 
   const onSubmit = async (data: AboutTestimonialsFormData) => {
     try {
@@ -195,20 +166,15 @@ export default function AboutTestimonialsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="en">English</TabsTrigger>
-              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-            </TabsList>
-
-            {/* English Tab */}
-            <TabsContent value="en" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Testimonial Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Testimonial Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title"
@@ -268,23 +234,16 @@ export default function AboutTestimonialsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
 
-            {/* Arabic Tab */}
-            <TabsContent value="ar" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>معلومات الشهادة (Testimonial Information)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>العنوان (Title)</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان الشهادة"
@@ -302,7 +261,7 @@ export default function AboutTestimonialsForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>الوصف (Description)</FormLabel>
+                        <FormLabel>Description (الوصف)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف الشهادة"
@@ -321,7 +280,7 @@ export default function AboutTestimonialsForm() {
                     name="name_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>الاسم (Name)</FormLabel>
+                        <FormLabel>Name (الاسم)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل اسم الشخص"
@@ -339,7 +298,7 @@ export default function AboutTestimonialsForm() {
                     name="designation_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>التسمية (Designation)</FormLabel>
+                        <FormLabel>Designation (التسمية)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل التسمية/الدور"
@@ -351,10 +310,10 @@ export default function AboutTestimonialsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Settings Card - Outside Tabs */}
           <Card>

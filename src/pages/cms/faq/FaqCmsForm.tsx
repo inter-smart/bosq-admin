@@ -12,12 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
@@ -30,7 +24,6 @@ export default function FaqCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<FaqCmsFormData>({
     resolver: zodResolver(faqCmsSchema),
@@ -83,42 +76,23 @@ export default function FaqCmsForm() {
     }
   };
 
-    // Custom submit handler with validation
-    const handleFormSubmit = form.handleSubmit(
-      // Success callback
-      async (data) => {
-        await onSubmit(data);
-      },
-      // Error callback - runs when validation fails
-      (errors) => {
-        // Define Arabic fields
-        const arabicFields: (keyof FaqCmsFormData)[] = [
-          "banner_title_ar",
-          "title_ar",
-          "question_title_ar",
-          "question_description_ar"
-        ];
-  
-        // Get the first error field
-        const firstErrorField = Object.keys(errors)[0] as keyof FaqCmsFormData;
-  
-        if (firstErrorField) {
-          // Check if the error is in an Arabic field
-          if (arabicFields.includes(firstErrorField)) {
-            setActiveTab("ar");
-          } else {
-            setActiveTab("en");
-          }
-  
-          // Focus the field after tab switch
-          setTimeout(() => {
-            form.setFocus(firstErrorField);
-          }, 100);
-        }
-      }
-    );
-  
+  // Custom submit handler with validation
+  const handleFormSubmit = form.handleSubmit(
+    // Success callback
+    async (data) => {
+      await onSubmit(data);
+    },
+    // Error callback - runs when validation fails
+    (errors) => {
+      const firstErrorField = Object.keys(errors)[0] as keyof FaqCmsFormData;
 
+      if (firstErrorField) {
+        setTimeout(() => {
+          form.setFocus(firstErrorField);
+        }, 100);
+      }
+    }
+  );
 
   const onSubmit = async (data: FaqCmsFormData) => {
     try {
@@ -178,64 +152,95 @@ export default function FaqCmsForm() {
 
       <Form {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="en">English</TabsTrigger>
-              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-            </TabsList>
+          {/* Banner Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Banner Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English */}
+                <FormField
+                  control={form.control}
+                  name="banner_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Banner Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter banner title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* English Content */}
-            <TabsContent value="en" className="space-y-6">
-              {/* Banner Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Banner Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="banner_title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Banner Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter banner title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                {/* Arabic */}
+                <FormField
+                  control={form.control}
+                  name="banner_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Banner Title (عنوان البانر)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="أدخل عنوان البانر" {...field} dir="rtl" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Page Title - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Page Title</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter page title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+          {/* Page Title */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Page Title</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter page title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* FAQ Section Titles - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>FAQ Section Titles</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic */}
+                <FormField
+                  control={form.control}
+                  name="title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="أدخل عنوان الصفحة" {...field} dir="rtl" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* FAQ Section Titles */}
+          <Card>
+            <CardHeader>
+              <CardTitle>FAQ Section Titles</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="question_title"
@@ -266,68 +271,16 @@ export default function FaqCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
+                </div>
 
-            {/* Arabic Content */}
-            <TabsContent value="ar" className="space-y-6">
-              {/* Banner Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم البانر (Banner Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="banner_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>عنوان البانر</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل عنوان البانر" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Page Title - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>عنوان الصفحة (Page Title)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل عنوان الصفحة" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* FAQ Section Titles - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم عناوين الأسئلة الشائعة (FAQ Section Titles)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="question_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>عنوان الأسئلة</FormLabel>
+                        <FormLabel>Question Title (عنوان الأسئلة)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان الأسئلة" {...field} dir="rtl" />
                         </FormControl>
@@ -341,7 +294,7 @@ export default function FaqCmsForm() {
                     name="question_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>وصف الأسئلة</FormLabel>
+                        <FormLabel>Question Description (وصف الأسئلة)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل وصف الأسئلة"
@@ -353,12 +306,12 @@ export default function FaqCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Media Uploads Section - Outside Tabs */}
+          {/* Media Uploads Section */}
           <Card>
             <CardHeader>
               <CardTitle>Media Uploads</CardTitle>

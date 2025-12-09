@@ -33,7 +33,6 @@ import {
   fetchFaqListList,
   deleteFaqList,
   FaqList,
-  updateFaqList,
 } from "@/services/cms/faq/faqListApi";
 import {
   fetchFaqCategoryList,
@@ -42,6 +41,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
+import { renderHTML } from "@/lib/utils";
 
 export default function FaqListList() {
   const navigate = useNavigate();
@@ -147,7 +147,7 @@ export default function FaqListList() {
       header: "Answer",
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground max-w-[200px] truncate">
-          {row.getValue("answer")}
+          {renderHTML(row.getValue("answer"))}
         </div>
       ),
     },

@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -45,7 +44,6 @@ export default function BlogsForm() {
   const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
     null
   );
-  const [activeTab, setActiveTab] = useState("en");
 
   const form = useForm<BlogFormData>({
     resolver: zodResolver(blogSchema),
@@ -121,41 +119,6 @@ export default function BlogsForm() {
     }
   };
 
-  // Custom submit handler with validation
-  const handleFormSubmit = form.handleSubmit(
-    // Success callback
-    async (data) => {
-      await onSubmit(data);
-    },
-    // Error callback - runs when validation fails
-    (errors) => {
-      console.log(errors);
-      // Define Arabic fields
-      const arabicFields: (keyof BlogFormData)[] = [
-        "title_ar",
-        "description_ar",
-        "media_alt_ar",
-        "thumbnail_alt_ar",
-      ];
-
-      // Get the first error field
-      const firstErrorField = Object.keys(errors)[0] as keyof BlogFormData;
-
-      if (firstErrorField) {
-        // Check if the error is in an Arabic field
-        if (arabicFields.includes(firstErrorField)) {
-          setActiveTab("ar");
-        } else {
-          setActiveTab("en");
-        }
-
-        // Focus the field after tab switch
-        setTimeout(() => {
-          form.setFocus(firstErrorField);
-        }, 100);
-      }
-    }
-  );
 
   const onSubmit = async (data: BlogFormData) => {
     try {
@@ -248,23 +211,15 @@ export default function BlogsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Blog Content</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="w-full"
-              >
-                <TabsList className="mb-4">
-                  <TabsTrigger value="en">English</TabsTrigger>
-                  <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="en" className="space-y-4">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title"
@@ -296,41 +251,39 @@ export default function BlogsForm() {
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="media_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Media Alt Text</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter media alt text for accessibility"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter media alt text for accessibility"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="thumbnail_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Thumbnail Alt Text</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter thumbnail alt text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="thumbnail_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Thumbnail Alt Text</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter thumbnail alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <FormField
                     control={form.control}
@@ -345,15 +298,16 @@ export default function BlogsForm() {
                       </FormItem>
                     )}
                   />
-                </TabsContent>
+                </div>
 
-                <TabsContent value="ar" className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>العنوان (Title)</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونة"
@@ -371,7 +325,7 @@ export default function BlogsForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>الوصف (Description)</FormLabel>
+                        <FormLabel>Description (الوصف)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             dir="rtl"
@@ -384,49 +338,43 @@ export default function BlogsForm() {
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            النص البديل للوسائط (Media Alt Text)
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل النص البديل للوسائط"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <FormField
+                    control={form.control}
+                    name="media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (النص البديل للوسائط)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل للوسائط"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormField
-                      control={form.control}
-                      name="thumbnail_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            النص البديل للصورة المصغرة (Thumbnail Alt Text)
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل النص البديل للصورة المصغرة"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </TabsContent>
-              </Tabs>
+                  <FormField
+                    control={form.control}
+                    name="thumbnail_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Thumbnail Alt Text (النص البديل للصورة المصغرة)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل للصورة المصغرة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 

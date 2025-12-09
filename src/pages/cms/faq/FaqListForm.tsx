@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -41,7 +40,6 @@ export default function FaqListForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
@@ -113,41 +111,6 @@ export default function FaqListForm() {
     }
   };
 
-
-    // Custom submit handler with validation
-    const handleFormSubmit = form.handleSubmit(
-      // Success callback
-      async (data) => {
-        await onSubmit(data);
-      },
-      // Error callback - runs when validation fails
-      (errors) => {
-        // Define Arabic fields
-        const arabicFields: (keyof FaqListFormData)[] = [
-          "question_ar",
-          "answer_ar",
-        ];
-  
-        // Get the first error field
-        const firstErrorField = Object.keys(errors)[0] as keyof FaqListFormData;
-  
-        if (firstErrorField) {
-          // Check if the error is in an Arabic field
-          if (arabicFields.includes(firstErrorField)) {
-            setActiveTab("ar");
-          } else {
-            setActiveTab("en");
-          }
-  
-          // Focus the field after tab switch
-          setTimeout(() => {
-            form.setFocus(firstErrorField);
-          }, 100);
-        }
-      }
-    );
-  
-
   const onSubmit = async (data: FaqListFormData) => {
     try {
       setLoading(true);
@@ -218,19 +181,15 @@ export default function FaqListForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="en">English</TabsTrigger>
-              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="en" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>FAQ Content</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>FAQ Content</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="question"
@@ -261,55 +220,16 @@ export default function FaqListForm() {
                       </FormItem>
                     )}
                   />
+                </div>
 
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Category</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value))
-                          }
-                          value={field.value ? String(field.value) : ""}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem
-                                key={category.id}
-                                value={String(category.id)}
-                              >
-                                {category.title}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="ar" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>محتوى الأسئلة الشائعة (FAQ Content)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="question_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>السؤال</FormLabel>
+                        <FormLabel>Question (السؤال)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل سؤال الأسئلة الشائعة"
@@ -327,7 +247,7 @@ export default function FaqListForm() {
                     name="answer_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>الإجابة</FormLabel>
+                        <FormLabel>Answer (الإجابة)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل إجابة الأسئلة الشائعة"
@@ -339,43 +259,46 @@ export default function FaqListForm() {
                       </FormItem>
                     )}
                   />
+                </div>
+              </div>
 
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>الفئة</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(parseInt(value))
-                          }
-                          value={field.value ? String(field.value) : ""}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="اختر فئة" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem
-                                key={category.id}
-                                value={String(category.id)}
-                              >
-                                {category.title}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+              {/* Category Field - Full Width */}
+              <div className="mt-4">
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={(value) =>
+                          field.onChange(parseInt(value))
+                        }
+                        value={field.value ? String(field.value) : ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem
+                              key={category.id}
+                              value={String(category.id)}
+                            >
+                              {category.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>

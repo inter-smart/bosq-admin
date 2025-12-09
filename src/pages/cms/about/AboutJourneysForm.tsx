@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -37,7 +36,6 @@ export default function AboutJourneysForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [activeTab, setActiveTab] = useState("en");
 
   const form = useForm<AboutJourneysFormData>({
     resolver: zodResolver(aboutJourneysSchema),
@@ -80,32 +78,7 @@ export default function AboutJourneysForm() {
     }
   };
 
-  const handleFormSubmit = form.handleSubmit(
-    // Success callback
-    async (data) => {
-      await onSubmit(data);
-    },
-    // Error callback - auto-switch to tab with error
-    (errors) => {
-      const arabicFields: (keyof AboutJourneysFormData)[] = [
-        "title_ar",
-      ];
 
-      const firstErrorField = Object.keys(errors)[0] as keyof AboutJourneysFormData;
-
-      if (firstErrorField) {
-        if (arabicFields.includes(firstErrorField)) {
-          setActiveTab("ar");
-        } else {
-          setActiveTab("en");
-        }
-
-        setTimeout(() => {
-          form.setFocus(firstErrorField);
-        }, 100);
-      }
-    }
-  );
 
   const onSubmit = async (data: AboutJourneysFormData) => {
     try {
@@ -173,67 +146,52 @@ export default function AboutJourneysForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} defaultValue="en" className="w-full">
-            <TabsList className="mb-4">
-              <TabsTrigger value="en">English</TabsTrigger>
-              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-            </TabsList>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Journey Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Journey Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter journey title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* English Tab */}
-            <TabsContent value="en" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Journey Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter journey title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
+                {/* Arabic */}
+                <FormField
+                  control={form.control}
+                  name="title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الرحلة"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Arabic Tab */}
-            <TabsContent value="ar" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>معلومات الرحلة (Journey Information)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان (Title)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الرحلة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          {/* Settings Card - Outside Tabs */}
+          {/* Settings */}
           <Card>
             <CardHeader>
               <CardTitle>Settings</CardTitle>

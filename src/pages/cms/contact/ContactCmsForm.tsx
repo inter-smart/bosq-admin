@@ -12,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
@@ -28,7 +27,6 @@ export default function ContactCmsForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [mediaFile, setMediaFile] = useState<File | string | null>(null);
-  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
   const form = useForm<ContactCmsFormData>({
     resolver: zodResolver(contactCmsSchema),
@@ -122,34 +120,12 @@ export default function ContactCmsForm() {
     },
     // Error callback - runs when validation fails
     (errors) => {
-      // Define Arabic fields
-      const arabicFields: (keyof ContactCmsFormData)[] = [
-        "title_ar",
-        "form_title_ar",
-        "form_description_ar",
-        "media_title_ar",
-        "media_description_ar",
-        "email_title_ar",
-        "phone_title_ar",
-        "address_title_ar",
-        "address_ar",
-        "social_media_title_ar",
-      ];
-
-      // Get the first error field
+      // Get the first error field and focus it
       const firstErrorField = Object.keys(
         errors
       )[0] as keyof ContactCmsFormData;
 
       if (firstErrorField) {
-        // Check if the error is in an Arabic field
-        if (arabicFields.includes(firstErrorField)) {
-          setActiveTab("ar");
-        } else {
-          setActiveTab("en");
-        }
-
-        // Focus the field after tab switch
         setTimeout(() => {
           form.setFocus(firstErrorField);
         }, 100);
@@ -258,47 +234,59 @@ export default function ContactCmsForm() {
 
       <Form {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            defaultValue="en"
-            className="w-full"
-          >
-            <TabsList className="mb-4">
-              <TabsTrigger value="en">English</TabsTrigger>
-              <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-            </TabsList>
+          {/* Page Title Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Page Title Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter page title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* English Content */}
-            <TabsContent value="en" className="space-y-6">
-              {/* Page Title Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Page Title Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter page title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                {/* Arabic */}
+                <FormField
+                  control={form.control}
+                  name="title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الصفحة"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Form Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Form Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+          {/* Form Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Form Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="form_title"
@@ -330,15 +318,60 @@ export default function ContactCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Media Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Media Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="form_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Form Title (عنوان النموذج)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان النموذج"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="form_description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Form Description (وصف النموذج)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="أدخل وصف النموذج"
+                            rows={4}
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Media Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Media Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="media_title"
@@ -374,91 +407,177 @@ export default function ContactCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Email Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Email Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="email_title"
+                    name="media_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email Title</FormLabel>
+                        <FormLabel>Media Title (عنوان الوسائط)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter email title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="email"
-                            placeholder="Enter email address"
+                          <Textarea
+                            placeholder="أدخل عنوان الوسائط"
+                            rows={3}
                             {...field}
+                            dir="rtl"
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
 
-              {/* Phone Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Phone Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="phone_title"
+                    name="media_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Title</FormLabel>
+                        <FormLabel>Media Description (وصف الوسائط)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter phone title" {...field} />
+                          <Textarea
+                            placeholder="أدخل وصف الوسائط"
+                            rows={3}
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-                  <FormField
-                    control={form.control}
-                    name="phone_number"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter phone number" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+          {/* Email Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Email Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="email_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter email title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Address Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Address Section</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email Title (عنوان البريد الإلكتروني)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان البريد الإلكتروني"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Enter email address"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Phone Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Phone Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="phone_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter phone title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Title (عنوان الهاتف)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الهاتف"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="phone_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter phone number" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Address Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Address Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="address_title"
@@ -490,244 +609,16 @@ export default function ContactCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Social Media Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Social Media Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="social_media_title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Social Media Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter social media title"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Map Section - EN */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Map Section</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="iframe"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Map Embed Code (iframe)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter map embed iframe code"
-                            rows={4}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Arabic Content */}
-            <TabsContent value="ar" className="space-y-6">
-              {/* Page Title Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم عنوان الصفحة (Page Title Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>العنوان</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الصفحة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Form Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم النموذج (Form Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="form_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>عنوان النموذج</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان النموذج"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="form_description_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>وصف النموذج</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف النموذج"
-                            rows={4}
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Media Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم الوسائط (Media Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="media_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>عنوان الوسائط</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="أدخل عنوان الوسائط"
-                            rows={3}
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="media_description_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>وصف الوسائط</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف الوسائط"
-                            rows={3}
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Email Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم البريد الإلكتروني (Email Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="email_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>عنوان البريد الإلكتروني</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان البريد الإلكتروني"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Phone Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم الهاتف (Phone Section)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="phone_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>عنوان الهاتف</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الهاتف"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Address Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>قسم العنوان (Address Section)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="address_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>عنوان العنوان</FormLabel>
+                        <FormLabel>Address Title (عنوان العنوان)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان العنوان"
@@ -745,7 +636,7 @@ export default function ContactCmsForm() {
                     name="address_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>العنوان</FormLabel>
+                        <FormLabel>Address (العنوان)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل العنوان"
@@ -758,38 +649,81 @@ export default function ContactCmsForm() {
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Social Media Section - AR */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    قسم وسائل التواصل الاجتماعي (Social Media Section)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="social_media_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>عنوان وسائل التواصل الاجتماعي</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان وسائل التواصل الاجتماعي"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          {/* Social Media Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Social Media Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="social_media_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Social Media Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter social media title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="social_media_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Social Media Title (عنوان وسائل التواصل الاجتماعي)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان وسائل التواصل الاجتماعي"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Map Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Map Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="iframe"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Map Embed Code (iframe)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter map embed iframe code"
+                        rows={4}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
 
           {/* Media Upload Section - Outside Tabs */}
           <Card>

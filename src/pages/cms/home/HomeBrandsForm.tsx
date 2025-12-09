@@ -13,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -34,7 +33,6 @@ export default function HomeBrandsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [activeTab, setActiveTab] = useState("en"); // Add state for active tab
 
 
   const form = useForm<HomeBrandFormData>({
@@ -81,36 +79,7 @@ export default function HomeBrandsForm() {
 
 
 
-    const handleFormSubmit = form.handleSubmit(
-      // Success callback
-      async (data) => {
-        await onSubmit(data);
-      },
-      // Error callback - runs when validation fails
-      (errors) => {
-        // Define Arabic fields
-        const arabicFields: (keyof HomeBrandFormData)[] = [
-          "title_ar",
-        ];
-  
-        // Get the first error field
-        const firstErrorField = Object.keys(errors)[0] as keyof HomeBrandFormData;
-  
-        if (firstErrorField) {
-          // Check if the error is in an Arabic field
-          if (arabicFields.includes(firstErrorField)) {
-            setActiveTab("ar");
-          } else {
-            setActiveTab("en");
-          }
-  
-          // Focus the field after tab switch
-          setTimeout(() => {
-            form.setFocus(firstErrorField);
-          }, 100);
-        }
-      }
-    );
+
   const onSubmit = async (data: HomeBrandFormData) => {
     try {
       setLoading(true);
@@ -185,19 +154,15 @@ export default function HomeBrandsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={handleFormSubmit} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Brand Content</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Tabs onValueChange={setActiveTab} value={activeTab} defaultValue="en" className="w-full">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="en">English</TabsTrigger>
-                  <TabsTrigger value="ar">العربية (Arabic)</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="en" className="space-y-4">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title"
@@ -214,15 +179,16 @@ export default function HomeBrandsForm() {
                       </FormItem>
                     )}
                   />
-                </TabsContent>
+                </div>
 
-                <TabsContent value="ar" className="space-y-4">
+                {/* Arabic Fields */}
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>العنوان (Title)</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان العلامة التجارية"
@@ -234,8 +200,8 @@ export default function HomeBrandsForm() {
                       </FormItem>
                     )}
                   />
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </CardContent>
           </Card>
 

@@ -60,6 +60,12 @@ export const fetchHomeBannerList = async (
     params.search = search;
   }
 
+
+
+
+
+  console.log("PARAMS => ",search)
+
   return apiCall('/cms/home/home-banner', { params });
 };
 
