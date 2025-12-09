@@ -59,8 +59,9 @@ const cmsSection = [
     icon: Info,
     subItems: [
       { title: "About CMS", url: "/about-cms", icon: FileText },
-      { title: "About Testimonials", url: "/about-testimonials", icon: MessageSquareQuote },
       { title: "About Journeys", url: "/about-journeys", icon: MapPin },
+      { title: "Why BOSQ", url: "/why-bosq", icon: Award },
+      { title: "About Testimonials", url: "/about-testimonials", icon: MessageSquareQuote },
       { title: "About Our Clients", url: "/about-our-clients", icon: Users },
     ],
   },

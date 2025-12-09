@@ -87,8 +87,26 @@ export const aboutClientsSchema = z.object({
   status: z.boolean(),
 });
 
+export const whyBosqSchema = z.object({
+  media_path: commonValidations.validateFileUpload("Main Media"),
+  media_alt: commonValidations.requiredString("Main Media Alt Text"),
+  media_alt_ar: commonValidations.requiredString("Main Media Alt Text (Arabic)"),
+  icon_media_path: commonValidations.validateFileUpload("Icon Media"),
+  icon_media_alt: commonValidations.requiredString("Icon Alt Text"),
+  title: commonValidations.requiredString("Title"),
+  subtitle: commonValidations.requiredString("Subtitle"),
+  description: commonValidations.requiredText("Description"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  subtitle_ar: commonValidations.requiredString("Subtitle (Arabic)"),
+  description_ar: commonValidations.requiredText("Description (Arabic)"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
 export type AboutJourneysFormData = z.infer<typeof aboutJourneysSchema>;
 
 export type AboutTestimonialsFormData = z.infer<typeof aboutTestimonialsSchema>;
 
 export type AboutClientsFormData = z.infer<typeof aboutClientsSchema>;
+
+export type WhyBosqFormData = z.infer<typeof whyBosqSchema>;

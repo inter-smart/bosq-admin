@@ -268,8 +268,7 @@ export function RichTextEditor({
         <div className="border-b bg-muted/50 p-2">
           <div
             className={cn(
-              "flex flex-wrap gap-1",
-              dir === "rtl" && "flex-row-reverse"
+              "flex flex-wrap gap-1"
             )}
           >
             {/* Text Formatting */}
@@ -465,7 +464,7 @@ export function RichTextEditor({
         {/* Editor */}
         <EditorContent
           editor={editor}
-          className="min-h-[120px]"
+          className="min-h-[300px]"
           placeholder={placeholder}
         />
 

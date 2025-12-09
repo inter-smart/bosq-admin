@@ -44,6 +44,8 @@ import AboutJourneysList from "./pages/cms/about/AboutJourneysList";
 import AboutJourneysForm from "./pages/cms/about/AboutJourneysForm";
 import AboutOurClientsList from "./pages/cms/about/AboutOurClientsList";
 import AboutOurClientsForm from "./pages/cms/about/AboutOurClientsForm";
+import WhyBosqList from "./pages/cms/about/WhyBosqList";
+import WhyBosqForm from "./pages/cms/about/WhyBosqForm";
 // Blog pages
 import BlogCmsForm from "./pages/blog/BlogCmsForm";
 import BlogsList from "./pages/blog/BlogsList";
@@ -412,6 +414,34 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AboutOurClientsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Why BOSQ Routes */}
+          <Route
+            path="/why-bosq"
+            element={
+              <ProtectedRoute>
+                <WhyBosqList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/why-bosq/create"
+            element={
+              <ProtectedRoute>
+                <WhyBosqForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/why-bosq/edit/:id"
+            element={
+              <ProtectedRoute>
+                <WhyBosqForm />
               </ProtectedRoute>
             }
           />
