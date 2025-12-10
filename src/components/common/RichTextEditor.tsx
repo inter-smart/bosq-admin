@@ -8,6 +8,7 @@ import { Color } from "@tiptap/extension-color";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import HardBreak from "@tiptap/extension-hard-break";
 import {
   Popover,
   PopoverContent,
@@ -58,6 +59,15 @@ export function RichTextEditor({
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
 
+
+const CustomHardBreak = HardBreak.extend({
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => this.editor.commands.setHardBreak(),
+    };
+  },
+});
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -70,6 +80,8 @@ export function RichTextEditor({
           keepAttributes: false,
         },
       }),
+      HardBreak,
+      CustomHardBreak,
       Image.configure({
         inline: false,
         allowBase64: true,
@@ -145,7 +157,14 @@ export function RichTextEditor({
           "[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-5 [&_h2]:mb-3",
           "[&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2"
         ),
+
         dir: dir,
+      },
+      
+
+      transformPastedText(text) {
+        // Convert new lines to <br>
+        return text.replace(/\n/g, "<br>");
       },
 
       handleKeyDown: (view, event) => {
@@ -266,11 +285,7 @@ export function RichTextEditor({
       <div className="border rounded-md">
         {/* Toolbar */}
         <div className="border-b bg-muted/50 p-2">
-          <div
-            className={cn(
-              "flex flex-wrap gap-1"
-            )}
-          >
+          <div className={cn("flex flex-wrap gap-1")}>
             {/* Text Formatting */}
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBold().run()}

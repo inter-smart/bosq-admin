@@ -19,6 +19,7 @@ import {
   MessageSquareQuote,
   MapPin,
   Users,
+  ShieldCheck,
 } from "lucide-react";
 
 import {
@@ -38,9 +39,7 @@ import {
 
 const bosqLogo = "/bosq-logo-light.png";
 
-const mainNavItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard }
-];
+const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 
 const cmsSection = [
   {
@@ -50,8 +49,12 @@ const cmsSection = [
       { title: "Home CMS", url: "/home-cms", icon: FileText },
       { title: "Home Banner", url: "/home-banner-slider", icon: Image },
       { title: "Home Brands", url: "/home-brands", icon: Award },
-      { title: "Smart Calculator", url: "/smart-space-calculator", icon: BookOpen },
-      { title: "Find Your Fits", url: "/find-your-fits", icon: Image }, 
+      {
+        title: "Smart Calculator",
+        url: "/smart-space-calculator",
+        icon: BookOpen,
+      },
+      { title: "Find Your Fits", url: "/find-your-fits", icon: Image },
     ],
   },
   {
@@ -61,7 +64,11 @@ const cmsSection = [
       { title: "About CMS", url: "/about-cms", icon: FileText },
       { title: "About Journeys", url: "/about-journeys", icon: MapPin },
       { title: "Why BOSQ", url: "/why-bosq", icon: Award },
-      { title: "About Testimonials", url: "/about-testimonials", icon: MessageSquareQuote },
+      {
+        title: "About Testimonials",
+        url: "/about-testimonials",
+        icon: MessageSquareQuote,
+      },
       { title: "About Our Clients", url: "/about-our-clients", icon: Users },
     ],
   },
@@ -77,9 +84,7 @@ const cmsSection = [
   {
     title: "Contact",
     icon: Mail,
-    subItems: [
-      { title: "Contact CMS", url: "/contact-cms", icon: FileText },
-    ],
+    subItems: [{ title: "Contact CMS", url: "/contact-cms", icon: FileText }],
   },
 ];
 
@@ -94,6 +99,25 @@ const commonSection = [
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
 ];
 
+const policiesSection = [
+  {
+    title: "Privacy Policy",
+    icon: ShieldCheck,
+    subItems: [
+      {
+        title: "Policy CMS",
+        url: "/privacy-policy-cms",
+        icon: FileText,
+      },
+      {
+        title: "Privacy Policy",
+        url: "/privacy-policy",
+        icon: List,
+      }
+    ],
+  },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
@@ -105,6 +129,8 @@ export function AppSidebar() {
   const [contactOpen, setContactOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
+  const [policiesOpen, setPoliciesOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
 
@@ -113,19 +139,32 @@ export function AppSidebar() {
     const path = location.pathname;
 
     // Auto-open Home section
-    if (["/home-cms", "/home-banner-slider", "/home-brands"].some((r) => path.includes(r))) {
+    if (
+      ["/home-cms", "/home-banner-slider", "/home-brands"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setCmsOpen(true);
       setHomeOpen(true);
     }
 
     // Auto-open About section
-    if (["/about-cms", "/about-testimonials", "/about-journeys", "/about-our-clients"].some((r) => path.includes(r))) {
+    if (
+      [
+        "/about-cms",
+        "/about-testimonials",
+        "/about-journeys",
+        "/about-our-clients",
+      ].some((r) => path.includes(r))
+    ) {
       setCmsOpen(true);
       setAboutOpen(true);
     }
 
     // Auto-open FAQ section
-    if (["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))) {
+    if (
+      ["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))
+    ) {
       setCmsOpen(true);
       setFaqOpen(true);
     }
@@ -143,11 +182,17 @@ export function AppSidebar() {
 
     // Auto-open Common section
     if (
-      ["/site-settings", "/social-media", "/meta-tags", "/policy"].some((r) =>
+      ["/site-settings", "/social-media", "/meta-tags"].some((r) =>
         path.includes(r)
       )
     ) {
       setCommonOpen(true);
+    }
+
+    // Auto-open Policies section
+    if (["/privacy-privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))) {
+      setPoliciesOpen(true);
+      setPrivacyOpen(true);
     }
   }, [location.pathname]);
 
@@ -246,6 +291,8 @@ export function AppSidebar() {
           </Collapsible>
         </SidebarGroup>
 
+ 
+
         {/* Blog Section - Standalone */}
         <SidebarCollapsibleSection
           title="Blog"
@@ -267,6 +314,40 @@ export function AppSidebar() {
           isCollapsed={isCollapsed}
           getNavCls={getNavCls}
         />
+
+            <SidebarGroup>
+          <Collapsible
+            open={!isCollapsed && policiesOpen}
+            onOpenChange={setPoliciesOpen}
+          >
+            <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
+              <ShieldCheck className="h-4 w-4" />
+              {!isCollapsed && (
+                <>
+                  <span className="ml-2">Policies</span>
+                  <ChevronRight
+                    className={`h-4 w-4 ml-auto transition-transform ${
+                      policiesOpen ? "rotate-90" : ""
+                    }`}
+                  />
+                </>
+              )}
+            </CollapsibleTrigger>
+
+            {!isCollapsed && (
+              <CollapsibleContent className="ml-4 mt-1 space-y-1">
+                <NestedSection
+                  title="Privacy Policy"
+                  icon={ShieldCheck}
+                  open={privacyOpen} // create new state: const [privacyOpen, setPrivacyOpen]
+                  setOpen={setPrivacyOpen}
+                  items={policiesSection[0].subItems}
+                  getNavCls={getNavCls}
+                />
+              </CollapsibleContent>
+            )}
+          </Collapsible>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   );

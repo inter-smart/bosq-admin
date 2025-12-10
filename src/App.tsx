@@ -53,6 +53,11 @@ import BlogsForm from "./pages/blog/BlogsForm";
 import FindYourFitsList from "./pages/cms/home/FindYourFitsList";
 import FindYourFitsForm from "./pages/cms/home/FindYourFitsForm";
 
+// Policy pages
+import PrivacyPolicyCmsForm from "./pages/policy/PrivacyPolicyCmsForm";
+import PrivacyPolicyForm from "./pages/policy/PrivacyPolicyForm";
+import PrivacyPolicyList from "./pages/policy/PrivacyPolicyList";
+
 const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -480,6 +485,44 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <BlogsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Privacy Policy CMS Route */}
+          <Route
+            path="/privacy-policy-cms"
+            element={
+              <ProtectedRoute>
+                <PrivacyPolicyCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Privacy Policy CRUD Routes */}
+
+          <Route
+            path="/privacy-policy"
+            element={
+              <ProtectedRoute>
+                <PrivacyPolicyList />
+              </ProtectedRoute>
+            } 
+          />
+          <Route
+            path="/privacy-policy/new"
+            element={
+              <ProtectedRoute>
+                <PrivacyPolicyForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/privacy-policy/:id/edit"
+            element={
+              <ProtectedRoute>
+                <PrivacyPolicyForm />
               </ProtectedRoute>
             }
           />
