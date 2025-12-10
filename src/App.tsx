@@ -90,6 +90,18 @@ const MaterialsList = lazy(() =>
 const MaterialsForm = lazy(() =>
   import("./pages/cms/materials/MaterialsForm")
 );
+
+// Delivery pages
+const DeliveryCmsForm = lazy(() =>
+  import("./pages/cms/delivery/DeliveryCmsForm")
+);
+const DeliveryTimeList = lazy(() =>
+  import("./pages/cms/delivery/DeliveryTimeList")
+);
+const DeliveryTimeForm = lazy(() =>
+  import("./pages/cms/delivery/DeliveryTimeForm")
+);
+
 const AboutTestimonialsForm = lazy(() =>
   import("./pages/cms/about/AboutTestimonialsForm")
 );
@@ -433,6 +445,42 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <MaterialsCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* DELIVERY CMS Route */}
+          <Route
+            path="/delivery-cms"
+            element={
+              <ProtectedRoute>
+                <DeliveryCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Delivery Time Routes */}
+          <Route
+            path="/delivery-time"
+            element={
+              <ProtectedRoute>
+                <DeliveryTimeList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery-time/create"
+            element={
+              <ProtectedRoute>
+                <DeliveryTimeForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery-time/edit/:id"
+            element={
+              <ProtectedRoute>
+                <DeliveryTimeForm />
               </ProtectedRoute>
             }
           />

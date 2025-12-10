@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   ScrollText,
   Package,
+  Truck,
 } from "lucide-react";
 
 import {
@@ -81,6 +82,14 @@ const cmsSection = [
       { title: "Materials CMS", url: "/materials-cms", icon: FileText },
       { title: "Material Categories", url: "/materials-category", icon: FolderOpen },
       { title: "Materials", url: "/materials", icon: List },
+    ],
+  },
+  {
+    title: "Delivery",
+    icon: Truck,
+    subItems: [
+      { title: "Delivery CMS", url: "/delivery-cms", icon: FileText },
+      { title: "Delivery Time", url: "/delivery-time", icon: List },
     ],
   },
   {
@@ -164,6 +173,7 @@ export function AppSidebar() {
   const [homeOpen, setHomeOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [materialsOpen, setMaterialsOpen] = useState(false);
+  const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
@@ -206,6 +216,12 @@ export function AppSidebar() {
     if (["/materials-cms", "/materials-category", "/materials"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setMaterialsOpen(true);
+    }
+
+    // Auto-open Delivery section
+    if (["/delivery-cms", "/delivery-time"].some(r => path.includes(r))) {
+      setCmsOpen(true);
+      setDeliveryOpen(true);
     }
 
     // Auto-open FAQ section
@@ -326,6 +342,9 @@ export function AppSidebar() {
                   } else if (section.title === "Materials") {
                     sectionOpen = materialsOpen;
                     setSectionOpen = setMaterialsOpen;
+                  } else if (section.title === "Delivery") {
+                    sectionOpen = deliveryOpen;
+                    setSectionOpen = setDeliveryOpen;
                   } else if (section.title === "FAQ") {
                     sectionOpen = faqOpen;
                     setSectionOpen = setFaqOpen;

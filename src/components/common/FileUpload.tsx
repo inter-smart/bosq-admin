@@ -31,7 +31,7 @@ export function FileUpload({
   onChange,
   accept = "image/*",
   maxSize = 5242880, // 5MB
-  maxImageSize = 1024 * 1024, // Default 1MB for images
+  maxImageSize = 300 * 1024, // 300KB
   maxVideoSize = 5 * 1024 * 1024, // Default 5MB for videos
   placeholder = "Drop files here or click to browse",
   preview = true,
@@ -62,15 +62,11 @@ export function FileUpload({
       if (isImage && file.size > maxImageSize) {
         return {
           code: "file-too-large",
-          message: `Image size must be under ${(
-            maxImageSize /
-            (1024 * 1024)
-          ).toFixed(0)}MB. Current size: ${(file.size / (1024 * 1024)).toFixed(
-            2
-          )}MB`,
+          message: `Image size must be under ${(maxImageSize / 1024).toFixed(
+            0
+          )}KB. Current size: ${(file.size / 1024).toFixed(0)}KB`,
         };
       }
-
       if (isVideo && file.size > maxVideoSize) {
         return {
           code: "file-too-large",
@@ -143,7 +139,6 @@ export function FileUpload({
     }
   };
 
-
   const getDisplayUrl = () => {
     if (previewUrl) return previewUrl; // File blob URL for new uploads
 
@@ -170,20 +165,39 @@ export function FileUpload({
 
   const getMediaType = (fileOrUrl: File | string | null) => {
     if (fileOrUrl instanceof File) {
-      return fileOrUrl.type.startsWith("image/") ? "image" : 
-             fileOrUrl.type.startsWith("video/") ? "video" : "unknown";
+      return fileOrUrl.type.startsWith("image/")
+        ? "image"
+        : fileOrUrl.type.startsWith("video/")
+        ? "video"
+        : "unknown";
     }
-    
+
     if (typeof fileOrUrl === "string") {
       // Check file extension for URLs/paths
-      const extension = fileOrUrl.toLowerCase().split('.').pop();
-      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-      const videoExtensions = ['mp4', 'webm', 'avi', 'mov', 'mkv', 'wmv', 'flv'];
-      
+      const extension = fileOrUrl.toLowerCase().split(".").pop();
+      const imageExtensions = [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "bmp",
+        "webp",
+        "svg",
+      ];
+      const videoExtensions = [
+        "mp4",
+        "webm",
+        "avi",
+        "mov",
+        "mkv",
+        "wmv",
+        "flv",
+      ];
+
       if (extension && imageExtensions.includes(extension)) return "image";
       if (extension && videoExtensions.includes(extension)) return "video";
     }
-    
+
     return "unknown";
   };
 
@@ -286,11 +300,7 @@ export function FileUpload({
       {recommendedDimensions && (
         <div className="text-sm text-muted-foreground">
           <strong>Recommended dimensions:</strong> {recommendedDimensions}
-          {dimensionNote && (
-            <div className="mt-1 text-xs">
-              {dimensionNote}
-            </div>
-          )}
+          {dimensionNote && <div className="mt-1 text-xs">{dimensionNote}</div>}
         </div>
       )}
 
@@ -308,7 +318,6 @@ export function FileUpload({
           />
         </div>
       )}
-
     </div>
   );
 }
