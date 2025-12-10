@@ -57,6 +57,8 @@ import FindYourFitsForm from "./pages/cms/home/FindYourFitsForm";
 import PrivacyPolicyCmsForm from "./pages/policy/PrivacyPolicyCmsForm";
 import PrivacyPolicyForm from "./pages/policy/PrivacyPolicyForm";
 import PrivacyPolicyList from "./pages/policy/PrivacyPolicyList";
+import WarrantyPolicyList from "./pages/policy/WarrantyPolicyList";
+import WarrantyPolicyForm from "./pages/policy/WarrantyPolicyForm";
 
 const queryClient = new QueryClient();
 // Protected Route Component
@@ -523,6 +525,32 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <PrivacyPolicyForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Warranty Policy CRUD Routes */}
+          <Route
+            path="/warranty-policy"
+            element={
+              <ProtectedRoute>
+                <WarrantyPolicyList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/warranty-policy/new"
+            element={
+              <ProtectedRoute>
+                <WarrantyPolicyForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/warranty-policy/:id/edit"
+            element={
+              <ProtectedRoute>
+                <WarrantyPolicyForm />
               </ProtectedRoute>
             }
           />

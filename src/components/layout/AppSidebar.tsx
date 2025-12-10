@@ -113,7 +113,18 @@ const policiesSection = [
         title: "Privacy Policy",
         url: "/privacy-policy",
         icon: List,
-      }
+      },
+    ],
+  },
+  {
+    title: "Warranty Policy",
+    icon: Award,
+    subItems: [
+      {
+        title: "Warranty Policy",
+        url: "/warranty-policy",
+        icon: List,
+      },
     ],
   },
 ];
@@ -131,6 +142,7 @@ export function AppSidebar() {
   const [commonOpen, setCommonOpen] = useState(false);
   const [policiesOpen, setPoliciesOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [warrantyOpen, setWarrantyOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
 
@@ -190,7 +202,11 @@ export function AppSidebar() {
     }
 
     // Auto-open Policies section
-    if (["/privacy-privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))) {
+    if (
+      ["/privacy-privacy-policy-cms", "/privacy-policy"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setPoliciesOpen(true);
       setPrivacyOpen(true);
     }
@@ -291,8 +307,6 @@ export function AppSidebar() {
           </Collapsible>
         </SidebarGroup>
 
- 
-
         {/* Blog Section - Standalone */}
         <SidebarCollapsibleSection
           title="Blog"
@@ -315,7 +329,7 @@ export function AppSidebar() {
           getNavCls={getNavCls}
         />
 
-            <SidebarGroup>
+        <SidebarGroup>
           <Collapsible
             open={!isCollapsed && policiesOpen}
             onOpenChange={setPoliciesOpen}
@@ -342,6 +356,16 @@ export function AppSidebar() {
                   open={privacyOpen} // create new state: const [privacyOpen, setPrivacyOpen]
                   setOpen={setPrivacyOpen}
                   items={policiesSection[0].subItems}
+                  getNavCls={getNavCls}
+                />
+
+                {/* Warranty Policy */}
+                <NestedSection
+                  title="Warranty Policy"
+                  icon={Award}
+                  open={warrantyOpen}
+                  setOpen={setWarrantyOpen}
+                  items={policiesSection[1].subItems}
                   getNavCls={getNavCls}
                 />
               </CollapsibleContent>

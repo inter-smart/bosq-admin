@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,16 +23,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchBlogList,
-  deleteBlog,
-  Blog,
-} from "@/services/blog/blogsApi";
+  fetchWarrantyPoliciesList,
+  deleteWarrantyPolicy,
+  WarrantyPolicy,
+} from "@/services/policy/warrantyPolicyApi";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { renderHTML } from "@/lib/utils";
 
-export default function BlogsList() {
+export default function WarrantyPolicyList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [blogItems, setBlogItems] = useState<Blog[]>([]);
+  const [policies, setPolicies] = useState<WarrantyPolicy[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -40,6 +44,16 @@ export default function BlogsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const pageSize = 10;
+
+  const {
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+  } = useCommonTableActions<WarrantyPolicy>({
+    modelName: "WarrantyPolicy",
+    data: policies,
+    setData: setPolicies,
+  });
 
   // Debounce search query
   useEffect(() => {
@@ -50,12 +64,12 @@ export default function BlogsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch blog items
+  // Fetch warranty policies
   useEffect(() => {
-    loadBlogItems();
+    loadPolicies();
   }, [currentPage, debouncedSearchQuery]);
 
-  const loadBlogItems = async () => {
+  const loadPolicies = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -63,20 +77,20 @@ export default function BlogsList() {
         setLoading(true);
       }
 
-      const response = await fetchBlogList(
+      const response = await fetchWarrantyPoliciesList(
         currentPage,
         pageSize,
         debouncedSearchQuery
       );
 
       if (response.success) {
-        setBlogItems(response.data.list);
+        setPolicies(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load blog items",
+        description: "Failed to load warranty policies",
         variant: "destructive",
       });
     } finally {
@@ -89,16 +103,16 @@ export default function BlogsList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteBlog(deleteItemId);
+      await deleteWarrantyPolicy(deleteItemId);
       toast({
         title: "Success",
-        description: "Blog deleted successfully",
+        description: "Warranty policy deleted successfully",
       });
-      loadBlogItems();
+      loadPolicies();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete blog",
+        description: "Failed to delete warranty policy",
         variant: "destructive",
       });
     } finally {
@@ -106,7 +120,7 @@ export default function BlogsList() {
     }
   };
 
-  const columns: ColumnDef<Blog>[] = [
+  const columns: ColumnDef<WarrantyPolicy>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -117,80 +131,84 @@ export default function BlogsList() {
       ),
     },
     {
-      accessorKey: "thumbnail",
-      header: "Thumbnail",
-      cell: ({ row }) => {
-        return (
-          <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center">
-            {row.getValue("thumbnail") ? (
-              <img
-                src={`${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-                  "thumbnail"
-                )}`}
-                alt={row.original.thumbnail_alt || row.original.title}
-                className="w-full h-full rounded object-cover"
-              />
-            ) : (
-              <div className="w-full h-full rounded bg-muted-foreground/20" />
-            )}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate">
+        <div className="font-medium max-w-[300px] truncate">
           {row.getValue("title")}
         </div>
       ),
     },
     {
-      accessorKey: "slug",
-      header: "Slug",
+      accessorKey: "title_ar",
+      header: "Title (AR)",
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[150px] truncate">
-          {row.getValue("slug")}
+        <div className="font-medium max-w-[300px] truncate" dir="rtl">
+          {row.getValue("title_ar")}
         </div>
       ),
     },
     {
-      accessorKey: "published_date",
-      header: "Published Date",
-      cell: ({ row }) => (
-        <div className="text-sm">
-          {new Date(row.getValue("published_date")).toLocaleDateString()}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "viewCount",
-      header: "Views",
-      cell: ({ row }) => (
-        <div className="text-sm">{row.getValue("viewCount") || 0}</div>
-      ),
+      accessorKey: "media_path",
+      header: "Media",
+      cell: ({ row }) => {
+        const mediaPath = row.getValue("media_path") as string;
+        return mediaPath ? (
+          <img
+            src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}
+            alt={row.original.media_alt || "Warranty policy"}
+            className="w-16 h-16 object-cover rounded"
+          />
+        ) : (
+          <div className="w-16 h-16 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
+            No image
+          </div>
+        );
+      },
     },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
+      enableSorting: true,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
         return (
-          <Badge variant={status ? "default" : "secondary"}>
-            {status ? "active" : "inactive"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "active" : "inactive"}
+            </Badge>
+          </div>
         );
       },
     },
     {
       accessorKey: "createdAt",
       header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -212,7 +230,7 @@ export default function BlogsList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/blogs/edit/${item.id}`)}
+                onClick={() => navigate(`/warranty-policy/${item.id}/edit`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -235,7 +253,7 @@ export default function BlogsList() {
     <>
       <DataTable
         columns={columns}
-        data={blogItems}
+        data={policies}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -247,10 +265,10 @@ export default function BlogsList() {
           totalPages: Math.ceil(totalCount / pageSize),
           onPageChange: setCurrentPage,
         }}
-        title="Blogs"
-        searchPlaceholder="Search blogs..."
-        onAdd={() => navigate("/blogs/create")}
-        addButtonText="Add Blog"
+        title="Warranty Policy Items"
+        searchPlaceholder="Search warranty policies..."
+        onAdd={() => navigate("/warranty-policy/new")}
+        addButtonText="Add Warranty Policy"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -263,7 +281,7 @@ export default function BlogsList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              blog and remove its data from the servers.
+              warranty policy and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
