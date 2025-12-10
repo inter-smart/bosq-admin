@@ -40,3 +40,18 @@ export const deliveryTimeSchema = z.object({
 });
 
 export type DeliveryTimeFormData = z.infer<typeof deliveryTimeSchema>;
+
+// Delivery Method Schema
+export const deliveryMethodSchema = z.object({
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  description: commonValidations.requiredText("Description"),
+  description_ar: commonValidations.requiredText("Description (Arabic)"),
+  media_path: commonValidations.validateFileUpload("Image"),
+  media_alt: commonValidations.requiredString("Media Alt Text"),
+  media_alt_ar: commonValidations.requiredString("Media Alt Text (Arabic)"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+export type DeliveryMethodFormData = z.infer<typeof deliveryMethodSchema>;

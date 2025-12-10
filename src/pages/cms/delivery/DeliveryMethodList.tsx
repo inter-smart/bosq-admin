@@ -5,7 +5,6 @@ import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,55 +23,41 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchFaqListList,
-  deleteFaqList,
-  FaqList,
-} from "@/services/policy/TermsAndConditionsFaqListApi";
+  fetchDeliveryMethodList,
+  deleteDeliveryMethod,
+  DeliveryMethod,
+} from "@/services/cms/delivery/deliveryMethodApi";
 import { useToast } from "@/hooks/use-toast";
-import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
-import { renderHTML } from "@/lib/utils";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function FaqListList() {
+export default function DeliveryMethodList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [faqItems, setFaqItems] = useState<FaqList[]>([]);
+  const [deliveryMethods, setDeliveryMethods] = useState<DeliveryMethod[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const {
-    editingSortOrder,
-    handleStatusChange,
-    handleSortOrderChange,
-  } = useCommonTableActions<FaqList>({
-    modelName: "Faq",
-    data: faqItems,
-    setData: setFaqItems,
-  });
+
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<DeliveryMethod>({
+      modelName: "DeliveryMethods",
+      data: deliveryMethods,
+      setData: setDeliveryMethods,
+    });
 
   useEffect(() => {
-    loadFaqItems();
+    loadDeliveryMethods();
   }, []);
 
-  useEffect(() => {
-    loadFaqItems();
-  }, [selectedCategory]);
-
-
-  const loadFaqItems = async () => {
+  const loadDeliveryMethods = async () => {
     try {
       setLoading(true);
-      const categoryParam =
-        selectedCategory === "all" ? undefined : parseInt(selectedCategory);
-      const response = await fetchFaqListList(1, 100, undefined, categoryParam);
-
-      console.log(response.data);
-
-      setFaqItems(response.data.list);
+      const response = await fetchDeliveryMethodList(1, 100);
+      setDeliveryMethods(response.data.list);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load FAQ items",
+        description: "Failed to load delivery methods",
         variant: "destructive",
       });
     } finally {
@@ -84,16 +69,16 @@ export default function FaqListList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteFaqList(deleteItemId);
-      setFaqItems((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteDeliveryMethod(deleteItemId);
+      setDeliveryMethods((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "FAQ deleted successfully",
+        description: "Delivery method deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete FAQ",
+        description: "Failed to delete delivery method",
         variant: "destructive",
       });
     } finally {
@@ -101,7 +86,7 @@ export default function FaqListList() {
     }
   };
 
-  const columns: ColumnDef<FaqList>[] = [
+  const columns: ColumnDef<DeliveryMethod>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -110,24 +95,46 @@ export default function FaqListList() {
       ),
     },
     {
-      accessorKey: "question",
-      header: "Question",
+      accessorKey: "media_path",
+      header: "Image",
+      cell: ({ row }) => {
+        const mediaPath = row.getValue("media_path") as string;
+        if (mediaPath) {
+          return (
+            <img
+              src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}
+              alt={row.original.media_alt || "Delivery Method"}
+              className="h-10 w-10 object-cover rounded"
+            />
+          );
+        }
+        return <div className="text-sm text-muted-foreground">No image</div>;
+      },
+    },
+    {
+      accessorKey: "title",
+      header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[250px] truncate">
-          {row.getValue("question")}
+        <div className="font-medium max-w-[200px] truncate">
+          {row.getValue("title")}
         </div>
       ),
     },
     {
-      accessorKey: "answer",
-      header: "Answer",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[200px] truncate">
-          {renderHTML(row.getValue("answer"))}
-        </div>
-      ),
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => {
+        const description = row.getValue("description") as string;
+        // Strip HTML tags for preview
+        const plainText = description?.replace(/<[^>]*>/g, "") || "";
+        return (
+          <div className="max-w-[250px] truncate text-sm text-muted-foreground">
+            {plainText || "No description"}
+          </div>
+        );
+      },
     },
-  {
+    {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,
@@ -169,6 +176,7 @@ export default function FaqListList() {
     {
       accessorKey: "createdAt",
       header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -190,7 +198,7 @@ export default function FaqListList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/terms-and-conditions-faq/${item.id}/edit`)}
+                onClick={() => navigate(`/delivery-method/edit/${item.id}`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -210,7 +218,14 @@ export default function FaqListList() {
   ];
 
   if (loading) {
-    return <div>Loading FAQ items...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading delivery methods...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -218,11 +233,11 @@ export default function FaqListList() {
       <div className="space-y-4">
         <DataTable
           columns={columns}
-          data={faqItems}
-          title="FAQ List"
-          searchPlaceholder="Search FAQs..."
-          onAdd={() => navigate("/terms-and-conditions-faq/create")}
-          addButtonText="Add FAQ"
+          data={deliveryMethods}
+          title="Delivery Methods"
+          searchPlaceholder="Search delivery methods..."
+          onAdd={() => navigate("/delivery-method/create")}
+          addButtonText="Add Delivery Method"
         />
       </div>
 
@@ -235,8 +250,8 @@ export default function FaqListList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the FAQ
-              and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the
+              delivery method and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

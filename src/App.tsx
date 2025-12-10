@@ -101,6 +101,12 @@ const DeliveryTimeList = lazy(() =>
 const DeliveryTimeForm = lazy(() =>
   import("./pages/cms/delivery/DeliveryTimeForm")
 );
+const DeliveryMethodList = lazy(() =>
+  import("./pages/cms/delivery/DeliveryMethodList")
+);
+const DeliveryMethodForm = lazy(() =>
+  import("./pages/cms/delivery/DeliveryMethodForm")
+);
 
 const AboutTestimonialsForm = lazy(() =>
   import("./pages/cms/about/AboutTestimonialsForm")
@@ -481,6 +487,32 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <DeliveryTimeForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Delivery Method Routes */}
+          <Route
+            path="/delivery-method"
+            element={
+              <ProtectedRoute>
+                <DeliveryMethodList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery-method/create"
+            element={
+              <ProtectedRoute>
+                <DeliveryMethodForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/delivery-method/edit/:id"
+            element={
+              <ProtectedRoute>
+                <DeliveryMethodForm />
               </ProtectedRoute>
             }
           />

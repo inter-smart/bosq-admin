@@ -90,6 +90,7 @@ const cmsSection = [
     subItems: [
       { title: "Delivery CMS", url: "/delivery-cms", icon: FileText },
       { title: "Delivery Time", url: "/delivery-time", icon: List },
+      { title: "Delivery Method", url: "/delivery-method", icon: Package },
     ],
   },
   {
@@ -219,7 +220,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Delivery section
-    if (["/delivery-cms", "/delivery-time"].some(r => path.includes(r))) {
+    if (["/delivery-cms", "/delivery-time", "/delivery-method"].some(r => path.includes(r))) {
       setCmsOpen(true);
       setDeliveryOpen(true);
     }

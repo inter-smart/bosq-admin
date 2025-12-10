@@ -16,11 +16,16 @@ export const commonValidations = {
       .optional(),
 
   requiredText: (fieldName: string) =>
-    z.string().min(1, `${fieldName} is required`),
+    z
+      .string()
+      .transform((val) => val.replace(/<[^>]+>/g, "").trim()) // remove all HTML tags
+      .refine((val) => val.length > 0, {
+        message: `${fieldName} is required`,
+      }),
 
   // Number validations
   sortOrder: () =>
-  z.number().min(1, "Sort order must be 0 or greater").optional(),
+    z.number().min(1, "Sort order must be 0 or greater").optional(),
 
   requiredNumber: (fieldName: string) =>
     z.number().min(0, `${fieldName} must be 0 or greater`),
@@ -28,7 +33,7 @@ export const commonValidations = {
   optionalNumber: z.number().optional(),
 
   // Status validations
-  booleanStatus:()=>  z.boolean(),
+  booleanStatus: () => z.boolean(),
 
   statusEnum: z.enum(["active", "inactive"]),
 
@@ -39,35 +44,31 @@ export const commonValidations = {
 
   fileUpload: z.any().optional(),
 
-  requiredFileUpload: (fieldName: string)=>
-  z
-  .instanceof(File, { message: `${fieldName}` })
-  .refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB" }),
+  requiredFileUpload: (fieldName: string) =>
+    z
+      .instanceof(File, { message: `${fieldName}` })
+      .refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB" }),
 
-
-
-validateFileUpload: (fieldName: string) =>
-  z
-    .union([
-      z
-        .instanceof(File)
-        .refine((f) => f.size <= 5 * 1024 * 1024, {
+  validateFileUpload: (fieldName: string) =>
+    z
+      .union([
+        z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, {
           message: "Max 5MB allowed",
         }),
-      z.string().min(1), // existing file URL
-      z.null(), // allow null so union doesn't BREAK
-      z.undefined()
-    ])
-    .refine(
-      (value) => {
-        if (value instanceof File) return true;          // Newly uploaded
-        if (typeof value === "string" && value.length) return true; // Existing file
-        return false;
-      },
-      {
-        message: `${fieldName} is required. Please upload media.`,
-      }
-    ),
+        z.string().min(1), // existing file URL
+        z.null(), // allow null so union doesn't BREAK
+        z.undefined(),
+      ])
+      .refine(
+        (value) => {
+          if (value instanceof File) return true; // Newly uploaded
+          if (typeof value === "string" && value.length) return true; // Existing file
+          return false;
+        },
+        {
+          message: `${fieldName} is required. Please upload media.`,
+        }
+      ),
 
   validateImageUpload: (fieldName: string) =>
     z
@@ -78,14 +79,17 @@ validateFileUpload: (fieldName: string) =>
             message: "Image size must be less than 5MB",
           })
           .refine(
-            (f) => ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(f.type),
+            (f) =>
+              ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(
+                f.type
+              ),
             {
               message: "Only JPEG, PNG, WEBP, and GIF images are allowed",
             }
           ),
         z.string().min(1), // existing file URL
         z.null(),
-        z.undefined()
+        z.undefined(),
       ])
       .refine(
         (value) => {
@@ -108,14 +112,13 @@ validateFileUpload: (fieldName: string) =>
   requiredUrl: (fieldName: string) =>
     z.string().regex(/^\/.*/, `${fieldName} must start with /`),
 
-externalUrl: (fieldName: string) =>
-  z
-    .string({ required_error: `${fieldName} is required` })
-    .refine(
-      (val) => /^https?:\/\/.+/.test(val),
-      `${fieldName} must be a valid external link starting with http:// or https://`
-    ),
-
+  externalUrl: (fieldName: string) =>
+    z
+      .string({ required_error: `${fieldName} is required` })
+      .refine(
+        (val) => /^https?:\/\/.+/.test(val),
+        `${fieldName} must be a valid external link starting with http:// or https://`
+      ),
 
   // Date validations
   dateString: z.string().min(1, "Date is required"),
