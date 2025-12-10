@@ -21,6 +21,7 @@ import {
   Users,
   ShieldCheck,
   ScrollText,
+  Package,
 } from "lucide-react";
 
 import {
@@ -71,6 +72,13 @@ const cmsSection = [
         icon: MessageSquareQuote,
       },
       { title: "About Our Clients", url: "/about-our-clients", icon: Users },
+    ],
+  },
+  {
+    title: "Materials",
+    icon: Package,
+    subItems: [
+      { title: "Materials CMS", url: "/materials-cms", icon: FileText },
     ],
   },
   {
@@ -153,6 +161,7 @@ export function AppSidebar() {
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [materialsOpen, setMaterialsOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
@@ -189,6 +198,12 @@ export function AppSidebar() {
     ) {
       setCmsOpen(true);
       setAboutOpen(true);
+    }
+
+    // Auto-open Materials section
+    if (["/materials-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setMaterialsOpen(true);
     }
 
     // Auto-open FAQ section
@@ -306,6 +321,9 @@ export function AppSidebar() {
                   if (section.title === "About") {
                     sectionOpen = aboutOpen;
                     setSectionOpen = setAboutOpen;
+                  } else if (section.title === "Materials") {
+                    sectionOpen = materialsOpen;
+                    setSectionOpen = setMaterialsOpen;
                   } else if (section.title === "FAQ") {
                     sectionOpen = faqOpen;
                     setSectionOpen = setFaqOpen;

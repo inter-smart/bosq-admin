@@ -73,6 +73,11 @@ const AboutCmsForm = lazy(() =>
 const AboutTestimonialsList = lazy(() =>
   import("./pages/cms/about/AboutTestimonialsList")
 );
+
+// Materials pages
+const MaterialsCmsForm = lazy(() =>
+  import("./pages/cms/materials/MaterialsCmsForm")
+);
 const AboutTestimonialsForm = lazy(() =>
   import("./pages/cms/about/AboutTestimonialsForm")
 );
@@ -406,6 +411,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AboutCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* MATERIALS CMS Route */}
+          <Route
+            path="/materials-cms"
+            element={
+              <ProtectedRoute>
+                <MaterialsCmsForm />
               </ProtectedRoute>
             }
           />
