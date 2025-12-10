@@ -59,6 +59,7 @@ import PrivacyPolicyForm from "./pages/policy/PrivacyPolicyForm";
 import PrivacyPolicyList from "./pages/policy/PrivacyPolicyList";
 import WarrantyPolicyList from "./pages/policy/WarrantyPolicyList";
 import WarrantyPolicyForm from "./pages/policy/WarrantyPolicyForm";
+import TermsAndConditionsCmsForm from "./pages/policy/TermsAndConditionsCmsForm";
 
 const queryClient = new QueryClient();
 // Protected Route Component
@@ -551,6 +552,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <WarrantyPolicyForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Terms and Conditions CMS Route */}
+          <Route
+            path="/terms-and-conditions-cms"
+            element={
+              <ProtectedRoute>
+                <TermsAndConditionsCmsForm />
               </ProtectedRoute>
             }
           />

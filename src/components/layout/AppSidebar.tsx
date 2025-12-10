@@ -20,6 +20,7 @@ import {
   MapPin,
   Users,
   ShieldCheck,
+  ScrollText,
 } from "lucide-react";
 
 import {
@@ -117,6 +118,17 @@ const policiesSection = [
     ],
   },
   {
+    title: "Terms & Conditions",
+    icon: ScrollText,
+    subItems: [
+      {
+        title: "T&C CMS",
+        url: "/terms-and-conditions-cms",
+        icon: FileText,
+      },
+    ],
+  },
+  {
     title: "Warranty Policy",
     icon: Award,
     subItems: [
@@ -142,6 +154,7 @@ export function AppSidebar() {
   const [commonOpen, setCommonOpen] = useState(false);
   const [policiesOpen, setPoliciesOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const [warrantyOpen, setWarrantyOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -209,6 +222,12 @@ export function AppSidebar() {
     ) {
       setPoliciesOpen(true);
       setPrivacyOpen(true);
+    }
+
+    // Auto-open Terms and Conditions section
+    if (["/terms-and-conditions-cms"].some((r) => path.includes(r))) {
+      setPoliciesOpen(true);
+      setTermsOpen(true);
     }
   }, [location.pathname]);
 
@@ -353,9 +372,19 @@ export function AppSidebar() {
                 <NestedSection
                   title="Privacy Policy"
                   icon={ShieldCheck}
-                  open={privacyOpen} // create new state: const [privacyOpen, setPrivacyOpen]
+                  open={privacyOpen}
                   setOpen={setPrivacyOpen}
                   items={policiesSection[0].subItems}
+                  getNavCls={getNavCls}
+                />
+
+                {/* Terms & Conditions */}
+                <NestedSection
+                  title="Terms & Conditions"
+                  icon={ScrollText}
+                  open={termsOpen}
+                  setOpen={setTermsOpen}
+                  items={policiesSection[1].subItems}
                   getNavCls={getNavCls}
                 />
 
@@ -365,7 +394,7 @@ export function AppSidebar() {
                   icon={Award}
                   open={warrantyOpen}
                   setOpen={setWarrantyOpen}
-                  items={policiesSection[1].subItems}
+                  items={policiesSection[2].subItems}
                   getNavCls={getNavCls}
                 />
               </CollapsibleContent>
