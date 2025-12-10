@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -15,27 +13,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
-  fetchFaqListById,
-  createFaqList,
-  updateFaqList,
-} from "@/services/cms/faq/faqListApi";
-import { fetchFaqCategoryList } from "@/services/cms/faq/faqCategoryApi";
+  fetchMaterialCategoryById,
+  createMaterialCategory,
+  updateMaterialCategory,
+  MaterialCategory,
+} from "@/services/cms/materials/materialsCategoryApi";
 import { Switch } from "@/components/ui/switch";
-import { FaqListFormData, faqListSchema } from "@/schemas/faqSchema";
-import { RichTextEditor } from "@/components/common/RichTextEditor";
+import { MaterialsCategoryFormData, materialsCategorySchema } from "@/schemas/materialsSchema";
 
-export default function FaqListForm() {
+export default function MaterialsCategoryForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -43,59 +33,33 @@ export default function FaqListForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [categories, setCategories] = useState<
-    Array<{ id: number; title: string }>
-  >([]);
 
-  const form = useForm<FaqListFormData>({
-    resolver: zodResolver(faqListSchema),
+  const form = useForm<MaterialsCategoryFormData>({
+    resolver: zodResolver(materialsCategorySchema),
     defaultValues: {
-      question: "",
-      question_ar: "",
-      answer: "",
-      answer_ar: "",
-      category: undefined,
+      title: "",
+      title_ar: "",
       sort_order: 1,
       status: true,
     },
   });
 
   useEffect(() => {
-    loadCategories();
     if (isEditing && id) {
-      loadFaqData(parseInt(id));
+      loadCategoryData(parseInt(id));
     }
   }, [id, isEditing]);
 
-  const loadCategories = async () => {
-    try {
-      const response = await fetchFaqCategoryList(1, 100);
-      const activeCategories = response.data.list.filter((cat) => cat.status);
-      setCategories(
-        activeCategories.map((cat) => ({ id: cat?.id!, title: cat.title }))
-      );
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load categories",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loadFaqData = async (itemId: number) => {
+  const loadCategoryData = async (itemId: number) => {
     try {
       setInitialLoading(true);
-      const response = await fetchFaqListById(itemId);
+      const response = await fetchMaterialCategoryById(itemId);
       const data = response.data;
 
       if (data) {
         form.reset({
-          question: data.question || "",
-          question_ar: data.question_ar || "",
-          answer: data.answer || "",
-          answer_ar: data.answer_ar || "",
-          category: data.category || 0,
+          title: data.title || "",
+          title_ar: data.title_ar || "",
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
         });
@@ -103,7 +67,7 @@ export default function FaqListForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load FAQ data",
+        description: "Failed to load material category data",
         variant: "destructive",
       });
     } finally {
@@ -111,40 +75,36 @@ export default function FaqListForm() {
     }
   };
 
-  const onSubmit = async (data: FaqListFormData) => {
+  const onSubmit = async (data: MaterialsCategoryFormData) => {
     try {
       setLoading(true);
 
-      const payload = {
-        question: data.question,
-        question_ar: data.question_ar,
-        answer: data.answer.toString(),
-        answer_ar: data.answer_ar.toString(),
-        category: data.category,
+      const payload: MaterialCategory = {
+        title: data.title,
+        title_ar: data.title_ar,
         sort_order: data.sort_order,
         status: data.status,
       };
 
       if (isEditing && id) {
-        await updateFaqList(parseInt(id), payload);
+        await updateMaterialCategory(parseInt(id), payload);
         toast({
           title: "Success",
-          description: "FAQ updated successfully",
+          description: "Material category updated successfully",
         });
       } else {
-        await createFaqList(payload);
+        await createMaterialCategory(payload);
         toast({
           title: "Success",
-          description: "FAQ created successfully",
+          description: "Material category created successfully",
         });
       }
 
-      navigate("/faq-list");
-    } catch (error) {
+      navigate("/materials-category");
+    } catch (error: any) {
       toast({
         title: "Error",
-        description:
-          error.message || `Failed to ${isEditing ? "update" : "create"} FAQ`,
+        description: error.message || `Failed to ${isEditing ? "update" : "create"} material category`,
         variant: "destructive",
       });
     } finally {
@@ -155,7 +115,7 @@ export default function FaqListForm() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading FAQ data...</div>
+        <div className="text-muted-foreground">Loading material category data...</div>
       </div>
     );
   }
@@ -166,16 +126,16 @@ export default function FaqListForm() {
         <Button
           variant="outline"
           size="icon"
-          onClick={() => navigate("/faq-list")}
+          onClick={() => navigate("/materials-category")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">
-            {isEditing ? "Edit" : "Add"} FAQ
+            {isEditing ? "Edit" : "Add"} Material Category
           </h1>
           <p className="text-muted-foreground">
-            {isEditing ? "Update" : "Create a new"} FAQ item
+            {isEditing ? "Update" : "Create a new"} material category
           </p>
         </div>
       </div>
@@ -184,7 +144,7 @@ export default function FaqListForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>FAQ Content</CardTitle>
+              <CardTitle>Category Information</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -192,29 +152,12 @@ export default function FaqListForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="question"
+                    name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question</FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter FAQ question" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="answer"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Answer</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            placeholder="Enter FAQ answer"
-                            {...field}
-                          />
+                          <Input placeholder="Enter category title" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -226,31 +169,13 @@ export default function FaqListForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="question_ar"
+                    name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question (السؤال)</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="أدخل سؤال الأسئلة الشائعة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="answer_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Answer (الإجابة)</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            placeholder="أدخل إجابة الأسئلة الشائعة"
+                            placeholder="أدخل عنوان الفئة"
                             {...field}
                             dir="rtl"
                           />
@@ -261,49 +186,13 @@ export default function FaqListForm() {
                   />
                 </div>
               </div>
-
-              {/* Category Field - Full Width */}
-              <div className="mt-4">
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(parseInt(value));
-                          form.trigger("category");
-                        }}
-                        value={field.value ? String(field.value) : ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem
-                              key={category.id}
-                              value={String(category.id)}
-                            >
-                              {category.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </CardContent>
           </Card>
 
+          {/* Settings Card */}
           <Card>
             <CardHeader>
-              <CardTitle>FAQ Settings</CardTitle>
+              <CardTitle>Category Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -336,7 +225,7 @@ export default function FaqListForm() {
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Status</FormLabel>
                         <FormDescription>
-                          Enable or disable this FAQ
+                          Enable or disable this category
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -356,7 +245,7 @@ export default function FaqListForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/faq-list")}
+              onClick={() => navigate("/materials-category")}
             >
               Cancel
             </Button>

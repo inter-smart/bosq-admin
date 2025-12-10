@@ -190,7 +190,7 @@ export default function FaqListList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/terms-and-conditions-faq/${item.id}/edit`)}
+                onClick={() => navigate(`/terms-and-conditions-faq/${item.id}edit`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit

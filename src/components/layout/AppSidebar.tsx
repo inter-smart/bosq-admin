@@ -79,6 +79,8 @@ const cmsSection = [
     icon: Package,
     subItems: [
       { title: "Materials CMS", url: "/materials-cms", icon: FileText },
+      { title: "Material Categories", url: "/materials-category", icon: FolderOpen },
+      { title: "Materials", url: "/materials", icon: List },
     ],
   },
   {
@@ -201,7 +203,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Materials section
-    if (["/materials-cms"].some((r) => path.includes(r))) {
+    if (["/materials-cms", "/materials-category", "/materials"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setMaterialsOpen(true);
     }

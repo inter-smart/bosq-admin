@@ -78,6 +78,18 @@ const AboutTestimonialsList = lazy(() =>
 const MaterialsCmsForm = lazy(() =>
   import("./pages/cms/materials/MaterialsCmsForm")
 );
+const MaterialsCategoryList = lazy(() =>
+  import("./pages/cms/materials/MaterialsCategoryList")
+);
+const MaterialsCategoryForm = lazy(() =>
+  import("./pages/cms/materials/MaterialsCategoryForm")
+);
+const MaterialsList = lazy(() =>
+  import("./pages/cms/materials/MaterialsList")
+);
+const MaterialsForm = lazy(() =>
+  import("./pages/cms/materials/MaterialsForm")
+);
 const AboutTestimonialsForm = lazy(() =>
   import("./pages/cms/about/AboutTestimonialsForm")
 );
@@ -421,6 +433,58 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <MaterialsCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Material Category Routes */}
+          <Route
+            path="/materials-category"
+            element={
+              <ProtectedRoute>
+                <MaterialsCategoryList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/materials-category/create"
+            element={
+              <ProtectedRoute>
+                <MaterialsCategoryForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/materials-category/edit/:id"
+            element={
+              <ProtectedRoute>
+                <MaterialsCategoryForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Materials Routes */}
+          <Route
+            path="/materials"
+            element={
+              <ProtectedRoute>
+                <MaterialsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/materials/create"
+            element={
+              <ProtectedRoute>
+                <MaterialsForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/materials/edit/:id"
+            element={
+              <ProtectedRoute>
+                <MaterialsForm />
               </ProtectedRoute>
             }
           />

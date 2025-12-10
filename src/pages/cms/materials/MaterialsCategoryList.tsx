@@ -6,13 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -30,72 +23,44 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchFaqListList,
-  deleteFaqList,
-  FaqList,
-} from "@/services/cms/faq/faqListApi";
-import {
-  fetchFaqCategoryList,
-  FaqCategory,
-} from "@/services/cms/faq/faqCategoryApi";
+  fetchMaterialCategoryList,
+  deleteMaterialCategory,
+  MaterialCategory,
+} from "@/services/cms/materials/materialsCategoryApi";
 import { useToast } from "@/hooks/use-toast";
-import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
-import { renderHTML } from "@/lib/utils";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function FaqListList() {
+export default function MaterialsCategoryList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [faqItems, setFaqItems] = useState<FaqList[]>([]);
+  const [categories, setCategories] = useState<MaterialCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState<FaqCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+
   const {
     editingSortOrder,
     handleStatusChange,
     handleSortOrderChange,
-  } = useCommonTableActions<FaqList>({
-    modelName: "FaqList",
-    data: faqItems,
-    setData: setFaqItems,
+  } = useCommonTableActions<MaterialCategory>({
+    modelName: "MaterialCategory",
+    data: categories,
+    setData: setCategories,
   });
 
   useEffect(() => {
     loadCategories();
   }, []);
 
-  useEffect(() => {
-    loadFaqItems();
-  }, [selectedCategory]);
-
   const loadCategories = async () => {
     try {
-      const response = await fetchFaqCategoryList(1, 100);
-      setCategories(response?.data?.list);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load FAQ categories",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loadFaqItems = async () => {
-    try {
       setLoading(true);
-      const categoryParam =
-        selectedCategory === "all" ? undefined : parseInt(selectedCategory);
-      const response = await fetchFaqListList(1, 100, undefined, categoryParam);
-
-      console.log(response.data);
-
-      setFaqItems(response.data.list);
+      const response = await fetchMaterialCategoryList(1, 100);
+      setCategories(response.data.list);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load FAQ items",
+        description: "Failed to load material categories",
         variant: "destructive",
       });
     } finally {
@@ -107,16 +72,16 @@ export default function FaqListList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteFaqList(deleteItemId);
-      setFaqItems((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteMaterialCategory(deleteItemId);
+      setCategories((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "FAQ deleted successfully",
+        description: "Material category deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete FAQ",
+        description: "Failed to delete material category",
         variant: "destructive",
       });
     } finally {
@@ -124,7 +89,7 @@ export default function FaqListList() {
     }
   };
 
-  const columns: ColumnDef<FaqList>[] = [
+  const columns: ColumnDef<MaterialCategory>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -133,34 +98,15 @@ export default function FaqListList() {
       ),
     },
     {
-      accessorKey: "question",
-      header: "Question",
+      accessorKey: "title",
+      header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[250px] truncate">
-          {row.getValue("question")}
+        <div className="font-medium max-w-[300px] truncate">
+          {row.getValue("title")}
         </div>
       ),
     },
     {
-      accessorKey: "answer",
-      header: "Answer",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[200px] truncate">
-          {renderHTML(row.getValue("answer"))}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "faq_category",
-      header: "Category",
-      cell: ({ row }) => {
-        const category = row.original.faq_category;
-        return (
-          <Badge variant="outline">{category?.title || "No Category"}</Badge>
-        );
-      },
-    },
-  {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,
@@ -202,6 +148,7 @@ export default function FaqListList() {
     {
       accessorKey: "createdAt",
       header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -223,7 +170,7 @@ export default function FaqListList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/faq-list/edit/${item.id}`)}
+                onClick={() => navigate(`/materials-category/edit/${item.id}`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -243,50 +190,19 @@ export default function FaqListList() {
   ];
 
   if (loading) {
-    return <div>Loading FAQ items...</div>;
+    return <div>Loading material categories...</div>;
   }
 
   return (
     <>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col gap-2">
-              <label
-                htmlFor="category-filter"
-                className="text-sm font-medium text-muted-foreground"
-              >
-                Filter by Category
-              </label>
-              <Select
-                value={selectedCategory}
-                onValueChange={setSelectedCategory}
-              >
-                <SelectTrigger id="category-filter" className="w-[200px]">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category?.id} value={String(category?.id)}>
-                      {category.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-
-        <DataTable
-          columns={columns}
-          data={faqItems}
-          title="FAQ List"
-          searchPlaceholder="Search FAQs..."
-          onAdd={() => navigate("/faq-list/create")}
-          addButtonText="Add FAQ"
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={categories}
+        title="Material Categories"
+        searchPlaceholder="Search categories..."
+        onAdd={() => navigate("/materials-category/create")}
+        addButtonText="Add Category"
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog
@@ -297,8 +213,8 @@ export default function FaqListList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the FAQ
-              and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the
+              material category and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

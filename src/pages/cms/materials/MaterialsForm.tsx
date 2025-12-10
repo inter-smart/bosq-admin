@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,17 +24,24 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { FileUpload } from "@/components/common/FileUpload";
 import {
-  fetchFaqListById,
-  createFaqList,
-  updateFaqList,
-} from "@/services/cms/faq/faqListApi";
-import { fetchFaqCategoryList } from "@/services/cms/faq/faqCategoryApi";
+  fetchMaterialById,
+  createMaterial,
+  updateMaterial,
+} from "@/services/cms/materials/materialsItemApi";
+import {
+  fetchMaterialCategoryList,
+  MaterialCategory,
+} from "@/services/cms/materials/materialsCategoryApi";
 import { Switch } from "@/components/ui/switch";
-import { FaqListFormData, faqListSchema } from "@/schemas/faqSchema";
+import {
+  MaterialsItemFormData,
+  materialsItemSchema,
+} from "@/schemas/materialsSchema";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 
-export default function FaqListForm() {
+export default function MaterialsForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -43,18 +49,21 @@ export default function FaqListForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [categories, setCategories] = useState<
-    Array<{ id: number; title: string }>
-  >([]);
+  const [categories, setCategories] = useState<MaterialCategory[]>([]);
 
-  const form = useForm<FaqListFormData>({
-    resolver: zodResolver(faqListSchema),
+  const form = useForm<MaterialsItemFormData>({
+    resolver: zodResolver(materialsItemSchema),
+    shouldFocusError: true,
     defaultValues: {
-      question: "",
-      question_ar: "",
-      answer: "",
-      answer_ar: "",
+      title: "",
+      title_ar: "",
+      description: "",
+    description_ar: "",
       category: undefined,
+      media_path: null,
+      media_alt: "",
+      media_alt_ar: "",
+      icon_path: null,
       sort_order: 1,
       status: true,
     },
@@ -63,17 +72,16 @@ export default function FaqListForm() {
   useEffect(() => {
     loadCategories();
     if (isEditing && id) {
-      loadFaqData(parseInt(id));
+      loadMaterialData(parseInt(id));
     }
   }, [id, isEditing]);
 
   const loadCategories = async () => {
     try {
-      const response = await fetchFaqCategoryList(1, 100);
+      const response = await fetchMaterialCategoryList(1, 100);
+      // Filter only active categories
       const activeCategories = response.data.list.filter((cat) => cat.status);
-      setCategories(
-        activeCategories.map((cat) => ({ id: cat?.id!, title: cat.title }))
-      );
+      setCategories(activeCategories);
     } catch (error) {
       toast({
         title: "Error",
@@ -83,27 +91,35 @@ export default function FaqListForm() {
     }
   };
 
-  const loadFaqData = async (itemId: number) => {
+  const loadMaterialData = async (itemId: number) => {
     try {
       setInitialLoading(true);
-      const response = await fetchFaqListById(itemId);
+      const response = await fetchMaterialById(itemId);
       const data = response.data;
 
       if (data) {
         form.reset({
-          question: data.question || "",
-          question_ar: data.question_ar || "",
-          answer: data.answer || "",
-          answer_ar: data.answer_ar || "",
+          title: data.title || "",
+          title_ar: data.title_ar || "",
+          description: data.description || "",
+          description_ar: data.description_ar || "",
           category: data.category || 0,
-          sort_order: data.sort_order || 0,
+          media_alt: data.media_alt || "",
+          media_alt_ar: data.media_alt_ar || "",
+          sort_order: data.sort_order || 1,
           status: data.status ?? true,
+          media_path: data.media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}`
+            : null,
+          icon_path: data.icon_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.icon_path}`
+            : null,
         });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load FAQ data",
+        description: "Failed to load material data",
         variant: "destructive",
       });
     } finally {
@@ -111,40 +127,52 @@ export default function FaqListForm() {
     }
   };
 
-  const onSubmit = async (data: FaqListFormData) => {
+  const onSubmit = async (data: MaterialsItemFormData) => {
     try {
       setLoading(true);
 
-      const payload = {
-        question: data.question,
-        question_ar: data.question_ar,
-        answer: data.answer.toString(),
-        answer_ar: data.answer_ar.toString(),
-        category: data.category,
-        sort_order: data.sort_order,
-        status: data.status,
-      };
+      const formData = new FormData();
+
+      // Add all text fields
+      formData.append("title", data.title);
+      formData.append("title_ar", data.title_ar);
+      formData.append("description", data.description);
+      formData.append("description_ar", data.description_ar);
+      formData.append("category", data.category.toString());
+      formData.append("media_alt", data.media_alt);
+      formData.append("media_alt_ar", data.media_alt_ar);
+      formData.append("sort_order", (data.sort_order || 1).toString());
+      formData.append("status", (data.status ?? true).toString());
+
+      // Only append File instances (new uploads)
+      if (data.media_path instanceof File) {
+        formData.append("media_path", data.media_path);
+      }
+      if (data.icon_path instanceof File) {
+        formData.append("icon_path", data.icon_path);
+      }
 
       if (isEditing && id) {
-        await updateFaqList(parseInt(id), payload);
+        await updateMaterial(parseInt(id), formData);
         toast({
           title: "Success",
-          description: "FAQ updated successfully",
+          description: "Material updated successfully",
         });
       } else {
-        await createFaqList(payload);
+        await createMaterial(formData);
         toast({
           title: "Success",
-          description: "FAQ created successfully",
+          description: "Material created successfully",
         });
       }
 
-      navigate("/faq-list");
-    } catch (error) {
+      navigate("/materials");
+    } catch (error: any) {
       toast({
         title: "Error",
         description:
-          error.message || `Failed to ${isEditing ? "update" : "create"} FAQ`,
+          error.message ||
+          `Failed to ${isEditing ? "update" : "create"} material`,
         variant: "destructive",
       });
     } finally {
@@ -155,7 +183,7 @@ export default function FaqListForm() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading FAQ data...</div>
+        <div className="text-muted-foreground">Loading material data...</div>
       </div>
     );
   }
@@ -166,25 +194,26 @@ export default function FaqListForm() {
         <Button
           variant="outline"
           size="icon"
-          onClick={() => navigate("/faq-list")}
+          onClick={() => navigate("/materials")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">
-            {isEditing ? "Edit" : "Add"} FAQ
+            {isEditing ? "Edit" : "Add"} Material
           </h1>
           <p className="text-muted-foreground">
-            {isEditing ? "Update" : "Create a new"} FAQ item
+            {isEditing ? "Update" : "Create a new"} material
           </p>
         </div>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Basic Information Card */}
           <Card>
             <CardHeader>
-              <CardTitle>FAQ Content</CardTitle>
+              <CardTitle>Basic Information</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -192,12 +221,15 @@ export default function FaqListForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="question"
+                    name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question</FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter FAQ question" {...field} />
+                          <Input
+                            placeholder="Enter material title"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -206,13 +238,14 @@ export default function FaqListForm() {
 
                   <FormField
                     control={form.control}
-                    name="answer"
+                    name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Answer</FormLabel>
+                        <FormLabel>Description</FormLabel>
                         <FormControl>
                           <RichTextEditor
-                            placeholder="Enter FAQ answer"
+                            placeholder="Enter material description"
+                            className="min-h-[100px]"
                             {...field}
                           />
                         </FormControl>
@@ -226,13 +259,13 @@ export default function FaqListForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="question_ar"
+                    name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question (السؤال)</FormLabel>
+                        <FormLabel>Title (العنوان)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="أدخل سؤال الأسئلة الشائعة"
+                            placeholder="أدخل عنوان المادة"
                             {...field}
                             dir="rtl"
                           />
@@ -244,13 +277,14 @@ export default function FaqListForm() {
 
                   <FormField
                     control={form.control}
-                    name="answer_ar"
+                    name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Answer (الإجابة)</FormLabel>
+                        <FormLabel>Description (الوصف)</FormLabel>
                         <FormControl>
                           <RichTextEditor
-                            placeholder="أدخل إجابة الأسئلة الشائعة"
+                            placeholder="أدخل وصف المادة"
+                            className="min-h-[100px]"
                             {...field}
                             dir="rtl"
                           />
@@ -262,8 +296,8 @@ export default function FaqListForm() {
                 </div>
               </div>
 
-              {/* Category Field - Full Width */}
-              <div className="mt-4">
+              {/* Category Selection */}
+              <div className="mt-6">
                 <FormField
                   control={form.control}
                   name="category"
@@ -272,10 +306,10 @@ export default function FaqListForm() {
                       <FormLabel>Category</FormLabel>
                       <Select
                         onValueChange={(value) => {
-                          field.onChange(parseInt(value));
-                          form.trigger("category");
+                          field.onChange(Number(value));
+                          form.trigger("category"); // 👈 force validation immediately
                         }}
-                        value={field.value ? String(field.value) : ""}
+                        value={field.value?.toString()}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -286,7 +320,7 @@ export default function FaqListForm() {
                           {categories.map((category) => (
                             <SelectItem
                               key={category.id}
-                              value={String(category.id)}
+                              value={category.id!.toString()}
                             >
                               {category.title}
                             </SelectItem>
@@ -301,9 +335,102 @@ export default function FaqListForm() {
             </CardContent>
           </Card>
 
+          {/* Media Upload Card */}
           <Card>
             <CardHeader>
-              <CardTitle>FAQ Settings</CardTitle>
+              <CardTitle>Media Upload</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Main Image */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Main Image</h3>
+                <FormField
+                  control={form.control}
+                  name="media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Material Image</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload material image"
+                          preview={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (English)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter media alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Icon Upload */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Icon</h3>
+                <FormField
+                  control={form.control}
+                  name="icon_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Material Icon</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/svg+xml,image/png,image/*"
+                          placeholder="Upload material icon (SVG or PNG)"
+                          preview={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Settings Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -336,7 +463,7 @@ export default function FaqListForm() {
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Status</FormLabel>
                         <FormDescription>
-                          Enable or disable this FAQ
+                          Enable or disable this material
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -356,7 +483,7 @@ export default function FaqListForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/faq-list")}
+              onClick={() => navigate("/materials")}
             >
               Cancel
             </Button>
