@@ -126,6 +126,11 @@ const policiesSection = [
         url: "/terms-and-conditions-cms",
         icon: FileText,
       },
+      {
+        title: "FAQ",
+        url: "/terms-and-conditions-faq",
+        icon: List,
+      },
     ],
   },
   {
@@ -225,7 +230,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Terms and Conditions section
-    if (["/terms-and-conditions-cms"].some((r) => path.includes(r))) {
+    if (["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setTermsOpen(true);
     }

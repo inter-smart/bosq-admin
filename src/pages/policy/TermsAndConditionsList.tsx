@@ -4,8 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,40 +24,55 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchHomeBrandsList,
-  deleteHomeBrand,
-  HomeBrand,
-} from "@/services/cms/home/homeBrandsApi";
+  fetchFaqListList,
+  deleteFaqList,
+  FaqList,
+} from "@/services/policy/TermsAndConditionsFaqListApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { Switch } from "@/components/ui/switch";
+import { renderHTML } from "@/lib/utils";
 
-export default function HomeBrandsList() {
+export default function FaqListList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [brandItems, setBrandItems] = useState<HomeBrand[]>([]);
+  const [faqItems, setFaqItems] = useState<FaqList[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<HomeBrand>({
-      modelName: "HomeBrands",
-      data: brandItems,
-      setData: setBrandItems,
-    });
+  const {
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+  } = useCommonTableActions<FaqList>({
+    modelName: "Faq",
+    data: faqItems,
+    setData: setFaqItems,
+  });
 
   useEffect(() => {
-    loadBrandItems();
+    loadFaqItems();
   }, []);
 
-  const loadBrandItems = async () => {
+  useEffect(() => {
+    loadFaqItems();
+  }, [selectedCategory]);
+
+
+  const loadFaqItems = async () => {
     try {
       setLoading(true);
-      const response = await fetchHomeBrandsList(1, 100);
-      setBrandItems(response.data.list);
+      const categoryParam =
+        selectedCategory === "all" ? undefined : parseInt(selectedCategory);
+      const response = await fetchFaqListList(1, 100, undefined, categoryParam);
+
+      console.log(response.data);
+
+      setFaqItems(response.data.list);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load home brands",
+        description: "Failed to load FAQ items",
         variant: "destructive",
       });
     } finally {
@@ -69,16 +84,16 @@ export default function HomeBrandsList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteHomeBrand(deleteItemId);
-      setBrandItems((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteFaqList(deleteItemId);
+      setFaqItems((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "Brand deleted successfully",
+        description: "FAQ deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete brand",
+        description: "Failed to delete FAQ",
         variant: "destructive",
       });
     } finally {
@@ -86,7 +101,7 @@ export default function HomeBrandsList() {
     }
   };
 
-  const columns: ColumnDef<HomeBrand>[] = [
+  const columns: ColumnDef<FaqList>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -95,50 +110,24 @@ export default function HomeBrandsList() {
       ),
     },
     {
-      accessorKey: "media_path",
-      header: "Logo",
-      cell: ({ row }) => {
-        const path = row.getValue("media_path") as string;
-        const imageUrl = `${import.meta.env.VITE_IMAGE_URL}/${path}`;
-
-        return (
-          <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center overflow-hidden">
-            {path ? (
-              <img
-                src={imageUrl}
-                alt={row.original.title}
-                width={64}
-                height={40}
-                loading="lazy"
-                decoding="async"
-                onError={(e) => {
-                  e.currentTarget.src = "/placeholder-logo.png"; // fallback
-                }}
-                className="
-              w-full h-full object-contain p-1
-              opacity-0 transition-opacity duration-300 ease-in-out
-            "
-                onLoad={(e) => {
-                  e.currentTarget.style.opacity = "1";
-                }}
-              />
-            ) : (
-              <div className="w-full h-full bg-muted-foreground/20 rounded" />
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "title",
-      header: "Title",
+      accessorKey: "question",
+      header: "Question",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate">
-          {row.getValue("title")}
+        <div className="font-medium max-w-[250px] truncate">
+          {row.getValue("question")}
         </div>
       ),
     },
     {
+      accessorKey: "answer",
+      header: "Answer",
+      cell: ({ row }) => (
+        <div className="text-sm text-muted-foreground max-w-[200px] truncate">
+          {renderHTML(row.getValue("answer"))}
+        </div>
+      ),
+    },
+  {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,
@@ -201,7 +190,7 @@ export default function HomeBrandsList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/home-brands/edit/${item.id}`)}
+                onClick={() => navigate(`/terms-and-conditions-faq/${item.id}/edit`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -221,19 +210,21 @@ export default function HomeBrandsList() {
   ];
 
   if (loading) {
-    return <div>Loading home brands...</div>;
+    return <div>Loading FAQ items...</div>;
   }
 
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={brandItems}
-        title="Home Brands"
-        searchPlaceholder="Search brands..."
-        onAdd={() => navigate("/home-brands/create")}
-        addButtonText="Add Brand"
-      />
+      <div className="space-y-4">
+        <DataTable
+          columns={columns}
+          data={faqItems}
+          title="FAQ List"
+          searchPlaceholder="Search FAQs..."
+          onAdd={() => navigate("/terms-and-conditions-faq/create")}
+          addButtonText="Add FAQ"
+        />
+      </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog
@@ -244,8 +235,8 @@ export default function HomeBrandsList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              brand and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the FAQ
+              and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

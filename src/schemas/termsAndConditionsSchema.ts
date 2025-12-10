@@ -10,4 +10,18 @@ export const termsAndConditionsCmsSchema = z.object({
   faq_title_ar: commonValidations.requiredString("FAQ Title (Arabic)"),
 });
 
+
+
+
+export const faqListSchema = z.object({
+  question: commonValidations.requiredString("Question"),
+  question_ar: commonValidations.requiredString("Question (Arabic)"),
+  answer: commonValidations.requiredText("Answer"),
+  answer_ar: commonValidations.requiredText("Answer (Arabic)"),
+  sort_order:commonValidations.sortOrder(),
+  status: commonValidations.booleanStatus(),
+});
+
+
+export type FaqListFormData = z.infer<typeof faqListSchema>;
 export type TermsAndConditionsCmsFormData = z.infer<typeof termsAndConditionsCmsSchema>;

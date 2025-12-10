@@ -6,60 +6,126 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { isAuthenticated } from "@/services/auth/authApi";
 
-// Core pages that exist
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import NotFound from "./pages/NotFound";
+import { lazy } from "react";
 
-// Common pages that exist
-import SiteSettingsForm from "./pages/common/SiteSettingsForm";
-import SocialMediaList from "./pages/common/SocialMediaList";
-import SocialMediaForm from "./pages/common/SocialMediaForm";
-import { MetaTagsList } from "./pages/common/MetaTagsList";
+// Core pages
+const Index = lazy(() => import("./pages/Index"));
+const Login = lazy(() => import("./pages/Login"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Home pages that exist
-import HomeCmsForm from "./pages/cms/home/HomeCmsForm";
-import HomeBannerSliderList from "./pages/cms/home/HomeBannerSliderList";
-import HomeBannerSliderForm from "./pages/cms/home/HomeBannerSliderForm";
-import HomeBrandsList from "./pages/cms/home/HomeBrandsList";
-import HomeBrandsForm from "./pages/cms/home/HomeBrandsForm";
-import SmartSpaceCalculatorList from "./pages/cms/home/SmartSpaceCalculatorList";
-import SmartSpaceCalculatorForm from "./pages/cms/home/SmartSpaceCalculatorForm";
+// Common pages
+const SiteSettingsForm = lazy(() => import("./pages/common/SiteSettingsForm"));
+const SocialMediaList = lazy(() => import("./pages/common/SocialMediaList"));
+const SocialMediaForm = lazy(() => import("./pages/common/SocialMediaForm"));
+const MetaTagsList = lazy(() => import("./pages/common/MetaTagsList"));
+
+// Home pages
+const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
+const HomeBannerSliderList = lazy(() =>
+  import("./pages/cms/home/HomeBannerSliderList")
+);
+const HomeBannerSliderForm = lazy(() =>
+  import("./pages/cms/home/HomeBannerSliderForm")
+);
+const HomeBrandsList = lazy(() =>
+  import("./pages/cms/home/HomeBrandsList")
+);
+const HomeBrandsForm = lazy(() =>
+  import("./pages/cms/home/HomeBrandsForm")
+);
+const SmartSpaceCalculatorList = lazy(() =>
+  import("./pages/cms/home/SmartSpaceCalculatorList")
+);
+const SmartSpaceCalculatorForm = lazy(() =>
+  import("./pages/cms/home/SmartSpaceCalculatorForm")
+);
+const FindYourFitsList = lazy(() =>
+  import("./pages/cms/home/FindYourFitsList")
+);
+const FindYourFitsForm = lazy(() =>
+  import("./pages/cms/home/FindYourFitsForm")
+);
 
 // FAQ pages
-import FaqCmsForm from "./pages/cms/faq/FaqCmsForm";
-import FaqCategoryList from "./pages/cms/faq/FaqCategoryList";
-import FaqCategoryForm from "./pages/cms/faq/FaqCategoryForm";
-import FaqListList from "./pages/cms/faq/FaqListList";
-import FaqListForm from "./pages/cms/faq/FaqListForm";
+const FaqCmsForm = lazy(() => import("./pages/cms/faq/FaqCmsForm"));
+const FaqCategoryList = lazy(() =>
+  import("./pages/cms/faq/FaqCategoryList")
+);
+const FaqCategoryForm = lazy(() =>
+  import("./pages/cms/faq/FaqCategoryForm")
+);
+const FaqListList = lazy(() =>
+  import("./pages/cms/faq/FaqListList")
+);
+const FaqListForm = lazy(() =>
+  import("./pages/cms/faq/FaqListForm")
+);
 
 // Contact pages
-import ContactCmsForm from "./pages/cms/contact/ContactCmsForm";
+const ContactCmsForm = lazy(() =>
+  import("./pages/cms/contact/ContactCmsForm")
+);
 
 // About pages
-import AboutCmsForm from "./pages/cms/about/aboutCmsForm";
-import AboutTestimonialsList from "./pages/cms/about/AboutTestimonialsList";
-import AboutTestimonialsForm from "./pages/cms/about/AboutTestimonialsForm";
-import AboutJourneysList from "./pages/cms/about/AboutJourneysList";
-import AboutJourneysForm from "./pages/cms/about/AboutJourneysForm";
-import AboutOurClientsList from "./pages/cms/about/AboutOurClientsList";
-import AboutOurClientsForm from "./pages/cms/about/AboutOurClientsForm";
-import WhyBosqList from "./pages/cms/about/WhyBosqList";
-import WhyBosqForm from "./pages/cms/about/WhyBosqForm";
+const AboutCmsForm = lazy(() =>
+  import("./pages/cms/about/aboutCmsForm")
+);
+const AboutTestimonialsList = lazy(() =>
+  import("./pages/cms/about/AboutTestimonialsList")
+);
+const AboutTestimonialsForm = lazy(() =>
+  import("./pages/cms/about/AboutTestimonialsForm")
+);
+const AboutJourneysList = lazy(() =>
+  import("./pages/cms/about/AboutJourneysList")
+);
+const AboutJourneysForm = lazy(() =>
+  import("./pages/cms/about/AboutJourneysForm")
+);
+const AboutOurClientsList = lazy(() =>
+  import("./pages/cms/about/AboutOurClientsList")
+);
+const AboutOurClientsForm = lazy(() =>
+  import("./pages/cms/about/AboutOurClientsForm")
+);
+const WhyBosqList = lazy(() => import("./pages/cms/about/WhyBosqList"));
+const WhyBosqForm = lazy(() => import("./pages/cms/about/WhyBosqForm"));
+
 // Blog pages
-import BlogCmsForm from "./pages/blog/BlogCmsForm";
-import BlogsList from "./pages/blog/BlogsList";
-import BlogsForm from "./pages/blog/BlogsForm";
-import FindYourFitsList from "./pages/cms/home/FindYourFitsList";
-import FindYourFitsForm from "./pages/cms/home/FindYourFitsForm";
+const BlogCmsForm = lazy(() => import("./pages/blog/BlogCmsForm"));
+const BlogsList = lazy(() => import("./pages/blog/BlogsList"));
+const BlogsForm = lazy(() => import("./pages/blog/BlogsForm"));
 
 // Policy pages
-import PrivacyPolicyCmsForm from "./pages/policy/PrivacyPolicyCmsForm";
-import PrivacyPolicyForm from "./pages/policy/PrivacyPolicyForm";
-import PrivacyPolicyList from "./pages/policy/PrivacyPolicyList";
-import WarrantyPolicyList from "./pages/policy/WarrantyPolicyList";
-import WarrantyPolicyForm from "./pages/policy/WarrantyPolicyForm";
-import TermsAndConditionsCmsForm from "./pages/policy/TermsAndConditionsCmsForm";
+const PrivacyPolicyCmsForm = lazy(() =>
+  import("./pages/policy/PrivacyPolicyCmsForm")
+);
+const PrivacyPolicyForm = lazy(() =>
+  import("./pages/policy/PrivacyPolicyForm")
+);
+const PrivacyPolicyList = lazy(() =>
+  import("./pages/policy/PrivacyPolicyList")
+);
+
+const WarrantyPolicyList = lazy(() =>
+  import("./pages/policy/WarrantyPolicyList")
+);
+const WarrantyPolicyForm = lazy(() =>
+  import("./pages/policy/WarrantyPolicyForm")
+);
+
+const TermsAndConditionsCmsForm = lazy(() =>
+  import("./pages/policy/TermsAndConditionsCmsForm")
+);
+const TermsAndConditionsFaqListForm = lazy(() =>
+  import("./pages/policy/TermsAndConditionsFaqListForm")
+);
+const TermsAndConditionsList = lazy(() =>
+  import("./pages/policy/TermsAndConditionsList")
+);
+
+import { Suspense } from "react";
+
 
 const queryClient = new QueryClient();
 // Protected Route Component
@@ -77,6 +143,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+      <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
@@ -510,7 +577,7 @@ const App = () => (
               <ProtectedRoute>
                 <PrivacyPolicyList />
               </ProtectedRoute>
-            } 
+            }
           />
           <Route
             path="/privacy-policy/new"
@@ -566,9 +633,36 @@ const App = () => (
             }
           />
 
+{/* terms and conditions faq */}
+          <Route
+            path="/terms-and-conditions-faq"
+            element={
+              <ProtectedRoute>
+                <TermsAndConditionsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/terms-and-conditions-faq/create"
+            element={
+              <ProtectedRoute>
+                <TermsAndConditionsFaqListForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/terms-and-conditions-faq/:id/edit"
+            element={
+              <ProtectedRoute>
+                <TermsAndConditionsFaqListForm />
+              </ProtectedRoute>
+            }
+          />
+
           {/* Catch all route - must be last */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
