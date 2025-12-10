@@ -8,7 +8,7 @@ interface UseCommonTableActionsProps<T> {
   setData: React.Dispatch<React.SetStateAction<T[]>>;
 }
 
-export const useCommonTableActions = <T extends { id: number }>({
+export const useCommonTableActions = <T extends { id?: number }>({
   modelName,
   data,
   setData,

@@ -2,13 +2,13 @@ import { apiCall } from "@/utils/apiUtils";
 
 export interface StatusUpdatePayload {
   model_name: string;
-  row_id: number;
+  row_id?: number;
   status: boolean | string | number;
 }
 
 export interface SortOrderUpdatePayload {
   model_name: string;
-  row_id: number;
+  row_id?: number;
   sort_order: number;
 }
 
