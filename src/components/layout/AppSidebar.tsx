@@ -114,6 +114,7 @@ const cmsSection = [
     subItems: [
       { title: "Customisation CMS", url: "/customization-cms", icon: FileText },
       { title: "Features", url: "/customization-features", icon: List },
+      { title: "Process", url: "/customization-process", icon: List },
     ],
   },
 ];
@@ -250,7 +251,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Customisation section
-    if (["/customization-cms", "/customization-features"].some((r) => path.includes(r))) {
+    if (["/customization-cms", "/customization-features", "/customization-process"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setCustomisationOpen(true);
     }

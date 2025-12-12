@@ -24,40 +24,43 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchCustomizationFeaturesList,
-  deleteCustomizationFeature,
-  CustomizationFeature,
-} from "@/services/customization/customizationFeaturesApi";
+  fetchCustomizationProcessList,
+  deleteCustomizationProcess,
+  CustomizationProcess,
+} from "@/services/customization/customizationProcessApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function CustomizationFeaturesList() {
+export default function CustomizationProcessList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [features, setFeatures] = useState<CustomizationFeature[]>([]);
+  const [processList, setProcessList] = useState<CustomizationProcess[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
 
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<CustomizationFeature>({
-      modelName: "CustomizationFeatures",
-      data: features,
-      setData: setFeatures,
-    });
+  const {
+    editingSortOrder,
+    handleStatusChange,
+    handleSortOrderChange,
+  } = useCommonTableActions<CustomizationProcess>({
+    modelName: "CustomizationProcess",
+    data: processList,
+    setData: setProcessList,
+  });
 
   useEffect(() => {
-    loadFeatures();
+    loadProcessList();
   }, []);
 
-  const loadFeatures = async () => {
+  const loadProcessList = async () => {
     try {
       setLoading(true);
-      const response = await fetchCustomizationFeaturesList(1, 100);
-      setFeatures(response.data.list);
+      const response = await fetchCustomizationProcessList(1, 100);
+      setProcessList(response.data.list);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load Customization Features",
+        description: "Failed to load Customization Process items",
         variant: "destructive",
       });
     } finally {
@@ -69,16 +72,16 @@ export default function CustomizationFeaturesList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteCustomizationFeature(deleteItemId);
-      setFeatures((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteCustomizationProcess(deleteItemId);
+      setProcessList((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "Customization Feature deleted successfully",
+        description: "Customization Process item deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete Customization Feature",
+        description: "Failed to delete Customization Process item",
         variant: "destructive",
       });
     } finally {
@@ -86,7 +89,7 @@ export default function CustomizationFeaturesList() {
     }
   };
 
-  const columns: ColumnDef<CustomizationFeature>[] = [
+  const columns: ColumnDef<CustomizationProcess>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -95,34 +98,24 @@ export default function CustomizationFeaturesList() {
       ),
     },
     {
-      accessorKey: "media_path",
-      header: "Image",
-      cell: ({ row }) => {
-        const imageUrl = `${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-          "media_path"
-        )}`;
-        return (
-          <div className="w-20 h-16 rounded-md bg-muted flex items-center justify-center">
-            {row.getValue("media_path") ? (
-              <img
-                src={imageUrl}
-                alt={row.original.title}
-                loading="lazy"
-                className="w-full h-full rounded object-cover"
-              />
-            ) : (
-              <div className="w-full h-full rounded bg-muted-foreground/20" />
-            )}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="max-w-[200px]">
-          <div className="font-medium truncate">{row.getValue("title")}</div>
+        <div className="max-w-[300px]">
+          <div className="font-medium truncate">
+            {row.getValue("title")}
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => (
+        <div className="max-w-[400px]">
+          <div className="text-sm text-muted-foreground truncate">
+            {row.getValue("description")}
+          </div>
         </div>
       ),
     },
@@ -140,7 +133,9 @@ export default function CustomizationFeaturesList() {
                 ? editingSortOrder[item.id!]
                 : row.getValue("sort_order") || 0
             }
-            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            onChange={(e) =>
+              handleSortOrderChange(item.id!, e.target.value)
+            }
             className="w-20"
           />
         );
@@ -189,9 +184,7 @@ export default function CustomizationFeaturesList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/customization-features/edit/${item.id}`)
-                }
+                onClick={() => navigate(`/customization-process/edit/${item.id}`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -211,18 +204,18 @@ export default function CustomizationFeaturesList() {
   ];
 
   if (loading) {
-    return <div>Loading Customization Features...</div>;
+    return <div>Loading Customization Process items...</div>;
   }
 
   return (
     <>
       <DataTable
         columns={columns}
-        data={features}
-        title="Customization Features"
-        searchPlaceholder="Search features..."
-        onAdd={() => navigate("/customization-features/create")}
-        addButtonText="Add Feature"
+        data={processList}
+        title="Customization Process"
+        searchPlaceholder="Search process items..."
+        onAdd={() => navigate("/customization-process/create")}
+        addButtonText="Add Process"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -235,7 +228,7 @@ export default function CustomizationFeaturesList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              Customization Feature item and remove its data from the servers.
+              Customization Process item and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
