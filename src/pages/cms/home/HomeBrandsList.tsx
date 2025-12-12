@@ -37,6 +37,12 @@ export default function HomeBrandsList() {
   const [brandItems, setBrandItems] = useState<HomeBrand[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const pageSize = 10;
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<HomeBrand>({
@@ -47,13 +53,30 @@ export default function HomeBrandsList() {
 
   useEffect(() => {
     loadBrandItems();
-  }, []);
+  }, [currentPage, debouncedSearchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const loadBrandItems = async () => {
     try {
-      setLoading(true);
-      const response = await fetchHomeBrandsList(1, 100);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+      const response = await fetchHomeBrandsList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
       setBrandItems(response.data.list);
+      setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -62,6 +85,7 @@ export default function HomeBrandsList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -91,7 +115,9 @@ export default function HomeBrandsList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -230,6 +256,9 @@ export default function HomeBrandsList() {
         columns={columns}
         data={brandItems}
         title="Home Brands"
+        searching={searching}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         searchPlaceholder="Search brands..."
         onAdd={() => navigate("/home-brands/create")}
         addButtonText="Add Brand"

@@ -36,7 +36,13 @@ export default function WhyBosqList() {
   const { toast } = useToast();
   const [whyBosqItems, setWhyBosqItems] = useState<WhyBosq[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     editingSortOrder,
@@ -48,15 +54,37 @@ export default function WhyBosqList() {
     setData: setWhyBosqItems,
   });
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     loadWhyBosqItems();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadWhyBosqItems = async () => {
     try {
-      setLoading(true);
-      const response = await fetchWhyBosqList(1, 100);
-      setWhyBosqItems(response.data.list);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await fetchWhyBosqList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
+
+      if (response.success) {
+        setWhyBosqItems(response.data.list);
+        setTotalCount(response.data.pagination.totalCount);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -65,6 +93,7 @@ export default function WhyBosqList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -94,7 +123,9 @@ export default function WhyBosqList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -217,15 +248,23 @@ export default function WhyBosqList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading Why BOSQ items...</div>;
-  }
-
   return (
     <>
       <DataTable
         columns={columns}
         data={whyBosqItems}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Why BOSQ"
         searchPlaceholder="Search Why BOSQ items..."
         onAdd={() => navigate("/why-bosq/create")}

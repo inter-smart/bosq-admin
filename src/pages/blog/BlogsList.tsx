@@ -21,11 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import {
-  fetchBlogList,
-  deleteBlog,
-  Blog,
-} from "@/services/blog/blogsApi";
+import { fetchBlogList, deleteBlog, Blog } from "@/services/blog/blogsApi";
 import { useToast } from "@/hooks/use-toast";
 
 export default function BlogsList() {
@@ -39,7 +35,7 @@ export default function BlogsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
 
   // Debounce search query
   useEffect(() => {
@@ -53,7 +49,7 @@ export default function BlogsList() {
   // Fetch blog items
   useEffect(() => {
     loadBlogItems();
-  }, [currentPage, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadBlogItems = async () => {
     try {
@@ -246,6 +242,7 @@ export default function BlogsList() {
           totalCount,
           totalPages: Math.ceil(totalCount / pageSize),
           onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
         }}
         title="Blogs"
         searchPlaceholder="Search blogs..."

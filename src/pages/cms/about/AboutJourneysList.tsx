@@ -36,7 +36,13 @@ export default function AboutJourneysList() {
   const { toast } = useToast();
   const [journeys, setJourneys] = useState<AboutJourneys[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     editingSortOrder,
@@ -48,15 +54,37 @@ export default function AboutJourneysList() {
     setData: setJourneys,
   });
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     loadJourneys();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadJourneys = async () => {
     try {
-      setLoading(true);
-      const response = await fetchAboutJourneysList(1, 100);
-      setJourneys(response.data.list);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await fetchAboutJourneysList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
+
+      if (response.success) {
+        setJourneys(response.data.list);
+        setTotalCount(response.data.pagination.totalCount);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -65,6 +93,7 @@ export default function AboutJourneysList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -94,7 +123,9 @@ export default function AboutJourneysList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -189,15 +220,23 @@ export default function AboutJourneysList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading journeys...</div>;
-  }
-
   return (
     <>
       <DataTable
         columns={columns}
         data={journeys}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="About Journeys"
         searchPlaceholder="Search journeys..."
         onAdd={() => navigate("/about-journeys/create")}

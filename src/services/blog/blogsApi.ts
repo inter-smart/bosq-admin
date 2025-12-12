@@ -61,6 +61,7 @@ export const fetchBlogList = async (
 
   if (search) {
     params.search = search;
+    params.limit = 100000
   }
 
   return apiCall('/blog/blogs', { params });

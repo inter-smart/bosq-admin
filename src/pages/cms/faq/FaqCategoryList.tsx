@@ -38,33 +38,55 @@ export default function FaqCategoryList() {
   const { toast } = useToast();
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
   const [updateTimeouts, setUpdateTimeouts] = useState<{
     [key: number]: NodeJS.Timeout;
   }>({});
 
-  const {
-    editingSortOrder,
-    handleStatusChange,
-    handleSortOrderChange,
-  } = useCommonTableActions<FaqCategory>({
-    modelName: "FaqCategory",
-    data: categories,
-    setData: setCategories,
-  });
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<FaqCategory>({
+      modelName: "FaqCategory",
+      data: categories,
+      setData: setCategories,
+    });
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     loadCategories();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadCategories = async () => {
     try {
-      setLoading(true);
-      const response = await fetchFaqCategoryList(1, 100);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
 
-      console.log(response.data);
+      const response = await fetchFaqCategoryList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
 
-      setCategories(response.data.list);
+      if (response.success) {
+        setCategories(response.data.list);
+        setTotalCount(response.data.pagination.totalCount);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -73,6 +95,7 @@ export default function FaqCategoryList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -108,6 +131,12 @@ export default function FaqCategoryList() {
     {
       accessorKey: "title",
       header: "Title",
+      /*************  ✨ Windsurf Command ⭐  *************/
+      /**
+ * A cell that displays the title of a FaqCategory
+ * @param {{row: FaqCategory}} row - The row data
+
+/*******  8a6722b8-a7da-427b-a24f-200862360906  *******/
       cell: ({ row }) => (
         <div className="font-medium max-w-[300px] truncate">
           {row.getValue("title")}
@@ -207,6 +236,17 @@ export default function FaqCategoryList() {
         columns={columns}
         data={categories}
         title="FAQ Categories"
+        searchQuery={searchQuery} 
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         searchPlaceholder="Search categories..."
         onAdd={() => navigate("/faq-category/create")}
         addButtonText="Add Category"

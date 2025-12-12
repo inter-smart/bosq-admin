@@ -37,7 +37,13 @@ export default function AboutOurClientsList() {
   const { toast } = useToast();
   const [clientItems, setclientItems] = useState<AboutOurClients[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     editingSortOrder,
@@ -49,15 +55,37 @@ export default function AboutOurClientsList() {
     setData: setclientItems,
   });
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     loadclientItems();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadclientItems = async () => {
     try {
-      setLoading(true);
-      const response = await fetchAboutOurClientsList(1, 100);
-      setclientItems(response.data.list);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await fetchAboutOurClientsList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
+
+      if (response.success) {
+        setclientItems(response.data.list);
+        setTotalCount(response.data.pagination.totalCount);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -66,6 +94,7 @@ export default function AboutOurClientsList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -95,7 +124,9 @@ export default function AboutOurClientsList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -212,15 +243,23 @@ export default function AboutOurClientsList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading Our Clients...</div>;
-  }
-
   return (
     <>
       <DataTable
         columns={columns}
         data={clientItems}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Clients"
         searchPlaceholder="Search clients..."
         onAdd={() => navigate("/about-our-clients/create")}

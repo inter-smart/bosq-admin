@@ -36,7 +36,13 @@ export default function DeliveryTimeList() {
   const { toast } = useToast();
   const [deliveryTimes, setDeliveryTimes] = useState<DeliveryTime[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<DeliveryTime>({
@@ -45,15 +51,37 @@ export default function DeliveryTimeList() {
       setData: setDeliveryTimes,
     });
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   useEffect(() => {
     loadDeliveryTimes();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadDeliveryTimes = async () => {
     try {
-      setLoading(true);
-      const response = await fetchDeliveryTimeList(1, 100);
-      setDeliveryTimes(response.data.list);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await fetchDeliveryTimeList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
+
+      if (response.success) {
+        setDeliveryTimes(response.data.list);
+        setTotalCount(response.data.pagination.totalCount);
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -62,6 +90,7 @@ export default function DeliveryTimeList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -91,7 +120,9 @@ export default function DeliveryTimeList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -208,23 +239,24 @@ export default function DeliveryTimeList() {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading delivery times...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="space-y-4">
         <DataTable
           columns={columns}
           data={deliveryTimes}
+          loading={loading}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          searching={searching}
+          pagination={{
+            currentPage,
+            pageSize,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+            onPageChange: setCurrentPage,
+            onPageSizeChange: setPageSize,
+          }}
           title="Delivery Times"
           searchPlaceholder="Search delivery times..."
           onAdd={() => navigate("/delivery-time/create")}
