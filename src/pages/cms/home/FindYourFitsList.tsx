@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
@@ -37,6 +37,12 @@ export default function FindYourFitsList() {
   const [fitItems, setFitItems] = useState<FindYourFit[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     editingSortOrder,
@@ -49,14 +55,31 @@ export default function FindYourFitsList() {
   });
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
     loadFitItems();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadFitItems = async () => {
     try {
-      setLoading(true);
-      const response = await fetchFindYourFitsList(1, 100);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+      const response = await fetchFindYourFitsList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
       setFitItems(response.data.list);
+      setTotalCount(response.data.pagination?.totalCount || 0);
     } catch (error) {
       toast({
         title: "Error",
@@ -65,6 +88,7 @@ export default function FindYourFitsList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -89,34 +113,46 @@ export default function FindYourFitsList() {
     }
   };
 
+  const ImageCell = React.memo(({ src, alt }: { src: string; alt: string }) => {
+    const fullSrc = `${import.meta.env.VITE_IMAGE_URL}/${src}`;
+
+    return (
+      <div className="w-20 h-16 rounded-md bg-muted flex items-center justify-center overflow-hidden">
+        {src ? (
+          <img
+            loading="lazy"
+            decoding="async"
+            src={fullSrc}
+            alt={alt}
+            className="w-full h-full object-cover rounded"
+            style={{ contentVisibility: "auto" }}
+          />
+        ) : (
+          <div className="w-full h-full bg-muted-foreground/20 rounded" />
+        )}
+      </div>
+    );
+  });
+
   const columns: ColumnDef<FindYourFit>[] = [
     {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
       accessorKey: "media_path",
       header: "Image",
-      cell: ({ row }) => {
-        return (
-          <div className="w-20 h-16 rounded-md bg-muted flex items-center justify-center">
-            {row.getValue("media_path") ? (
-              <img
-                src={`${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-                  "media_path"
-                )}`}
-                alt={row.original.media_alt || row.original.title}
-                className="w-full h-full rounded object-cover"
-              />
-            ) : (
-              <div className="w-full h-full rounded bg-muted-foreground/20" />
-            )}
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <ImageCell
+          src={row.getValue("media_path")}
+          alt={row.original.media_alt || row.original.title}
+        />
+      ),
     },
     {
       accessorKey: "title",
@@ -242,6 +278,18 @@ export default function FindYourFitsList() {
       <DataTable
         columns={columns}
         data={fitItems}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Find Your Fits"
         searchPlaceholder="Search items..."
         onAdd={() => navigate("/find-your-fits/create")}

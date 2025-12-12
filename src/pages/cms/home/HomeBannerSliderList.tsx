@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
@@ -38,37 +38,45 @@ export default function HomeBannerSliderList() {
   const [bannerItems, setBannerItems] = useState<HomeBanner[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [updateTimeouts, setUpdateTimeouts] = useState<{
-    [key: number]: NodeJS.Timeout;
-  }>({});
+  const [searching, setSearching] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
-  const {
-    editingSortOrder,
-    handleStatusChange,
-    handleSortOrderChange,
-  } = useCommonTableActions<HomeBanner>({
-    modelName: "HomeBanner",
-    data: bannerItems,
-    setData: setBannerItems,
-  });
-  
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<HomeBanner>({
+      modelName: "HomeBanner",
+      data: bannerItems,
+      setData: setBannerItems,
+    });
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
 
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch blog items
   useEffect(() => {
     loadBannerItems();
-  }, []);
-
-  // Cleanup timeouts on unmount
-  useEffect(() => {
-    return () => {
-      Object.values(updateTimeouts).forEach(clearTimeout);
-    };
-  }, [updateTimeouts]);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadBannerItems = async () => {
     try {
-      setLoading(true);
-      const response = await fetchHomeBannerList(1, 100);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+      const response = await fetchHomeBannerList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
 
       console.log(response.data);
 
@@ -81,6 +89,7 @@ export default function HomeBannerSliderList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -105,8 +114,26 @@ export default function HomeBannerSliderList() {
     }
   };
 
+  const ImageCell = React.memo(({ src, alt }:{ src: string; alt: string}) => {
+    const fullSrc = `${import.meta.env.VITE_IMAGE_URL}/${src}`;
 
-
+    return (
+      <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center overflow-hidden">
+        {src ? (
+          <img
+            loading="lazy"
+            decoding="async"
+            src={fullSrc}
+            alt={alt}
+            className="w-full h-full object-cover rounded"
+            style={{ contentVisibility: "auto" }}
+          />
+        ) : (
+          <div className="w-full h-full bg-muted-foreground/20 rounded" />
+        )}
+      </div>
+    );
+  });
 
   const columns: ColumnDef<HomeBanner>[] = [
     {
@@ -119,30 +146,12 @@ export default function HomeBannerSliderList() {
     {
       accessorKey: "media_desktop_path",
       header: "Image",
-      cell: ({ row }) => {
-        console.log(
-          `${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-            "media_desktop_path"
-          )}`
-        );
-        return (
-          <>
-            <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center">
-              {row.getValue("media_desktop_path") ? (
-                <img
-                  src={`${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-                    "media_desktop_path"
-                  )}`}
-                  alt={row.original.media_alt || row.original.title}
-                  className="w-full h-full rounded object-cover"
-                />
-              ) : (
-                <div className="w-full h-full rounded bg-muted-foreground/20" />
-              )}
-            </div>
-          </>
-        );
-      },
+      cell: ({ row }) => (
+        <ImageCell
+          src={row.getValue("media_desktop_path")}
+          alt={row.original.media_alt || row.original.title}
+        />
+      ),
     },
     {
       accessorKey: "title",
@@ -167,9 +176,7 @@ export default function HomeBannerSliderList() {
                 ? editingSortOrder[item.id!]
                 : row.getValue("sort_order") || 0
             }
-            onChange={(e) =>
-              handleSortOrderChange(item.id!, e.target.value)
-            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
             className="w-20"
           />
         );
@@ -246,6 +253,18 @@ export default function HomeBannerSliderList() {
       <DataTable
         columns={columns}
         data={bannerItems}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Home Banner Slider"
         searchPlaceholder="Search banners..."
         onAdd={() => navigate("/home-banner-slider/create")}

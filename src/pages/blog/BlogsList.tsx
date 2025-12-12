@@ -23,6 +23,9 @@ import {
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { fetchBlogList, deleteBlog, Blog } from "@/services/blog/blogsApi";
 import { useToast } from "@/hooks/use-toast";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 
 export default function BlogsList() {
   const navigate = useNavigate();
@@ -36,6 +39,13 @@ export default function BlogsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
+
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<Blog>({
+      modelName: "Blogs",
+      data: blogItems,
+      setData: setBlogItems,
+    });
 
   // Debounce search query
   useEffect(() => {
@@ -170,17 +180,39 @@ export default function BlogsList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div>{row.getValue("sort_order")}</div>,
+      enableSorting: true,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
         return (
-          <Badge variant={status ? "default" : "secondary"}>
-            {status ? "active" : "inactive"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "active" : "inactive"}
+            </Badge>
+          </div>
         );
       },
     },

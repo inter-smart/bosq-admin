@@ -40,6 +40,12 @@ export default function FaqListList() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
   const {
     editingSortOrder,
     handleStatusChange,
@@ -52,23 +58,37 @@ export default function FaqListList() {
 
   useEffect(() => {
     loadFaqItems();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory]);
 
   useEffect(() => {
-    loadFaqItems();
-  }, [selectedCategory]);
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
 
   const loadFaqItems = async () => {
     try {
-      setLoading(true);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
       const categoryParam =
         selectedCategory === "all" ? undefined : parseInt(selectedCategory);
-      const response = await fetchFaqListList(1, 100, undefined, categoryParam);
+      const response = await fetchFaqListList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery,
+        categoryParam
+      );
 
       console.log(response.data);
 
       setFaqItems(response.data.list);
+      setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -77,6 +97,7 @@ export default function FaqListList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -106,7 +127,9 @@ export default function FaqListList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -219,6 +242,18 @@ export default function FaqListList() {
         <DataTable
           columns={columns}
           data={faqItems}
+          loading={loading}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          searching={searching}
+          pagination={{
+            currentPage,
+            pageSize,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+            onPageChange: setCurrentPage,
+            onPageSizeChange: setPageSize,
+          }}
           title="FAQ List"
           searchPlaceholder="Search FAQs..."
           onAdd={() => navigate("/terms-and-conditions-faq/create")}

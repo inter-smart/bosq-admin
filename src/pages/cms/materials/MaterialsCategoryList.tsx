@@ -37,6 +37,12 @@ export default function MaterialsCategoryList() {
   const [categories, setCategories] = useState<MaterialCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     editingSortOrder,
@@ -49,14 +55,31 @@ export default function MaterialsCategoryList() {
   });
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
     loadCategories();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadCategories = async () => {
     try {
-      setLoading(true);
-      const response = await fetchMaterialCategoryList(1, 100);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+      const response = await fetchMaterialCategoryList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
       setCategories(response.data.list);
+      setTotalCount(response.data.pagination?.totalCount || 0);
     } catch (error) {
       toast({
         title: "Error",
@@ -65,6 +88,7 @@ export default function MaterialsCategoryList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -94,7 +118,9 @@ export default function MaterialsCategoryList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -198,6 +224,18 @@ export default function MaterialsCategoryList() {
       <DataTable
         columns={columns}
         data={categories}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Material Categories"
         searchPlaceholder="Search categories..."
         onAdd={() => navigate("/materials-category/create")}

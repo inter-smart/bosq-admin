@@ -48,9 +48,15 @@ export default function FaqListList() {
   const { toast } = useToast();
   const [faqItems, setFaqItems] = useState<FaqList[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [categories, setCategories] = useState<FaqCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
   const {
     editingSortOrder,
     handleStatusChange,
@@ -65,9 +71,24 @@ export default function FaqListList() {
     loadCategories();
   }, []);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset to page 1 when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery, selectedCategory]);
+
+  // Load FAQ items when dependencies change
   useEffect(() => {
     loadFaqItems();
-  }, [selectedCategory]);
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory]);
 
   const loadCategories = async () => {
     try {
@@ -84,14 +105,25 @@ export default function FaqListList() {
 
   const loadFaqItems = async () => {
     try {
-      setLoading(true);
+      // Set appropriate loading state
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
       const categoryParam =
         selectedCategory === "all" ? undefined : parseInt(selectedCategory);
-      const response = await fetchFaqListList(1, 100, undefined, categoryParam);
 
-      console.log(response.data);
+      const response = await fetchFaqListList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery || undefined,
+        categoryParam
+      );
 
       setFaqItems(response.data.list);
+      setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -100,6 +132,7 @@ export default function FaqListList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -129,7 +162,9 @@ export default function FaqListList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -242,10 +277,6 @@ export default function FaqListList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading FAQ items...</div>;
-  }
-
   return (
     <>
       <div className="space-y-4">
@@ -281,6 +312,18 @@ export default function FaqListList() {
         <DataTable
           columns={columns}
           data={faqItems}
+          loading={loading}
+          searching={searching}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          pagination={{
+            currentPage,
+            pageSize,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+            onPageChange: setCurrentPage,
+            onPageSizeChange: setPageSize,
+          }}
           title="FAQ List"
           searchPlaceholder="Search FAQs..."
           onAdd={() => navigate("/faq-list/create")}

@@ -47,9 +47,15 @@ export default function MaterialsList() {
   const { toast } = useToast();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [categories, setCategories] = useState<MaterialCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<Material>({
@@ -60,20 +66,48 @@ export default function MaterialsList() {
 
   useEffect(() => {
     loadCategories();
-    loadMaterials();
   }, []);
 
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset to page 1 when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery, selectedCategory]);
+
+  // Load materials when dependencies change
   useEffect(() => {
     loadMaterials();
-  }, [selectedCategory]);
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory]);
 
   const loadMaterials = async () => {
     try {
-      setLoading(true);
+      // Set appropriate loading state
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+
       const categoryParam =
         selectedCategory === "all" ? undefined : parseInt(selectedCategory);
-      const response = await fetchMaterialsList(1, 100, undefined, categoryParam);
+
+      const response = await fetchMaterialsList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery || undefined,
+        categoryParam
+      );
+
       setMaterials(response.data.list);
+      setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -82,6 +116,7 @@ export default function MaterialsList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -124,7 +159,9 @@ export default function MaterialsList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -144,23 +181,23 @@ export default function MaterialsList() {
         return <div className="text-sm">{category?.title || "N/A"}</div>;
       },
     },
-    {
-      accessorKey: "media_path",
-      header: "Image",
-      cell: ({ row }) => {
-        const mediaPath = row.getValue("media_path") as string;
-        if (mediaPath) {
-          return (
-            <img
-              src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}
-              alt={row.original.media_alt || "Material"}
-              className="h-10 w-10 object-cover rounded"
-            />
-          );
-        }
-        return <div className="text-sm text-muted-foreground">No image</div>;
-      },
-    },
+    // {
+    //   accessorKey: "media_path",
+    //   header: "Image",
+    //   cell: ({ row }) => {
+    //     const mediaPath = row.getValue("media_path") as string;
+    //     if (mediaPath) {
+    //       return (
+    //         <img
+    //           src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}
+    //           alt={row.original.media_alt || "Material"}
+    //           className="h-10 w-10 object-cover rounded"
+    //         />
+    //       );
+    //     }
+    //     return <div className="text-sm text-muted-foreground">No image</div>;
+    //   },
+    // },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
@@ -244,16 +281,6 @@ export default function MaterialsList() {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading materials...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -291,6 +318,18 @@ export default function MaterialsList() {
         <DataTable
           columns={columns}
           data={materials}
+          loading={loading}
+          searching={searching}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          pagination={{
+            currentPage,
+            pageSize,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+            onPageChange: setCurrentPage,
+            onPageSizeChange: setPageSize,
+          }}
           title="Materials"
           searchPlaceholder="Search materials..."
           onAdd={() => navigate("/materials/create")}

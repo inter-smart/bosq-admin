@@ -125,7 +125,9 @@ export default function FaqCategoryList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -226,17 +228,13 @@ export default function FaqCategoryList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading FAQ categories...</div>;
-  }
-
   return (
     <>
       <DataTable
         columns={columns}
         data={categories}
-        title="FAQ Categories"
-        searchQuery={searchQuery} 
+        loading={loading}
+        searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searching={searching}
         pagination={{
@@ -247,6 +245,7 @@ export default function FaqCategoryList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
+        title="FAQ Categories"
         searchPlaceholder="Search categories..."
         onAdd={() => navigate("/faq-category/create")}
         addButtonText="Add Category"

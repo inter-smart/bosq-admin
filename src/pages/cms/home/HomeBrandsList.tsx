@@ -42,7 +42,7 @@ export default function HomeBrandsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<HomeBrand>({
@@ -53,7 +53,7 @@ export default function HomeBrandsList() {
 
   useEffect(() => {
     loadBrandItems();
-  }, [currentPage, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -255,10 +255,19 @@ export default function HomeBrandsList() {
       <DataTable
         columns={columns}
         data={brandItems}
-        title="Home Brands"
-        searching={searching}
+        loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
+        title={"Brands"}
         searchPlaceholder="Search brands..."
         onAdd={() => navigate("/home-brands/create")}
         addButtonText="Add Brand"
