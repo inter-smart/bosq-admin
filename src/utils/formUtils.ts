@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+const extractVisibleContent = (html: string) => {
+  return html
+    .replace(/<br\s*\/?>/gi, "") // ignore line breaks
+    .replace(/&nbsp;/gi, "") // ignore invisible spaces
+    .replace(/<img[^>]*>/gi, "[img]") // treat images as content
+    .replace(/<li[^>]*>.*?<\/li>/gi, "[li]") // list items as content
+    .replace(/<[^>]+>/g, "") // remove other tags
+    .trim();
+};
+
 // Common validation patterns
 export const commonValidations = {
   // String validations
@@ -16,13 +26,9 @@ export const commonValidations = {
       .optional(),
 
   requiredText: (fieldName: string) =>
-    z
-      .string()
-      .transform((val) => val.replace(/<[^>]+>/g, "").trim()) // remove all HTML tags
-      .refine((val) => val.length > 0, {
-        message: `${fieldName} is required`,
-      }),
-
+    z.string().refine((html) => extractVisibleContent(html).length > 0, {
+      message: `${fieldName} is required`,
+    }),
   // Number validations
   sortOrder: () =>
     z.number().min(1, "Sort order must be 0 or greater").optional(),

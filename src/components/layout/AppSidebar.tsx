@@ -24,6 +24,7 @@ import {
   Package,
   Truck,
   Palette,
+  LogIn,
 } from "lucide-react";
 
 import {
@@ -109,6 +110,13 @@ const cmsSection = [
     subItems: [{ title: "Contact CMS", url: "/contact-cms", icon: FileText }],
   },
   {
+    title: "Login/Register",
+    icon: LogIn,
+    subItems: [
+      { title: "Login/Register CMS", url: "/login-register-cms", icon: FileText },
+    ],
+  },
+  {
     title: "Customisation",
     icon: Palette,
     subItems: [
@@ -188,6 +196,7 @@ export function AppSidebar() {
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [loginRegisterOpen, setLoginRegisterOpen] = useState(false);
   const [customisationOpen, setCustomisationOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
@@ -249,6 +258,12 @@ export function AppSidebar() {
     if (["/contact-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setContactOpen(true);
+    }
+
+    // Auto-open Login/Register section
+    if (["/login-register-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setLoginRegisterOpen(true);
     }
 
     // Auto-open Customisation section
@@ -370,6 +385,9 @@ export function AppSidebar() {
                   } else if (section.title === "Contact") {
                     sectionOpen = contactOpen;
                     setSectionOpen = setContactOpen;
+                  } else if (section.title === "Login/Register") {
+                    sectionOpen = loginRegisterOpen;
+                    setSectionOpen = setLoginRegisterOpen;
                   } else if (section.title === "Customisation") {
                     sectionOpen = customisationOpen;
                     setSectionOpen = setCustomisationOpen;
