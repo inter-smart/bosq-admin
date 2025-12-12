@@ -43,17 +43,14 @@ export default function WarrantyPolicyList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
 
-  const {
-    editingSortOrder,
-    handleStatusChange,
-    handleSortOrderChange,
-  } = useCommonTableActions<WarrantyPolicy>({
-    modelName: "WarrantyPolicy",
-    data: policies,
-    setData: setPolicies,
-  });
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<WarrantyPolicy>({
+      modelName: "WarrantyPolicy",
+      data: policies,
+      setData: setPolicies,
+    });
 
   // Debounce search query
   useEffect(() => {
@@ -67,7 +64,7 @@ export default function WarrantyPolicyList() {
   // Fetch warranty policies
   useEffect(() => {
     loadPolicies();
-  }, [currentPage, debouncedSearchQuery]);
+  }, [currentPage,pageSize, debouncedSearchQuery]);
 
   const loadPolicies = async () => {
     try {
@@ -264,6 +261,7 @@ export default function WarrantyPolicyList() {
           totalCount,
           totalPages: Math.ceil(totalCount / pageSize),
           onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
         }}
         title="Warranty Policy Items"
         searchPlaceholder="Search warranty policies..."

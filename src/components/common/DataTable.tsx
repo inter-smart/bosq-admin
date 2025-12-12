@@ -3,7 +3,6 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -137,14 +136,13 @@ export function DataTable<TData, TValue>({
   );
 
   const [rowSelection, setRowSelection] = useState({});
-  const [globalFilter, setGlobalFilter] = useState("");
+  // const [globalFilter, setGlobalFilter] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [localSearching, setLocalSearching] = useState(false);
 
   // Use external search query if provided, otherwise use internal globalFilter
-  const effectiveSearchQuery =
-    searchQuery !== undefined ? searchQuery : globalFilter;
-  const setEffectiveSearchQuery = onSearchChange || setGlobalFilter;
+  const effectiveSearchQuery = searchQuery;
+  const setEffectiveSearchQuery = onSearchChange 
 
   // Show brief animation for local search (when no external search management)
   useEffect(() => {
@@ -168,11 +166,10 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: pagination ? undefined : getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: "includesString",
+    // onGlobalFilterChange: setGlobalFilter,
+    // globalFilterFn: "includesString",
     manualPagination: !!pagination,
     state: {
       sorting,
@@ -372,7 +369,7 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
               <Badge variant="secondary">
                 {selectedRows.length} of{" "}
-                {table.getFilteredRowModel().rows.length} row(s) selected
+                {table.getRowModel().rows.length} row(s) selected
               </Badge>
               <div className="flex items-center space-x-2">
                 {bulkActions.length > 0 && onBulkAction && (
@@ -598,7 +595,7 @@ export function DataTable<TData, TValue>({
               <div className="flex items-center space-x-2">
                 <p className="text-sm text-muted-foreground">
                   {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                  {table.getFilteredRowModel().rows.length} row(s) selected
+                  {table.getRowModel().rows.length} row(s) selected
                 </p>
               </div>
               <div className="flex items-center space-x-6 lg:space-x-8">
