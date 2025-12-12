@@ -46,6 +46,14 @@ const FindYourFitsForm = lazy(() =>
   import("./pages/cms/home/FindYourFitsForm")
 );
 
+// Customization pages
+const CustomizationFeaturesList = lazy(() =>
+  import("./pages/customization/CustomizationFeaturesList")
+);
+const CustomizationFeaturesForm = lazy(() =>
+  import("./pages/customization/CustomizationFeaturesForm")
+);
+
 // FAQ pages
 const FaqCmsForm = lazy(() => import("./pages/cms/faq/FaqCmsForm"));
 const FaqCategoryList = lazy(() =>
@@ -130,6 +138,11 @@ const WhyBosqForm = lazy(() => import("./pages/cms/about/WhyBosqForm"));
 const BlogCmsForm = lazy(() => import("./pages/blog/BlogCmsForm"));
 const BlogsList = lazy(() => import("./pages/blog/BlogsList"));
 const BlogsForm = lazy(() => import("./pages/blog/BlogsForm"));
+
+// Customization pages
+const CustomizationCmsForm = lazy(() =>
+  import("./pages/customization/CustomizationCmsForm")
+);
 
 // Policy pages
 const PrivacyPolicyCmsForm = lazy(() =>
@@ -355,6 +368,34 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <FindYourFitsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Customization Features Routes */}
+          <Route
+            path="/customization-features"
+            element={
+              <ProtectedRoute>
+                <CustomizationFeaturesList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/customization-features/create"
+            element={
+              <ProtectedRoute>
+                <CustomizationFeaturesForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/customization-features/edit/:id"
+            element={
+              <ProtectedRoute>
+                <CustomizationFeaturesForm />
               </ProtectedRoute>
             }
           />
@@ -686,6 +727,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <BlogCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Customization CMS Route */}
+          <Route
+            path="/customization-cms"
+            element={
+              <ProtectedRoute>
+                <CustomizationCmsForm />
               </ProtectedRoute>
             }
           />

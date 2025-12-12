@@ -23,6 +23,7 @@ import {
   ScrollText,
   Package,
   Truck,
+  Palette,
 } from "lucide-react";
 
 import {
@@ -107,6 +108,14 @@ const cmsSection = [
     icon: Mail,
     subItems: [{ title: "Contact CMS", url: "/contact-cms", icon: FileText }],
   },
+  {
+    title: "Customisation",
+    icon: Palette,
+    subItems: [
+      { title: "Customisation CMS", url: "/customization-cms", icon: FileText },
+      { title: "Customisation Features", url: "/customization-features", icon: List },
+    ],
+  },
 ];
 
 const blogsSection = [
@@ -177,6 +186,7 @@ export function AppSidebar() {
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [customisationOpen, setCustomisationOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
   const [policiesOpen, setPoliciesOpen] = useState(false);
@@ -237,6 +247,12 @@ export function AppSidebar() {
     if (["/contact-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setContactOpen(true);
+    }
+
+    // Auto-open Customisation section
+    if (["/customization-cms", "/customization-features"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setCustomisationOpen(true);
     }
 
     // Auto-open Blog section
@@ -352,6 +368,9 @@ export function AppSidebar() {
                   } else if (section.title === "Contact") {
                     sectionOpen = contactOpen;
                     setSectionOpen = setContactOpen;
+                  } else if (section.title === "Customisation") {
+                    sectionOpen = customisationOpen;
+                    setSectionOpen = setCustomisationOpen;
                   }
 
                   return (
