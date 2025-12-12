@@ -1,7 +1,7 @@
 import { apiCall } from '@/utils/apiUtils';
 
 export interface FaqList {
-  id: number;
+  id?: number;
   question: string;
   question_ar: string;
   answer: string;

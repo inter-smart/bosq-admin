@@ -115,6 +115,7 @@ const cmsSection = [
       { title: "Customisation CMS", url: "/customization-cms", icon: FileText },
       { title: "Features", url: "/customization-features", icon: List },
       { title: "Process", url: "/customization-process", icon: List },
+      { title: "Options", url: "/customization-options", icon: List },
     ],
   },
 ];

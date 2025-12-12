@@ -59,6 +59,12 @@ const CustomizationProcessList = lazy(() =>
 const CustomizationProcessForm = lazy(() =>
   import("./pages/customization/CustomizationProcessForm")
 );
+const CustomizationOptionsList = lazy(() =>
+  import("./pages/customization/CustomizationOptionsList")
+);
+const CustomizationOptionsForm = lazy(() =>
+  import("./pages/customization/CustomizationOptionsForm")
+);
 
 // FAQ pages
 const FaqCmsForm = lazy(() => import("./pages/cms/faq/FaqCmsForm"));
@@ -430,6 +436,34 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <CustomizationProcessForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Customization Options Routes */}
+          <Route
+            path="/customization-options"
+            element={
+              <ProtectedRoute>
+                <CustomizationOptionsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/customization-options/create"
+            element={
+              <ProtectedRoute>
+                <CustomizationOptionsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/customization-options/edit/:id"
+            element={
+              <ProtectedRoute>
+                <CustomizationOptionsForm />
               </ProtectedRoute>
             }
           />

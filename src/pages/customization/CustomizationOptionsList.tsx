@@ -24,17 +24,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchCustomizationProcessList,
-  deleteCustomizationProcess,
-  CustomizationProcess,
-} from "@/services/customization/customizationProcessApi";
+  fetchCustomizationOptionsList,
+  deleteCustomizationOption,
+  CustomizationOption,
+} from "@/services/customization/customizationOptionsApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function CustomizationProcessList() {
+export default function CustomizationOptionsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [processList, setProcessList] = useState<CustomizationProcess[]>([]);
+
+  const [optionsList, setOptionsList] = useState<CustomizationOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [searching, setSearching] = useState(false);
@@ -45,16 +46,17 @@ export default function CustomizationProcessList() {
   const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<CustomizationProcess>({
-      modelName: "CustomizationProcess",
-      data: processList,
-      setData: setProcessList,
+    useCommonTableActions<CustomizationOption>({
+      modelName: "CustomizationOptions",
+      data: optionsList,
+      setData: setOptionsList,
     });
 
   useEffect(() => {
-    loadProcessList();
+    loadOptionsList();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
+  // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
@@ -63,25 +65,25 @@ export default function CustomizationProcessList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const loadProcessList = async () => {
+  const loadOptionsList = async () => {
     try {
       if (debouncedSearchQuery) setSearching(true);
       else setLoading(true);
 
-      const response = await fetchCustomizationProcessList(
+      const response = await fetchCustomizationOptionsList(
         currentPage,
         pageSize,
         debouncedSearchQuery
       );
 
       if (response.success) {
-        setProcessList(response.data.list);
+        setOptionsList(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load Customization Process items",
+        description: "Failed to load Customization Options items",
         variant: "destructive",
       });
     } finally {
@@ -94,16 +96,16 @@ export default function CustomizationProcessList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteCustomizationProcess(deleteItemId);
-      setProcessList((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteCustomizationOption(deleteItemId);
+      setOptionsList((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "Customization Process item deleted successfully",
+        description: "Customization Option item deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete Customization Process item",
+        description: "Failed to delete Customization Option item",
         variant: "destructive",
       });
     } finally {
@@ -111,7 +113,7 @@ export default function CustomizationProcessList() {
     }
   };
 
-  const columns: ColumnDef<CustomizationProcess>[] = [
+  const columns: ColumnDef<CustomizationOption>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -147,7 +149,6 @@ export default function CustomizationProcessList() {
         const item = row.original;
         return (
           <Input
-          min={0}
             type="number"
             value={
               editingSortOrder[item.id!] !== undefined
@@ -204,7 +205,7 @@ export default function CustomizationProcessList() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={() =>
-                  navigate(`/customization-process/edit/${item.id}`)
+                  navigate(`/customization-options/edit/${item.id}`)
                 }
               >
                 <Edit className="mr-2 h-4 w-4" />
@@ -225,14 +226,14 @@ export default function CustomizationProcessList() {
   ];
 
   if (loading) {
-    return <div>Loading Customization Process items...</div>;
+    return <div>Loading Customization Options items...</div>;
   }
 
   return (
     <>
       <DataTable
         columns={columns}
-        data={processList}
+        data={optionsList}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -245,10 +246,10 @@ export default function CustomizationProcessList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Customization Process"
-        searchPlaceholder="Search process items..."
-        onAdd={() => navigate("/customization-process/create")}
-        addButtonText="Add Process"
+        title="Customization Options"
+        searchPlaceholder="Search options items..."
+        onAdd={() => navigate("/customization-options/create")}
+        addButtonText="Add Customization Option"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -261,7 +262,7 @@ export default function CustomizationProcessList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              Customization Process item and remove its data from the servers.
+              Customization Option item and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

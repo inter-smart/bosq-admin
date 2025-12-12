@@ -73,6 +73,23 @@ export const customizationProcessSchema = z.object({
   status: commonValidations.booleanStatus(),
 });
 
+export const customizationOptionsSchema = z.object({
+  // English fields (required)
+  title: commonValidations.requiredString("Title is required"),
+  description: commonValidations.requiredText("Description is required"),
+  points: commonValidations.requiredText("Points is required"),
+
+  // Arabic fields (required)
+  title_ar: commonValidations.requiredString("Arabic Title is required"),
+  description_ar: commonValidations.requiredText("Arabic Description is required"),
+  points_ar: commonValidations.requiredText("Arabic Points is required"),
+
+  // Sort order + status
+  sort_order: commonValidations.sortOrder(),
+  status: commonValidations.booleanStatus(),
+});
+
 export type CustomizationCmsFormData = z.infer<typeof customizationCmsSchema>;
 export type CustomizationFeatureFormData = z.infer<typeof customizationFeatureSchema>;
 export type CustomizationProcessFormData = z.infer<typeof customizationProcessSchema>;
+export type CustomizationOptionsFormData = z.infer<typeof customizationOptionsSchema>;
