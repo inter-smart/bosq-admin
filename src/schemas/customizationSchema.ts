@@ -45,11 +45,11 @@ export const customizationCmsSchema = z.object({
 export const customizationFeatureSchema = z.object({
   // English fields (required)
   title: commonValidations.requiredString("Title is required"),
-  description: commonValidations.requiredString("Description is required"),
+  description: commonValidations.requiredText("Description is required"),
 
   // Arabic fields (required)
   title_ar: commonValidations.requiredString("Arabic Title is required"),
-  description_ar: commonValidations.requiredString("Arabic Description is required"),
+  description_ar: commonValidations.requiredText("Arabic Description is required"),
 
   // Media fields
   media_path: commonValidations.validateFileUpload("Image is required"),

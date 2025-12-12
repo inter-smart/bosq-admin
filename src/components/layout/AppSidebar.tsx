@@ -113,7 +113,7 @@ const cmsSection = [
     icon: Palette,
     subItems: [
       { title: "Customisation CMS", url: "/customization-cms", icon: FileText },
-      { title: "Customisation Features", url: "/customization-features", icon: List },
+      { title: "Features", url: "/customization-features", icon: List },
     ],
   },
 ];
