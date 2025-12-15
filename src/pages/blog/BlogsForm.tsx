@@ -56,6 +56,7 @@ export default function BlogsForm() {
       meta_description: "",
       meta_description_ar: "",
       meta_keywords: "",
+      slug: "",
       meta_keywords_ar: "",
       description: "",
       description_ar: "",
@@ -75,6 +76,33 @@ export default function BlogsForm() {
     }
   }, [id, isEditing]);
 
+  const slugify = (text: string) =>
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "") // remove special chars
+      .replace(/\s+/g, "-") // spaces to hyphen
+      .replace(/--+/g, "-"); // remove double hyphens
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "title") {
+        const currentSlug = form.getValues("slug");
+
+        // Only auto-generate slug if:
+        // - creating new blog OR
+        // - slug is empty
+        if (isEditing || !currentSlug) {
+          form.setValue("slug", slugify(value.title || ""), {
+            shouldValidate: true,
+          });
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, isEditing]);
+
   const loadBlogData = async (itemId: number) => {
     try {
       setInitialLoading(true);
@@ -88,8 +116,9 @@ export default function BlogsForm() {
           description: data.description || "",
           description_ar: data.description_ar || "",
           meta_title: data.meta_title || "",
+          slug: data.slug || "",
           meta_title_ar: data.meta_title_ar || "",
-          meta_description: data.meta_description|| "",
+          meta_description: data.meta_description || "",
           meta_description_ar: data.meta_description_ar || "",
           meta_keywords: data.meta_keywords || "",
           meta_keywords_ar: data.meta_keywords_ar || "",
@@ -107,17 +136,17 @@ export default function BlogsForm() {
         if (data.thumbnail) {
           const thumbnailUrl = `${MEDIA_URL}/${data.thumbnail}`;
           setThumbnailFile(thumbnailUrl);
-          form.setValue('thumbnail', thumbnailUrl);
+          form.setValue("thumbnail", thumbnailUrl);
         }
         if (data.media_desktop_path) {
           const desktopUrl = `${MEDIA_URL}/${data.media_desktop_path}`;
           setDesktopImageFile(desktopUrl);
-          form.setValue('media_desktop_path', desktopUrl);
+          form.setValue("media_desktop_path", desktopUrl);
         }
         if (data.media_mobile_path) {
           const mobileUrl = `${MEDIA_URL}/${data.media_mobile_path}`;
           setMobileImageFile(mobileUrl);
-          form.setValue('media_mobile_path', mobileUrl);
+          form.setValue("media_mobile_path", mobileUrl);
         }
       }
     } catch (error) {
@@ -142,6 +171,7 @@ export default function BlogsForm() {
       formData.append("description", data.description);
       formData.append("meta_title", data.meta_title);
       formData.append("meta_description", data.meta_description);
+      formData.append("slug", data.slug);
       formData.append("meta_keywords", data.meta_keywords);
       formData.append("media_alt", data.media_alt);
       if (data.thumbnail_alt)
@@ -253,6 +283,20 @@ export default function BlogsForm() {
 
                   <FormField
                     control={form.control}
+                    name="slug"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slug</FormLabel>
+                        <FormControl>
+                          <Input placeholder="auto-generated-slug" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="description"
                     render={({ field }) => (
                       <FormItem>
@@ -301,20 +345,6 @@ export default function BlogsForm() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="published_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Published Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 {/* Arabic Fields */}
@@ -337,6 +367,19 @@ export default function BlogsForm() {
                     )}
                   />
 
+                  <FormField
+                    control={form.control}
+                    name="published_date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Published Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name="description_ar"

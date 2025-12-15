@@ -38,6 +38,7 @@ export const blogSchema = z.object({
   description: commonValidations.requiredText("Description"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
   thumbnail_alt: commonValidations.optionalString("Thumbnail Alt Text"),
+  slug: commonValidations.requiredString("Slug"),
 
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
