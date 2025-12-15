@@ -5,6 +5,7 @@ import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,10 +26,10 @@ import { MoreHorizontal, Edit, Trash2, ExternalLink } from "lucide-react";
 import {
   fetchSocialMediaList,
   deleteSocialMedia,
-  toggleSocialMediaStatus,
   SocialMedia,
 } from "@/services/common/socialMediaApi";
 import { useToast } from "@/hooks/use-toast";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
 export default function SocialMediaList() {
   const navigate = useNavigate();
@@ -36,21 +37,46 @@ export default function SocialMediaList() {
   const [socialMediaItems, setSocialMediaItems] = useState<SocialMedia[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [statusToggleItem, setStatusToggleItem] = useState<{
-    id: number;
-    newStatus: boolean;
-  } | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [pageSize, setPageSize] = useState(10);
+  const MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<SocialMedia>({
+      modelName: "SocialMedia",
+      data: socialMediaItems,
+      setData: setSocialMediaItems,
+    });
 
-  // Load social media items on component mount
   useEffect(() => {
     loadSocialMediaItems();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const loadSocialMediaItems = async () => {
     try {
-      setLoading(true);
-      const response = await fetchSocialMediaList(1, 100); // Load all items
-      setSocialMediaItems(response.data.data);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+      const response = await fetchSocialMediaList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery
+      );
+      setSocialMediaItems(response.data.list);
+      setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -59,34 +85,7 @@ export default function SocialMediaList() {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const confirmStatusToggle = async () => {
-    if (!statusToggleItem) return;
-
-    try {
-      const { id } = statusToggleItem;
-      await toggleSocialMediaStatus(id);
-
-      setSocialMediaItems((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, status: statusToggleItem.newStatus } : item
-        )
-      );
-
-      toast({
-        title: "Success",
-        description: "Social media status updated successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update social media status",
-        variant: "destructive",
-      });
-    } finally {
-      setStatusToggleItem(null);
+      setSearching(false);
     }
   };
 
@@ -118,17 +117,19 @@ export default function SocialMediaList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
-      accessorKey: "icon",
+      accessorKey: "icon_media_path",
       header: "Icon",
       cell: ({ row }) => (
-        <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center">
-          {row.getValue("icon") ? (
+        <div className="w-10 h-10 rounded-md bg-black flex items-center justify-center">
+          {row.getValue("icon_media_path") ? (
             <img
-              src={`${import.meta.env.VITE_URL}/${row.getValue("icon")}`}
+              src={`${MEDIA_URL}/${row.getValue("icon_media_path")}`}
               alt={row.original.icon_alt}
               className="w-8 h-8 rounded object-cover"
             />
@@ -139,11 +140,18 @@ export default function SocialMediaList() {
       ),
     },
     {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => (
-        <div className="font-medium capitalize">{row.getValue("name")}</div>
-      ),
+      accessorKey: "icon_alt",
+      header: "Title",
+      cell: ({ row }) => {
+        const link = row.getValue("icon_alt") as string;
+        return (
+          <div className="flex items-center gap-2">
+            <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">
+              {link}
+            </div>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "link",
@@ -168,28 +176,38 @@ export default function SocialMediaList() {
         );
       },
     },
+
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("sort_order")}</div>
-      ),
+      enableSorting: true,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Switch
               checked={status}
-              onCheckedChange={(checked) =>
-                setStatusToggleItem({
-                  id: row.original.id!,
-                  newStatus: checked,
-                })
-              }
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
             />
             <Badge variant={status ? "default" : "secondary"}>
               {status ? "active" : "inactive"}
@@ -250,8 +268,20 @@ export default function SocialMediaList() {
       <DataTable
         columns={columns}
         data={socialMediaItems}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Social Media"
-        searchPlaceholder="Search social media items..."
+        searchPlaceholder="Search social media..."
         onAdd={() => navigate("/social-media/new")}
         addButtonText="Add Social Media"
       />
@@ -276,30 +306,6 @@ export default function SocialMediaList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Status Toggle Confirmation Dialog */}
-      <AlertDialog
-        open={!!statusToggleItem}
-        onOpenChange={() => setStatusToggleItem(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to{" "}
-              {statusToggleItem?.newStatus ? "activate" : "deactivate"} this
-              social media item? This will change its visibility and availability in the
-              system.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmStatusToggle}>
-              {statusToggleItem?.newStatus ? "Activate" : "Deactivate"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

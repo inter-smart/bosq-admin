@@ -7,6 +7,14 @@ export interface Blog {
   slug?: string;
   description: string;
   description_ar?: string;
+
+  meta_title: string;
+  meta_title_ar?: string;
+  meta_description: string;
+  meta_description_ar?: string;
+  meta_keywords: string;
+  meta_keywords_ar?: string;
+  
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt: string;

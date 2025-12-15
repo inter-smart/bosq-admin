@@ -72,7 +72,7 @@ export const commonValidations = {
           return false;
         },
         {
-          message: `${fieldName} is required. Please upload media.`,
+          message: `${fieldName} is required. Please upload ${fieldName}.`,
         }
       ),
 

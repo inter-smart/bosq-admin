@@ -2,9 +2,9 @@ import { apiCall } from '@/utils/apiUtils';
 
 export interface SocialMedia {
   id?: number;
-  name: string;
-  icon: string | null;
+  icon_media_path: string | null;
   icon_alt: string;
+  icon_alt_ar: string;
   link: string;
   sort_order?: number;
   status?: boolean;
@@ -19,7 +19,7 @@ export interface SocialMediaResponse {
   timestamp: string;
   statusCode: number;
   data: {
-    data: SocialMedia[];
+    list: SocialMedia[];
     pagination: {
       totalCount: number;
       totalPages: number;
@@ -93,12 +93,5 @@ export const updateSocialMedia = async (
 export const deleteSocialMedia = async (id: number): Promise<void> => {
   return apiCall(`/social-media/${id}`, {
     method: 'DELETE',
-  });
-};
-
-// Toggle status
-export const toggleSocialMediaStatus = async (id: number): Promise<SocialMediaItemResponse> => {
-  return apiCall(`/social-media/${id}/toggle-status`, {
-    method: 'PATCH',
   });
 };
