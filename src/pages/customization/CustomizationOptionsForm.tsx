@@ -23,16 +23,20 @@ import {
   updateCustomizationOption,
   CustomizationOption,
 } from "@/services/customization/customizationOptionsApi";
-import { customizationOptionsSchema, CustomizationOptionsFormData } from "@/schemas/customizationSchema";
+import {
+  customizationOptionsSchema,
+  CustomizationOptionsFormData,
+} from "@/schemas/customizationSchema";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
+import { FileUpload } from "@/components/common/FileUpload";
 
 export default function CustomizationOptionsForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-
+  const MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
 
@@ -46,6 +50,8 @@ export default function CustomizationOptionsForm() {
       description_ar: "",
       points: "",
       points_ar: "",
+      media_alt: "",
+      media_alt_ar: "",
       sort_order: 1,
       status: true,
     },
@@ -71,10 +77,16 @@ export default function CustomizationOptionsForm() {
           description_ar: data.description_ar || "",
           points: data.points || "",
           points_ar: data.points_ar || "",
+          media_alt: data.media_alt || "",
+          media_alt_ar: data.media_alt_ar || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
+          media_path: data.media_path
+            ? `${MEDIA_URL}/${data.media_path}`
+            : null,
         });
       }
+
     } catch (error) {
       toast({
         title: "Error",
@@ -107,26 +119,30 @@ export default function CustomizationOptionsForm() {
     try {
       setLoading(true);
 
-      const payload: CustomizationOption = {
-        title: data.title,
-        title_ar: data.title_ar,
-        description: data.description,
-        description_ar: data.description_ar,
-        points: data.points,
-        points_ar: data.points_ar,
-        sort_order: data.sort_order,
-        status: data.status,
+      const formData = new FormData();
+
+      formData.append("title", data.title);
+      formData.append("title_ar", data.title_ar);
+      formData.append("description", data.description);
+      formData.append("description_ar", data.description_ar);
+      formData.append("points", data.points);
+      formData.append("points_ar", data.points_ar);
+      formData.append("media_alt", data.media_alt);
+      formData.append("media_alt_ar", data.media_alt_ar);
+      formData.append("sort_order", (data.sort_order || 0).toString());
+      formData.append("status", (data.status ?? true).toString());
+
+      if (data.media_path instanceof File) {
+        formData.append("media_path", data.media_path);
       }
-
-
       if (isEditing && id) {
-        await updateCustomizationOption(parseInt(id), payload);
+        await updateCustomizationOption(parseInt(id), formData);
         toast({
           title: "Success",
           description: "Customization Option updated successfully",
         });
       } else {
-        await createCustomizationOption(payload);
+        await createCustomizationOption(formData);
         toast({
           title: "Success",
           description: "Customization Option created successfully",
@@ -137,7 +153,9 @@ export default function CustomizationOptionsForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to ${isEditing ? "update" : "create"} Customization Option`,
+        description: `Failed to ${
+          isEditing ? "update" : "create"
+        } Customization Option`,
         variant: "destructive",
       });
     } finally {
@@ -286,7 +304,7 @@ export default function CustomizationOptionsForm() {
                         <FormLabel>Points (النقاط)</FormLabel>
                         <FormControl>
                           <RichTextEditor
-                          {...field}
+                            {...field}
                             placeholder="أدخل النقاط كقائمة نقطية"
                             dir="rtl"
                           />
@@ -299,6 +317,86 @@ export default function CustomizationOptionsForm() {
                     )}
                   />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Images</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="media_path"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">
+                      Image
+                    </FormLabel>
+
+                    <FormControl>
+                      <div className="rounded-lg border-2 border-dashed border-muted-foreground/30 p-4">
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload image"
+                          preview={true}
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </div>
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="border-t pt-6" />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="media_alt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-medium">
+                        Media Alt Text (EN)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Describe the image for accessibility"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_alt_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-medium">
+                        Media Alt Text (AR)
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          dir="rtl"
+                          placeholder="اكتب وصف الصورة لإمكانية الوصول"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </CardContent>
           </Card>

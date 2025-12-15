@@ -32,7 +32,7 @@ export default function BlogsForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
-
+  const MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
   const [thumbnailFile, setThumbnailFile] = useState<File | string | null>(
@@ -93,19 +93,13 @@ export default function BlogsForm() {
         });
 
         if (data.thumbnail) {
-          setThumbnailFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.thumbnail}`
-          );
+          setThumbnailFile(`${MEDIA_URL}/${data.thumbnail}`);
         }
         if (data.media_desktop_path) {
-          setDesktopImageFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path}`
-          );
+          setDesktopImageFile(`${MEDIA_URL}/${data.media_desktop_path}`);
         }
         if (data.media_mobile_path) {
-          setMobileImageFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`
-          );
+          setMobileImageFile(`${MEDIA_URL}/${data.media_mobile_path}`);
         }
       }
     } catch (error) {
@@ -118,7 +112,6 @@ export default function BlogsForm() {
       setInitialLoading(false);
     }
   };
-
 
   const onSubmit = async (data: BlogFormData) => {
     try {
@@ -343,7 +336,9 @@ export default function BlogsForm() {
                     name="media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Alt Text (النص البديل للوسائط)</FormLabel>
+                        <FormLabel>
+                          Media Alt Text (النص البديل للوسائط)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل للوسائط"
@@ -361,7 +356,9 @@ export default function BlogsForm() {
                     name="thumbnail_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Thumbnail Alt Text (النص البديل للصورة المصغرة)</FormLabel>
+                        <FormLabel>
+                          Thumbnail Alt Text (النص البديل للصورة المصغرة)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل للصورة المصغرة"

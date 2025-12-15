@@ -84,6 +84,11 @@ export const customizationOptionsSchema = z.object({
   description_ar: commonValidations.requiredText("Arabic Description is required"),
   points_ar: commonValidations.requiredText("Arabic Points is required"),
 
+  //media section
+  media_path: commonValidations.validateFileUpload("Image is required"),
+  media_alt: commonValidations.requiredString("Image Alt Text is required"),
+  media_alt_ar: commonValidations.requiredString("Arabic Image Alt Text is required"),
+
   // Sort order + status
   sort_order: commonValidations.sortOrder(),
   status: commonValidations.booleanStatus(),

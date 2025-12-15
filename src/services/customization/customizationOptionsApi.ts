@@ -8,6 +8,9 @@ export interface CustomizationOption {
   description_ar?: string;
   points?: string;
   points_ar?: string;
+  media_path?: string | File | null;
+  media_alt?: string;
+  media_alt_ar?: string;
   sort_order?: number;
   status?: boolean;
   deleted_at?: string | null;
@@ -64,21 +67,21 @@ export const fetchCustomizationOptionById = async (id: number): Promise<Customiz
 };
 
 // Create customization option item
-export const createCustomizationOption = async (payload: CustomizationOption): Promise<CustomizationOptionItemResponse> => {
+export const createCustomizationOption = async (formData: FormData): Promise<CustomizationOptionItemResponse> => {
   return apiCall('/cms/customization/customization-options', {
     method: 'POST',
-    data: payload,
+    data: formData,
   });
 };
 
 // Update customization option item
 export const updateCustomizationOption = async (
   id: number,
-  payload: CustomizationOption
+  formData: FormData
 ): Promise<CustomizationOptionItemResponse> => {
   return apiCall(`/cms/customization/customization-options/${id}`, {
     method: 'PUT',
-    data: payload,
+    data: formData,
   });
 };
 
