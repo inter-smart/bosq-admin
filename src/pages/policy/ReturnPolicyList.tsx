@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,16 +22,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { fetchBlogList, deleteBlog, Blog } from "@/services/blog/blogsApi";
+import {
+  fetchReturnPoliciesList,
+  deleteReturnPolicy,
+  ReturnPolicy,
+} from "@/services/policy/returnPolicyApi";
 import { useToast } from "@/hooks/use-toast";
-import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { renderHTML } from "@/lib/utils";
 
-export default function BlogsList() {
+export default function ReturnPolicyList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [blogItems, setBlogItems] = useState<Blog[]>([]);
+  const [policies, setPolicies] = useState<ReturnPolicy[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -38,13 +43,13 @@ export default function BlogsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
+  const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<Blog>({
-      modelName: "Blogs",
-      data: blogItems,
-      setData: setBlogItems,
+    useCommonTableActions<ReturnPolicy>({
+      modelName: "ReturnPolicies",
+      data: policies,
+      setData: setPolicies,
     });
 
   // Debounce search query
@@ -56,16 +61,12 @@ export default function BlogsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch blog items
+  // Fetch return policies
   useEffect(() => {
-    loadBlogItems();
+    loadPolicies();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
-
-    console.count("ReturnPolicyList rendered");
-
-    
-  const loadBlogItems = async () => {
+  const loadPolicies = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -73,20 +74,20 @@ export default function BlogsList() {
         setLoading(true);
       }
 
-      const response = await fetchBlogList(
+      const response = await fetchReturnPoliciesList(
         currentPage,
         pageSize,
         debouncedSearchQuery
       );
 
       if (response.success) {
-        setBlogItems(response.data.list);
+        setPolicies(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load blog items",
+        description: "Failed to load return policies",
         variant: "destructive",
       });
     } finally {
@@ -99,16 +100,16 @@ export default function BlogsList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteBlog(deleteItemId);
+      await deleteReturnPolicy(deleteItemId);
       toast({
         title: "Success",
-        description: "Blog deleted successfully",
+        description: "Return policy deleted successfully",
       });
-      loadBlogItems();
+      loadPolicies();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete blog",
+        description: "Failed to delete return policy",
         variant: "destructive",
       });
     } finally {
@@ -116,7 +117,7 @@ export default function BlogsList() {
     }
   };
 
-  const columns: ColumnDef<Blog>[] = [
+  const columns: ColumnDef<ReturnPolicy>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -127,58 +128,21 @@ export default function BlogsList() {
       ),
     },
     {
-      accessorKey: "thumbnail",
-      header: "Thumbnail",
-      cell: ({ row }) => {
-        return (
-          <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center">
-            {row.getValue("thumbnail") ? (
-              <img
-                src={`${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-                  "thumbnail"
-                )}`}
-                alt={row.original.thumbnail_alt || row.original.title}
-                className="w-full h-full rounded object-cover"
-              />
-            ) : (
-              <div className="w-full h-full rounded bg-muted-foreground/20" />
-            )}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate">
+        <div className="font-medium max-w-[250px] truncate">
           {row.getValue("title")}
         </div>
       ),
     },
     {
-      accessorKey: "slug",
-      header: "Slug",
+      accessorKey: "description",
+      header: "Description",
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[150px] truncate">
-          {row.getValue("slug")}
+        <div className="text-sm text-muted-foreground max-w-[300px] truncate">
+          {renderHTML(row.getValue("description"))}
         </div>
-      ),
-    },
-    {
-      accessorKey: "published_date",
-      header: "Published Date",
-      cell: ({ row }) => (
-        <div className="text-sm">
-          {new Date(row.getValue("published_date")).toLocaleDateString()}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "viewCount",
-      header: "Views",
-      cell: ({ row }) => (
-        <div className="text-sm">{row.getValue("viewCount") || 0}</div>
       ),
     },
     {
@@ -223,6 +187,7 @@ export default function BlogsList() {
     {
       accessorKey: "createdAt",
       header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -244,7 +209,7 @@ export default function BlogsList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/blogs/edit/${item.id}`)}
+                onClick={() => navigate(`/return-policy/${item.id}/edit`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -267,7 +232,7 @@ export default function BlogsList() {
     <>
       <DataTable
         columns={columns}
-        data={blogItems}
+        data={policies}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -280,10 +245,10 @@ export default function BlogsList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Blogs"
-        searchPlaceholder="Search blogs..."
-        onAdd={() => navigate("/blogs/create")}
-        addButtonText="Add Blog"
+        title="Return Policies"
+        searchPlaceholder="Search return policies..."
+        onAdd={() => navigate("/return-policy/new")}
+        addButtonText="Add Return Policy"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -296,7 +261,7 @@ export default function BlogsList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              blog and remove its data from the servers.
+              return policy and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

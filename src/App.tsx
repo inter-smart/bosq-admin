@@ -189,6 +189,17 @@ const TermsAndConditionsList = lazy(() =>
   import("./pages/policy/TermsAndConditionsList")
 );
 
+// Return Policy pages
+const ReturnPolicyCmsForm = lazy(() =>
+  import("./pages/policy/ReturnPolicyCmsForm")
+);
+const ReturnPolicyForm = lazy(() =>
+  import("./pages/policy/ReturnPolicyForm")
+);
+const ReturnPolicyList = lazy(() =>
+  import("./pages/policy/ReturnPolicyList")
+);
+
 import { Suspense } from "react";
 
 
@@ -948,6 +959,42 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <TermsAndConditionsFaqListForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Return Policy CMS Route */}
+          <Route
+            path="/return-policy-cms"
+            element={
+              <ProtectedRoute>
+                <ReturnPolicyCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Return Policy CRUD Routes */}
+          <Route
+            path="/return-policy"
+            element={
+              <ProtectedRoute>
+                <ReturnPolicyList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/return-policy/new"
+            element={
+              <ProtectedRoute>
+                <ReturnPolicyForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/return-policy/:id/edit"
+            element={
+              <ProtectedRoute>
+                <ReturnPolicyForm />
               </ProtectedRoute>
             }
           />

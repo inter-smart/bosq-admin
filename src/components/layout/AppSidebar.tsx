@@ -25,6 +25,7 @@ import {
   Truck,
   Palette,
   LogIn,
+  RotateCcw,
 } from "lucide-react";
 
 import {
@@ -183,6 +184,22 @@ const policiesSection = [
       },
     ],
   },
+  {
+    title: "Return Policy",
+    icon: RotateCcw,
+    subItems: [
+      {
+        title: "Policy CMS",
+        url: "/return-policy-cms",
+        icon: FileText,
+      },
+      {
+        title: "Return Policy",
+        url: "/return-policy",
+        icon: List,
+      },
+    ],
+  },
 ];
 
 export function AppSidebar() {
@@ -204,6 +221,7 @@ export function AppSidebar() {
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [warrantyOpen, setWarrantyOpen] = useState(false);
+  const [returnPolicyOpen, setReturnPolicyOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
 
@@ -300,6 +318,12 @@ export function AppSidebar() {
     if (["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setTermsOpen(true);
+    }
+
+    // Auto-open Return Policy section
+    if (["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))) {
+      setPoliciesOpen(true);
+      setReturnPolicyOpen(true);
     }
   }, [location.pathname]);
 
@@ -479,6 +503,16 @@ export function AppSidebar() {
                   open={warrantyOpen}
                   setOpen={setWarrantyOpen}
                   items={policiesSection[2].subItems}
+                  getNavCls={getNavCls}
+                />
+
+                {/* Return Policy */}
+                <NestedSection
+                  title="Return Policy"
+                  icon={RotateCcw}
+                  open={returnPolicyOpen}
+                  setOpen={setReturnPolicyOpen}
+                  items={policiesSection[3].subItems}
                   getNavCls={getNavCls}
                 />
               </CollapsibleContent>
