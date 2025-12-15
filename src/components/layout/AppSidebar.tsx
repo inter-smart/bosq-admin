@@ -26,6 +26,7 @@ import {
   Palette,
   LogIn,
   RotateCcw,
+  Newspaper,
 } from "lucide-react";
 
 import {
@@ -134,6 +135,12 @@ const blogsSection = [
   { title: "Blogs", url: "/blogs", icon: List },
 ];
 
+const newsSection = [
+  { title: "News CMS", url: "/news-cms", icon: FileText },
+  { title: "News", url: "/news", icon: List },
+];
+
+
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
   { title: "Social Media", url: "/social-media", icon: Share2 },
@@ -216,6 +223,7 @@ export function AppSidebar() {
   const [loginRegisterOpen, setLoginRegisterOpen] = useState(false);
   const [customisationOpen, setCustomisationOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
+  const [newsOpen, setNewsOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
   const [policiesOpen, setPoliciesOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
@@ -293,6 +301,11 @@ export function AppSidebar() {
     // Auto-open Blog section
     if (["/blog-cms", "/blogs"].some((r) => path.includes(r))) {
       setBlogOpen(true);
+    }
+
+    // Auto-open News section
+    if (["/news-cms", "/news"].some((r) => path.includes(r))) {
+      setNewsOpen(true);
     }
 
     // Auto-open Common section
@@ -441,6 +454,17 @@ export function AppSidebar() {
           open={blogOpen}
           setOpen={setBlogOpen}
           items={blogsSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
+
+        {/* news */}
+        <SidebarCollapsibleSection
+          title="News"
+          icon={Newspaper}
+          open={newsOpen}
+          setOpen={setNewsOpen}
+          items={newsSection}
           isCollapsed={isCollapsed}
           getNavCls={getNavCls}
         />

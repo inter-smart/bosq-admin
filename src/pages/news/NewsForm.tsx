@@ -19,15 +19,15 @@ import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
-  fetchBlogById,
-  createBlog,
-  updateBlog,
-} from "@/services/blog/blogsApi";
-import { blogSchema, BlogFormData } from "@/schemas/blogSchema";
+  fetchNewsById,
+  createNews,
+  updateNews,
+} from "@/services/news/newsApi";
+import {NewsFormData, newsSchema } from "@/schemas/newsSchema";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 
-export default function BlogsForm() {
+export default function NewsForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -45,8 +45,8 @@ export default function BlogsForm() {
     null
   );
 
-  const form = useForm<BlogFormData>({
-    resolver: zodResolver(blogSchema),
+  const form = useForm<NewsFormData>({
+    resolver: zodResolver(newsSchema),
     shouldFocusError: true,
     defaultValues: {
       title: "",
@@ -72,11 +72,11 @@ export default function BlogsForm() {
 
   useEffect(() => {
     if (isEditing && id) {
-      loadBlogData(parseInt(id));
-    }
+      loadNewsData(parseInt(id));
+  }
   }, [id, isEditing]);
 
-   const slugify = (text: string) =>
+  const slugify = (text: string) =>
     text
       .toLowerCase()
       .trim()
@@ -100,11 +100,10 @@ export default function BlogsForm() {
     return () => subscription.unsubscribe();
   }, [form, isEditing]);
 
-
-  const loadBlogData = async (itemId: number) => {
+  const loadNewsData = async (itemId: number) => {
     try {
       setInitialLoading(true);
-      const response = await fetchBlogById(itemId);
+      const response = await fetchNewsById(itemId);
       const data = response.data;
 
       if (data) {
@@ -150,7 +149,7 @@ export default function BlogsForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to load blog data",
+        description: error.message || "Failed to load news data",
         variant: "destructive",
       });
     } finally {
@@ -158,7 +157,7 @@ export default function BlogsForm() {
     }
   };
 
-  const onSubmit = async (data: BlogFormData) => {
+  const onSubmit = async (data: NewsFormData) => {
     try {
       setLoading(true);
 
@@ -201,25 +200,25 @@ export default function BlogsForm() {
       }
 
       if (isEditing && id) {
-        await updateBlog(parseInt(id), formData);
+        await updateNews(parseInt(id), formData);
         toast({
           title: "Success",
-          description: "Blog updated successfully",
+          description: "News updated successfully",
         });
       } else {
-        await createBlog(formData);
+        await createNews(formData);
         toast({
           title: "Success",
-          description: "Blog created successfully",
+          description: "News created successfully",
         });
       }
 
-      navigate("/blogs");
+      navigate("/news");
     } catch (error) {
       toast({
         title: "Error",
         description:
-          error.message || `Failed to ${isEditing ? "update" : "create"} blog`,
+          error.message || `Failed to ${isEditing ? "update" : "create"} news`,
         variant: "destructive",
       });
     } finally {
@@ -230,7 +229,7 @@ export default function BlogsForm() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading blog data...</div>
+        <div className="text-muted-foreground">Loading news data...</div>
       </div>
     );
   }
@@ -241,16 +240,16 @@ export default function BlogsForm() {
         <Button
           variant="outline"
           size="icon"
-          onClick={() => navigate("/blogs")}
+          onClick={() => navigate("/news")}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">
-            {isEditing ? "Edit" : "Add"} Blog
+            {isEditing ? "Edit" : "Add"} News
           </h1>
           <p className="text-muted-foreground">
-            {isEditing ? "Update" : "Create a new"} blog post
+            {isEditing ? "Update" : "Create a new"} news post
           </p>
         </div>
       </div>
@@ -259,7 +258,7 @@ export default function BlogsForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Blog Content</CardTitle>
+              <CardTitle>News Content</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -272,7 +271,7 @@ export default function BlogsForm() {
                       <FormItem>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter blog title" {...field} />
+                          <Input placeholder="Enter news title" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -301,7 +300,7 @@ export default function BlogsForm() {
                         <FormLabel>Description</FormLabel>
                         <FormControl>
                           <RichTextEditor
-                            placeholder="Enter blog description"
+                            placeholder="Enter news description"
                             {...field}
                           />
                         </FormControl>
@@ -562,7 +561,7 @@ export default function BlogsForm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Blog Images</CardTitle>
+              <CardTitle>News Images</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -606,7 +605,7 @@ export default function BlogsForm() {
                             setDesktopImageFile(file);
                           }}
                           accept="image/*"
-                          placeholder="Upload desktop blog image"
+                          placeholder="Upload desktop news image"
                           preview={true}
                           recommendedDimensions="1920px x 1080px"
                         />
@@ -631,7 +630,7 @@ export default function BlogsForm() {
                             setMobileImageFile(file);
                           }}
                           accept="image/*"
-                          placeholder="Upload mobile blog image"
+                          placeholder="Upload mobile news image"
                           recommendedDimensions="600px x 400px"
                           preview={true}
                         />
@@ -647,7 +646,7 @@ export default function BlogsForm() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Blog Settings</CardTitle>
+              <CardTitle>News Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -680,7 +679,7 @@ export default function BlogsForm() {
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Status</FormLabel>
                         <FormDescription>
-                          Enable or disable this blog post
+                          Enable or disable this news post
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -700,7 +699,7 @@ export default function BlogsForm() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/blogs")}
+              onClick={() => navigate("/news")}
             >
               Cancel
             </Button>

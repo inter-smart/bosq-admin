@@ -156,6 +156,11 @@ const BlogCmsForm = lazy(() => import("./pages/blog/BlogCmsForm"));
 const BlogsList = lazy(() => import("./pages/blog/BlogsList"));
 const BlogsForm = lazy(() => import("./pages/blog/BlogsForm"));
 
+
+const NewsCmsForm = lazy(() => import("./pages/news/NewsCmsForm"));
+const NewsList = lazy(() => import("./pages/news/NewsList"));
+const NewsForm = lazy(() => import("./pages/news/NewsForm"));
+
 // Customization pages
 const CustomizationCmsForm = lazy(() =>
   import("./pages/customization/CustomizationCmsForm")
@@ -862,6 +867,56 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+
+
+               {/* News CMS Route */}
+          <Route
+            path="/news-cms"
+            element={
+              <ProtectedRoute>
+                <NewsCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Customization CMS Route */}
+          <Route
+            path="/customization-cms"
+            element={
+              <ProtectedRoute>
+                <CustomizationCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* News Routes */}
+          <Route
+            path="/news"
+            element={
+              <ProtectedRoute>
+                <NewsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/news/create"
+            element={
+              <ProtectedRoute>
+                <NewsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/news/edit/:id"
+            element={
+              <ProtectedRoute>
+                <BlogsForm />
+              </ProtectedRoute>
+            }
+          />
+
 
           {/* Privacy Policy CMS Route */}
           <Route
