@@ -13,10 +13,16 @@ export const blogCmsSchema = z.object({
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
   banner_title_ar: commonValidations.requiredString("Arabic Banner Title"),
-  banner_description_ar: commonValidations.requiredText("Arabic Banner Description"),
+  banner_description_ar: commonValidations.requiredText(
+    "Arabic Banner Description"
+  ),
   media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
-  popular_blogs_title_ar: commonValidations.requiredString("Arabic Popular Blogs Title"),
-  related_blogs_title_ar: commonValidations.requiredString("Arabic Related Blogs Title"),
+  popular_blogs_title_ar: commonValidations.requiredString(
+    "Arabic Popular Blogs Title"
+  ),
+  related_blogs_title_ar: commonValidations.requiredString(
+    "Arabic Related Blogs Title"
+  ),
 
   // File uploads (no Arabic versions needed)
   media_desktop_path: commonValidations.validateFileUpload("Desktop media"),
@@ -26,6 +32,9 @@ export const blogCmsSchema = z.object({
 export const blogSchema = z.object({
   // English fields
   title: commonValidations.requiredString("Title"),
+  meta_title: commonValidations.requiredString("Meta Title"),
+  meta_description: commonValidations.requiredText("Meta Description"),
+  meta_keywords: commonValidations.requiredString("Meta Keywords"),
   description: commonValidations.requiredText("Description"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
   thumbnail_alt: commonValidations.optionalString("Thumbnail Alt Text"),
@@ -33,8 +42,15 @@ export const blogSchema = z.object({
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
   description_ar: commonValidations.requiredString("Arabic Description"),
+  meta_title_ar: commonValidations.requiredString("Arabic Meta Title"),
+  meta_description_ar: commonValidations.requiredText(
+    "Arabic Meta Description"
+  ),
+  meta_keywords_ar: commonValidations.requiredString("Arabic Meta Keywords"),
   media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
-  thumbnail_alt_ar: commonValidations.optionalString("Arabic Thumbnail Alt Text"),
+  thumbnail_alt_ar: commonValidations.optionalString(
+    "Arabic Thumbnail Alt Text"
+  ),
 
   // File uploads
   media_desktop_path: commonValidations.validateImageUpload("Desktop image"),

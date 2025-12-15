@@ -51,6 +51,12 @@ export default function BlogsForm() {
     defaultValues: {
       title: "",
       title_ar: "",
+      meta_title: "",
+      meta_title_ar: "",
+      meta_description: "",
+      meta_description_ar: "",
+      meta_keywords: "",
+      meta_keywords_ar: "",
       description: "",
       description_ar: "",
       media_alt: "",
@@ -81,6 +87,12 @@ export default function BlogsForm() {
           title_ar: data.title_ar || "",
           description: data.description || "",
           description_ar: data.description_ar || "",
+          meta_title: data.meta_title || "",
+          meta_title_ar: data.meta_title_ar || "",
+          meta_description: data.meta_description|| "",
+          meta_description_ar: data.meta_description_ar || "",
+          meta_keywords: data.meta_keywords || "",
+          meta_keywords_ar: data.meta_keywords_ar || "",
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           thumbnail_alt: data.thumbnail_alt || "",
@@ -93,13 +105,19 @@ export default function BlogsForm() {
         });
 
         if (data.thumbnail) {
-          setThumbnailFile(`${MEDIA_URL}/${data.thumbnail}`);
+          const thumbnailUrl = `${MEDIA_URL}/${data.thumbnail}`;
+          setThumbnailFile(thumbnailUrl);
+          form.setValue('thumbnail', thumbnailUrl);
         }
         if (data.media_desktop_path) {
-          setDesktopImageFile(`${MEDIA_URL}/${data.media_desktop_path}`);
+          const desktopUrl = `${MEDIA_URL}/${data.media_desktop_path}`;
+          setDesktopImageFile(desktopUrl);
+          form.setValue('media_desktop_path', desktopUrl);
         }
         if (data.media_mobile_path) {
-          setMobileImageFile(`${MEDIA_URL}/${data.media_mobile_path}`);
+          const mobileUrl = `${MEDIA_URL}/${data.media_mobile_path}`;
+          setMobileImageFile(mobileUrl);
+          form.setValue('media_mobile_path', mobileUrl);
         }
       }
     } catch (error) {
@@ -122,6 +140,9 @@ export default function BlogsForm() {
       // English fields
       formData.append("title", data.title);
       formData.append("description", data.description);
+      formData.append("meta_title", data.meta_title);
+      formData.append("meta_description", data.meta_description);
+      formData.append("meta_keywords", data.meta_keywords);
       formData.append("media_alt", data.media_alt);
       if (data.thumbnail_alt)
         formData.append("thumbnail_alt", data.thumbnail_alt);
@@ -129,6 +150,9 @@ export default function BlogsForm() {
       // Arabic fields
       formData.append("title_ar", data.title_ar);
       formData.append("description_ar", data.description_ar);
+      formData.append("meta_title_ar", data.meta_title_ar);
+      formData.append("meta_description_ar", data.meta_description_ar);
+      formData.append("meta_keywords_ar", data.meta_keywords_ar);
       formData.append("media_alt_ar", data.media_alt_ar);
       if (data.thumbnail_alt_ar)
         formData.append("thumbnail_alt_ar", data.thumbnail_alt_ar);
@@ -362,6 +386,126 @@ export default function BlogsForm() {
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل للصورة المصغرة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>SEO Meta</CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* ================= ENGLISH META ================= */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="meta_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter meta title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta_description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter meta description"
+                            {...field}
+                            rows={6}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta_keywords"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Keywords</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="keyword1, keyword2, keyword3"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* ================= ARABIC META ================= */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="meta_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Title (عنوان الميتا)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان الميتا"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta_description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Description (وصف الميتا)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="أدخل وصف الميتا"
+                            {...field}
+                            rows={6}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="meta_keywords_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Keywords (كلمات مفتاحية)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="كلمة1، كلمة2، كلمة3"
                             {...field}
                             dir="rtl"
                           />
