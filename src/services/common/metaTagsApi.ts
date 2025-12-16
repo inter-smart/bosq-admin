@@ -1,23 +1,27 @@
+import { apiCall } from "@/utils/apiUtils";
+
 export interface MetaTag {
   id: number;
   page: string;
   meta_title: string;
+  meta_title_ar?: string;
   meta_description: string;
+  meta_description_ar?: string;
   meta_keywords: string;
-  other_meta_tags?: string | null;
-  canonical_url?: string | null;
+  meta_keywords_ar?: string;
+  status?: boolean;
   deleted_at?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface MetaTagsListResponse {
   success: boolean;
   message: string;
-  statusCode: number;
   timestamp: string;
+  statusCode: number;
   data: {
-    data: MetaTag[];
+    list: MetaTag[];
     pagination: {
       totalCount: number;
       totalPages: number;
@@ -28,58 +32,68 @@ export interface MetaTagsListResponse {
   };
 }
 
+export interface MetaTagItemResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  statusCode: number;
+  data: MetaTag;
+}
+
+export interface CreateMetaTagData {
+  page: string;
+  meta_title: string;
+  meta_title_ar?: string;
+  meta_description: string;
+  meta_description_ar?: string;
+  meta_keywords: string;
+  meta_keywords_ar?: string;
+  status?: boolean;
+}
+
 export interface UpdateMetaTagRequest {
   meta_title: string;
   meta_description: string;
   meta_keywords: string;
   other_meta_tags?: string;
-  canonical_url?: string;
 }
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000/api/backend";
 
-export const fetchMetaTagsList = async (): Promise<MetaTagsListResponse> => {
-  const response = await fetch(`${API_BASE_URL}/meta-tags`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch meta tags");
+
+
+export const fetchMetaTagsList = async (
+  page: number = 1,
+  limit: number = 10,
+  search?: string
+): Promise<MetaTagsListResponse> => {
+  const params: Record<string, string | number> = { page, limit };
+
+  if (search) {
+    params.search = search;
   }
 
-  return response.json();
+  return apiCall("/sitesettings/meta-tags", { params });
 };
+
+
+export const fetchMetaTagById = async (
+  id: number
+): Promise<MetaTagItemResponse> => {
+  return apiCall(`/sitesettings/meta-tags/${id}`);
+};
+
 
 export const updateMetaTag = async (
   id: number,
-  data: UpdateMetaTagRequest
-): Promise<{ success: boolean; message: string; data?: MetaTag }> => {
-  const formData = new FormData();
+  payload: Partial<UpdateMetaTagRequest>
+): Promise<MetaTagItemResponse> => {
 
-  formData.append("meta_title", data.meta_title);
-  formData.append("meta_description", data.meta_description);
-  formData.append("meta_keywords", data.meta_keywords);
-
-  if (data.other_meta_tags) {
-    formData.append("other_meta_tags", data.other_meta_tags);
-  }
-
-  if (data.canonical_url) {
-    formData.append("canonical_url", data.canonical_url);
-  }
-
-  const response = await fetch(`${API_BASE_URL}/meta-tags/${id}`, {
+  return apiCall(`/sitesettings/meta-tags/${id}`, {
     method: "PUT",
-    body: formData,
+    data: payload,
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to update meta tag");
-  }
-
-  return response.json();
 };
+
+
+
