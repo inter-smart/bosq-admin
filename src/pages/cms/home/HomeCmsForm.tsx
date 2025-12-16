@@ -32,6 +32,7 @@ export default function HomeCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+ const [prevMediaType, setPrevMediaType] = useState<string | null>(null);
 
   const form = useForm<HomeCmsFormData>({
     resolver: zodResolver(homeSchema),
@@ -73,6 +74,22 @@ export default function HomeCmsForm() {
   });
 
   const watchJourneyMediaType = form.watch("journey_media_type");
+
+  useEffect(() => {
+    if (
+      !initialLoading &&
+      prevMediaType !== null &&
+      prevMediaType !== watchJourneyMediaType
+    ) {
+      form.setValue("journey_media_path", null);
+    }
+
+    // Update prevMediaType after initial loading is complete
+    if (!initialLoading) {
+      setPrevMediaType(watchJourneyMediaType);
+    }
+  }, [watchJourneyMediaType, initialLoading, form, prevMediaType]);
+
 
   useEffect(() => {
     loadHomeCmsData();

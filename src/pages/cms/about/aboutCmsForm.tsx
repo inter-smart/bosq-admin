@@ -40,6 +40,8 @@ export default function AboutCmsForm() {
     File | string | null
   >(null);
 
+  const [prevMediaType, setPrevMediaType] = useState<string | null>(null);
+
   const form = useForm<AboutCmsFormData>({
     resolver: zodResolver(aboutCmsSchema),
     shouldFocusError: true, // Enable auto-focus on error
@@ -85,6 +87,26 @@ export default function AboutCmsForm() {
   });
 
   const watchBannerMediaType = form.watch("banner_media_type");
+
+  useEffect(() => {
+    if (
+      !initialLoading &&
+      prevMediaType !== null &&
+      prevMediaType !== watchBannerMediaType
+    ) {
+      form.setValue("banner_media_desktop_path", null);
+      form.setValue("banner_media_mobile_path", null);
+    }
+
+    // Update prevMediaType after initial loading is complete
+    if (!initialLoading) {
+      setPrevMediaType(watchBannerMediaType);
+    }
+  }, [watchBannerMediaType, initialLoading, form, prevMediaType]);
+
+
+
+
 
   useEffect(() => {
     loadAboutCmsData();
