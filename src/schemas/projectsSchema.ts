@@ -32,3 +32,79 @@ export const projectsCmsSchema = z.object({
 });
 
 export type ProjectsCmsFormData = z.infer<typeof projectsCmsSchema>;
+
+export const projectCategorySchema = z.object({
+  name: commonValidations.requiredString("Name"),
+  name_ar: commonValidations.requiredString("Name (Arabic)"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+export type ProjectCategoryFormData = z.infer<typeof projectCategorySchema>;
+
+export const projectSchema = z.object({
+  // Category relationship
+  category_id: z.number().optional().nullable(),
+
+  // Basic content (bilingual)
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  description: commonValidations.requiredText("Description"),
+  description_ar: commonValidations.requiredText("Description (Arabic)"),
+
+  // Thumbnail
+  thumbnail: commonValidations.validateFileUpload("Thumbnail"),
+
+  // Section 1 - Hero Media
+  section1_desktop_media_path: commonValidations.validateFileUpload("Section 1 Desktop Media"),
+  section1_mobile_media_path: commonValidations.validateFileUpload("Section 1 Mobile Media"),
+  section1_media_alt: commonValidations.requiredString("Section 1 Media Alt"),
+  section1_media_alt_ar: commonValidations.requiredString("Section 1 Media Alt (Arabic)"),
+
+  // Section 2 - Dual Images
+  section2_first_media_path: commonValidations.validateFileUpload("Section 2 First Media"),
+  section2_first_media_alt: commonValidations.requiredString("Section 2 First Alt"),
+  section2_first_media_alt_ar: commonValidations.requiredString("Section 2 First Alt (Arabic)"),
+  section2_second_media_path: commonValidations.validateFileUpload("Section 2 Second Media"),
+  section2_second_alt: commonValidations.requiredString("Section 2 Second Alt"),
+  section2_second_media_alt_ar: commonValidations.requiredString("Section 2 Second Alt (Arabic)"),
+
+  // Section 3 - Content Block
+  section3_title: commonValidations.requiredString("Section 3 Title"),
+  section3_title_ar: commonValidations.requiredString("Section 3 Title (Arabic)"),
+  section3_description: commonValidations.requiredText("Section 3 Description"),
+  section3_description_ar: commonValidations.requiredText("Section 3 Description (Arabic)"),
+  section3_media_path: commonValidations.validateFileUpload("Section 3 Media"),
+  section3_media_alt: commonValidations.requiredString("Section 3 Media Alt"),
+  section3_media_alt_ar: commonValidations.requiredString("Section 3 Media Alt (Arabic)"),
+
+  // Section 4
+  section4_title: commonValidations.requiredString("Section 4 Title"),
+  section4_title_ar: commonValidations.requiredString("Section 4 Title (Arabic)"),
+
+  // SEO & Slug
+  slug: commonValidations.requiredString("Slug"),
+  meta_title: commonValidations.requiredString("Meta Title"),
+  meta_description: commonValidations.requiredText("Meta Description"),
+  meta_keywords: commonValidations.requiredString("Meta Keywords"),
+  meta_title_ar: commonValidations.requiredString("Meta Title (Arabic)"),
+  meta_description_ar: commonValidations.requiredText("Meta Description (Arabic)"),
+  meta_keywords_ar: commonValidations.requiredString("Meta Keywords (Arabic)"),
+
+  // JSONB Arrays - validate as arrays of strings
+  tags: z.array(z.string()).min(1, "At least one tag is required").default([]),
+  tags_ar: z.array(z.string()).min(1, "At least one Arabic tag is required").default([]),
+  // JSONB Objects - validate as key-value pairs (Record<string, string>)
+  features: z.record(z.string(), z.string()).refine((obj) => Object.keys(obj).length > 0, {
+    message: "At least one feature key-value pair is required",
+  }).default({}),
+  features_ar: z.record(z.string(), z.string()).refine((obj) => Object.keys(obj).length > 0, {
+    message: "At least one Arabic feature key-value pair is required",
+  }).default({}),
+
+  // Settings
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+export type ProjectFormData = z.infer<typeof projectSchema>;

@@ -115,7 +115,11 @@ const cmsSection = [
   {
     title: "Projects",
     icon: Briefcase,
-    subItems: [{ title: "Projects CMS", url: "/projects-cms", icon: FileText }],
+    subItems: [
+      { title: "Projects CMS", url: "/projects-cms", icon: FileText },
+      { title: "Project Category", url: "/project-category", icon: FolderOpen },
+      { title: "Projects", url: "/projects", icon: List },
+    ],
   },
   {
     title: "Login/Register",
@@ -294,7 +298,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Projects section
-    if (["/projects-cms"].some((r) => path.includes(r))) {
+    if (["/projects-cms", "/project-category", "/projects"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setProjectsOpen(true);
     }

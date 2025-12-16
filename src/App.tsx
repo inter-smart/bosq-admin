@@ -90,6 +90,18 @@ const ContactCmsForm = lazy(() =>
 const ProjectsCmsForm = lazy(() =>
   import("./pages/cms/projects/ProjectsCmsForm")
 );
+const ProjectCategoryList = lazy(() =>
+  import("./pages/cms/projects/ProjectCategoryList")
+);
+const ProjectCategoryForm = lazy(() =>
+  import("./pages/cms/projects/ProjectCategoryForm")
+);
+const ProjectsList = lazy(() =>
+  import("./pages/cms/projects/ProjectsList")
+);
+const ProjectsForm = lazy(() =>
+  import("./pages/cms/projects/ProjectsForm")
+);
 
 // Login/Register pages
 const LoginRegisterCmsForm = lazy(() =>
@@ -576,6 +588,58 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ProjectsCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Project Category Routes */}
+          <Route
+            path="/project-category"
+            element={
+              <ProtectedRoute>
+                <ProjectCategoryList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project-category/create"
+            element={
+              <ProtectedRoute>
+                <ProjectCategoryForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project-category/edit/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectCategoryForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Projects List Routes */}
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <ProjectsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/create"
+            element={
+              <ProtectedRoute>
+                <ProjectsForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects/edit/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectsForm />
               </ProtectedRoute>
             }
           />
