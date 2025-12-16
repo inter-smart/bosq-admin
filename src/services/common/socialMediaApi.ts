@@ -62,17 +62,17 @@ export const fetchSocialMediaList = async (
     params.search = search;
   }
 
-  return apiCall('/social-media', { params });
+  return apiCall('/sitesettings/social-media', { params });
 };
 
 // Fetch single social media item
 export const fetchSocialMediaById = async (id: number): Promise<SocialMediaItemResponse> => {
-  return apiCall(`/social-media/${id}`);
+  return apiCall(`/sitesettings/social-media/${id}`);
 };
 
 // Create social media item
 export const createSocialMedia = async (formData: FormData): Promise<SocialMediaItemResponse> => {
-  return apiCall('/social-media', {
+  return apiCall('/sitesettings/social-media', {
     method: 'POST',
     data: formData,
   });
@@ -83,7 +83,7 @@ export const updateSocialMedia = async (
   id: number,
   formData: FormData
 ): Promise<SocialMediaItemResponse> => {
-  return apiCall(`/social-media/${id}`, {
+  return apiCall(`/sitesettings/social-media/${id}`, {
     method: 'PUT',
     data: formData,
   });
@@ -91,7 +91,7 @@ export const updateSocialMedia = async (
 
 // Delete social media item
 export const deleteSocialMedia = async (id: number): Promise<void> => {
-  return apiCall(`/social-media/${id}`, {
+  return apiCall(`/sitesettings/social-media/${id}`, {
     method: 'DELETE',
   });
 };

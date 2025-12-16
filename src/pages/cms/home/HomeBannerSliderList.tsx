@@ -55,7 +55,7 @@ export default function HomeBannerSliderList() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 300);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);

@@ -1,5 +1,5 @@
 // BOSQ App Slider API service
-export interface GoecAppSliderData {
+export interface BosqAppSliderData {
   id?: number;
   description: string;
   btn_text: string;
@@ -16,7 +16,7 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/backend";
 
 // Get all app sliders
-export const getGoecAppSliders = async (): Promise<GoecAppSliderData[]> => {
+export const getBosqAppSliders = async (): Promise<BosqAppSliderData[]> => {
   const response = await fetch(`${API_BASE_URL}/bosq-app`);
   if (!response.ok) {
     throw new Error("Failed to fetch app sliders");
@@ -28,9 +28,9 @@ export const getGoecAppSliders = async (): Promise<GoecAppSliderData[]> => {
 };
 
 // Get app slider by ID
-export const getGoecAppSlider = async (
+export const getBosqAppSlider = async (
   id: number
-): Promise<GoecAppSliderData> => {
+): Promise<BosqAppSliderData> => {
   const response = await fetch(`${API_BASE_URL}/bosq-app/${id}`);
   if (!response.ok) {
     throw new Error("Failed to fetch app slider");
@@ -40,9 +40,9 @@ export const getGoecAppSlider = async (
 };
 
 // Create new app slider
-export const createGoecAppSlider = async (
-  data: GoecAppSliderData
-): Promise<GoecAppSliderData> => {
+export const createBosqAppSlider = async (
+  data: BosqAppSliderData
+): Promise<BosqAppSliderData> => {
   const formData = new FormData();
 
   // Add text fields
@@ -74,10 +74,10 @@ export const createGoecAppSlider = async (
 };
 
 // Update app slider
-export const updateGoecAppSlider = async (
+export const updateBosqAppSlider = async (
   id: number,
-  data: GoecAppSliderData
-): Promise<GoecAppSliderData> => {
+  data: BosqAppSliderData
+): Promise<BosqAppSliderData> => {
   const formData = new FormData();
 
   // Add text fields
@@ -109,7 +109,7 @@ export const updateGoecAppSlider = async (
 };
 
 // Delete app slider
-export const deleteGoecAppSlider = async (id: number): Promise<void> => {
+export const deleteBosqAppSlider = async (id: number): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/bosq-app/${id}`, {
     method: "DELETE",
   });
@@ -120,9 +120,9 @@ export const deleteGoecAppSlider = async (id: number): Promise<void> => {
 };
 
 // Toggle app slider status
-export const toggleGoecAppSliderStatus = async (
+export const toggleBosqAppSliderStatus = async (
   id: number
-): Promise<GoecAppSliderData> => {
+): Promise<BosqAppSliderData> => {
   const response = await fetch(
     `${API_BASE_URL}/bosq-app/${id}/toggle-status`,
     {

@@ -51,7 +51,7 @@ export default function BlogsList() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 300);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
