@@ -352,7 +352,7 @@ export default function BlogsForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونة"
@@ -383,7 +383,7 @@ export default function BlogsForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             dir="rtl"
@@ -402,7 +402,7 @@ export default function BlogsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Media Alt Text (النص البديل للوسائط)
+                          Media Alt Text (AR)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -422,7 +422,7 @@ export default function BlogsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Thumbnail Alt Text (النص البديل للصورة المصغرة)
+                          Thumbnail Alt Text (AR)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -506,7 +506,7 @@ export default function BlogsForm() {
                     name="meta_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Meta Title (عنوان الميتا)</FormLabel>
+                        <FormLabel>Meta Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان الميتا"
@@ -524,7 +524,7 @@ export default function BlogsForm() {
                     name="meta_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Meta Description (وصف الميتا)</FormLabel>
+                        <FormLabel>Meta Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف الميتا"
@@ -543,7 +543,7 @@ export default function BlogsForm() {
                     name="meta_keywords_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Meta Keywords (كلمات مفتاحية)</FormLabel>
+                        <FormLabel>Meta Keywords (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="كلمة1، كلمة2، كلمة3"

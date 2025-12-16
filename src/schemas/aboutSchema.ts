@@ -93,6 +93,7 @@ export const whyBosqSchema = z.object({
   media_alt_ar: commonValidations.requiredString("Main Media Alt Text (Arabic)"),
   icon_media_path: commonValidations.validateFileUpload("Icon Media"),
   icon_media_alt: commonValidations.requiredString("Icon Alt Text"),
+  icon_media_alt_ar: commonValidations.requiredString("Icon Alt Text (Arabic)"),
   title: commonValidations.requiredString("Title"),
   subtitle: commonValidations.requiredString("Subtitle"),
   description: commonValidations.requiredText("Description"),

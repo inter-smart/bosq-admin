@@ -359,7 +359,7 @@ export default function AboutCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الصفحة"
@@ -452,7 +452,7 @@ export default function AboutCmsForm() {
                     name="banner_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان البانر"
@@ -470,7 +470,7 @@ export default function AboutCmsForm() {
                     name="banner_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف البانر"
@@ -489,7 +489,7 @@ export default function AboutCmsForm() {
                     name="banner_button_text_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Button Text (نص الزر)</FormLabel>
+                        <FormLabel>Button Text  (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل نص الزر"
@@ -555,7 +555,7 @@ export default function AboutCmsForm() {
                     name="journey_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان الرحلة"
@@ -573,7 +573,7 @@ export default function AboutCmsForm() {
                     name="journey_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف الرحلة"
@@ -643,7 +643,7 @@ export default function AboutCmsForm() {
                     name="why_choose_us_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل العنوان"
@@ -661,7 +661,7 @@ export default function AboutCmsForm() {
                     name="why_choose_us_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل الوصف"
@@ -708,7 +708,7 @@ export default function AboutCmsForm() {
                   name="testimonial_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الشهادات"
@@ -750,7 +750,7 @@ export default function AboutCmsForm() {
                   name="client_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان العملاء"
@@ -792,7 +792,7 @@ export default function AboutCmsForm() {
                   name="news_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الأخبار"
@@ -922,7 +922,7 @@ export default function AboutCmsForm() {
                     name="banner_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل</FormLabel>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"
@@ -1063,7 +1063,7 @@ export default function AboutCmsForm() {
                     name="journey_one_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل للصورة 1</FormLabel>
+                        <FormLabel>Image Alt Text 1 (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"
@@ -1081,7 +1081,7 @@ export default function AboutCmsForm() {
                     name="journey_two_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل للصورة 2</FormLabel>
+                        <FormLabel>Image Alt Text 2 (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"
@@ -1099,7 +1099,7 @@ export default function AboutCmsForm() {
                     name="journey_three_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل للصورة 3</FormLabel>
+                        <FormLabel>Image Alt Text 3 (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"

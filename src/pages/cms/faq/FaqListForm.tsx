@@ -230,7 +230,7 @@ export default function FaqListForm() {
                     name="question_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question (السؤال)</FormLabel>
+                        <FormLabel>Question (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل سؤال الأسئلة الشائعة"
@@ -248,7 +248,7 @@ export default function FaqListForm() {
                     name="answer_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Answer (الإجابة)</FormLabel>
+                        <FormLabel>Answer (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل إجابة الأسئلة الشائعة"

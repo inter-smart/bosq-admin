@@ -48,6 +48,7 @@ export default function WhyBosqForm() {
       media_alt: "",
       media_alt_ar: "",
       icon_media_alt: "",
+      icon_media_alt_ar: "",
       sort_order: 1,
       status: true,
     },
@@ -76,6 +77,7 @@ export default function WhyBosqForm() {
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           icon_media_alt: data.icon_media_alt || "",
+          icon_media_alt_ar: data.icon_media_alt_ar || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           media_path: data.media_path
@@ -113,6 +115,7 @@ export default function WhyBosqForm() {
       formData.append("media_alt", data.media_alt);
       formData.append("media_alt_ar", data.media_alt_ar);
       formData.append("icon_media_alt", data.icon_media_alt);
+      formData.append("icon_media_alt_ar", data.icon_media_alt_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -244,7 +247,7 @@ export default function WhyBosqForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل العنوان"
@@ -262,7 +265,7 @@ export default function WhyBosqForm() {
                     name="subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Subtitle (العنوان الفرعي)</FormLabel>
+                        <FormLabel>Subtitle (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل العنوان الفرعي"
@@ -280,7 +283,7 @@ export default function WhyBosqForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل الوصف"
@@ -348,7 +351,7 @@ export default function WhyBosqForm() {
                   name="media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Main Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Main Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل بالعربية"
@@ -392,19 +395,38 @@ export default function WhyBosqForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="icon_media_alt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Icon Alt Text</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter icon alt text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="icon_media_alt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Icon Alt Text</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter icon alt text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="icon_media_alt_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Icon Alt Text (AR)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter icon alt text in Arabic"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
           </Card>
 

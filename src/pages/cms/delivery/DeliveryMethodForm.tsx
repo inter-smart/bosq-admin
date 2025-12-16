@@ -223,7 +223,7 @@ export default function DeliveryMethodForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل العنوان"
@@ -241,7 +241,7 @@ export default function DeliveryMethodForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل الوصف"
@@ -308,7 +308,7 @@ export default function DeliveryMethodForm() {
                   name="media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل"

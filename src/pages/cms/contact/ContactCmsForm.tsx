@@ -262,7 +262,7 @@ export default function ContactCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الصفحة"
@@ -327,7 +327,7 @@ export default function ContactCmsForm() {
                     name="form_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Form Title (عنوان النموذج)</FormLabel>
+                        <FormLabel>Form Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان النموذج"
@@ -345,7 +345,7 @@ export default function ContactCmsForm() {
                     name="form_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Form Description (وصف النموذج)</FormLabel>
+                        <FormLabel>Form Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف النموذج"
@@ -416,7 +416,7 @@ export default function ContactCmsForm() {
                     name="media_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Title (عنوان الوسائط)</FormLabel>
+                        <FormLabel>Media Title (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل عنوان الوسائط"
@@ -435,7 +435,7 @@ export default function ContactCmsForm() {
                     name="media_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Description (وصف الوسائط)</FormLabel>
+                        <FormLabel>Media Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف الوسائط"
@@ -479,7 +479,7 @@ export default function ContactCmsForm() {
                   name="email_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email Title (عنوان البريد الإلكتروني)</FormLabel>
+                      <FormLabel>Email Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان البريد الإلكتروني"
@@ -539,7 +539,7 @@ export default function ContactCmsForm() {
                   name="phone_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Title (عنوان الهاتف)</FormLabel>
+                      <FormLabel>Phone Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الهاتف"
@@ -618,7 +618,7 @@ export default function ContactCmsForm() {
                     name="address_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address Title (عنوان العنوان)</FormLabel>
+                        <FormLabel>Address Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان العنوان"
@@ -636,7 +636,7 @@ export default function ContactCmsForm() {
                     name="address_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Address (العنوان)</FormLabel>
+                        <FormLabel>Address (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل العنوان"
@@ -683,7 +683,7 @@ export default function ContactCmsForm() {
                   name="social_media_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Social Media Title (عنوان وسائل التواصل الاجتماعي)</FormLabel>
+                      <FormLabel>Social Media Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان وسائل التواصل الاجتماعي"
@@ -781,7 +781,7 @@ export default function ContactCmsForm() {
                     name="media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل للوسائط</FormLabel>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"

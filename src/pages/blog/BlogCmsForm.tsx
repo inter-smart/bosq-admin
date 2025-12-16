@@ -190,7 +190,7 @@ export default function BlogCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان المدونة"
@@ -255,7 +255,7 @@ export default function BlogCmsForm() {
                     name="banner_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Title (عنوان البانر)</FormLabel>
+                        <FormLabel>Banner Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان البانر"
@@ -273,7 +273,7 @@ export default function BlogCmsForm() {
                     name="banner_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Description (وصف البانر)</FormLabel>
+                        <FormLabel>Banner Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف البانر"
@@ -337,7 +337,7 @@ export default function BlogCmsForm() {
                     name="popular_blogs_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Popular Blogs Title (عنوان المدونات الشائعة)</FormLabel>
+                        <FormLabel>Popular Blogs Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونات الشائعة"
@@ -355,7 +355,7 @@ export default function BlogCmsForm() {
                     name="related_blogs_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Related Blogs Title (عنوان المدونات ذات الصلة)</FormLabel>
+                        <FormLabel>Related Blogs Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونات ذات الصلة"
@@ -438,7 +438,7 @@ export default function BlogCmsForm() {
                   name="media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل للصورة"

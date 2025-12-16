@@ -262,7 +262,7 @@ export default function MaterialsForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المادة"
@@ -280,7 +280,7 @@ export default function MaterialsForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل وصف المادة"
@@ -386,7 +386,7 @@ export default function MaterialsForm() {
                     name="media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"

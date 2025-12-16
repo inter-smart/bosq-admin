@@ -199,7 +199,7 @@ export default function PrivacyPolicyForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان السياسة"
@@ -217,7 +217,7 @@ export default function PrivacyPolicyForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل وصف السياسة"

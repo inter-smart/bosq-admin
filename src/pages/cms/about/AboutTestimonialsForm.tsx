@@ -243,7 +243,7 @@ export default function AboutTestimonialsForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان الشهادة"
@@ -261,7 +261,7 @@ export default function AboutTestimonialsForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف الشهادة"
@@ -280,7 +280,7 @@ export default function AboutTestimonialsForm() {
                     name="name_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name (الاسم)</FormLabel>
+                        <FormLabel>Name (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل اسم الشخص"
@@ -298,7 +298,7 @@ export default function AboutTestimonialsForm() {
                     name="designation_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Designation (التسمية)</FormLabel>
+                        <FormLabel>Designation (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل التسمية/الدور"

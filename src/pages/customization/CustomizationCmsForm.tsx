@@ -249,7 +249,7 @@ export default function CustomizationCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان التخصيص"
@@ -314,7 +314,7 @@ export default function CustomizationCmsForm() {
                     name="banner_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Title (عنوان البانر)</FormLabel>
+                        <FormLabel>Banner Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان البانر"
@@ -332,7 +332,7 @@ export default function CustomizationCmsForm() {
                     name="banner_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Description (وصف البانر)</FormLabel>
+                        <FormLabel>Banner Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف البانر"
@@ -432,7 +432,7 @@ export default function CustomizationCmsForm() {
                   name="banner_media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل"
@@ -495,7 +495,7 @@ export default function CustomizationCmsForm() {
                     name="process_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Process Title (عنوان العملية)</FormLabel>
+                        <FormLabel>Process Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان العملية"
@@ -513,7 +513,7 @@ export default function CustomizationCmsForm() {
                     name="process_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Process Description (وصف العملية)</FormLabel>
+                        <FormLabel>Process Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف العملية"
@@ -569,7 +569,7 @@ export default function CustomizationCmsForm() {
                   name="process_media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Process Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Process Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل"
@@ -632,7 +632,7 @@ export default function CustomizationCmsForm() {
                     name="options_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Options Title (عنوان الخيارات)</FormLabel>
+                        <FormLabel>Options Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان الخيارات"
@@ -650,7 +650,7 @@ export default function CustomizationCmsForm() {
                     name="options_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Options Description (وصف الخيارات)</FormLabel>
+                        <FormLabel>Options Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف الخيارات"
@@ -715,7 +715,7 @@ export default function CustomizationCmsForm() {
                     name="form_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Form Title (عنوان النموذج)</FormLabel>
+                        <FormLabel>Form Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان النموذج"
@@ -733,7 +733,7 @@ export default function CustomizationCmsForm() {
                     name="form_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Form Description (وصف النموذج)</FormLabel>
+                        <FormLabel>Form Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف النموذج"
@@ -789,7 +789,7 @@ export default function CustomizationCmsForm() {
                   name="form_media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Form Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Form Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل"

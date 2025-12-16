@@ -150,7 +150,7 @@ export default function TermsAndConditionsCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل العنوان"
@@ -187,7 +187,7 @@ export default function TermsAndConditionsCmsForm() {
                   name="description_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description (الوصف)</FormLabel>
+                      <FormLabel>Description (AR)</FormLabel>
                       <FormControl>
                         <RichTextEditor
                           placeholder="أدخل الوصف"
@@ -221,7 +221,7 @@ export default function TermsAndConditionsCmsForm() {
                   name="faq_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>FAQ Title (عنوان الأسئلة الشائعة)</FormLabel>
+                      <FormLabel>FAQ Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الأسئلة الشائعة"

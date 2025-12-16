@@ -279,7 +279,7 @@ export default function HomeBannerSliderForm() {
                     name="title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان البانر"
@@ -297,7 +297,7 @@ export default function HomeBannerSliderForm() {
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل الوصف"
@@ -315,7 +315,7 @@ export default function HomeBannerSliderForm() {
                     name="button_text_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Button Text (نص الزر)</FormLabel>
+                        <FormLabel>Button Text  (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="مثال: اعرف المزيد"
@@ -333,7 +333,7 @@ export default function HomeBannerSliderForm() {
                     name="media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Alt Text (النص البديل)</FormLabel>
+                        <FormLabel>Alt Text (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل للصورة"
@@ -429,7 +429,7 @@ export default function HomeBannerSliderForm() {
                   name="media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل للصورة"

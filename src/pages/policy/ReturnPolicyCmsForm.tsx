@@ -164,7 +164,7 @@ export default function ReturnPolicyCmsForm() {
                   name="media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل للصورة"

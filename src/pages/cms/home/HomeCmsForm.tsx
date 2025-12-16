@@ -260,7 +260,7 @@ export default function HomeCmsForm() {
                     name="about_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان القسم" {...field} dir="rtl" />
                         </FormControl>
@@ -274,7 +274,7 @@ export default function HomeCmsForm() {
                     name="about_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea placeholder="أدخل وصف القسم" {...field} dir="rtl" />
                         </FormControl>
@@ -318,7 +318,7 @@ export default function HomeCmsForm() {
                     name="featured_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان المنتجات المميزة" {...field} dir="rtl" />
                         </FormControl>
@@ -376,7 +376,7 @@ export default function HomeCmsForm() {
                     name="journey_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان الرحلة" {...field} dir="rtl" />
                         </FormControl>
@@ -390,7 +390,7 @@ export default function HomeCmsForm() {
                     name="journey_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea placeholder="أدخل وصف الرحلة" {...field} dir="rtl" />
                         </FormControl>
@@ -434,7 +434,7 @@ export default function HomeCmsForm() {
                     name="project_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان المشروع" {...field} dir="rtl" />
                         </FormControl>
@@ -492,7 +492,7 @@ export default function HomeCmsForm() {
                     name="fits_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان المناسب" {...field} dir="rtl" />
                         </FormControl>
@@ -506,7 +506,7 @@ export default function HomeCmsForm() {
                     name="fits_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea placeholder="أدخل وصف المناسب" {...field} dir="rtl" />
                         </FormControl>
@@ -550,7 +550,7 @@ export default function HomeCmsForm() {
                     name="brands_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان العلامات التجارية" {...field} dir="rtl" />
                         </FormControl>
@@ -608,7 +608,7 @@ export default function HomeCmsForm() {
                     name="form_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title (العنوان)</FormLabel>
+                        <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان النموذج" {...field} dir="rtl" />
                         </FormControl>
@@ -622,7 +622,7 @@ export default function HomeCmsForm() {
                     name="form_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (الوصف)</FormLabel>
+                        <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea placeholder="أدخل وصف النموذج" {...field} dir="rtl" />
                         </FormControl>
@@ -686,7 +686,7 @@ export default function HomeCmsForm() {
                       name="about_media_alt_ar"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>
+                          <FormLabel>Alt Text  (AR)</FormLabel>
                           <FormControl>
                             <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
                           </FormControl>
@@ -771,7 +771,7 @@ export default function HomeCmsForm() {
                     name="journey_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>
+                        <FormLabel>Alt Text  (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
                         </FormControl>
@@ -827,7 +827,7 @@ export default function HomeCmsForm() {
                       name="form_media_alt_ar"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>
+                          <FormLabel>Alt Text  (AR)</FormLabel>
                           <FormControl>
                             <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
                           </FormControl>

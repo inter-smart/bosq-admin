@@ -190,7 +190,7 @@ export default function NewsCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان المدونة"
@@ -255,7 +255,7 @@ export default function NewsCmsForm() {
                     name="banner_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Title (عنوان البانر)</FormLabel>
+                        <FormLabel>Banner Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان البانر"
@@ -273,7 +273,7 @@ export default function NewsCmsForm() {
                     name="banner_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Description (وصف البانر)</FormLabel>
+                        <FormLabel>Banner Description (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل وصف البانر"
@@ -337,7 +337,7 @@ export default function NewsCmsForm() {
                     name="popular_news_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Popular News Title (عنوان المدونات الشائعة)</FormLabel>
+                        <FormLabel>Popular News Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونات الشائعة"
@@ -355,7 +355,7 @@ export default function NewsCmsForm() {
                     name="related_news_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Related News Title (عنوان المدونات ذات الصلة)</FormLabel>
+                        <FormLabel>Related News Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونات ذات الصلة"
@@ -438,7 +438,7 @@ export default function NewsCmsForm() {
                   name="media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل النص البديل للصورة"

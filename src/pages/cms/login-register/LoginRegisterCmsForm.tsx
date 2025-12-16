@@ -400,7 +400,7 @@ export default function LoginRegisterCmsForm() {
                     name="signup_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Signup Title (العنوان)</FormLabel>
+                        <FormLabel>Signup Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان التسجيل"
@@ -418,7 +418,7 @@ export default function LoginRegisterCmsForm() {
                     name="signup_subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Signup Subtitle (العنوان الفرعي)</FormLabel>
+                        <FormLabel>Signup Subtitle (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل العنوان الفرعي للتسجيل"
@@ -510,7 +510,7 @@ export default function LoginRegisterCmsForm() {
                     name="otp_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>OTP Title (العنوان)</FormLabel>
+                        <FormLabel>OTP Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان OTP"
@@ -528,7 +528,7 @@ export default function LoginRegisterCmsForm() {
                     name="otp_subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>OTP Subtitle (العنوان الفرعي)</FormLabel>
+                        <FormLabel>OTP Subtitle (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل العنوان الفرعي لـ OTP"
@@ -623,7 +623,7 @@ export default function LoginRegisterCmsForm() {
                     name="your_password_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Your Password Title (العنوان)</FormLabel>
+                        <FormLabel>Your Password Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان كلمة المرور"
@@ -642,7 +642,7 @@ export default function LoginRegisterCmsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Your Password Subtitle (العنوان الفرعي)
+                          Your Password Subtitle (AR)
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -735,7 +735,7 @@ export default function LoginRegisterCmsForm() {
                     name="login_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Login Title (العنوان)</FormLabel>
+                        <FormLabel>Login Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان تسجيل الدخول"
@@ -753,7 +753,7 @@ export default function LoginRegisterCmsForm() {
                     name="login_subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Login Subtitle (العنوان الفرعي)</FormLabel>
+                        <FormLabel>Login Subtitle (AR)</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="أدخل العنوان الفرعي لتسجيل الدخول"
@@ -848,7 +848,7 @@ export default function LoginRegisterCmsForm() {
                     name="recover_email_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Recover Email Title (العنوان)</FormLabel>
+                        <FormLabel>Recover Email Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان استرداد البريد الإلكتروني"
@@ -867,7 +867,7 @@ export default function LoginRegisterCmsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Recover Email Subtitle (العنوان الفرعي)
+                          Recover Email Subtitle (AR)
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -963,7 +963,7 @@ export default function LoginRegisterCmsForm() {
                     name="recover_password_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Recover Password Title (العنوان)</FormLabel>
+                        <FormLabel>Recover Password Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان استرداد كلمة المرور"
@@ -982,7 +982,7 @@ export default function LoginRegisterCmsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Recover Password Subtitle (العنوان الفرعي)
+                          Recover Password Subtitle (AR)
                         </FormLabel>
                         <FormControl>
                           <Textarea
@@ -1057,7 +1057,7 @@ export default function LoginRegisterCmsForm() {
                   name="new_password_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>New Password Title (العنوان)</FormLabel>
+                      <FormLabel>New Password Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان كلمة المرور الجديدة"

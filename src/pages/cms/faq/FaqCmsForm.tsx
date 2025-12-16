@@ -180,7 +180,7 @@ export default function FaqCmsForm() {
                   name="banner_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Banner Title (عنوان البانر)</FormLabel>
+                      <FormLabel>Banner Title (AR)</FormLabel>
                       <FormControl>
                         <Input placeholder="أدخل عنوان البانر" {...field} dir="rtl" />
                       </FormControl>
@@ -220,7 +220,7 @@ export default function FaqCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input placeholder="أدخل عنوان الصفحة" {...field} dir="rtl" />
                       </FormControl>
@@ -280,7 +280,7 @@ export default function FaqCmsForm() {
                     name="question_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question Title (عنوان الأسئلة)</FormLabel>
+                        <FormLabel>Question Title (AR)</FormLabel>
                         <FormControl>
                           <Input placeholder="أدخل عنوان الأسئلة" {...field} dir="rtl" />
                         </FormControl>
@@ -294,7 +294,7 @@ export default function FaqCmsForm() {
                     name="question_description_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Question Description (وصف الأسئلة)</FormLabel>
+                        <FormLabel>Question Description (AR)</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="أدخل وصف الأسئلة"
@@ -379,7 +379,7 @@ export default function FaqCmsForm() {
                   name="banner_media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>النص البديل (Alt Text - Arabic)</FormLabel>
+                      <FormLabel>Alt Text  (AR)</FormLabel>
                       <FormControl>
                         <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
                       </FormControl>

@@ -11,6 +11,7 @@ export interface WhyBosq {
   // Icon Media fields
   icon_media_path?: string | File | null;
   icon_media_alt?: string;
+  icon_media_alt_ar?: string;
 
   // Content fields (English)
   title: string;

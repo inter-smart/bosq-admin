@@ -225,7 +225,7 @@ export default function DeliveryCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (العنوان)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان الصفحة"
@@ -272,7 +272,7 @@ export default function DeliveryCmsForm() {
                     name="banner_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Title (عنوان البانر)</FormLabel>
+                        <FormLabel>Banner Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان البانر"
@@ -364,7 +364,7 @@ export default function DeliveryCmsForm() {
                     name="banner_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"
@@ -432,7 +432,7 @@ export default function DeliveryCmsForm() {
                     name="delivery_time_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Delivery Time Title (عنوان وقت التوصيل)</FormLabel>
+                        <FormLabel>Delivery Time Title (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان وقت التوصيل"
@@ -450,7 +450,7 @@ export default function DeliveryCmsForm() {
                     name="delivery_time_subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Delivery Time Subtitle (نص فرعي وقت التوصيل)</FormLabel>
+                        <FormLabel>Delivery Time Subtitle (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل نص فرعي وقت التوصيل"
@@ -517,7 +517,7 @@ export default function DeliveryCmsForm() {
                     name="delivery_media_alt_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Alt Text (النص البديل)</FormLabel>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="أدخل النص البديل"
