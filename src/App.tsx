@@ -86,6 +86,11 @@ const ContactCmsForm = lazy(() =>
   import("./pages/cms/contact/ContactCmsForm")
 );
 
+// Projects pages
+const ProjectsCmsForm = lazy(() =>
+  import("./pages/cms/projects/ProjectsCmsForm")
+);
+
 // Login/Register pages
 const LoginRegisterCmsForm = lazy(() =>
   import("./pages/cms/login-register/LoginRegisterCmsForm")
@@ -561,6 +566,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ContactCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* PROJECTS CMS Route */}
+          <Route
+            path="/projects-cms"
+            element={
+              <ProtectedRoute>
+                <ProjectsCmsForm />
               </ProtectedRoute>
             }
           />

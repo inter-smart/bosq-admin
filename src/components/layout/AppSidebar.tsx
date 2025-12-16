@@ -27,6 +27,7 @@ import {
   LogIn,
   RotateCcw,
   Newspaper,
+  Briefcase,
 } from "lucide-react";
 
 import {
@@ -110,6 +111,11 @@ const cmsSection = [
     title: "Contact",
     icon: Mail,
     subItems: [{ title: "Contact CMS", url: "/contact-cms", icon: FileText }],
+  },
+  {
+    title: "Projects",
+    icon: Briefcase,
+    subItems: [{ title: "Projects CMS", url: "/projects-cms", icon: FileText }],
   },
   {
     title: "Login/Register",
@@ -220,6 +226,7 @@ export function AppSidebar() {
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
   const [loginRegisterOpen, setLoginRegisterOpen] = useState(false);
   const [customisationOpen, setCustomisationOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
@@ -284,6 +291,12 @@ export function AppSidebar() {
     if (["/contact-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setContactOpen(true);
+    }
+
+    // Auto-open Projects section
+    if (["/projects-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setProjectsOpen(true);
     }
 
     // Auto-open Login/Register section
@@ -422,6 +435,9 @@ export function AppSidebar() {
                   } else if (section.title === "Contact") {
                     sectionOpen = contactOpen;
                     setSectionOpen = setContactOpen;
+                  } else if (section.title === "Projects") {
+                    sectionOpen = projectsOpen;
+                    setSectionOpen = setProjectsOpen;
                   } else if (section.title === "Login/Register") {
                     sectionOpen = loginRegisterOpen;
                     setSectionOpen = setLoginRegisterOpen;
