@@ -912,7 +912,7 @@ const App = () => (
             path="/news/edit/:id"
             element={
               <ProtectedRoute>
-                <BlogsForm />
+                <NewsForm />
               </ProtectedRoute>
             }
           />
