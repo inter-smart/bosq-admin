@@ -76,6 +76,9 @@ export const commonValidations = {
         }
       ),
 
+
+      
+
   validateImageUpload: (fieldName: string) =>
     z
       .union([

@@ -59,15 +59,6 @@ export function RichTextEditor({
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
 
-
-const CustomHardBreak = HardBreak.extend({
-  addKeyboardShortcuts() {
-    return {
-      Enter: () => this.editor.commands.setHardBreak(),
-    };
-  },
-});
-
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -80,8 +71,6 @@ const CustomHardBreak = HardBreak.extend({
           keepAttributes: false,
         },
       }),
-      HardBreak,
-      CustomHardBreak,
       Image.configure({
         inline: false,
         allowBase64: true,
@@ -147,8 +136,10 @@ const CustomHardBreak = HardBreak.extend({
           // Horizontal rule
           "prose-hr:border-border prose-hr:my-6",
           // Fallback classes for direct elements
-          "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3",
-          "[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3",
+          // ✅ RTL/LTR SAFE LIST FIX
+          "[&_ul]:list-disc [&_ul]:!ps-6 [&_ul]:!pl-0 [&_ul]:!pr-0 [&_ul]:my-3",
+          "[&_ol]:list-decimal [&_ol]:!ps-6 [&_ol]:!pl-0 [&_ol]:!pr-0 [&_ol]:my-3",
+
           "[&_li]:my-1 [&_li]:leading-7",
           "[&_blockquote]:border-l-4 [&_blockquote]:border-border [&_blockquote]:pl-4 [&_blockquote]:italic",
           "[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4",
@@ -160,7 +151,6 @@ const CustomHardBreak = HardBreak.extend({
 
         dir: dir,
       },
-      
 
       transformPastedText(text) {
         // Convert new lines to <br>

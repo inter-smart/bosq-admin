@@ -150,6 +150,20 @@ const cmsSection = [
       { title: "Options", url: "/customization-options", icon: List },
     ],
   },
+
+  // Sustainability
+  {
+    title: "Sustainability",
+    icon: Briefcase,
+    subItems: [
+      {
+        title: "Sustainability CMS",
+        url: "/sustainability-cms",
+        icon: FileText,
+      },
+      { title: "Sustainability", url: "/sustainability", icon: List },
+    ],
+  },
 ];
 
 const projectsSection = [
@@ -259,7 +273,7 @@ export function AppSidebar() {
   const [termsOpen, setTermsOpen] = useState(false);
   const [warrantyOpen, setWarrantyOpen] = useState(false);
   const [returnPolicyOpen, setReturnPolicyOpen] = useState(false);
-
+  const [sustainabilityOpen, setSustainabilityOpen] = useState(false);
   const isCollapsed = state === "collapsed";
 
   // Auto-open based on current path
@@ -354,6 +368,13 @@ export function AppSidebar() {
     ) {
       setCmsOpen(true);
       setCustomisationOpen(true);
+    }
+
+
+    // Auto-open Sustainability section
+    if (["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setSustainabilityOpen(true);
     }
 
     // Auto-open Blog section
@@ -495,6 +516,10 @@ export function AppSidebar() {
                   } else if (section.title === "Customisation") {
                     sectionOpen = customisationOpen;
                     setSectionOpen = setCustomisationOpen;
+                  }
+                  else if (section.title === "Sustainability") {
+                    sectionOpen = sustainabilityOpen;
+                    setSectionOpen = setSustainabilityOpen;
                   }
 
                   return (

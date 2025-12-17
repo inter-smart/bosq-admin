@@ -244,6 +244,9 @@ const ReturnPolicyList = lazy(() =>
 );
 
 import { Suspense } from "react";
+import SustainabilityCmsForm from "./pages/cms/sustainability/SustainabilityCmsForm";
+import SustainabilityList from "./pages/cms/sustainability/SustainabilityList";
+import SustainabilityForm from "./pages/cms/sustainability/SustainabilityForm";
 
 
 const queryClient = new QueryClient();
@@ -1213,6 +1216,43 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <ReturnPolicyForm />
+              </ProtectedRoute>
+            }
+          />
+
+
+          {/* Sustainability Cms */}
+          <Route
+            path="/sustainability-cms"
+            element={
+              <ProtectedRoute>
+                <SustainabilityCmsForm />
+              </ProtectedRoute>
+            }
+          />  
+
+          {/* Sustainability */}
+          <Route
+            path="/sustainability"
+            element={
+              <ProtectedRoute>
+                <SustainabilityList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sustainability/create"
+            element={
+              <ProtectedRoute>
+                <SustainabilityForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sustainability/:id/edit"
+            element={
+              <ProtectedRoute>
+                <SustainabilityForm />
               </ProtectedRoute>
             }
           />
