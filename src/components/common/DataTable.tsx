@@ -59,6 +59,7 @@ import {
   XCircle,
   FileText,
   FileSpreadsheet,
+  ArrowLeft,
 } from "lucide-react";
 
 export interface FilterOption {
@@ -94,6 +95,8 @@ interface DataTableProps<TData, TValue> {
   pagination?: PaginationProps;
   searchQuery?: string;
   onSearchChange?: (query: string) => void;
+  navigateBack?: () => void;
+  isBackNavigation?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -113,6 +116,8 @@ export function DataTable<TData, TValue>({
   pagination,
   searchQuery,
   onSearchChange,
+  navigateBack,
+  isBackNavigation,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -204,21 +209,38 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          {title && (
-            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-          )}
-          <p className="text-muted-foreground">
-            Manage your {title?.toLowerCase() || "items"}
-          </p>
-        </div>
-        {onAdd && showAddButton && (
-          <Button onClick={onAdd} className="bg-primary hover:bg-primary/90">
-            {addButtonText}
-          </Button>
-        )}
-      </div>
+   <div className="flex items-center justify-between">
+  <div className="flex items-center gap-3">
+    {/* Back Button */}
+    {isBackNavigation && navigateBack && (
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={navigateBack}
+      >
+        <ArrowLeft className="h-4 w-4" />
+      </Button>
+    )}
+
+    <div>
+      {title && (
+        <h1 className="text-2xl font-bold text-foreground">
+          {title}
+        </h1>
+      )}
+      <p className="text-muted-foreground">
+        Manage your {title?.toLowerCase() || "items"}
+      </p>
+    </div>
+  </div>
+
+  {onAdd && showAddButton && (
+    <Button onClick={onAdd} className="bg-primary hover:bg-primary/90">
+      {addButtonText}
+    </Button>
+  )}
+</div>
+
 
       <Card>
         <CardHeader>
