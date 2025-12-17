@@ -85,7 +85,11 @@ const cmsSection = [
     icon: Package,
     subItems: [
       { title: "Materials CMS", url: "/materials-cms", icon: FileText },
-      { title: "Material Categories", url: "/materials-category", icon: FolderOpen },
+      {
+        title: "Material Categories",
+        url: "/materials-category",
+        icon: FolderOpen,
+      },
       { title: "Materials", url: "/materials", icon: List },
     ],
   },
@@ -113,19 +117,14 @@ const cmsSection = [
     subItems: [{ title: "Contact CMS", url: "/contact-cms", icon: FileText }],
   },
   {
-    title: "Projects",
-    icon: Briefcase,
-    subItems: [
-      { title: "Projects CMS", url: "/projects-cms", icon: FileText },
-      { title: "Project Category", url: "/project-category", icon: FolderOpen },
-      { title: "Projects", url: "/projects", icon: List },
-    ],
-  },
-  {
     title: "Login/Register",
     icon: LogIn,
     subItems: [
-      { title: "Login/Register CMS", url: "/login-register-cms", icon: FileText },
+      {
+        title: "Login/Register CMS",
+        url: "/login-register-cms",
+        icon: FileText,
+      },
     ],
   },
   {
@@ -140,6 +139,12 @@ const cmsSection = [
   },
 ];
 
+const projectsSection = [
+  { title: "Projects CMS", url: "/projects-cms", icon: FileText },
+  { title: "Project Category", url: "/project-category", icon: FolderOpen },
+  { title: "Projects", url: "/projects", icon: List },
+];
+
 const blogsSection = [
   { title: "Blog CMS", url: "/blog-cms", icon: FileText },
   { title: "Blogs", url: "/blogs", icon: List },
@@ -149,7 +154,6 @@ const newsSection = [
   { title: "News CMS", url: "/news-cms", icon: FileText },
   { title: "News", url: "/news", icon: List },
 ];
-
 
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
@@ -272,13 +276,21 @@ export function AppSidebar() {
     }
 
     // Auto-open Materials section
-    if (["/materials-cms", "/materials-category", "/materials"].some((r) => path.includes(r))) {
+    if (
+      ["/materials-cms", "/materials-category", "/materials"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setCmsOpen(true);
       setMaterialsOpen(true);
     }
 
     // Auto-open Delivery section
-    if (["/delivery-cms", "/delivery-time", "/delivery-method"].some(r => path.includes(r))) {
+    if (
+      ["/delivery-cms", "/delivery-time", "/delivery-method"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setCmsOpen(true);
       setDeliveryOpen(true);
     }
@@ -298,7 +310,11 @@ export function AppSidebar() {
     }
 
     // Auto-open Projects section
-    if (["/projects-cms", "/project-category", "/projects"].some((r) => path.includes(r))) {
+    if (
+      ["/projects-cms", "/project-category", "/projects"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setCmsOpen(true);
       setProjectsOpen(true);
     }
@@ -310,7 +326,13 @@ export function AppSidebar() {
     }
 
     // Auto-open Customisation section
-    if (["/customization-cms", "/customization-features", "/customization-process"].some((r) => path.includes(r))) {
+    if (
+      [
+        "/customization-cms",
+        "/customization-features",
+        "/customization-process",
+      ].some((r) => path.includes(r))
+    ) {
       setCmsOpen(true);
       setCustomisationOpen(true);
     }
@@ -345,13 +367,19 @@ export function AppSidebar() {
     }
 
     // Auto-open Terms and Conditions section
-    if (["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) => path.includes(r))) {
+    if (
+      ["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setPoliciesOpen(true);
       setTermsOpen(true);
     }
 
     // Auto-open Return Policy section
-    if (["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))) {
+    if (
+      ["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))
+    ) {
       setPoliciesOpen(true);
       setReturnPolicyOpen(true);
     }
@@ -439,9 +467,6 @@ export function AppSidebar() {
                   } else if (section.title === "Contact") {
                     sectionOpen = contactOpen;
                     setSectionOpen = setContactOpen;
-                  } else if (section.title === "Projects") {
-                    sectionOpen = projectsOpen;
-                    setSectionOpen = setProjectsOpen;
                   } else if (section.title === "Login/Register") {
                     sectionOpen = loginRegisterOpen;
                     setSectionOpen = setLoginRegisterOpen;
@@ -466,6 +491,17 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
+
+        {/* Projects */}
+        <SidebarCollapsibleSection
+          title="Projects"
+          icon={Briefcase}
+          open={projectsOpen}
+          setOpen={setProjectsOpen}
+          items={projectsSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
 
         {/* Blog Section - Standalone */}
         <SidebarCollapsibleSection
