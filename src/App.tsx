@@ -1257,7 +1257,7 @@ const App = () => (
             }
           />
 
-          {/* Catch all route - must be last */}
+          {/* Catch all route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>

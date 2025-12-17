@@ -38,6 +38,18 @@ export const commonValidations = {
 
   optionalNumber: z.number().optional(),
 
+
+  validatePhoneNumber: (fieldName: string) =>
+     z.string()
+  .nonempty("Phone number is required")
+  .regex(
+    /^\+?\d[\d ]*$/,
+    "Invalid phone number. Only numbers"
+  ),
+
+
+
+  
   // Status validations
   booleanStatus: () => z.boolean(),
 
@@ -76,8 +88,11 @@ export const commonValidations = {
         }
       ),
 
-
-      
+  validateEmail: (fieldName: string) =>
+    z
+      .string()
+      .email("Invalid email address")
+      .min(1, `${fieldName} is required`),
 
   validateImageUpload: (fieldName: string) =>
     z

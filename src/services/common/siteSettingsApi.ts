@@ -1,69 +1,99 @@
-import { apiCall } from '@/utils/apiUtils';
+import { apiCall } from "@/utils/apiUtils";
 
-export interface SiteSettings {
+export interface HeaderFooterSettings {
   id?: number;
+
+  header_logo_media_path: string | null;
+  footer_logo_media_path: string | null;
+
+  header_media_alt: string;
+  header_media_alt_ar: string;
+
+  footer_media_alt: string;
+  footer_media_alt_ar: string;
+
   address: string;
+  address_ar: string;
+
+  sale_enquiry_title: string;
+  sale_enquiry_title_ar: string;
+  sale_enquiry_email: string;
+  sales_phone_number: string;
+
+  phone_number: string;
   email: string;
-  phone: string;
-  logo: string | null;
-  logo_alt: string;
-  favicon: string | null;
-  footer_download_image_one: string | null;
-  footer_download_image_one_alt: string;
-  footer_download_image_one_link: string;
-  footer_download_image_two: string | null;
-  footer_download_image_two_alt: string;
-  footer_download_image_two_link: string;
-  footer_logo: string | null;
-  footer_logo_alt: string;
-  footer_description: string;
-  social_media_title: string;
-  subscribe_title: string;
-  status?: boolean;
-  deletedAt?: string | null;
+
+  support_enquiry_title: string;
+  support_enquiry_title_ar: string;
+  support_email: string;
+
+
+  news_letter_main_title: string;
+  news_letter_main_title_ar: string;
+
+  news_letter_title: string;
+  news_letter_title_ar: string;
+
+  po_box_number: number;
+
   createdAt?: string;
   updatedAt?: string;
 }
 
-export interface SiteSettingsResponse {
+export interface HeaderFooterResponse {
   success: boolean;
   message: string;
   timestamp: string;
   statusCode: number;
-  data: SiteSettings;
+  data: HeaderFooterSettings;
 }
 
-export interface CreateSiteSettingsData {
+export interface SaveHeaderFooterData {
+  header_logo_media_path?: File | string | null;
+  footer_logo_media_path?: File | string | null;
+
+  header_media_alt: string;
+  header_media_alt_ar: string;
+
+  footer_media_alt: string;
+  footer_media_alt_ar: string;
+
   address: string;
-  email: string;
-  phone: string;
-  logo?: File | string;
-  logo_alt: string;
-  favicon?: File | string;
-  footer_download_image_one?: File | string;
-  footer_download_image_one_alt: string;
-  footer_download_image_one_link: string;
-  footer_download_image_two?: File | string;
-  footer_download_image_two_alt: string;
-  footer_download_image_two_link: string;
-  footer_logo?: File | string;
-  footer_logo_alt: string;
-  footer_description: string;
-  social_media_title: string;
-  subscribe_title: string;
+  address_ar: string;
+
+  sale_enquiry_title: string;
+  sale_enquiry_title_ar: string;
+  sale_enquiry_email: string;
+
+  phone_number: string;
+
+  support_enquiry_title: string;
+  support_enquiry_title_ar: string;
+  support_email: string;
+
+  news_letter_main_title: string;
+  news_letter_main_title_ar: string;
+
+  news_letter_title: string;
+  news_letter_title_ar: string;
+
+  po_box_number: string;
 }
+export const fetchHeaderFooterSettings =
+  async (): Promise<HeaderFooterResponse> => {
+    return apiCall('/sitesettings/header-footer');
+  };
 
-// Fetch Site Settings data
-export const fetchSiteSettings = async (): Promise<SiteSettingsResponse> => {
-  return apiCall('/site-settings');
-};
 
-// Create or Update Site Settings data
-export const saveSiteSettings = async (
+export const saveHeaderFooterSettings = async (
   formData: FormData
-): Promise<SiteSettings> => {
-  return apiCall('/site-settings', {
+): Promise<HeaderFooterSettings> => {
+  return apiCall('/sitesettings/header-footer', {
     method: 'POST',
     data: formData,
   });
 };
+
+
+
+
