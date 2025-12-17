@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,16 +22,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { fetchBlogList, deleteBlog, Blog } from "@/services/blog/blogsApi";
+import {
+  fetchErgonomicsChairFeatureList,
+  deleteErgonomicsChairFeature,
+  ErgonomicsChairFeature,
+} from "@/services/cms/ergonomic-guide/ergonomicsFeaturesApi";
 import { useToast } from "@/hooks/use-toast";
-import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function BlogsList() {
+export default function ErgonomicsChairFeatureList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [blogItems, setBlogItems] = useState<Blog[]>([]);
+
+  const [features, setFeatures] = useState<ErgonomicsChairFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -38,16 +43,18 @@ export default function BlogsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
+  const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<Blog>({
-      modelName: "Blogs",
-      data: blogItems,
-      setData: setBlogItems,
+    useCommonTableActions<ErgonomicsChairFeature>({
+      modelName: "ErgonomicFeatures",
+      data: features,
+      setData: setFeatures,
     });
 
-  // Debounce search query
+  /* =======================
+     Debounce Search
+  ======================= */
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
@@ -56,36 +63,31 @@ export default function BlogsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch blog items
   useEffect(() => {
-    loadBlogItems();
+    loadFeatures();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
-
-    
-    
-  const loadBlogItems = async () => {
+  /* =======================
+     Data Load
+  ======================= */
+  const loadFeatures = async () => {
     try {
-      if (debouncedSearchQuery) {
-        setSearching(true);
-      } else {
-        setLoading(true);
-      }
+      debouncedSearchQuery ? setSearching(true) : setLoading(true);
 
-      const response = await fetchBlogList(
+      const response = await fetchErgonomicsChairFeatureList(
         currentPage,
         pageSize,
         debouncedSearchQuery
       );
 
       if (response.success) {
-        setBlogItems(response.data.list);
+        setFeatures(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
-        description: "Failed to load blog items",
+        description: "Failed to load ergonomics chair features",
         variant: "destructive",
       });
     } finally {
@@ -94,20 +96,23 @@ export default function BlogsList() {
     }
   };
 
+  /* =======================
+     Delete
+  ======================= */
   const confirmDelete = async () => {
     if (!deleteItemId) return;
 
     try {
-      await deleteBlog(deleteItemId);
+      await deleteErgonomicsChairFeature(deleteItemId);
+      setFeatures((prev) => prev.filter((item) => item.id !== deleteItemId));
       toast({
         title: "Success",
-        description: "Blog deleted successfully",
+        description: "Feature deleted successfully",
       });
-      loadBlogItems();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
-        description: "Failed to delete blog",
+        description: "Failed to delete feature",
         variant: "destructive",
       });
     } finally {
@@ -115,7 +120,10 @@ export default function BlogsList() {
     }
   };
 
-  const columns: ColumnDef<Blog>[] = [
+  /* =======================
+     Columns
+  ======================= */
+  const columns: ColumnDef<ErgonomicsChairFeature>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -126,23 +134,18 @@ export default function BlogsList() {
       ),
     },
     {
-      accessorKey: "thumbnail",
-      header: "Thumbnail",
+      accessorKey: "media_path",
+      header: "Image",
       cell: ({ row }) => {
-        return (
-          <div className="w-16 h-10 rounded-md bg-muted flex items-center justify-center">
-            {row.getValue("thumbnail") ? (
-              <img
-                src={`${import.meta.env.VITE_IMAGE_URL}/${row.getValue(
-                  "thumbnail"
-                )}`}
-                alt={row.original.thumbnail_alt || row.original.title}
-                className="w-full h-full rounded object-cover"
-              />
-            ) : (
-              <div className="w-full h-full rounded bg-muted-foreground/20" />
-            )}
-          </div>
+        const mediaPath = row.getValue("media_path") as string;
+        return mediaPath ? (
+          <img
+            src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}
+            alt={row.original.media_alt || "Feature"}
+            className="h-10 w-10 object-cover rounded"
+          />
+        ) : (
+          <div className="text-sm text-muted-foreground">No image</div>
         );
       },
     },
@@ -156,29 +159,17 @@ export default function BlogsList() {
       ),
     },
     {
-      accessorKey: "slug",
-      header: "Slug",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[150px] truncate">
-          {row.getValue("slug")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "published_date",
-      header: "Published Date",
-      cell: ({ row }) => (
-        <div className="text-sm">
-          {new Date(row.getValue("published_date")).toLocaleDateString()}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "viewCount",
-      header: "Views",
-      cell: ({ row }) => (
-        <div className="text-sm">{row.getValue("viewCount") || 0}</div>
-      ),
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => {
+        const description = row.getValue("description") as string;
+        const plainText = description?.replace(/<[^>]*>/g, "") || "";
+        return (
+          <div className="max-w-[250px] truncate text-sm text-muted-foreground">
+            {plainText || "No description"}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "sort_order",
@@ -222,6 +213,7 @@ export default function BlogsList() {
     {
       accessorKey: "createdAt",
       header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString()}
@@ -232,18 +224,18 @@ export default function BlogsList() {
       id: "actions",
       cell: ({ row }) => {
         const item = row.original;
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/blogs/edit/${item.id}`)}
+                onClick={() =>
+                  navigate(`/ergonomic-chair-features/edit/${item.id}`)
+                }
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -262,11 +254,14 @@ export default function BlogsList() {
     },
   ];
 
+  /* =======================
+     Render
+  ======================= */
   return (
     <>
       <DataTable
         columns={columns}
-        data={blogItems}
+        data={features}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -279,13 +274,13 @@ export default function BlogsList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Blogs"
-        searchPlaceholder="Search blogs..."
-        onAdd={() => navigate("/blogs/create")}
-        addButtonText="Add Blog"
+        title="Ergonomics Chair Features"
+        searchPlaceholder="Search features..."
+        onAdd={() => navigate("/ergonomic-chair-features/create")}
+        addButtonText="Add Feature"
       />
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       <AlertDialog
         open={!!deleteItemId}
         onOpenChange={() => setDeleteItemId(null)}
@@ -295,7 +290,7 @@ export default function BlogsList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              blog and remove its data from the servers.
+              feature.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

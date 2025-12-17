@@ -103,6 +103,19 @@ const cmsSection = [
     ],
   },
   {
+    title: "Ergonomics",
+    icon: Award, // or any icon you prefer
+    subItems: [
+      { title: "Ergonomics CMS", url: "/ergonomic-guide-cms", icon: FileText },
+      {
+        title: "Ergonomic Chair Features",
+        url: "/ergonomic-chair-features",
+        icon: List,
+      },
+    ],
+  },
+
+  {
     title: "FAQ",
     icon: HelpCircle,
     subItems: [
@@ -230,6 +243,7 @@ export function AppSidebar() {
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [ergonomicOpen, setErgonomicOpen] = useState(false);
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
@@ -275,6 +289,12 @@ export function AppSidebar() {
       setAboutOpen(true);
     }
 
+    // Auto-open Ergonomic section
+    if (["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setErgonomicOpen(true);
+    }
+
     // Auto-open Materials section
     if (
       ["/materials-cms", "/materials-category", "/materials"].some((r) =>
@@ -315,7 +335,6 @@ export function AppSidebar() {
         path.includes(r)
       )
     ) {
-      setCmsOpen(true);
       setProjectsOpen(true);
     }
 
@@ -464,6 +483,9 @@ export function AppSidebar() {
                   } else if (section.title === "FAQ") {
                     sectionOpen = faqOpen;
                     setSectionOpen = setFaqOpen;
+                  } else if (section.title === "Ergonomics") {
+                    sectionOpen = ergonomicOpen;
+                    setSectionOpen = setErgonomicOpen;
                   } else if (section.title === "Contact") {
                     sectionOpen = contactOpen;
                     setSectionOpen = setContactOpen;

@@ -327,24 +327,6 @@ export default function HomeBannerSliderForm() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alt Text (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل للصورة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               </div>
             </CardContent>

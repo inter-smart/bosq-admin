@@ -102,14 +102,3 @@ export const updateDeliveryMethodStatus = async (
     data: { status },
   });
 };
-
-// Update delivery method sort order
-export const updateDeliveryMethodSortOrder = async (
-  id: number,
-  sort_order: number
-): Promise<DeliveryMethodItemResponse> => {
-  return apiCall(`/cms/delivery/delivery-methods/${id}/sort-order`, {
-    method: 'PATCH',
-    data: { sort_order },
-  });
-};

@@ -174,6 +174,21 @@ const AboutOurClientsForm = lazy(() =>
 const WhyBosqList = lazy(() => import("./pages/cms/about/WhyBosqList"));
 const WhyBosqForm = lazy(() => import("./pages/cms/about/WhyBosqForm"));
 
+
+// ERGONOMICS
+const ErgonomicGuideCmsForm = lazy(() =>
+  import("./pages/cms/ergonomic-guide/ErgoGuideForm")
+);
+// ergogomicsfeatures
+const ErgonomicFeaturesList = lazy(() =>
+  import("./pages/cms/ergonomic-guide/ErgonomicsChairFeatureList")
+);
+const ErgonomicFeaturesForm = lazy(() =>
+  import("./pages/cms/ergonomic-guide/ErgonomicsChairFeatureForm")
+);
+
+
+
 // Blog pages
 const BlogCmsForm = lazy(() => import("./pages/blog/BlogCmsForm"));
 const BlogsList = lazy(() => import("./pages/blog/BlogsList"));
@@ -695,6 +710,43 @@ const App = () => (
               </ProtectedRoute>
             }
           />
+
+
+          {/* Ergonomic Guide CMS Route */}
+          <Route
+            path="/ergonomic-guide-cms"
+            element={
+              <ProtectedRoute>
+                <ErgonomicGuideCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+{/* Ergomnemic chair features */}
+          <Route
+            path="/ergonomic-chair-features"
+            element={
+              <ProtectedRoute>
+                <ErgonomicFeaturesList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ergonomic-chair-features/create"
+            element={
+              <ProtectedRoute>
+                <ErgonomicFeaturesForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ergonomic-chair-features/edit/:id"
+            element={
+              <ProtectedRoute>
+                <ErgonomicFeaturesForm />
+              </ProtectedRoute>
+            }
+            />
 
           {/* MATERIALS CMS Route */}
           <Route
