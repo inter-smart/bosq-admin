@@ -396,7 +396,7 @@ export function AppSidebar() {
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-sidebar border-r border-sidebar-border">
         {/* Logo */}
-        <div className="p-4 border-b border-sidebar-border">
+        <div className="py-4 border-b border-sidebar-border">
           {!isCollapsed ? (
             <div className="flex items-center justify-center">
               <img
