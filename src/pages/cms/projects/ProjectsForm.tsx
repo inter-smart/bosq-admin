@@ -125,6 +125,7 @@ export default function ProjectsForm() {
       features_ar: {},
       sort_order: 1,
       status: true,
+      show_in_home: false,
     },
   });
 
@@ -207,6 +208,7 @@ export default function ProjectsForm() {
           features_ar: parsedFeaturesAr,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
+          show_in_home: data.show_in_home ?? false,
         });
 
         // Set dynamic arrays and objects
@@ -470,6 +472,7 @@ export default function ProjectsForm() {
       if (data.sort_order !== undefined)
         formData.append("sort_order", data.sort_order.toString());
       formData.append("status", data.status.toString());
+      formData.append("show_in_home", data.show_in_home.toString());
 
       // JSONB Arrays and Objects - stringify and append
       const filteredTags = tags.filter((t) => t.trim() !== "");
@@ -1523,6 +1526,28 @@ export default function ProjectsForm() {
                         <FormLabel className="text-base">Status</FormLabel>
                         <FormDescription>
                           Enable or disable this project
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+
+                <FormField
+                  control={form.control}
+                  name="show_in_home"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Show In Home Page</FormLabel>
+                        <FormDescription>
+                          Enable or disable this project to show in homepage
                         </FormDescription>
                       </div>
                       <FormControl>

@@ -105,6 +105,7 @@ export const projectSchema = z.object({
   // Settings
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
+  show_in_home: z.boolean()
 });
 
 export type ProjectFormData = z.infer<typeof projectSchema>;

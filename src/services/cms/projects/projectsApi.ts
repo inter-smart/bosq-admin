@@ -59,7 +59,7 @@ export interface Project {
   // Settings
   sort_order?: number;
   status?: boolean;
-
+  show_in_home?: boolean;
   // Timestamps
   createdAt?: string;
   updatedAt?: string;

@@ -40,6 +40,29 @@ export const useCommonTableActions = <T extends { id?: number }>({
     }
   };
 
+
+   const handleHomePageChange = async (id: number, currentStatus: boolean) => {
+    const newStatus = !currentStatus;
+
+    try {
+      await updateStatus({
+        model_name: modelName,
+        row_id: id,
+        status: newStatus,
+      });
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      );
+
+      toast({ title: "Success", description: "Status updated successfully" });
+    } catch {
+      toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
+    }
+  };
+
   const handleSortOrderChange = (id: number, newValue: string) => {
     setEditingSortOrder((prev) => ({ ...prev, [id]: newValue }));
 

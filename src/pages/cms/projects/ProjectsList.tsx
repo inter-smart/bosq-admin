@@ -33,6 +33,7 @@ import {
   fetchProjectsList,
   deleteProject,
   Project,
+  updateProject,
 } from "@/services/cms/projects/projectsApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -133,6 +134,35 @@ export default function ProjectsList() {
     }
   };
 
+  const handleShowInHomeToggle = async (id: number, currentValue: boolean) => {
+    try {
+      // Create FormData to match your API signature
+      const formData = new FormData();
+      formData.append("show_in_home", String(!currentValue));
+
+      // Call API
+      await updateProject(id, formData);
+
+      // Update local state optimistically
+      setProjects((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, show_in_home: !currentValue } : item
+        )
+      );
+
+      toast({
+        title: "Success",
+        description: "Show In Home status updated",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update Show In Home",
+        variant: "destructive",
+      });
+    }
+  };
+
   const confirmDelete = async () => {
     if (!deleteItemId) return;
 
@@ -220,6 +250,29 @@ export default function ProjectsList() {
       },
     },
     {
+      accessorKey: "show_in_home",
+      header: "Show In Home",
+      cell: ({ row }) => {
+        const item = row.original;
+        const show_in_home = row.getValue("show_in_home") as boolean;
+
+        return (
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={show_in_home}
+              onCheckedChange={() =>
+                handleShowInHomeToggle(item.id!, show_in_home)
+              }
+            />
+            <Badge variant={show_in_home ? "default" : "secondary"}>
+              {show_in_home ? "active" : "inactive"}
+            </Badge>
+          </div>
+        );
+      },
+    },
+
+    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
@@ -269,7 +322,9 @@ export default function ProjectsList() {
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => navigate(`/specialised-areas?projectId=${item.id}`)}
+                onClick={() =>
+                  navigate(`/specialised-areas?projectId=${item.id}`)
+                }
               >
                 <Award className="mr-2 h-4 w-4" />
                 Specialised Areas
@@ -358,7 +413,9 @@ export default function ProjectsList() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
