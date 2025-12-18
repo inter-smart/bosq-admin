@@ -37,6 +37,13 @@ export default function CustomizationFeaturesList() {
   const [features, setFeatures] = useState<CustomizationFeature[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [categories, setCategories] = useState<CustomizationFeature[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [pageSize, setPageSize] = useState(10);
+  const [searching, setSearching] = useState(false);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<CustomizationFeature>({
@@ -46,14 +53,36 @@ export default function CustomizationFeaturesList() {
     });
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery]);
+
+  useEffect(() => {
     loadFeatures();
-  }, []);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const loadFeatures = async () => {
     try {
-      setLoading(true);
-      const response = await fetchCustomizationFeaturesList(1, 100);
+      if (debouncedSearchQuery) {
+        setSearching(true);
+      } else {
+        setLoading(true);
+      }
+      const response = await fetchCustomizationFeaturesList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery || undefined
+      );
       setFeatures(response.data.list);
+      setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -62,6 +91,7 @@ export default function CustomizationFeaturesList() {
       });
     } finally {
       setLoading(false);
+      setSearching(false);
     }
   };
 
@@ -91,7 +121,9 @@ export default function CustomizationFeaturesList() {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.index + 1}</div>
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
       ),
     },
     {
@@ -219,6 +251,18 @@ export default function CustomizationFeaturesList() {
       <DataTable
         columns={columns}
         data={features}
+        loading={loading}
+        searching={searching}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
         title="Customization Features"
         searchPlaceholder="Search features..."
         onAdd={() => navigate("/customization-features/create")}

@@ -185,6 +185,7 @@ const newsSection = [
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
   { title: "Social Media", url: "/social-media", icon: Share2 },
+  {title: "Payment Methods", url: "/payment-methods", icon: List },
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
 ];
 
@@ -389,7 +390,7 @@ export function AppSidebar() {
 
     // Auto-open Common section
     if (
-      ["/site-settings", "/social-media", "/meta-tags"].some((r) =>
+      ["/site-settings", "/social-media", "/payment-methods", "/meta-tags"].some((r) =>
         path.includes(r)
       )
     ) {

@@ -247,6 +247,8 @@ import { Suspense } from "react";
 import SustainabilityCmsForm from "./pages/cms/sustainability/SustainabilityCmsForm";
 import SustainabilityList from "./pages/cms/sustainability/SustainabilityList";
 import SustainabilityForm from "./pages/cms/sustainability/SustainabilityForm";
+import PaymentMethodsForm from "./pages/common/PaymentMethodsForm";
+import PaymentMethodsList from "./pages/common/PaymentMethodsList";
 
 
 const queryClient = new QueryClient();
@@ -311,6 +313,34 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <SocialMediaForm />
+              </ProtectedRoute>
+            }
+          />
+
+                   {/* Payment methods Routes */}
+          <Route
+            path="/payment-methods"
+            element={
+              <ProtectedRoute>
+                <PaymentMethodsList />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/payment-methods/new"
+            element={
+              <ProtectedRoute>
+                <PaymentMethodsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/payment-methods/:id/edit"
+            element={
+              <ProtectedRoute>
+                <PaymentMethodsForm />
               </ProtectedRoute>
             }
           />

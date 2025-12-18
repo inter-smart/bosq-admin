@@ -36,6 +36,7 @@ import {
 
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { renderHTML } from "@/lib/utils";
 
 export default function SustainabilityList() {
   const navigate = useNavigate();
@@ -185,7 +186,7 @@ export default function SustainabilityList() {
       header: "Description",
       cell: ({ row }) => (
         <div className="max-w-[300px] text-sm text-muted-foreground truncate">
-          {row.getValue("description")}
+          {renderHTML(row.getValue("description"))}
         </div>
       ),
     },

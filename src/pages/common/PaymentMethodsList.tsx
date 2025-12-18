@@ -22,19 +22,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ExternalLink } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchSocialMediaList,
-  deleteSocialMedia,
-  SocialMedia,
-} from "@/services/common/socialMediaApi";
+  fetchPaymentMethodList,
+  deletePaymentMethod,
+  PaymentMethod,
+} from "@/services/common/paymentMethods";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function SocialMediaList() {
+export default function PaymentMethodsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [socialMediaItems, setSocialMediaItems] = useState<SocialMedia[]>([]);
+  const [PaymentMethodsItems, setPaymentMethodsItems] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
@@ -45,14 +45,14 @@ export default function SocialMediaList() {
   const [pageSize, setPageSize] = useState(10);
   const MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<SocialMedia>({
-      modelName: "SocialMedia",
-      data: socialMediaItems,
-      setData: setSocialMediaItems,
+    useCommonTableActions<PaymentMethod>({
+      modelName: "PaymentMethods",
+      data: PaymentMethodsItems,
+      setData: setPaymentMethodsItems,
     });
 
   useEffect(() => {
-    loadSocialMediaItems();
+    loadPaymentMethods();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
   useEffect(() => {
@@ -63,24 +63,24 @@ export default function SocialMediaList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const loadSocialMediaItems = async () => {
+  const loadPaymentMethods = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
       } else {
         setLoading(true);
       }
-      const response = await fetchSocialMediaList(
+      const response = await fetchPaymentMethodList(
         currentPage,
         pageSize,
         debouncedSearchQuery
       );
-      setSocialMediaItems(response.data.list);
+      setPaymentMethodsItems(response.data.list);
       setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load social media items",
+        description: "Failed to load payment methods",
         variant: "destructive",
       });
     } finally {
@@ -93,18 +93,18 @@ export default function SocialMediaList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteSocialMedia(deleteItemId);
-      setSocialMediaItems((prev) =>
+      await deletePaymentMethod(deleteItemId);
+      setPaymentMethodsItems((prev) =>
         prev.filter((item) => item.id !== deleteItemId)
       );
       toast({
         title: "Success",
-        description: "Social media item deleted successfully",
+        description: "Payment method deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete social media item",
+        description: "Failed to delete payment method",
         variant: "destructive",
       });
     } finally {
@@ -112,7 +112,7 @@ export default function SocialMediaList() {
     }
   };
 
-  const columns: ColumnDef<SocialMedia>[] = [
+  const columns: ColumnDef<PaymentMethod>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -126,7 +126,7 @@ export default function SocialMediaList() {
       accessorKey: "icon_media_path",
       header: "Icon",
       cell: ({ row }) => (
-        <div className="w-10 h-10 rounded-md bg-black flex items-center justify-center">
+        <div className="w-10 h-10 rounded-md flex items-center justify-center">
           {row.getValue("icon_media_path") ? (
             <img
               src={`${MEDIA_URL}/${row.getValue("icon_media_path")}`}
@@ -143,40 +143,16 @@ export default function SocialMediaList() {
       accessorKey: "icon_alt",
       header: "Title",
       cell: ({ row }) => {
-        const link = row.getValue("icon_alt") as string;
+        const title = row.getValue("icon_alt") as string;
         return (
           <div className="flex items-center gap-2">
             <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">
-              {link}
+              {title}
             </div>
           </div>
         );
       },
     },
-    {
-      accessorKey: "link",
-      header: "Link",
-      cell: ({ row }) => {
-        const link = row.getValue("link") as string;
-        return (
-          <div className="flex items-center gap-2">
-            <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">
-              {link}
-            </div>
-            {link && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.open(link, "_blank")}
-              >
-                <ExternalLink className="h-3 w-3" />
-              </Button>
-            )}
-          </div>
-        );
-      },
-    },
-
     {
       accessorKey: "sort_order",
       header: "Sort Order",
@@ -240,7 +216,7 @@ export default function SocialMediaList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/social-media/${item.id}/edit`)}
+                onClick={() => navigate(`/payment-methods/${item.id}/edit`)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
@@ -260,14 +236,14 @@ export default function SocialMediaList() {
   ];
 
   if (loading) {
-    return <div>Loading social media items...</div>;
+    return <div>Loading payment methods...</div>;
   }
 
   return (
     <>
       <DataTable
         columns={columns}
-        data={socialMediaItems}
+        data={PaymentMethodsItems}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -280,10 +256,10 @@ export default function SocialMediaList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Social Media"
-        searchPlaceholder="Search social media..."
-        onAdd={() => navigate("/social-media/new")}
-        addButtonText="Add Social Media"
+        title="Payment Methods"
+        searchPlaceholder="Search payment Methods..."
+        onAdd={() => navigate("/payment-methods/new")}
+        addButtonText="Add Payment Methods"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -296,7 +272,7 @@ export default function SocialMediaList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              social media item and remove its data from the servers.
+              payment method and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
