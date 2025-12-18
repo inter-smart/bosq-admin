@@ -24,7 +24,7 @@ export const contactCmsSchema = z.object({
   // Email Section
   email_title: commonValidations.requiredString("Email Title"),
   email_title_ar: commonValidations.requiredText("Email Title (Arabic)"),
-  email: z.string().email("Please enter a valid email address"),
+  email: commonValidations.requiredString("Email"),
 
   // Phone Section
   phone_title: commonValidations.requiredString("Phone Title"),

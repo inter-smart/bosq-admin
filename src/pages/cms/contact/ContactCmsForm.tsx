@@ -21,6 +21,7 @@ import {
   saveContactCms,
 } from "@/services/cms/contact/contactCmsApi";
 import { contactCmsSchema, ContactCmsFormData } from "@/schemas/contactSchema";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 
 export default function ContactCmsForm() {
   const { toast } = useToast();
@@ -501,7 +502,6 @@ export default function ContactCmsForm() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        type="email"
                         placeholder="Enter email address"
                         {...field}
                       />
@@ -599,9 +599,8 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <Textarea
+                          <RichTextEditor
                             placeholder="Enter address"
-                            rows={3}
                             {...field}
                           />
                         </FormControl>
@@ -638,9 +637,8 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Address (AR)</FormLabel>
                         <FormControl>
-                          <Textarea
+                          <RichTextEditor
                             placeholder="أدخل العنوان"
-                            rows={3}
                             {...field}
                             dir="rtl"
                           />
@@ -710,10 +708,10 @@ export default function ContactCmsForm() {
                 name="iframe"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Map Embed Code (iframe)</FormLabel>
+                    <FormLabel>Map URL</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Enter map embed iframe code"
+                        placeholder="Enter map URL"
                         rows={4}
                         {...field}
                       />
