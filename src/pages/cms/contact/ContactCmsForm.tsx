@@ -451,6 +451,71 @@ export default function ContactCmsForm() {
                   />
                 </div>
               </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Media</FormLabel>
+
+                      <FormControl>
+                        <FileUpload
+                          value={mediaFile}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMediaFile(file);
+                          }}
+                          recommendedDimensions="1920x1080"
+                          accept="image/*"
+                          placeholder="Upload contact media"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter media alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -723,79 +788,7 @@ export default function ContactCmsForm() {
             </CardContent>
           </Card>
 
-          {/* Media Upload Section - Outside Tabs */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Upload</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="media_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Media</FormLabel>
-
-                      <FormControl>
-                        <FileUpload
-                          value={mediaFile}
-                          onChange={(file) => {
-                            field.onChange(file);
-                            setMediaFile(file);
-                          }}
-                          recommendedDimensions="1920x1080"
-                          accept="image/*"
-                          placeholder="Upload contact media"
-                          preview={true}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Media Alt Text</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter media alt text"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Media Alt Text (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
+      
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>
               <Save className="h-4 w-4 mr-2" />

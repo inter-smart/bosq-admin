@@ -27,12 +27,11 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchHomeCms, saveHomeCms } from "@/services/cms/home/homeCmsApi";
 import { homeSchema, HomeCmsFormData } from "@/schemas/homeSchema";
 
-
 export default function HomeCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
- const [prevMediaType, setPrevMediaType] = useState<string | null>(null);
+  const [prevMediaType, setPrevMediaType] = useState<string | null>(null);
 
   const form = useForm<HomeCmsFormData>({
     resolver: zodResolver(homeSchema),
@@ -90,7 +89,6 @@ export default function HomeCmsForm() {
     }
   }, [watchJourneyMediaType, initialLoading, form, prevMediaType]);
 
-
   useEffect(() => {
     loadHomeCmsData();
   }, []);
@@ -103,7 +101,9 @@ export default function HomeCmsForm() {
 
       if (data) {
         form.reset({
-          about_media_path: data.about_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.about_media_path}` : null,
+          about_media_path: data.about_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.about_media_path}`
+            : null,
           about_media_alt: data.about_media_alt || "",
           about_media_alt_ar: data.about_media_alt_ar || "",
           about_title: data.about_title || "",
@@ -117,7 +117,9 @@ export default function HomeCmsForm() {
           journey_description: data.journey_description || "",
           journey_description_ar: data.journey_description_ar || "",
           journey_media_type: data.journey_media_type || "image",
-          journey_media_path: data.journey_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}` : null,
+          journey_media_path: data.journey_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}`
+            : null,
           journey_media_alt: data.journey_media_alt || "",
           journey_media_alt_ar: data.journey_media_alt_ar || "",
           project_title: data.project_title || "",
@@ -132,7 +134,9 @@ export default function HomeCmsForm() {
           form_title_ar: data.form_title_ar || "",
           form_description: data.form_description || "",
           form_description_ar: data.form_description_ar || "",
-          form_media_path: data.form_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.form_media_path}` : null,
+          form_media_path: data.form_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.form_media_path}`
+            : null,
           form_media_alt: data.form_media_alt || "",
           form_media_alt_ar: data.form_media_alt_ar || "",
         });
@@ -144,8 +148,6 @@ export default function HomeCmsForm() {
     }
   };
 
-
-
   const onSubmit = async (data: HomeCmsFormData) => {
     try {
       setLoading(true);
@@ -153,49 +155,77 @@ export default function HomeCmsForm() {
 
       // About Section
       if (data.about_title) formData.append("about_title", data.about_title);
-      if (data.about_title_ar) formData.append("about_title_ar", data.about_title_ar);
-      if (data.about_description) formData.append("about_description", data.about_description);
-      if (data.about_description_ar) formData.append("about_description_ar", data.about_description_ar);
-      if (data.about_media_alt) formData.append("about_media_alt", data.about_media_alt);
-      if (data.about_media_alt_ar) formData.append("about_media_alt_ar", data.about_media_alt_ar);
-      if (data.about_media_path instanceof File) formData.append("about_media_path", data.about_media_path);
+      if (data.about_title_ar)
+        formData.append("about_title_ar", data.about_title_ar);
+      if (data.about_description)
+        formData.append("about_description", data.about_description);
+      if (data.about_description_ar)
+        formData.append("about_description_ar", data.about_description_ar);
+      if (data.about_media_alt)
+        formData.append("about_media_alt", data.about_media_alt);
+      if (data.about_media_alt_ar)
+        formData.append("about_media_alt_ar", data.about_media_alt_ar);
+      if (data.about_media_path instanceof File)
+        formData.append("about_media_path", data.about_media_path);
 
       // Featured Products Section
-      if (data.featured_title) formData.append("featured_title", data.featured_title);
-      if (data.featured_title_ar) formData.append("featured_title_ar", data.featured_title_ar);
+      if (data.featured_title)
+        formData.append("featured_title", data.featured_title);
+      if (data.featured_title_ar)
+        formData.append("featured_title_ar", data.featured_title_ar);
 
       // Journey Section
-      if (data.journey_title) formData.append("journey_title", data.journey_title);
-      if (data.journey_title_ar) formData.append("journey_title_ar", data.journey_title_ar);
-      if (data.journey_description) formData.append("journey_description", data.journey_description);
-      if (data.journey_description_ar) formData.append("journey_description_ar", data.journey_description_ar);
-      if (data.journey_media_type) formData.append("journey_media_type", data.journey_media_type);
-      if (data.journey_media_alt) formData.append("journey_media_alt", data.journey_media_alt);
-      if (data.journey_media_alt_ar) formData.append("journey_media_alt_ar", data.journey_media_alt_ar);
-      if (data.journey_media_path instanceof File) formData.append("journey_media_path", data.journey_media_path);
+      if (data.journey_title)
+        formData.append("journey_title", data.journey_title);
+      if (data.journey_title_ar)
+        formData.append("journey_title_ar", data.journey_title_ar);
+      if (data.journey_description)
+        formData.append("journey_description", data.journey_description);
+      if (data.journey_description_ar)
+        formData.append("journey_description_ar", data.journey_description_ar);
+      if (data.journey_media_type)
+        formData.append("journey_media_type", data.journey_media_type);
+      if (data.journey_media_alt)
+        formData.append("journey_media_alt", data.journey_media_alt);
+      if (data.journey_media_alt_ar)
+        formData.append("journey_media_alt_ar", data.journey_media_alt_ar);
+      if (data.journey_media_path instanceof File)
+        formData.append("journey_media_path", data.journey_media_path);
 
       // Project Section
-      if (data.project_title) formData.append("project_title", data.project_title);
-      if (data.project_title_ar) formData.append("project_title_ar", data.project_title_ar);
+      if (data.project_title)
+        formData.append("project_title", data.project_title);
+      if (data.project_title_ar)
+        formData.append("project_title_ar", data.project_title_ar);
 
       // Fits Section
       if (data.fits_title) formData.append("fits_title", data.fits_title);
-      if (data.fits_title_ar) formData.append("fits_title_ar", data.fits_title_ar);
-      if (data.fits_description) formData.append("fits_description", data.fits_description);
-      if (data.fits_description_ar) formData.append("fits_description_ar", data.fits_description_ar);
+      if (data.fits_title_ar)
+        formData.append("fits_title_ar", data.fits_title_ar);
+      if (data.fits_description)
+        formData.append("fits_description", data.fits_description);
+      if (data.fits_description_ar)
+        formData.append("fits_description_ar", data.fits_description_ar);
 
       // Brands Section
       if (data.brands_title) formData.append("brands_title", data.brands_title);
-      if (data.brands_title_ar) formData.append("brands_title_ar", data.brands_title_ar);
+      if (data.brands_title_ar)
+        formData.append("brands_title_ar", data.brands_title_ar);
 
       // Form Section
       if (data.form_title) formData.append("form_title", data.form_title);
-      if (data.form_title_ar) formData.append("form_title_ar", data.form_title_ar);
-      if (data.form_description) formData.append("form_description", data.form_description);
-      if (data.form_description_ar) formData.append("form_description_ar", data.form_description_ar);
-      if (data.form_media_alt) formData.append("form_media_alt", data.form_media_alt);
-      if (data.form_media_alt_ar) formData.append("form_media_alt_ar", data.form_media_alt_ar);
-      if (data.form_media_path instanceof File) formData.append("form_media_path", data.form_media_path);
+      if (data.form_title_ar)
+        formData.append("form_title_ar", data.form_title_ar);
+      if (data.form_description)
+        formData.append("form_description", data.form_description);
+      if (data.form_description_ar)
+        formData.append("form_description_ar", data.form_description_ar);
+      if (data.form_media_alt)
+        formData.append("form_media_alt", data.form_media_alt);
+      if (data.form_media_alt_ar)
+        formData.append("form_media_alt_ar", data.form_media_alt_ar);
+      if (data.form_media_path instanceof File)
+        formData.append("form_media_path", data.form_media_path);
 
       await saveHomeCms(formData);
       toast({
@@ -262,7 +292,10 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter about description" {...field} />
+                          <Textarea
+                            placeholder="Enter about description"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -279,7 +312,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان القسم" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان القسم"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -293,7 +330,72 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="أدخل وصف القسم" {...field} dir="rtl" />
+                          <Textarea
+                            placeholder="أدخل وصف القسم"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Media */}
+                <FormField
+                  control={form.control}
+                  name="about_media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>About Media</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload about section media"
+                          recommendedDimensions="1920px x 1080px"
+                          preview
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Alt Texts */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="about_media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (English)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter media alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="about_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -320,7 +422,10 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter featured title" {...field} />
+                          <Input
+                            placeholder="Enter featured title"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -337,7 +442,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان المنتجات المميزة" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان المنتجات المميزة"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -353,7 +462,9 @@ export default function HomeCmsForm() {
             <CardHeader>
               <CardTitle>Journey Section</CardTitle>
             </CardHeader>
+
             <CardContent className="space-y-4">
+              {/* Title & Description */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* English Fields */}
                 <div className="space-y-4">
@@ -378,7 +489,10 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter journey description" {...field} />
+                          <Textarea
+                            placeholder="Enter journey description"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -395,7 +509,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان الرحلة" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان الرحلة"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -409,7 +527,104 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="أدخل وصف الرحلة" {...field} dir="rtl" />
+                          <Textarea
+                            placeholder="أدخل وصف الرحلة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Media Type */}
+              <FormField
+                control={form.control}
+                name="journey_media_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Media Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select media type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="image">Image</SelectItem>
+                        <SelectItem value="video">Video</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Media + Alt Texts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Media */}
+                <FormField
+                  control={form.control}
+                  name="journey_media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Journey{" "}
+                        {watchJourneyMediaType === "image" ? "Image" : "Video"}
+                      </FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept={
+                            watchJourneyMediaType === "image"
+                              ? "image/*"
+                              : "video/*"
+                          }
+                          placeholder={`Upload journey ${watchJourneyMediaType}`}
+                          preview
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Alt Texts */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="journey_media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (English)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={`Enter ${watchJourneyMediaType} alt text`}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="journey_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -453,7 +668,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان المشروع" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان المشروع"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -494,7 +713,10 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter fits description" {...field} />
+                          <Textarea
+                            placeholder="Enter fits description"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -511,7 +733,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان المناسب" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان المناسب"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -525,7 +751,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="أدخل وصف المناسب" {...field} dir="rtl" />
+                          <Textarea
+                            placeholder="أدخل وصف المناسب"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -569,7 +799,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان العلامات التجارية" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان العلامات التجارية"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -610,7 +844,10 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter form description" {...field} />
+                          <Textarea
+                            placeholder="Enter form description"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -627,7 +864,11 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان النموذج" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان النموذج"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -641,125 +882,10 @@ export default function HomeCmsForm() {
                       <FormItem>
                         <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="أدخل وصف النموذج" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Media Uploads Section - Outside Tabs */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Uploads</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* About Media */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">About Section Media</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="about_media_path"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>About Media</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept="image/*"
-                            placeholder="Upload about section media"
-                            recommendedDimensions="1920px x 1080px"
-                            preview={true}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="about_media_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Media Alt Text (English)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter media alt text" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="about_media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Alt Text  (AR)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Journey Media */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Journey Section Media</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="journey_media_type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Media Type</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select media type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="image">Image</SelectItem>
-                            <SelectItem value="video">Video</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_media_path"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Journey {watchJourneyMediaType === "image" ? "Image" : "Video"}
-                        </FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept={watchJourneyMediaType === "image" ? "image/*" : "video/*"}
-                            placeholder={`Upload journey ${watchJourneyMediaType}`}
-                            recommendedDimensions="1920px x 1080px"
-                            preview={true}
+                          <Textarea
+                            placeholder="أدخل وصف النموذج"
+                            {...field}
+                            dir="rtl"
                           />
                         </FormControl>
                         <FormMessage />
@@ -767,41 +893,9 @@ export default function HomeCmsForm() {
                     )}
                   />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="journey_media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Media Alt Text (English)</FormLabel>
-                        <FormControl>
-                          <Input placeholder={`Enter ${watchJourneyMediaType} alt text`} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alt Text  (AR)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
 
-              {/* Form Media */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Form Section Media</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -832,7 +926,10 @@ export default function HomeCmsForm() {
                         <FormItem>
                           <FormLabel>Media Alt Text (English)</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter media alt text" {...field} />
+                            <Input
+                              placeholder="Enter media alt text"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -844,9 +941,13 @@ export default function HomeCmsForm() {
                       name="form_media_alt_ar"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Alt Text  (AR)</FormLabel>
+                          <FormLabel>Alt Text (AR)</FormLabel>
                           <FormControl>
-                            <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
+                            <Input
+                              placeholder="أدخل النص البديل"
+                              {...field}
+                              dir="rtl"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
