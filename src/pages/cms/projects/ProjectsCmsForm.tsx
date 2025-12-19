@@ -388,16 +388,7 @@ export default function ProjectsCmsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Banner Media Upload Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Banner Media Upload</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Desktop Banner */}
 
               <FormField
                 control={form.control}
@@ -605,16 +596,8 @@ export default function ProjectsCmsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Form Media Upload Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Form Media Upload</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="form_media_path"

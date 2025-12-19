@@ -57,15 +57,12 @@ export default function FaqListList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
-  const {
-    editingSortOrder,
-    handleStatusChange,
-    handleSortOrderChange,
-  } = useCommonTableActions<FaqList>({
-    modelName: "FaqList",
-    data: faqItems,
-    setData: setFaqItems,
-  });
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<FaqList>({
+      modelName: "FaqList",
+      data: faqItems,
+      setData: setFaqItems,
+    });
 
   useEffect(() => {
     loadCategories();
@@ -195,7 +192,7 @@ export default function FaqListList() {
         );
       },
     },
-  {
+    {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,
@@ -289,22 +286,38 @@ export default function FaqListList() {
               >
                 Filter by Category
               </label>
-              <Select
-                value={selectedCategory}
-                onValueChange={setSelectedCategory}
-              >
-                <SelectTrigger id="category-filter" className="w-[200px]">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category?.id} value={String(category?.id)}>
-                      {category.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+
+              <div className="flex items-center gap-4">
+                <Select
+                  value={selectedCategory}
+                  onValueChange={setSelectedCategory}
+                >
+                  <SelectTrigger id="category-filter" className="w-[200px]">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem
+                        key={category?.id}
+                        value={String(category?.id)}
+                      >
+                        {category.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {selectedCategory !== "all" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedCategory("all")}
+                  >
+                    Clear Filter
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>

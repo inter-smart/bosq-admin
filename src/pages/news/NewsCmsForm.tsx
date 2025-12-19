@@ -288,6 +288,81 @@ export default function NewsCmsForm() {
                   />
                 </div>
               </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Media</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload desktop media"
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Media</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload mobile media"
+                          recommendedDimensions="600px x 600px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                   <FormField
+                  control={form.control}
+                  name="media_alt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Alt Text</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter media alt text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_alt_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل النص البديل للصورة"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+              </div>
             </CardContent>
           </Card>
 
@@ -372,88 +447,7 @@ export default function NewsCmsForm() {
             </CardContent>
           </Card>
 
-          {/* News Header Images */}
-          <Card>
-            <CardHeader>
-              <CardTitle>News Header Images</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="media_desktop_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Desktop Media</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          placeholder="Upload desktop media"
-                          recommendedDimensions="1920px x 1080px"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="media_mobile_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mobile Media</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          placeholder="Upload mobile media"
-                          recommendedDimensions="600px x 600px"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                   <FormField
-                  control={form.control}
-                  name="media_alt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Media Alt Text</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter media alt text" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="media_alt_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Media Alt Text (AR)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="أدخل النص البديل للصورة"
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-              </div>
-            </CardContent>
-          </Card>
+     
 
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>

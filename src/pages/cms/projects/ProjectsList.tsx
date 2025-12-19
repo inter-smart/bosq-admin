@@ -348,10 +348,12 @@ export default function ProjectsList() {
       <div className="space-y-4">
         {/* Filter Section */}
         <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
+
+          <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">Filter by Category:</span>
-          </div>
+
+        <div className="flex items-center gap-4">
+
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-[250px]">
               <SelectValue placeholder="Select category" />
@@ -365,6 +367,7 @@ export default function ProjectsList() {
               ))}
             </SelectContent>
           </Select>
+
           {selectedCategory !== "all" && (
             <Button
               variant="ghost"
@@ -375,6 +378,8 @@ export default function ProjectsList() {
             </Button>
           )}
         </div>
+        </div>
+          </div>
 
         <DataTable
           columns={columns}

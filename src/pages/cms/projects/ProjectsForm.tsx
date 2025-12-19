@@ -576,6 +576,121 @@ export default function ProjectsForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+                 {/* 0. SEO Meta Tags */}
+          <Card>
+            <CardHeader>
+              <CardTitle>SEO Meta Tags</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="meta_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter meta title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="meta_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Title (AR)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان الميتا"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="meta_description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Enter meta description"
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="meta_description_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description (AR)</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="أدخل وصف الميتا"
+                          rows={3}
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="meta_keywords"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Keywords</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter meta keywords (comma-separated)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="meta_keywords_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Keywords (AR)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل كلمات الميتا (مفصولة بفواصل)"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* 1. Basic Information */}
           <Card>
             <CardHeader>
@@ -1375,120 +1490,7 @@ export default function ProjectsForm() {
             </CardContent>
           </Card>
 
-          {/* 8. SEO Meta Tags */}
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO Meta Tags</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="meta_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter meta title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="meta_title_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Title (AR)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان الميتا"
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="meta_description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter meta description"
-                          rows={3}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="meta_description_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Description (AR)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="أدخل وصف الميتا"
-                          rows={3}
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="meta_keywords"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Keywords</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter meta keywords (comma-separated)"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="meta_keywords_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Meta Keywords (AR)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="أدخل كلمات الميتا (مفصولة بفواصل)"
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
+   
           {/* 9. Settings */}
           <Card>
             <CardHeader>
