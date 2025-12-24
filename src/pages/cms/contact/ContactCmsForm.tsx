@@ -28,7 +28,7 @@ export default function ContactCmsForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [mediaFile, setMediaFile] = useState<File | string | null>(null);
-
+  const [urls, setUrls] = useState<string>("");
   const form = useForm<ContactCmsFormData>({
     resolver: zodResolver(contactCmsSchema),
     defaultValues: {
@@ -57,7 +57,7 @@ export default function ContactCmsForm() {
       address_ar: "",
       social_media_title: "",
       social_media_title_ar: "",
-      iframe: "",
+      url: "",
     },
   });
 
@@ -98,13 +98,15 @@ export default function ContactCmsForm() {
           address_ar: data.address_ar || "",
           social_media_title: data.social_media_title || "",
           social_media_title_ar: data.social_media_title_ar || "",
-          iframe: data.iframe || "",
+          url: data.url || "",
         });
 
         // Set media file state with full URL
         if (data.media_path) {
           setMediaFile(`${import.meta.env.VITE_IMAGE_URL}/${data.media_path}`);
         }
+
+        setUrls(data.url || "");
       }
     } catch (error) {
       console.log("No existing data found, starting with empty form");
@@ -190,7 +192,7 @@ export default function ContactCmsForm() {
         formData.append("social_media_title_ar", data.social_media_title_ar);
 
       // Map integration
-      if (data.iframe) formData.append("iframe", data.iframe);
+      if (data.url) formData.append("url", data.url);
 
       // Add media file upload
       if (mediaFile instanceof File) {
@@ -452,7 +454,7 @@ export default function ContactCmsForm() {
                 </div>
               </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="media_path"
@@ -566,10 +568,7 @@ export default function ContactCmsForm() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter email address"
-                        {...field}
-                      />
+                      <Input placeholder="Enter email address" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -770,7 +769,7 @@ export default function ContactCmsForm() {
             <CardContent>
               <FormField
                 control={form.control}
-                name="iframe"
+                name="url"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Map URL</FormLabel>
@@ -785,10 +784,21 @@ export default function ContactCmsForm() {
                   </FormItem>
                 )}
               />
+              {urls && (
+                <div className="mt-4">
+                  <iframe
+                    src={urls}
+                    width="100%"
+                    height="300"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
-      
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>
               <Save className="h-4 w-4 mr-2" />

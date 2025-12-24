@@ -43,7 +43,7 @@ export interface ContactCms {
   social_media_title_ar?: string | null;
 
   // Map Integration
-  iframe?: string | null;
+  url?: string | null;
 
   deleted_at?: string | null;
   createdAt?: string;
