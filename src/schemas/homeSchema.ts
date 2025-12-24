@@ -29,7 +29,8 @@ export const homeSchema = z.object({
     "Journey Description (Arabic)"
   ),
   journey_media_type: commonValidations.requiredString("Media Type"),
-  journey_media_path: commonValidations.validateFileUpload("Journey Media"),
+  journey_media_desktop_path: commonValidations.validateFileUpload("Journey Media"),
+  journey_media_mobile_path: commonValidations.validateFileUpload("Journey Media Mobile"),
   journey_media_alt: commonValidations.requiredString("Journey Media Alt Text"),
   journey_media_alt_ar: commonValidations.requiredString(
     "Journey Media Alt Text (Arabic)"

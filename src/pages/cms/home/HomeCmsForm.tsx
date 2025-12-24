@@ -51,7 +51,8 @@ export default function HomeCmsForm() {
       journey_description: "",
       journey_description_ar: "",
       journey_media_type: "image",
-      journey_media_path: null,
+      journey_media_desktop_path: null,
+      journey_media_mobile_path: null,
       journey_media_alt: "",
       journey_media_alt_ar: "",
       project_title: "",
@@ -80,7 +81,9 @@ export default function HomeCmsForm() {
       prevMediaType !== null &&
       prevMediaType !== watchJourneyMediaType
     ) {
-      form.setValue("journey_media_path", null);
+      form.setValue("journey_media_desktop_path", null);
+      form.setValue("journey_media_mobile_path", null);
+      
     }
 
     // Update prevMediaType after initial loading is complete
@@ -117,8 +120,11 @@ export default function HomeCmsForm() {
           journey_description: data.journey_description || "",
           journey_description_ar: data.journey_description_ar || "",
           journey_media_type: data.journey_media_type || "image",
-          journey_media_path: data.journey_media_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_path}`
+          journey_media_desktop_path: data.journey_media_desktop_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_desktop_path}`
+            : null,
+            journey_media_mobile_path: data.journey_media_mobile_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_mobile_path}`
             : null,
           journey_media_alt: data.journey_media_alt || "",
           journey_media_alt_ar: data.journey_media_alt_ar || "",
@@ -189,8 +195,12 @@ export default function HomeCmsForm() {
         formData.append("journey_media_alt", data.journey_media_alt);
       if (data.journey_media_alt_ar)
         formData.append("journey_media_alt_ar", data.journey_media_alt_ar);
-      if (data.journey_media_path instanceof File)
-        formData.append("journey_media_path", data.journey_media_path);
+      if (data.journey_media_desktop_path instanceof File)
+        formData.append("journey_media_desktop_path", data.journey_media_desktop_path);
+
+       if (data.journey_media_mobile_path instanceof File)
+        formData.append("journey_media_mobile_path", data.journey_media_mobile_path);
+
 
       // Project Section
       if (data.project_title)
@@ -568,7 +578,35 @@ export default function HomeCmsForm() {
                 {/* Media */}
                 <FormField
                   control={form.control}
-                  name="journey_media_path"
+                  name="journey_media_desktop_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Journey{" "}
+                        {watchJourneyMediaType === "image" ? "Image" : "Video"}
+                      </FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept={
+                            watchJourneyMediaType === "image"
+                              ? "image/*"
+                              : "video/*"
+                          }
+                          placeholder={`Upload journey ${watchJourneyMediaType}`}
+                          preview
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+ <FormField
+                  control={form.control}
+                  name="journey_media_mobile_path"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
