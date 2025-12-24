@@ -104,7 +104,7 @@ const cmsSection = [
   },
   {
     title: "Ergonomics",
-    icon: Award, // or any icon you prefer
+    icon: Award,
     subItems: [
       { title: "Ergonomics CMS", url: "/ergonomic-guide-cms", icon: FileText },
       {
@@ -114,7 +114,6 @@ const cmsSection = [
       },
     ],
   },
-
   {
     title: "FAQ",
     icon: HelpCircle,
@@ -150,8 +149,6 @@ const cmsSection = [
       { title: "Options", url: "/customization-options", icon: List },
     ],
   },
-
-  // Sustainability
   {
     title: "Sustainability",
     icon: Briefcase,
@@ -185,7 +182,7 @@ const newsSection = [
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
   { title: "Social Media", url: "/social-media", icon: Share2 },
-  {title: "Payment Methods", url: "/payment-methods", icon: List },
+  { title: "Payment Methods", url: "/payment-methods", icon: List },
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
 ];
 
@@ -277,18 +274,46 @@ export function AppSidebar() {
   const [sustainabilityOpen, setSustainabilityOpen] = useState(false);
   const isCollapsed = state === "collapsed";
 
-  // Auto-open based on current path
+  // Helper function to close all sections
+  const closeAllSections = () => {
+    setCmsOpen(false);
+    setHomeOpen(false);
+    setAboutOpen(false);
+    setErgonomicOpen(false);
+    setMaterialsOpen(false);
+    setDeliveryOpen(false);
+    setFaqOpen(false);
+    setContactOpen(false);
+    setProjectsOpen(false);
+    setLoginRegisterOpen(false);
+    setCustomisationOpen(false);
+    setBlogOpen(false);
+    setNewsOpen(false);
+    setCommonOpen(false);
+    setPoliciesOpen(false);
+    setPrivacyOpen(false);
+    setTermsOpen(false);
+    setWarrantyOpen(false);
+    setReturnPolicyOpen(false);
+    setSustainabilityOpen(false);
+  };
+
+  // Auto-open based on current path and close others
   useEffect(() => {
     const path = location.pathname;
+    
+    // Close all first
+    closeAllSections();
 
     // Auto-open Home section
     if (
-      ["/home-cms", "/home-banner-slider", "/home-brands"].some((r) =>
+      ["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) =>
         path.includes(r)
       )
     ) {
       setCmsOpen(true);
       setHomeOpen(true);
+      return;
     }
 
     // Auto-open About section
@@ -298,16 +323,23 @@ export function AppSidebar() {
         "/about-testimonials",
         "/about-journeys",
         "/about-our-clients",
+        "/why-bosq",
       ].some((r) => path.includes(r))
     ) {
       setCmsOpen(true);
       setAboutOpen(true);
+      return;
     }
 
     // Auto-open Ergonomic section
-    if (["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) => path.includes(r))) {
+    if (
+      ["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) =>
+        path.includes(r)
+      )
+    ) {
       setCmsOpen(true);
       setErgonomicOpen(true);
+      return;
     }
 
     // Auto-open Materials section
@@ -318,6 +350,7 @@ export function AppSidebar() {
     ) {
       setCmsOpen(true);
       setMaterialsOpen(true);
+      return;
     }
 
     // Auto-open Delivery section
@@ -328,6 +361,7 @@ export function AppSidebar() {
     ) {
       setCmsOpen(true);
       setDeliveryOpen(true);
+      return;
     }
 
     // Auto-open FAQ section
@@ -336,12 +370,14 @@ export function AppSidebar() {
     ) {
       setCmsOpen(true);
       setFaqOpen(true);
+      return;
     }
 
     // Auto-open Contact section
     if (["/contact-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setContactOpen(true);
+      return;
     }
 
     // Auto-open Projects section
@@ -351,12 +387,14 @@ export function AppSidebar() {
       )
     ) {
       setProjectsOpen(true);
+      return;
     }
 
     // Auto-open Login/Register section
     if (["/login-register-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setLoginRegisterOpen(true);
+      return;
     }
 
     // Auto-open Customisation section
@@ -365,46 +403,57 @@ export function AppSidebar() {
         "/customization-cms",
         "/customization-features",
         "/customization-process",
+        "/customization-options",
       ].some((r) => path.includes(r))
     ) {
       setCmsOpen(true);
       setCustomisationOpen(true);
+      return;
     }
 
-
     // Auto-open Sustainability section
-    if (["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))) {
+    if (
+      ["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))
+    ) {
       setCmsOpen(true);
       setSustainabilityOpen(true);
+      return;
     }
 
     // Auto-open Blog section
     if (["/blog-cms", "/blogs"].some((r) => path.includes(r))) {
       setBlogOpen(true);
+      return;
     }
 
     // Auto-open News section
     if (["/news-cms", "/news"].some((r) => path.includes(r))) {
       setNewsOpen(true);
+      return;
     }
 
     // Auto-open Common section
     if (
-      ["/site-settings", "/social-media", "/payment-methods", "/meta-tags"].some((r) =>
-        path.includes(r)
-      )
+      [
+        "/site-settings",
+        "/social-media",
+        "/payment-methods",
+        "/meta-tags",
+      ].some((r) => path.includes(r))
     ) {
       setCommonOpen(true);
+      return;
     }
 
-    // Auto-open Policies section
+    // Auto-open Privacy Policy section
     if (
-      ["/privacy-privacy-policy-cms", "/privacy-policy"].some((r) =>
+      ["/privacy-policy-cms", "/privacy-policy"].some((r) =>
         path.includes(r)
       )
     ) {
       setPoliciesOpen(true);
       setPrivacyOpen(true);
+      return;
     }
 
     // Auto-open Terms and Conditions section
@@ -415,6 +464,14 @@ export function AppSidebar() {
     ) {
       setPoliciesOpen(true);
       setTermsOpen(true);
+      return;
+    }
+
+    // Auto-open Warranty Policy section
+    if (["/warranty-policy"].some((r) => path.includes(r))) {
+      setPoliciesOpen(true);
+      setWarrantyOpen(true);
+      return;
     }
 
     // Auto-open Return Policy section
@@ -423,6 +480,7 @@ export function AppSidebar() {
     ) {
       setPoliciesOpen(true);
       setReturnPolicyOpen(true);
+      return;
     }
   }, [location.pathname]);
 
@@ -517,8 +575,7 @@ export function AppSidebar() {
                   } else if (section.title === "Customisation") {
                     sectionOpen = customisationOpen;
                     setSectionOpen = setCustomisationOpen;
-                  }
-                  else if (section.title === "Sustainability") {
+                  } else if (section.title === "Sustainability") {
                     sectionOpen = sustainabilityOpen;
                     setSectionOpen = setSustainabilityOpen;
                   }
@@ -551,7 +608,7 @@ export function AppSidebar() {
           getNavCls={getNavCls}
         />
 
-        {/* Blog Section - Standalone */}
+        {/* Blog Section */}
         <SidebarCollapsibleSection
           title="Blog"
           icon={BookOpen}
@@ -562,7 +619,7 @@ export function AppSidebar() {
           getNavCls={getNavCls}
         />
 
-        {/* news */}
+        {/* News */}
         <SidebarCollapsibleSection
           title="News"
           icon={Newspaper}
@@ -584,6 +641,7 @@ export function AppSidebar() {
           getNavCls={getNavCls}
         />
 
+        {/* Policies */}
         <SidebarGroup>
           <Collapsible
             open={!isCollapsed && policiesOpen}
@@ -614,7 +672,6 @@ export function AppSidebar() {
                   getNavCls={getNavCls}
                 />
 
-                {/* Terms & Conditions */}
                 <NestedSection
                   title="Terms & Conditions"
                   icon={ScrollText}
@@ -624,7 +681,6 @@ export function AppSidebar() {
                   getNavCls={getNavCls}
                 />
 
-                {/* Warranty Policy */}
                 <NestedSection
                   title="Warranty Policy"
                   icon={Award}
@@ -634,7 +690,6 @@ export function AppSidebar() {
                   getNavCls={getNavCls}
                 />
 
-                {/* Return Policy */}
                 <NestedSection
                   title="Return Policy"
                   icon={RotateCcw}
@@ -653,7 +708,7 @@ export function AppSidebar() {
 }
 
 /**
- * 🧱 Nested Section Component (for Home, FAQ, Contact under CMS)
+ * Nested Section Component (for Home, FAQ, Contact under CMS)
  */
 function NestedSection({
   title,
@@ -693,7 +748,7 @@ function NestedSection({
 }
 
 /**
- * 🧱 Reusable Sidebar Section Component
+ * Reusable Sidebar Section Component
  */
 function SidebarCollapsibleSection({
   title,

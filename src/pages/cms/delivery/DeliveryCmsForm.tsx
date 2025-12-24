@@ -15,8 +15,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchDeliveryCms, saveDeliveryCms } from "@/services/cms/delivery/deliveryApi";
-import { deliveryCmsSchema, type DeliveryCmsFormData } from "@/schemas/deliverySchema";
+import {
+  fetchDeliveryCms,
+  saveDeliveryCms,
+} from "@/services/cms/delivery/deliveryApi";
+import {
+  deliveryCmsSchema,
+  type DeliveryCmsFormData,
+} from "@/schemas/deliverySchema";
 
 export default function DeliveryCmsForm() {
   const { toast } = useToast();
@@ -62,10 +68,14 @@ export default function DeliveryCmsForm() {
           banner_title: data.banner_title || "",
           banner_title_ar: data.banner_title_ar || "",
           banner_media_desktop_path: data.banner_media_desktop_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_desktop_path}`
+            ? `${import.meta.env.VITE_IMAGE_URL}/${
+                data.banner_media_desktop_path
+              }`
             : null,
           banner_media_mobile_path: data.banner_media_mobile_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path}`
+            ? `${import.meta.env.VITE_IMAGE_URL}/${
+                data.banner_media_mobile_path
+              }`
             : null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
@@ -134,7 +144,10 @@ export default function DeliveryCmsForm() {
       if (data.delivery_time_subtitle)
         formData.append("delivery_time_subtitle", data.delivery_time_subtitle);
       if (data.delivery_time_subtitle_ar)
-        formData.append("delivery_time_subtitle_ar", data.delivery_time_subtitle_ar);
+        formData.append(
+          "delivery_time_subtitle_ar",
+          data.delivery_time_subtitle_ar
+        );
 
       // Delivery media section text
       if (data.delivery_media_alt)
@@ -181,7 +194,9 @@ export default function DeliveryCmsForm() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading Delivery CMS data...</div>
+        <div className="text-muted-foreground">
+          Loading Delivery CMS data...
+        </div>
       </div>
     );
   }
@@ -286,15 +301,6 @@ export default function DeliveryCmsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Banner Media Uploads Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Banner Media Uploads</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Banner Images</h3>
 
@@ -464,73 +470,65 @@ export default function DeliveryCmsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Delivery Media Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Delivery Media Section</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="delivery_media_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Delivery Image</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          recommendedDimensions="800px x 600px"
-                          placeholder="Upload delivery image"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4 grid">
                   <FormField
                     control={form.control}
-                    name="delivery_media_alt"
+                    name="delivery_media_path"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Media Alt Text (English)</FormLabel>
+                        <FormLabel>Delivery Image</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter media alt text"
-                            {...field}
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="800px x 600px"
+                            placeholder="Upload delivery image"
+                            preview={true}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="delivery_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Media Alt Text (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="delivery_media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Media Alt Text (English)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter media alt text"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="delivery_media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Media Alt Text (AR)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
-              </div>
             </CardContent>
           </Card>
 

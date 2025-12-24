@@ -108,10 +108,16 @@ export default function FaqCmsForm() {
 
       // Add file uploads
       if (data.banner_media_desktop_path instanceof File) {
-        formData.append("banner_media_desktop_path", data.banner_media_desktop_path);
+        formData.append(
+          "banner_media_desktop_path",
+          data.banner_media_desktop_path
+        );
       }
       if (data.banner_media_mobile_path instanceof File) {
-        formData.append("banner_media_mobile_path", data.banner_media_mobile_path);
+        formData.append(
+          "banner_media_mobile_path",
+          data.banner_media_mobile_path
+        );
       }
 
       await saveFaqCms(formData);
@@ -145,9 +151,7 @@ export default function FaqCmsForm() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">FAQ Page CMS</h1>
-        <p className="text-muted-foreground">
-          Manage content for the FAQ page
-        </p>
+        <p className="text-muted-foreground">Manage content for the FAQ page</p>
       </div>
 
       <Form {...form}>
@@ -158,36 +162,121 @@ export default function FaqCmsForm() {
               <CardTitle>Banner Section</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* English */}
-                <FormField
-                  control={form.control}
-                  name="banner_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter banner title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* English */}
+                  <FormField
+                    control={form.control}
+                    name="banner_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter banner title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                {/* Arabic */}
-                <FormField
-                  control={form.control}
-                  name="banner_title_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Title (AR)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="أدخل عنوان البانر" {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  {/* Arabic */}
+                  <FormField
+                    control={form.control}
+                    name="banner_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Title (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان البانر"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_media_desktop_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Desktop)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="1200px x 600px"
+                            placeholder="Upload desktop banner image"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Mobile)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload mobile banner image"
+                            recommendedDimensions="600px x 600px"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (English)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter banner media alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -222,7 +311,11 @@ export default function FaqCmsForm() {
                     <FormItem>
                       <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
-                        <Input placeholder="أدخل عنوان الصفحة" {...field} dir="rtl" />
+                        <Input
+                          placeholder="أدخل عنوان الصفحة"
+                          {...field}
+                          dir="rtl"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,7 +341,10 @@ export default function FaqCmsForm() {
                       <FormItem>
                         <FormLabel>Question Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter question title" {...field} />
+                          <Input
+                            placeholder="Enter question title"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -282,7 +378,11 @@ export default function FaqCmsForm() {
                       <FormItem>
                         <FormLabel>Question Title (AR)</FormLabel>
                         <FormControl>
-                          <Input placeholder="أدخل عنوان الأسئلة" {...field} dir="rtl" />
+                          <Input
+                            placeholder="أدخل عنوان الأسئلة"
+                            {...field}
+                            dir="rtl"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -307,86 +407,6 @@ export default function FaqCmsForm() {
                     )}
                   />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Media Uploads Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Uploads</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="banner_media_desktop_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Image (Desktop)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          recommendedDimensions="1200px x 600px"
-                          placeholder="Upload desktop banner image"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="banner_media_mobile_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Image (Mobile)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          placeholder="Upload mobile banner image"
-                          recommendedDimensions="600px x 600px"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="banner_media_alt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Media Alt Text (English)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter banner media alt text" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="banner_media_alt_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Alt Text  (AR)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </CardContent>
           </Card>

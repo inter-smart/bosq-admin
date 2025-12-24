@@ -58,7 +58,7 @@ export default function MaterialsForm() {
       title: "",
       title_ar: "",
       description: "",
-    description_ar: "",
+      description_ar: "",
       category: undefined,
       media_path: null,
       media_alt: "",
@@ -295,7 +295,6 @@ export default function MaterialsForm() {
                   />
                 </div>
               </div>
-
               {/* Category Selection */}
               <div className="mt-6">
                 <FormField

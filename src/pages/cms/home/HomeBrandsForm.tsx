@@ -202,15 +202,7 @@ export default function HomeBrandsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Brand Logo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FormField
+                  <FormField
                 control={form.control}
                 name="media_path"
                 render={({ field }) => (
@@ -241,6 +233,7 @@ export default function HomeBrandsForm() {
             </CardContent>
           </Card>
 
+  
           <Card>
             <CardHeader>
               <CardTitle>Brand Settings</CardTitle>

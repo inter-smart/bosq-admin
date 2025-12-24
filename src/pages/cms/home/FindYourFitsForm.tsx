@@ -34,7 +34,7 @@ export default function FindYourFitsForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
- 
+
   const form = useForm<FindYourFitFormData>({
     resolver: zodResolver(findYourFitSchema),
     shouldFocusError: true, // Enable auto-focus on error
@@ -90,8 +90,6 @@ export default function FindYourFitsForm() {
     }
   };
 
-
-
   // Custom submit handler with validation
   const handleFormSubmit = form.handleSubmit(
     // Success callback
@@ -112,8 +110,6 @@ export default function FindYourFitsForm() {
       }
     }
   );
-  
-
 
   const onSubmit = async (data: FindYourFitFormData) => {
     try {
@@ -160,7 +156,9 @@ export default function FindYourFitsForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to ${isEditing ? "update" : "create"} Find Your Fit`,
+        description: `Failed to ${
+          isEditing ? "update" : "create"
+        } Find Your Fit`,
         variant: "destructive",
       });
     } finally {
@@ -239,23 +237,6 @@ export default function FindYourFitsForm() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alt Text</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter image alt text for accessibility"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 {/* Arabic Fields */}
@@ -296,8 +277,58 @@ export default function FindYourFitsForm() {
                       </FormItem>
                     )}
                   />
+                </div>
+              </div>
 
+                <FormField
+                  control={form.control}
+                  name="media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Image <span className="text-red-500">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                          }}
+                          accept="image/*"
+                          preview={true}
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {isEditing
+                          ? "Upload a new image to replace the current one (optional)"
+                          : "Upload an image (required)"}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+               
                   <FormField
+                    control={form.control}
+                    name="media_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Alt Text</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter image alt text for accessibility"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                     <FormField
                     control={form.control}
                     name="media_alt_ar"
                     render={({ field }) => (
@@ -314,44 +345,8 @@ export default function FindYourFitsForm() {
                       </FormItem>
                     )}
                   />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Image</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FormField
-                control={form.control}
-                name="media_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Image <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        value={field.value}
-                        onChange={(file) => {
-                          field.onChange(file);
-                        }}
-                        accept="image/*"
-                        preview={true}
-                        recommendedDimensions="1920px x 1080px"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {isEditing
-                        ? "Upload a new image to replace the current one (optional)"
-                        : "Upload an image (required)"}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                </div>
             </CardContent>
           </Card>
 

@@ -780,7 +780,7 @@ export default function ProjectsForm() {
                           onValueChange={(value) =>
                             field.onChange(value ? parseInt(value) : null)
                           }
-                          value={field.value?.toString() || ""}
+                          value={field.value?.toString() ?? undefined}
                         >
                           <FormControl>
                             <SelectTrigger>

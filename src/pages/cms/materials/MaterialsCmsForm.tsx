@@ -251,19 +251,9 @@ export default function MaterialsCmsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Media Uploads Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Uploads</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Banner Media */}
+                     {/* Banner Media */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Banner Section Media</h3>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}

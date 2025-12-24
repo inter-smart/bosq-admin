@@ -321,7 +321,7 @@ export default function WarrantyPolicyForm() {
                         />
                       </FormControl>
                       <FormDescription>
-                        النص البديل لإمكانية الوصول وتحسين محركات البحث
+                        Alt text for accessibility and SEO
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

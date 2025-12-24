@@ -238,19 +238,6 @@ export default function SmartSpaceCalculatorForm() {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="link"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Button Link</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 {/* Arabic Fields */}
@@ -309,16 +296,25 @@ export default function SmartSpaceCalculatorForm() {
                     )}
                   />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Calculator Image</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
+                
+              </div>
+
+
+                  <FormField
+                    control={form.control}
+                    name="link"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Link</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                   <FormField
                 control={form.control}
                 name="media_path"
                 render={({ field }) => (
@@ -382,6 +378,7 @@ export default function SmartSpaceCalculatorForm() {
             </CardContent>
           </Card>
 
+    
           <Card>
             <CardHeader>
               <CardTitle>Calculator Settings</CardTitle>

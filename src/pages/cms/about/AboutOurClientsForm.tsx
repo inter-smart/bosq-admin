@@ -202,15 +202,7 @@ export default function AboutClientsForm() {
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Client Logo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FormField
+                <FormField
                 control={form.control}
                 name="media_path"
                 render={({ field }) => (
@@ -241,6 +233,7 @@ export default function AboutClientsForm() {
             </CardContent>
           </Card>
 
+    
           <Card>
             <CardHeader>
               <CardTitle>Client Settings</CardTitle>
