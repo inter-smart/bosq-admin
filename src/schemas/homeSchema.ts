@@ -70,7 +70,7 @@ export const homeBannerSchema = z.object({
   // English fields (required)
   title: commonValidations.requiredString("Title"),
   description: commonValidations.requiredText("Description"),
-  link: commonValidations.externalUrl("Link"),
+  link: commonValidations.requiredUrl("Link"),
   button_text: commonValidations.requiredString("Button Text"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
 
@@ -141,7 +141,7 @@ export const findYourFitSchema = z.object({
   media_alt_ar:commonValidations.requiredString("Arabic Image Alt Text is required"),
 
   // Link (optional)
-  link: commonValidations.externalUrl("Link"),
+  link: commonValidations.requiredUrl("Link"),
 
   // Sort order + status
   sort_order: commonValidations.sortOrder(),

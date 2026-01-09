@@ -48,8 +48,6 @@ export default function CustomizationOptionsForm() {
       title_ar: "",
       description: "",
       description_ar: "",
-      points: "",
-      points_ar: "",
       media_alt: "",
       media_alt_ar: "",
       sort_order: 1,
@@ -75,8 +73,6 @@ export default function CustomizationOptionsForm() {
           title_ar: data.title_ar || "",
           description: data.description || "",
           description_ar: data.description_ar || "",
-          points: data.points || "",
-          points_ar: data.points_ar || "",
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           sort_order: data.sort_order || 1,
@@ -86,7 +82,6 @@ export default function CustomizationOptionsForm() {
             : null,
         });
       }
-
     } catch (error) {
       toast({
         title: "Error",
@@ -125,8 +120,6 @@ export default function CustomizationOptionsForm() {
       formData.append("title_ar", data.title_ar);
       formData.append("description", data.description);
       formData.append("description_ar", data.description_ar);
-      formData.append("points", data.points);
-      formData.append("points_ar", data.points_ar);
       formData.append("media_alt", data.media_alt);
       formData.append("media_alt_ar", data.media_alt_ar);
       formData.append("sort_order", (data.sort_order || 0).toString());
@@ -224,33 +217,12 @@ export default function CustomizationOptionsForm() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter description"
-                            rows={4}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="points"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Points</FormLabel>
-                        <FormControl>
                           <RichTextEditor
-                            placeholder="Enter points as bullet list"
+                            placeholder="Enter description"
                             dir="ltr"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          Use bullet list for better formatting
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -284,34 +256,12 @@ export default function CustomizationOptionsForm() {
                       <FormItem>
                         <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="أدخل الوصف"
-                            rows={4}
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="points_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Points (AR)</FormLabel>
-                        <FormControl>
                           <RichTextEditor
                             {...field}
-                            placeholder="أدخل النقاط كقائمة نقطية"
+                            placeholder="أدخل الوصف"
                             dir="rtl"
                           />
                         </FormControl>
-                        <FormDescription>
-                          استخدم القائمة النقطية لتنسيق أفضل
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

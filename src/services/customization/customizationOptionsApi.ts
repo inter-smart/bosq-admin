@@ -6,8 +6,6 @@ export interface CustomizationOption {
   title_ar?: string;
   description?: string;
   description_ar?: string;
-  points?: string;
-  points_ar?: string;
   media_path?: string | File | null;
   media_alt?: string;
   media_alt_ar?: string;
