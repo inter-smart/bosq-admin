@@ -6,7 +6,7 @@ export const newsCmsSchema = z.object({
   title: commonValidations.requiredString("Title"),
   banner_title: commonValidations.requiredString("Banner Title"),
   banner_description: commonValidations.requiredText("Banner Description"),
-  media_alt: commonValidations.requiredString("Media Alt Text"),
+  media_alt: commonValidations.optionalString("Media Alt Text"),
   popular_news_title: commonValidations.requiredString("Popular News Title"),
   related_news_title: commonValidations.requiredString("Related News Title"),
 
@@ -16,7 +16,7 @@ export const newsCmsSchema = z.object({
   banner_description_ar: commonValidations.requiredText(
     "Arabic Banner Description"
   ),
-  media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
+  media_alt_ar: commonValidations.optionalString("Arabic Media Alt Text"),
   popular_news_title_ar: commonValidations.requiredString(
     "Arabic Popular News Title"
   ),
@@ -32,23 +32,25 @@ export const newsCmsSchema = z.object({
 export const newsSchema = z.object({
   // English fields
   title: commonValidations.requiredString("Title"),
+  name: commonValidations.requiredString("Name"),
   meta_title: commonValidations.requiredString("Meta Title"),
   meta_description: commonValidations.requiredText("Meta Description"),
   meta_keywords: commonValidations.requiredString("Meta Keywords"),
   description: commonValidations.requiredText("Description"),
-  media_alt: commonValidations.requiredString("Media Alt Text"),
+  media_alt: commonValidations.optionalString("Media Alt Text"),
   thumbnail_alt: commonValidations.optionalString("Thumbnail Alt Text"),
   slug: commonValidations.requiredString("Slug"),
 
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
+  name_ar: commonValidations.requiredString("Arabic Name"),
   description_ar: commonValidations.requiredString("Arabic Description"),
   meta_title_ar: commonValidations.requiredString("Arabic Meta Title"),
   meta_description_ar: commonValidations.requiredText(
     "Arabic Meta Description"
   ),
   meta_keywords_ar: commonValidations.requiredString("Arabic Meta Keywords"),
-  media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
+  media_alt_ar: commonValidations.optionalString("Arabic Media Alt Text"),
   thumbnail_alt_ar: commonValidations.optionalString(
     "Arabic Thumbnail Alt Text"
   ),

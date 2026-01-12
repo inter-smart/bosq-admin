@@ -7,7 +7,9 @@ export interface News {
   slug?: string;
   description: string;
   description_ar?: string;
-
+  name?: string;
+  name_ar?: string;
+  
   meta_title: string;
   meta_title_ar?: string;
   meta_description: string;

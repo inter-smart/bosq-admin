@@ -46,7 +46,9 @@ export default function NewsForm() {
     shouldFocusError: true,
     defaultValues: {
       title: "",
+      name: "",
       title_ar: "",
+      name_ar: "",
       meta_title: "",
       meta_title_ar: "",
       meta_description: "",
@@ -105,7 +107,9 @@ export default function NewsForm() {
       if (data) {
         form.reset({
           title: data.title || "",
+          name: data.name || "",
           title_ar: data.title_ar || "",
+          name_ar: data.name_ar || "",
           description: data.description || "",
           description_ar: data.description_ar || "",
           meta_title: data.meta_title || "",
@@ -161,6 +165,7 @@ export default function NewsForm() {
 
       // English fields
       formData.append("title", data.title);
+      formData.append("name", data.name);
       formData.append("description", data.description);
       formData.append("meta_title", data.meta_title);
       formData.append("meta_description", data.meta_description);
@@ -172,6 +177,7 @@ export default function NewsForm() {
 
       // Arabic fields
       formData.append("title_ar", data.title_ar);
+      formData.append("name_ar", data.name_ar);
       formData.append("description_ar", data.description_ar);
       formData.append("meta_title_ar", data.meta_title_ar);
       formData.append("meta_description_ar", data.meta_description_ar);
@@ -392,6 +398,20 @@ export default function NewsForm() {
 
                   <FormField
                     control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter news name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="slug"
                     render={({ field }) => (
                       <FormItem>
@@ -433,6 +453,24 @@ export default function NewsForm() {
                         <FormControl>
                           <Input
                             placeholder="أدخل عنوان المدونة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="name_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل اسم الأخبار"
                             {...field}
                             dir="rtl"
                           />
