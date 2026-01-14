@@ -140,6 +140,17 @@ const cmsSection = [
     ],
   },
   {
+    title: "Auth",
+    icon: ShieldCheck,
+    subItems: [
+      {
+        title: "Auth CMS",
+        url: "/auth-cms",
+        icon: FileText,
+      },
+    ],
+  },
+  {
     title: "Customisation",
     icon: Palette,
     subItems: [
@@ -262,6 +273,7 @@ export function AppSidebar() {
   const [contactOpen, setContactOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [loginRegisterOpen, setLoginRegisterOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   const [customisationOpen, setCustomisationOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
@@ -286,6 +298,7 @@ export function AppSidebar() {
     setContactOpen(false);
     setProjectsOpen(false);
     setLoginRegisterOpen(false);
+    setAuthOpen(false);
     setCustomisationOpen(false);
     setBlogOpen(false);
     setNewsOpen(false);
@@ -394,6 +407,13 @@ export function AppSidebar() {
     if (["/login-register-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setLoginRegisterOpen(true);
+      return;
+    }
+
+    // Auto-open Auth section
+    if (["/auth-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setAuthOpen(true);
       return;
     }
 
@@ -572,6 +592,9 @@ export function AppSidebar() {
                   } else if (section.title === "Login/Register") {
                     sectionOpen = loginRegisterOpen;
                     setSectionOpen = setLoginRegisterOpen;
+                  } else if (section.title === "Auth") {
+                    sectionOpen = authOpen;
+                    setSectionOpen = setAuthOpen;
                   } else if (section.title === "Customisation") {
                     sectionOpen = customisationOpen;
                     setSectionOpen = setCustomisationOpen;

@@ -114,6 +114,11 @@ const LoginRegisterCmsForm = lazy(() =>
   import("./pages/cms/login-register/LoginRegisterCmsForm")
 );
 
+// Auth pages
+const AuthCmsForm = lazy(() =>
+  import("./pages/cms/auth/AuthCmsForm")
+);
+
 // About pages
 const AboutCmsForm = lazy(() =>
   import("./pages/cms/about/aboutCmsForm")
@@ -730,6 +735,16 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <LoginRegisterCmsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* AUTH CMS Route */}
+          <Route
+            path="/auth-cms"
+            element={
+              <ProtectedRoute>
+                <AuthCmsForm />
               </ProtectedRoute>
             }
           />
