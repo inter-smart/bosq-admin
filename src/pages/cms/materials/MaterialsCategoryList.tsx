@@ -49,7 +49,7 @@ export default function MaterialsCategoryList() {
     handleStatusChange,
     handleSortOrderChange,
   } = useCommonTableActions<MaterialCategory>({
-    modelName: "MaterialCategory",
+    modelName: "MaterialCategories",
     data: categories,
     setData: setCategories,
   });

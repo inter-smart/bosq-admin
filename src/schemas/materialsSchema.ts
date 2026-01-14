@@ -35,7 +35,7 @@ export const materialsItemSchema = z.object({
   media_path: commonValidations.validateFileUpload("Main Image"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
   media_alt_ar: commonValidations.requiredString("Media Alt Text (Arabic)"),
-  icon_path: commonValidations.validateFileUpload("Icon"),
+  icon_path: commonValidations.fileUpload,
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
 });
@@ -50,7 +50,7 @@ export const extraMaterialsItemSchema = z.object({
   media_path: commonValidations.validateFileUpload("Main Image"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
   media_alt_ar: commonValidations.requiredString("Media Alt Text (Arabic)"),
-  icon_path: commonValidations.validateFileUpload("Icon"),
+  icon_path: commonValidations.fileUpload,
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
 });
