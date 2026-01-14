@@ -28,6 +28,7 @@ import {
   RotateCcw,
   Newspaper,
   Briefcase,
+  Layers,
 } from "lucide-react";
 
 import {
@@ -91,6 +92,7 @@ const cmsSection = [
         icon: FolderOpen,
       },
       { title: "Materials", url: "/materials", icon: List },
+      { title: "Extra Materials", url: "/extra-materials", icon: Layers },
     ],
   },
   {
@@ -344,7 +346,7 @@ export function AppSidebar() {
 
     // Auto-open Materials section
     if (
-      ["/materials-cms", "/materials-category", "/materials"].some((r) =>
+      ["/materials-cms", "/materials-category", "/materials", "/extra-materials"].some((r) =>
         path.includes(r)
       )
     ) {

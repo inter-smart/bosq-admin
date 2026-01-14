@@ -138,6 +138,12 @@ const MaterialsList = lazy(() =>
 const MaterialsForm = lazy(() =>
   import("./pages/cms/materials/MaterialsForm")
 );
+const ExtraMaterialsList = lazy(() =>
+  import("./pages/cms/materials/ExtraMaterialsList")
+);
+const ExtraMaterialsForm = lazy(() =>
+  import("./pages/cms/materials/ExtraMaterialsForm")
+);
 
 // Delivery pages
 const DeliveryCmsForm = lazy(() =>
@@ -901,6 +907,32 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <MaterialsForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Extra Materials Routes */}
+          <Route
+            path="/extra-materials"
+            element={
+              <ProtectedRoute>
+                <ExtraMaterialsList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/extra-materials/create"
+            element={
+              <ProtectedRoute>
+                <ExtraMaterialsForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/extra-materials/edit/:id"
+            element={
+              <ProtectedRoute>
+                <ExtraMaterialsForm />
               </ProtectedRoute>
             }
           />
