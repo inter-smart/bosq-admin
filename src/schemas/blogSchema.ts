@@ -42,7 +42,7 @@ export const blogSchema = z.object({
 
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
-  description_ar: commonValidations.requiredString("Arabic Description"),
+  description_ar: commonValidations.requiredText("Arabic Description"),
   meta_title_ar: commonValidations.requiredString("Arabic Meta Title"),
   meta_description_ar: commonValidations.requiredText(
     "Arabic Meta Description"
