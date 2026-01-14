@@ -15,7 +15,6 @@ export const materialsCmsSchema = z.object({
   banner_media_alt_ar: commonValidations.requiredString("Banner Media Alt Text (Arabic)"),
 });
 
-export type MaterialsCmsFormData = z.infer<typeof materialsCmsSchema>;
 
 // Material Category Schema
 export const materialsCategorySchema = z.object({
@@ -25,7 +24,6 @@ export const materialsCategorySchema = z.object({
   status: z.boolean(),
 });
 
-export type MaterialsCategoryFormData = z.infer<typeof materialsCategorySchema>;
 
 // Materials Item Schema
 export const materialsItemSchema = z.object({
@@ -42,4 +40,22 @@ export const materialsItemSchema = z.object({
   status: z.boolean(),
 });
 
+
+// Extra Materials Item Schema
+export const extraMaterialsItemSchema = z.object({
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
+  description: commonValidations.requiredText("Description"),
+  description_ar: commonValidations.requiredText("Description (Arabic)"),
+  media_path: commonValidations.validateFileUpload("Main Image"),
+  media_alt: commonValidations.requiredString("Media Alt Text"),
+  media_alt_ar: commonValidations.requiredString("Media Alt Text (Arabic)"),
+  icon_path: commonValidations.validateFileUpload("Icon"),
+  sort_order: commonValidations.sortOrder(),
+  status: z.boolean(),
+});
+
+export type MaterialsCmsFormData = z.infer<typeof materialsCmsSchema>;
+export type MaterialsCategoryFormData = z.infer<typeof materialsCategorySchema>;
 export type MaterialsItemFormData = z.infer<typeof materialsItemSchema>;
+export type ExtraMaterialsItemFormData = z.infer<typeof extraMaterialsItemSchema>;
