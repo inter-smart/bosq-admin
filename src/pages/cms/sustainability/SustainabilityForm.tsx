@@ -43,14 +43,14 @@ export default function SustainabilityForm() {
       title_ar: "",
       description: "",
       description_ar: "",
-      points: "",
-      points_ar: "",
+      // points: "",
+      // points_ar: "",
       img1_path: null,
       img1_alt: "",
       img1_alt_ar: "",
-      img2_path: null,
-      img2_alt: "",
-      img2_alt_ar: "",
+      // img2_path: null,
+      // img2_alt: "",
+      // img2_alt_ar: "",
       sort_order: 1,
       status: true,
     },
@@ -74,14 +74,14 @@ export default function SustainabilityForm() {
           title_ar: data.title_ar || "",
           description: data.description || "",
           description_ar: data.description_ar || "",
-          points: data.points || "",
-          points_ar: data.points_ar || "",
+          // points: data.points || "",
+          // points_ar: data.points_ar || "",
           img1_path: data.img1_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.img1_path}` : null,
           img1_alt: data.img1_alt || "",
           img1_alt_ar: data.img1_alt_ar || "",
-          img2_path: data.img2_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.img2_path}` : null,
-          img2_alt: data.img2_alt || "",
-          img2_alt_ar: data.img2_alt_ar || "",
+          // img2_path: data.img2_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.img2_path}` : null,
+          // img2_alt: data.img2_alt || "",
+          // img2_alt_ar: data.img2_alt_ar || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
         });
@@ -106,12 +106,12 @@ export default function SustainabilityForm() {
       // Text fields
       formData.append("title", data.title);
       formData.append("description", data.description);
-      formData.append("points", data.points);
+      // formData.append("points", data.points);
 
       // Arabic fields
       if (data.title_ar) formData.append("title_ar", data.title_ar);
       if (data.description_ar) formData.append("description_ar", data.description_ar);
-      if (data.points_ar) formData.append("points_ar", data.points_ar);
+      // if (data.points_ar) formData.append("points_ar", data.points_ar);
 
       // Image 1
       if (data.img1_alt) formData.append("img1_alt", data.img1_alt);
@@ -121,11 +121,11 @@ export default function SustainabilityForm() {
       }
 
       // Image 2
-      if (data.img2_alt) formData.append("img2_alt", data.img2_alt);
-      if (data.img2_alt_ar) formData.append("img2_alt_ar", data.img2_alt_ar);
-      if (data.img2_path instanceof File) {
-        formData.append("img2_path", data.img2_path);
-      }
+      // if (data.img2_alt) formData.append("img2_alt", data.img2_alt);
+      // if (data.img2_alt_ar) formData.append("img2_alt_ar", data.img2_alt_ar);
+      // if (data.img2_path instanceof File) {
+      //   formData.append("img2_path", data.img2_path);
+      // }
 
       // Settings
       formData.append("sort_order", (data.sort_order || 1).toString());
@@ -274,8 +274,8 @@ export default function SustainabilityForm() {
             </CardContent>
           </Card>
 
-          {/* Points Section */}
-          <Card>
+          {/* Points Section - Commented out as not needed */}
+          {/* <Card>
             <CardHeader>
               <CardTitle>Key Points</CardTitle>
             </CardHeader>
@@ -325,7 +325,7 @@ export default function SustainabilityForm() {
                 />
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Image 1 */}
           <Card>
@@ -399,8 +399,8 @@ export default function SustainabilityForm() {
             </CardContent>
           </Card>
 
-          {/* Image 2 */}
-          <Card>
+          {/* Image 2 - Commented out as not needed */}
+          {/* <Card>
             <CardHeader>
               <CardTitle>Image 2</CardTitle>
             </CardHeader>
@@ -469,7 +469,7 @@ export default function SustainabilityForm() {
                 />
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Settings */}
           <Card>
