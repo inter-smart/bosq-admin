@@ -55,20 +55,19 @@ export const sustainabilityItemSchema = z.object({
   description: commonValidations.requiredText("Description"),
   description_ar: commonValidations.requiredText("Description (Arabic)"),
 
-  // Bullet Points (stored as JSON array)
-  points: commonValidations.optionalString("Points is required"),
-
-  points_ar: commonValidations.optionalString("Points (Arabic) is required"),
+  // Bullet Points (stored as JSON array) - Commented out as not needed
+  // points: commonValidations.optionalString("Points is required"),
+  // points_ar: commonValidations.optionalString("Points (Arabic) is required"),
 
   // Image 1
   img1_path: commonValidations.validateFileUpload("Image 1"),
   img1_alt: commonValidations.requiredString("Image 1 Alt Text"),
   img1_alt_ar: commonValidations.requiredString("Image 1 Alt Text (Arabic)"),
 
-  // Image 2
-  img2_path: commonValidations.fileUpload,
-  img2_alt: commonValidations.optionalString("Image 2 Alt Text"),
-  img2_alt_ar: commonValidations.optionalString("Image 2 Alt Text (Arabic)"),
+  // Image 2 - Commented out as not needed
+  // img2_path: commonValidations.fileUpload,
+  // img2_alt: commonValidations.optionalString("Image 2 Alt Text"),
+  // img2_alt_ar: commonValidations.optionalString("Image 2 Alt Text (Arabic)"),
 
   // Settings
   sort_order: commonValidations.sortOrder(),
