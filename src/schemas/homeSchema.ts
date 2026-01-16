@@ -11,7 +11,7 @@ export const homeSchema = z.object({
   about_title: commonValidations.requiredString("About Title"),
   about_title_ar: commonValidations.requiredString("About Title (Arabic)"),
   about_description: commonValidations.requiredText("About Description"),
-  about_description_ar: commonValidations.requiredString(
+  about_description_ar: commonValidations.requiredText(
     "About Description (Arabic)"
   ),
 
@@ -56,7 +56,7 @@ export const homeSchema = z.object({
   form_title: commonValidations.requiredString("Form Title"),
   form_title_ar: commonValidations.requiredString("Form Title (Arabic)"),
   form_description: commonValidations.requiredText("Form Description"),
-  form_description_ar: commonValidations.requiredString(
+  form_description_ar: commonValidations.requiredText(
     "Form Description (Arabic)"
   ),
   form_media_path: commonValidations.validateFileUpload("Form Media"),

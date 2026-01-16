@@ -22,6 +22,7 @@ import {
 } from "@/services/cms/contact/contactCmsApi";
 import { contactCmsSchema, ContactCmsFormData } from "@/schemas/contactSchema";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
+import { normalizeMapEmbed } from "@/lib/utils";
 
 export default function ContactCmsForm() {
   const { toast } = useToast();
@@ -787,7 +788,7 @@ export default function ContactCmsForm() {
               {urls && (
                 <div className="mt-4">
                   <iframe
-                    src={urls}
+                    src={normalizeMapEmbed(urls)}
                     width="100%"
                     height="300"
                     style={{ border: 0 }}
@@ -810,3 +811,6 @@ export default function ContactCmsForm() {
     </div>
   );
 }
+
+
+
