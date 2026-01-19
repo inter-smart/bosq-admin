@@ -20,6 +20,12 @@ const SocialMediaForm = lazy(() => import("./pages/common/SocialMediaForm"));
 const MetaTagsList = lazy(() => import("./pages/common/MetaTagsList"));
 
 // Product pages
+const ProductCategoriesList = lazy(() =>
+  import("./pages/product/ProductCategoriesList")
+);
+const ProductCategoriesForm = lazy(() =>
+  import("./pages/product/ProductCategoriesForm")
+);
 const ProductAttributesList = lazy(() =>
   import("./pages/product/ProductAttributesList")
 );
@@ -370,6 +376,32 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <MetaTagsList />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Product Categories Routes */}
+          <Route
+            path="/product-categories"
+            element={
+              <ProtectedRoute>
+                <ProductCategoriesList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/product-categories/create"
+            element={
+              <ProtectedRoute>
+                <ProductCategoriesForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/product-categories/edit/:id"
+            element={
+              <ProtectedRoute>
+                <ProductCategoriesForm />
               </ProtectedRoute>
             }
           />
