@@ -17,15 +17,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { fetchProductAttributeList, deleteProductAttribute, ProductAttribute } from "@/services/product/productAttributesApi";
+import { fetchDataList, deleteData, ProductSellingPoint } from "@/services/product/productSellingPointsApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function ProductAttributesList() {
+export default function ProductSellingPointsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
+  const [categories, setCategories] = useState<ProductSellingPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -35,10 +35,10 @@ export default function ProductAttributesList() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
 
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductAttribute>({
-    modelName: "ProductAttribute",
-    data: attributes,
-    setData: setAttributes,
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductSellingPoint>({
+    modelName: "ProductSellingPoints",
+    data: categories,
+    setData: setCategories,
   });
 
   // Debounce search query
@@ -51,10 +51,10 @@ export default function ProductAttributesList() {
   }, [searchQuery]);
 
   useEffect(() => {
-    loadAttributes();
+    loadCategories();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
-  const loadAttributes = async () => {
+  const loadCategories = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -62,16 +62,16 @@ export default function ProductAttributesList() {
         setLoading(true);
       }
 
-      const response = await fetchProductAttributeList(currentPage, pageSize, debouncedSearchQuery);
+      const response = await fetchDataList(currentPage, pageSize, debouncedSearchQuery);
 
       if (response.success) {
-        setAttributes(response.data.list);
+        setCategories(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load product attributes",
+        description: "Failed to load data",
         variant: "destructive",
       });
     } finally {
@@ -84,17 +84,17 @@ export default function ProductAttributesList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteProductAttribute(deleteItemId);
-      setAttributes((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteData(deleteItemId);
+      setCategories((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
         title: "Success",
-        description: "Product attribute deleted successfully",
+        description: "Data deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete product attribute",
+        description: "Failed to delete data",
         variant: "destructive",
       });
     } finally {
@@ -102,11 +102,23 @@ export default function ProductAttributesList() {
     }
   };
 
-  const columns: ColumnDef<ProductAttribute>[] = [
+  const columns: ColumnDef<ProductSellingPoint>[] = [
     {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
+    },
+    {
+      accessorKey: "media_path",
+      header: "Image",
+      cell: ({ row }) => {
+        const mediaPath = row.getValue("media_path") as string | null;
+        return mediaPath ? (
+          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("name")} className="h-10 w-10 object-cover rounded" />
+        ) : (
+          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
+        );
+      },
     },
     {
       accessorKey: "name",
@@ -114,9 +126,9 @@ export default function ProductAttributesList() {
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
     },
     {
-      accessorKey: "code",
-      header: "Code",
-      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("code")}</div>,
+      accessorKey: "slug",
+      header: "Slug",
+      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
     },
     {
       accessorKey: "sort_order",
@@ -168,7 +180,7 @@ export default function ProductAttributesList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/product-attributes/edit/${item.id}`)}>
+              <DropdownMenuItem onClick={() => navigate(`/product-selling-points/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
@@ -187,7 +199,7 @@ export default function ProductAttributesList() {
     <>
       <DataTable
         columns={columns}
-        data={attributes}
+        data={categories}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -200,10 +212,10 @@ export default function ProductAttributesList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Product Attributes"
-        searchPlaceholder="Search attributes..."
-        onAdd={() => navigate("/product-attributes/create")}
-        addButtonText="Add Attribute"
+        title="Product Categories"
+        searchPlaceholder="Search categories..."
+        onAdd={() => navigate("/product-selling-points/create")}
+        addButtonText="Add Category"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -212,7 +224,7 @@ export default function ProductAttributesList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the product attribute and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the product category and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

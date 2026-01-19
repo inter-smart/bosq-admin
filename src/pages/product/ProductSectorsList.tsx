@@ -17,15 +17,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { fetchProductAttributeList, deleteProductAttribute, ProductAttribute } from "@/services/product/productAttributesApi";
+import {
+  fetchProductSectorList,
+  fetchProductSectorById,
+  deleteProductSector,
+  updateProductSector,
+  ProductSector,
+} from "@/services/product/productSectorsApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function ProductAttributesList() {
+export default function ProductSectorsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [attributes, setAttributes] = useState<ProductAttribute[]>([]);
+  const [attributes, setAttributes] = useState<ProductSector[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -35,8 +41,8 @@ export default function ProductAttributesList() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
 
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductAttribute>({
-    modelName: "ProductAttribute",
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductSector>({
+    modelName: "ProductSectors",
     data: attributes,
     setData: setAttributes,
   });
@@ -62,7 +68,7 @@ export default function ProductAttributesList() {
         setLoading(true);
       }
 
-      const response = await fetchProductAttributeList(currentPage, pageSize, debouncedSearchQuery);
+      const response = await fetchProductSectorList(currentPage, pageSize, debouncedSearchQuery);
 
       if (response.success) {
         setAttributes(response.data.list);
@@ -71,7 +77,7 @@ export default function ProductAttributesList() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load product attributes",
+        description: "Failed to load product sectors",
         variant: "destructive",
       });
     } finally {
@@ -84,17 +90,17 @@ export default function ProductAttributesList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteProductAttribute(deleteItemId);
+      await deleteProductSector(deleteItemId);
       setAttributes((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
         title: "Success",
-        description: "Product attribute deleted successfully",
+        description: "Product sector deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete product attribute",
+        description: "Failed to delete product sector",
         variant: "destructive",
       });
     } finally {
@@ -102,7 +108,7 @@ export default function ProductAttributesList() {
     }
   };
 
-  const columns: ColumnDef<ProductAttribute>[] = [
+  const columns: ColumnDef<ProductSector>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -112,6 +118,18 @@ export default function ProductAttributesList() {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "media_path",
+      header: "Image",
+      cell: ({ row }) => {
+        const mediaPath = row.getValue("media_path") as string | null;
+        return mediaPath ? (
+          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("name")} className="h-10 w-10 object-cover rounded" />
+        ) : (
+          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
+        );
+      },
     },
     {
       accessorKey: "code",
@@ -168,7 +186,7 @@ export default function ProductAttributesList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/product-attributes/edit/${item.id}`)}>
+              <DropdownMenuItem onClick={() => navigate(`/product-sectors/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
@@ -200,10 +218,10 @@ export default function ProductAttributesList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Product Attributes"
-        searchPlaceholder="Search attributes..."
-        onAdd={() => navigate("/product-attributes/create")}
-        addButtonText="Add Attribute"
+        title="Product Sectors"
+        searchPlaceholder="Search sectors..."
+        onAdd={() => navigate("/product-sectors/create")}
+        addButtonText="Add Product Sector"
       />
 
       {/* Delete Confirmation Dialog */}

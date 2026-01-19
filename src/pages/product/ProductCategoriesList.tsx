@@ -5,12 +5,7 @@ import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,11 +17,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import {
-  fetchProductCategoryList,
-  deleteProductCategory,
-  ProductCategory,
-} from "@/services/product/productCategoriesApi";
+import { fetchProductCategoryList, deleteProductCategory, ProductCategory } from "@/services/product/productCategoriesApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
@@ -44,12 +35,11 @@ export default function ProductCategoriesList() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
 
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<ProductCategory>({
-      modelName: "ProductCategory",
-      data: categories,
-      setData: setCategories,
-    });
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductCategory>({
+    modelName: "ProductCategory",
+    data: categories,
+    setData: setCategories,
+  });
 
   // Debounce search query
   useEffect(() => {
@@ -72,11 +62,7 @@ export default function ProductCategoriesList() {
         setLoading(true);
       }
 
-      const response = await fetchProductCategoryList(
-        currentPage,
-        pageSize,
-        debouncedSearchQuery
-      );
+      const response = await fetchProductCategoryList(currentPage, pageSize, debouncedSearchQuery);
 
       if (response.success) {
         setCategories(response.data.list);
@@ -120,11 +106,7 @@ export default function ProductCategoriesList() {
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm">
-          {(currentPage - 1) * pageSize + row.index + 1}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
     {
       accessorKey: "media_path",
@@ -132,35 +114,21 @@ export default function ProductCategoriesList() {
       cell: ({ row }) => {
         const mediaPath = row.getValue("media_path") as string | null;
         return mediaPath ? (
-          <img
-            src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}
-            alt={row.getValue("name")}
-            className="h-10 w-10 object-cover rounded"
-          />
+          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("name")} className="h-10 w-10 object-cover rounded" />
         ) : (
-          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
-            N/A
-          </div>
+          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
         );
       },
     },
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate">
-          {row.getValue("name")}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
     },
     {
       accessorKey: "slug",
       header: "Slug",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm text-muted-foreground">
-          {row.getValue("slug")}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
     },
     {
       accessorKey: "parent_id",
@@ -168,11 +136,7 @@ export default function ProductCategoriesList() {
       cell: ({ row }) => {
         const parentId = row.getValue("parent_id") as number | null;
         const isParent = !parentId;
-        return (
-          <Badge variant={isParent ? "default" : "outline"}>
-            {isParent ? "Parent" : "Sub"}
-          </Badge>
-        );
+        return <Badge variant={isParent ? "default" : "outline"}>{isParent ? "Parent" : "Sub"}</Badge>;
       },
     },
     {
@@ -184,11 +148,7 @@ export default function ProductCategoriesList() {
         return (
           <Input
             type="number"
-            value={
-              editingSortOrder[item.id!] !== undefined
-                ? editingSortOrder[item.id!]
-                : row.getValue("sort_order") || 0
-            }
+            value={editingSortOrder[item.id!] !== undefined ? editingSortOrder[item.id!] : row.getValue("sort_order") || 0}
             onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
             className="w-20"
           />
@@ -203,13 +163,8 @@ export default function ProductCategoriesList() {
         const status = row.getValue("status") as boolean;
         return (
           <div className="flex items-center gap-2">
-            <Switch
-              checked={status}
-              onCheckedChange={() => handleStatusChange(item.id!, status)}
-            />
-            <Badge variant={status ? "default" : "secondary"}>
-              {status ? "active" : "inactive"}
-            </Badge>
+            <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
+            <Badge variant={status ? "default" : "secondary"}>{status ? "active" : "inactive"}</Badge>
           </div>
         );
       },
@@ -218,11 +173,7 @@ export default function ProductCategoriesList() {
       accessorKey: "createdAt",
       header: "Created At",
       enableSorting: true,
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {new Date(row.getValue("createdAt")).toLocaleDateString()}
-        </div>
-      ),
+      cell: ({ row }) => <div className="text-sm text-muted-foreground">{new Date(row.getValue("createdAt")).toLocaleDateString()}</div>,
     },
     {
       id: "actions",
@@ -238,16 +189,11 @@ export default function ProductCategoriesList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => navigate(`/product-categories/edit/${item.id}`)}
-              >
+              <DropdownMenuItem onClick={() => navigate(`/product-categories/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setDeleteItemId(item.id!)}
-              >
+              <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -282,24 +228,17 @@ export default function ProductCategoriesList() {
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={!!deleteItemId}
-        onOpenChange={() => setDeleteItemId(null)}
-      >
+      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              product category and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the product category and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

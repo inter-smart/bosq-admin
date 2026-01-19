@@ -32,22 +32,12 @@ import {
   ShoppingBag,
   Grid,
   Sliders,
+  PieChart,
+  Star,
 } from "lucide-react";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const bosqLogo = "/bosq-logo-light.png";
 
@@ -182,6 +172,8 @@ const cmsSection = [
 const productsSection = [
   { title: "Product Categories", url: "/product-categories", icon: Grid },
   { title: "Product Attributes", url: "/product-attributes", icon: Sliders },
+  { title: "Product Sectors", url: "/product-sectors", icon: PieChart },
+  { title: "Product Selling Points", url: "/product-selling-points", icon: Star },
 ];
 
 const projectsSection = [
@@ -326,73 +318,47 @@ export function AppSidebar() {
   // Auto-open based on current path and close others
   useEffect(() => {
     const path = location.pathname;
-    
+
     // Close all first
     closeAllSections();
 
     // Auto-open Home section
-    if (
-      ["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setHomeOpen(true);
       return;
     }
 
     // Auto-open About section
-    if (
-      [
-        "/about-cms",
-        "/about-testimonials",
-        "/about-journeys",
-        "/about-our-clients",
-        "/why-bosq",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/about-cms", "/about-testimonials", "/about-journeys", "/about-our-clients", "/why-bosq"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setAboutOpen(true);
       return;
     }
 
     // Auto-open Ergonomic section
-    if (
-      ["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setErgonomicOpen(true);
       return;
     }
 
     // Auto-open Materials section
-    if (
-      ["/materials-cms", "/materials-category", "/materials", "/extra-materials"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/materials-cms", "/materials-category", "/materials", "/extra-materials"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setMaterialsOpen(true);
       return;
     }
 
     // Auto-open Delivery section
-    if (
-      ["/delivery-cms", "/delivery-time", "/delivery-method"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/delivery-cms", "/delivery-time", "/delivery-method"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setDeliveryOpen(true);
       return;
     }
 
     // Auto-open FAQ section
-    if (
-      ["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))
-    ) {
+    if (["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setFaqOpen(true);
       return;
@@ -406,21 +372,13 @@ export function AppSidebar() {
     }
 
     // Auto-open Products section
-    if (
-      ["/product-categories", "/product-attributes"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/product-categories", "/product-attributes", "/product-sectors", "/product-selling-points"].some((r) => path.includes(r))) {
       setProductsOpen(true);
       return;
     }
 
     // Auto-open Projects section
-    if (
-      ["/projects-cms", "/project-category", "/projects"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/projects-cms", "/project-category", "/projects"].some((r) => path.includes(r))) {
       setProjectsOpen(true);
       return;
     }
@@ -440,23 +398,14 @@ export function AppSidebar() {
     }
 
     // Auto-open Customisation section
-    if (
-      [
-        "/customization-cms",
-        "/customization-features",
-        "/customization-process",
-        "/customization-options",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/customization-cms", "/customization-features", "/customization-process", "/customization-options"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setCustomisationOpen(true);
       return;
     }
 
     // Auto-open Sustainability section
-    if (
-      ["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))
-    ) {
+    if (["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setSustainabilityOpen(true);
       return;
@@ -475,35 +424,20 @@ export function AppSidebar() {
     }
 
     // Auto-open Common section
-    if (
-      [
-        "/site-settings",
-        "/social-media",
-        "/payment-methods",
-        "/meta-tags",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/site-settings", "/social-media", "/payment-methods", "/meta-tags"].some((r) => path.includes(r))) {
       setCommonOpen(true);
       return;
     }
 
     // Auto-open Privacy Policy section
-    if (
-      ["/privacy-policy-cms", "/privacy-policy"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setPrivacyOpen(true);
       return;
     }
 
     // Auto-open Terms and Conditions section
-    if (
-      ["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) =>
-        path.includes(r)
-      )
-    ) {
+    if (["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setTermsOpen(true);
       return;
@@ -517,9 +451,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Return Policy section
-    if (
-      ["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))
-    ) {
+    if (["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setReturnPolicyOpen(true);
       return;
@@ -540,17 +472,11 @@ export function AppSidebar() {
         <div className="py-4 border-b border-sidebar-border">
           {!isCollapsed ? (
             <div className="flex items-center justify-center">
-              <img
-                src={bosqLogo}
-                alt="BOSQ"
-                className="h-8 w-auto object-contain"
-              />
+              <img src={bosqLogo} alt="BOSQ" className="h-8 w-auto object-contain" />
             </div>
           ) : (
             <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center mx-auto">
-              <span className="text-primary-foreground font-bold text-sm">
-                B
-              </span>
+              <span className="text-primary-foreground font-bold text-sm">B</span>
             </div>
           )}
         </div>
@@ -579,11 +505,7 @@ export function AppSidebar() {
               {!isCollapsed && (
                 <>
                   <span className="ml-2">CMS</span>
-                  <ChevronRight
-                    className={`h-4 w-4 ml-auto transition-transform ${
-                      cmsOpen ? "rotate-90" : ""
-                    }`}
-                  />
+                  <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${cmsOpen ? "rotate-90" : ""}`} />
                 </>
               )}
             </CollapsibleTrigger>
@@ -699,20 +621,13 @@ export function AppSidebar() {
 
         {/* Policies */}
         <SidebarGroup>
-          <Collapsible
-            open={!isCollapsed && policiesOpen}
-            onOpenChange={setPoliciesOpen}
-          >
+          <Collapsible open={!isCollapsed && policiesOpen} onOpenChange={setPoliciesOpen}>
             <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
               <ShieldCheck className="h-4 w-4" />
               {!isCollapsed && (
                 <>
                   <span className="ml-2">Policies</span>
-                  <ChevronRight
-                    className={`h-4 w-4 ml-auto transition-transform ${
-                      policiesOpen ? "rotate-90" : ""
-                    }`}
-                  />
+                  <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${policiesOpen ? "rotate-90" : ""}`} />
                 </>
               )}
             </CollapsibleTrigger>
@@ -766,24 +681,13 @@ export function AppSidebar() {
 /**
  * Nested Section Component (for Home, FAQ, Contact under CMS)
  */
-function NestedSection({
-  title,
-  icon: Icon,
-  open,
-  setOpen,
-  items,
-  getNavCls,
-}: any) {
+function NestedSection({ title, icon: Icon, open, setOpen, items, getNavCls }: any) {
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex items-center w-full p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
         <Icon className="h-4 w-4" />
         <span className="ml-2">{title}</span>
-        <ChevronRight
-          className={`h-4 w-4 ml-auto transition-transform ${
-            open ? "rotate-90" : ""
-          }`}
-        />
+        <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${open ? "rotate-90" : ""}`} />
       </CollapsibleTrigger>
       <CollapsibleContent className="ml-6 mt-1 space-y-1">
         <SidebarMenu>
@@ -806,15 +710,7 @@ function NestedSection({
 /**
  * Reusable Sidebar Section Component
  */
-function SidebarCollapsibleSection({
-  title,
-  icon: Icon,
-  open,
-  setOpen,
-  items,
-  isCollapsed,
-  getNavCls,
-}: any) {
+function SidebarCollapsibleSection({ title, icon: Icon, open, setOpen, items, isCollapsed, getNavCls }: any) {
   return (
     <SidebarGroup>
       <Collapsible open={!isCollapsed && open} onOpenChange={setOpen}>
@@ -823,11 +719,7 @@ function SidebarCollapsibleSection({
           {!isCollapsed && (
             <>
               <span className="ml-2">{title}</span>
-              <ChevronRight
-                className={`h-4 w-4 ml-auto transition-transform ${
-                  open ? "rotate-90" : ""
-                }`}
-              />
+              <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${open ? "rotate-90" : ""}`} />
             </>
           )}
         </CollapsibleTrigger>
