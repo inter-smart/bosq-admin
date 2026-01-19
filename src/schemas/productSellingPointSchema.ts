@@ -3,7 +3,7 @@ import { commonValidations } from "@/utils/formUtils";
 
 export const schema = z.object({
   name: commonValidations.requiredString("Name"),
-  media_path: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]).optional(),
+  media_path: commonValidations.validateFileUpload("Icon"),
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
 });

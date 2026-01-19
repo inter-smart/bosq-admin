@@ -212,10 +212,10 @@ export default function ProductSellingPointsList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Product Categories"
-        searchPlaceholder="Search categories..."
+        title="Product Selling Points"
+        searchPlaceholder="Search points..."
         onAdd={() => navigate("/product-selling-points/create")}
-        addButtonText="Add Category"
+        addButtonText="Add Point"
       />
 
       {/* Delete Confirmation Dialog */}
