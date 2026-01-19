@@ -29,6 +29,9 @@ import {
   Newspaper,
   Briefcase,
   Layers,
+  ShoppingBag,
+  Grid,
+  Sliders,
 } from "lucide-react";
 
 import {
@@ -176,6 +179,11 @@ const cmsSection = [
   },
 ];
 
+const productsSection = [
+  { title: "Product Categories", url: "/product-categories", icon: Grid },
+  { title: "Product Attributes", url: "/product-attributes", icon: Sliders },
+];
+
 const projectsSection = [
   { title: "Projects CMS", url: "/projects-cms", icon: FileText },
   { title: "Project Category", url: "/project-category", icon: FolderOpen },
@@ -286,6 +294,7 @@ export function AppSidebar() {
   const [warrantyOpen, setWarrantyOpen] = useState(false);
   const [returnPolicyOpen, setReturnPolicyOpen] = useState(false);
   const [sustainabilityOpen, setSustainabilityOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
   const isCollapsed = state === "collapsed";
 
   // Helper function to close all sections
@@ -311,6 +320,7 @@ export function AppSidebar() {
     setWarrantyOpen(false);
     setReturnPolicyOpen(false);
     setSustainabilityOpen(false);
+    setProductsOpen(false);
   };
 
   // Auto-open based on current path and close others
@@ -392,6 +402,16 @@ export function AppSidebar() {
     if (["/contact-cms"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setContactOpen(true);
+      return;
+    }
+
+    // Auto-open Products section
+    if (
+      ["/product-categories", "/product-attributes"].some((r) =>
+        path.includes(r)
+      )
+    ) {
+      setProductsOpen(true);
       return;
     }
 
@@ -621,6 +641,17 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
+
+        {/* Products */}
+        <SidebarCollapsibleSection
+          title="Products"
+          icon={ShoppingBag}
+          open={productsOpen}
+          setOpen={setProductsOpen}
+          items={productsSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
 
         {/* Projects */}
         <SidebarCollapsibleSection
