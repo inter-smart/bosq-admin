@@ -4,22 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  fetchContactCms,
-  saveContactCms,
-} from "@/services/cms/contact/contactCmsApi";
+import { fetchContactCms, saveContactCms } from "@/services/cms/contact/contactCmsApi";
 import { contactCmsSchema, ContactCmsFormData } from "@/schemas/contactSchema";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 import { normalizeMapEmbed } from "@/lib/utils";
@@ -125,9 +115,7 @@ export default function ContactCmsForm() {
     // Error callback - runs when validation fails
     (errors) => {
       // Get the first error field and focus it
-      const firstErrorField = Object.keys(
-        errors
-      )[0] as keyof ContactCmsFormData;
+      const firstErrorField = Object.keys(errors)[0] as keyof ContactCmsFormData;
 
       if (firstErrorField) {
         setTimeout(() => {
@@ -148,49 +136,37 @@ export default function ContactCmsForm() {
 
       // Form section
       if (data.form_title) formData.append("form_title", data.form_title);
-      if (data.form_title_ar)
-        formData.append("form_title_ar", data.form_title_ar);
-      if (data.form_description)
-        formData.append("form_description", data.form_description);
-      if (data.form_description_ar)
-        formData.append("form_description_ar", data.form_description_ar);
+      if (data.form_title_ar) formData.append("form_title_ar", data.form_title_ar);
+      if (data.form_description) formData.append("form_description", data.form_description);
+      if (data.form_description_ar) formData.append("form_description_ar", data.form_description_ar);
 
       // Media section
       if (data.media_alt) formData.append("media_alt", data.media_alt);
       if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
       if (data.media_title) formData.append("media_title", data.media_title);
-      if (data.media_title_ar)
-        formData.append("media_title_ar", data.media_title_ar);
-      if (data.media_description)
-        formData.append("media_description", data.media_description);
-      if (data.media_description_ar)
-        formData.append("media_description_ar", data.media_description_ar);
+      if (data.media_title_ar) formData.append("media_title_ar", data.media_title_ar);
+      if (data.media_description) formData.append("media_description", data.media_description);
+      if (data.media_description_ar) formData.append("media_description_ar", data.media_description_ar);
 
       // Email section
       if (data.email_title) formData.append("email_title", data.email_title);
-      if (data.email_title_ar)
-        formData.append("email_title_ar", data.email_title_ar);
+      if (data.email_title_ar) formData.append("email_title_ar", data.email_title_ar);
       if (data.email) formData.append("email", data.email);
 
       // Phone section
       if (data.phone_title) formData.append("phone_title", data.phone_title);
-      if (data.phone_title_ar)
-        formData.append("phone_title_ar", data.phone_title_ar);
+      if (data.phone_title_ar) formData.append("phone_title_ar", data.phone_title_ar);
       if (data.phone_number) formData.append("phone_number", data.phone_number);
 
       // Address section
-      if (data.address_title)
-        formData.append("address_title", data.address_title);
-      if (data.address_title_ar)
-        formData.append("address_title_ar", data.address_title_ar);
+      if (data.address_title) formData.append("address_title", data.address_title);
+      if (data.address_title_ar) formData.append("address_title_ar", data.address_title_ar);
       if (data.address) formData.append("address", data.address);
       if (data.address_ar) formData.append("address_ar", data.address_ar);
 
       // Social media section
-      if (data.social_media_title)
-        formData.append("social_media_title", data.social_media_title);
-      if (data.social_media_title_ar)
-        formData.append("social_media_title_ar", data.social_media_title_ar);
+      if (data.social_media_title) formData.append("social_media_title", data.social_media_title);
+      if (data.social_media_title_ar) formData.append("social_media_title_ar", data.social_media_title_ar);
 
       // Map integration
       if (data.url) formData.append("url", data.url);
@@ -231,9 +207,7 @@ export default function ContactCmsForm() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Contact Page CMS</h1>
-        <p className="text-muted-foreground">
-          Manage content for the Contact page
-        </p>
+        <p className="text-muted-foreground">Manage content for the Contact page</p>
       </div>
 
       <Form {...form}>
@@ -268,11 +242,7 @@ export default function ContactCmsForm() {
                     <FormItem>
                       <FormLabel>Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان الصفحة"
-                          {...field}
-                          dir="rtl"
-                        />
+                        <Input placeholder="أدخل عنوان الصفحة" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -312,11 +282,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Form Description</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter form description"
-                            rows={4}
-                            {...field}
-                          />
+                          <Textarea placeholder="Enter form description" rows={4} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -333,11 +299,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Form Title (AR)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان النموذج"
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Input placeholder="أدخل عنوان النموذج" {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -351,12 +313,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Form Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف النموذج"
-                            rows={4}
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Textarea placeholder="أدخل وصف النموذج" rows={4} {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -383,11 +340,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Media Title</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter media title"
-                            rows={3}
-                            {...field}
-                          />
+                          <Textarea placeholder="Enter media title" rows={3} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -401,11 +354,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Media Description</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter media description"
-                            rows={3}
-                            {...field}
-                          />
+                          <Textarea placeholder="Enter media description" rows={3} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -422,12 +371,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Media Title (AR)</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="أدخل عنوان الوسائط"
-                            rows={3}
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Textarea placeholder="أدخل عنوان الوسائط" rows={3} {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -441,12 +385,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Media Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف الوسائط"
-                            rows={3}
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Textarea placeholder="أدخل وصف الوسائط" rows={3} {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -490,10 +429,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Media Alt Text</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Enter media alt text"
-                            {...field}
-                          />
+                          <Input placeholder="Enter media alt text" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -507,11 +443,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Media Alt Text (AR)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل"
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -550,11 +482,7 @@ export default function ContactCmsForm() {
                     <FormItem>
                       <FormLabel>Email Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان البريد الإلكتروني"
-                          {...field}
-                          dir="rtl"
-                        />
+                        <Input placeholder="أدخل عنوان البريد الإلكتروني" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -606,11 +534,7 @@ export default function ContactCmsForm() {
                     <FormItem>
                       <FormLabel>Phone Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان الهاتف"
-                          {...field}
-                          dir="rtl"
-                        />
+                        <Input placeholder="أدخل عنوان الهاتف" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -664,10 +588,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Address</FormLabel>
                         <FormControl>
-                          <RichTextEditor
-                            placeholder="Enter address"
-                            {...field}
-                          />
+                          <RichTextEditor placeholder="Enter address" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -684,11 +605,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Address Title (AR)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان العنوان"
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Input placeholder="أدخل عنوان العنوان" {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -702,11 +619,7 @@ export default function ContactCmsForm() {
                       <FormItem>
                         <FormLabel>Address (AR)</FormLabel>
                         <FormControl>
-                          <RichTextEditor
-                            placeholder="أدخل العنوان"
-                            {...field}
-                            dir="rtl"
-                          />
+                          <RichTextEditor placeholder="أدخل العنوان" {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -731,10 +644,7 @@ export default function ContactCmsForm() {
                     <FormItem>
                       <FormLabel>Social Media Title</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter social media title"
-                          {...field}
-                        />
+                        <Input placeholder="Enter social media title" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -748,11 +658,7 @@ export default function ContactCmsForm() {
                     <FormItem>
                       <FormLabel>Social Media Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان وسائل التواصل الاجتماعي"
-                          {...field}
-                          dir="rtl"
-                        />
+                        <Input placeholder="أدخل عنوان وسائل التواصل الاجتماعي" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -775,11 +681,7 @@ export default function ContactCmsForm() {
                   <FormItem>
                     <FormLabel>Map URL</FormLabel>
                     <FormControl>
-                      <Textarea
-                        placeholder="Enter map URL"
-                        rows={4}
-                        {...field}
-                      />
+                      <Textarea placeholder="Enter map URL" rows={4} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
