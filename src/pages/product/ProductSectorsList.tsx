@@ -114,12 +114,7 @@ export default function ProductSectorsList() {
       header: "ID",
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
-    {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
-    },
-    {
+     {
       accessorKey: "media_path",
       header: "Image",
       cell: ({ row }) => {
@@ -130,6 +125,11 @@ export default function ProductSectorsList() {
           <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
         );
       },
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
     },
     {
       accessorKey: "code",
