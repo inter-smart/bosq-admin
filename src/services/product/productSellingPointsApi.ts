@@ -7,6 +7,7 @@ import { apiCall } from "@/utils/apiUtils";
 export interface ProductSellingPoint {
   id?: number;
   name: string;
+  name_ar: string;
   slug: string;
   media_path?: string | File | null;
   status: boolean;

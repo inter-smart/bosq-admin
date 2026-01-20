@@ -27,6 +27,7 @@ export default function ProductSectorsForm() {
     resolver: zodResolver(productSectorSchema),
     defaultValues: {
       name: "",
+      name_ar: "",
       code: "",
       media_path: null,
       sort_order: 1,
@@ -43,6 +44,7 @@ export default function ProductSectorsForm() {
       if (data) {
         form.reset({
           name: data.name || "",
+          name_ar: data.name_ar || "",
           code: data.code || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -67,6 +69,7 @@ export default function ProductSectorsForm() {
       const formData = new FormData();
 
       formData.append("name", data.name);
+      formData.append("name_ar", data.name_ar);
       formData.append("code", data.code);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
@@ -142,6 +145,20 @@ export default function ProductSectorsForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter sector name (e.g., Health Care, School ..)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                 <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter sector name (e.g., Health Care, School ..)" {...field} />
                       </FormControl>
