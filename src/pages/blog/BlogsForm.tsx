@@ -56,6 +56,8 @@ export default function BlogsForm() {
       meta_description: "",
       meta_description_ar: "",
       meta_keywords: "",
+      other_meta: "",
+      other_meta_ar: "",
       slug: "",
       meta_keywords_ar: "",
       description: "",
@@ -119,6 +121,8 @@ export default function BlogsForm() {
           meta_description_ar: data.meta_description_ar || "",
           meta_keywords: data.meta_keywords || "",
           meta_keywords_ar: data.meta_keywords_ar || "",
+          other_meta: data.other_meta || "",
+          other_meta_ar: data.other_meta_ar || "",
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           thumbnail_alt: data.thumbnail_alt || "",
@@ -170,6 +174,9 @@ export default function BlogsForm() {
       formData.append("meta_description", data.meta_description);
       formData.append("slug", data.slug);
       formData.append("meta_keywords", data.meta_keywords);
+      formData.append("other_meta", data.other_meta || "");
+      formData.append("other_meta_ar", data.other_meta_ar || "");
+
       formData.append("media_alt", data.media_alt);
       if (data.thumbnail_alt)
         formData.append("thumbnail_alt", data.thumbnail_alt);
@@ -180,6 +187,7 @@ export default function BlogsForm() {
       formData.append("meta_title_ar", data.meta_title_ar);
       formData.append("meta_description_ar", data.meta_description_ar);
       formData.append("meta_keywords_ar", data.meta_keywords_ar);
+      
       formData.append("media_alt_ar", data.media_alt_ar);
       if (data.thumbnail_alt_ar)
         formData.append("thumbnail_alt_ar", data.thumbnail_alt_ar);
@@ -313,6 +321,24 @@ export default function BlogsForm() {
                       </FormItem>
                     )}
                   />
+
+                    <FormField
+                    control={form.control}
+                    name="other_meta"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Other Meta Tags</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder={`<meta name="description" content="John Doe" />`}
+                            {...field}
+                            rows={6}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 {/* ================= ARABIC META ================= */}
@@ -365,6 +391,24 @@ export default function BlogsForm() {
                             placeholder="كلمة1، كلمة2، كلمة3"
                             {...field}
                             dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                    <FormField
+                    control={form.control}
+                    name="other_meta_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Other Meta Tags (AR)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder={`<meta name="description" content="John Doe" />`}
+                            {...field}
+                            rows={6}
                           />
                         </FormControl>
                         <FormMessage />

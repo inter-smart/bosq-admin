@@ -35,6 +35,7 @@ export const blogSchema = z.object({
   meta_title: commonValidations.requiredString("Meta Title"),
   meta_description: commonValidations.requiredText("Meta Description"),
   meta_keywords: commonValidations.requiredString("Meta Keywords"),
+  other_meta: commonValidations.optionalString("Other Meta"),
   description: commonValidations.requiredText("Description"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
   thumbnail_alt: commonValidations.optionalString("Thumbnail Alt Text"),
@@ -48,6 +49,7 @@ export const blogSchema = z.object({
     "Arabic Meta Description"
   ),
   meta_keywords_ar: commonValidations.requiredString("Arabic Meta Keywords"),
+  other_meta_ar: commonValidations.optionalString("Arabic Other Meta"),
   media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
   thumbnail_alt_ar: commonValidations.optionalString(
     "Arabic Thumbnail Alt Text"
