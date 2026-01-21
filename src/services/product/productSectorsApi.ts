@@ -3,6 +3,7 @@ import { apiCall } from "@/utils/apiUtils";
 export interface ProductSector {
   id?: number;
   name: string;
+  name_ar: string;
   code: string;
   slug?: string;
   media_path?: string | File | null;

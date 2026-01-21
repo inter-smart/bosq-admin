@@ -166,26 +166,6 @@ export default function FindYourFitsList() {
       ),
     },
     {
-      accessorKey: "link",
-      header: "Link",
-      cell: ({ row }) => {
-        const link = row.getValue("link") as string;
-        return link ? (
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm"
-          >
-            <ExternalLink className="h-3 w-3" />
-            Link
-          </a>
-        ) : (
-          <span className="text-muted-foreground text-sm">—</span>
-        );
-      },
-    },
-    {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,

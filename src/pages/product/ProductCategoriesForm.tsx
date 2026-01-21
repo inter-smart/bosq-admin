@@ -34,6 +34,7 @@ export default function ProductCategoriesForm() {
     resolver: zodResolver(productCategorySchema),
     defaultValues: {
       name: "",
+      name_ar: "",
       parent_id: null,
       media_path: null,
       sort_order: 1,
@@ -73,6 +74,7 @@ export default function ProductCategoriesForm() {
       if (data) {
         form.reset({
           name: data.name || "",
+          name_ar: data.name_ar || "",
           parent_id: data.parent_id || null,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -97,6 +99,7 @@ export default function ProductCategoriesForm() {
       const formData = new FormData();
 
       formData.append("name", data.name);
+      formData.append("name_ar", data.name_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -170,6 +173,19 @@ export default function ProductCategoriesForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter category name (e.g., Office Chairs)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter category name (e.g., Office Chairs)" {...field} />
                       </FormControl>

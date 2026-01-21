@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { fetchContactCms, saveContactCms } from "@/services/cms/contact/contactCmsApi";
 import { contactCmsSchema, ContactCmsFormData } from "@/schemas/contactSchema";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
+import { normalizeMapEmbed } from "@/lib/utils";
 
 export default function ContactCmsForm() {
   const { toast } = useToast();
@@ -688,7 +689,14 @@ export default function ContactCmsForm() {
               />
               {urls && (
                 <div className="mt-4">
-                  <iframe src={urls} width="100%" height="300" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                  <iframe
+                    src={normalizeMapEmbed(urls)}
+                    width="100%"
+                    height="300"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               )}
             </CardContent>
@@ -705,3 +713,6 @@ export default function ContactCmsForm() {
     </div>
   );
 }
+
+
+

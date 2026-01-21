@@ -27,6 +27,7 @@ export default function ProductSellingPointForm() {
     resolver: zodResolver(schema),
     defaultValues: {
       name: "",
+      name_ar: "",
       media_path: null,
       sort_order: 1,
       status: true,
@@ -42,6 +43,7 @@ export default function ProductSellingPointForm() {
       if (data) {
         form.reset({
           name: data.name || "",
+          name_ar: data.name_ar || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
@@ -65,6 +67,7 @@ export default function ProductSellingPointForm() {
       const formData = new FormData();
 
       formData.append("name", data.name);
+      formData.append("name_ar", data.name_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -139,6 +142,20 @@ export default function ProductSellingPointForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter name (e.g., Free Delivery)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter name (e.g., Free Delivery)" {...field} />
                       </FormControl>

@@ -8,6 +8,7 @@ export interface ProductCategory {
   id?: number;
   parent_id?: number | null;
   name: string;
+  name_ar: string;
   slug: string;
   media_path?: string | File | null;
   status: boolean;
@@ -19,6 +20,7 @@ export interface ProductCategory {
 export interface ParentCategories {
   id?: number;
   name: string;
+  name_ar: string;
   slug: string;
   media_path?: string | File | null;
 }
@@ -66,6 +68,13 @@ export const fetchParentCategoryList = async (): Promise<ParentCategoryResponse>
   });
 };
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Fetch all product categories with pagination, search, and category filter.
+ * @param {number} [page=1] - Page number for pagination.
+ * @param {number} [limit=10] - Limit number of items per page.
+ * @returns {Promise<ProductCategoryResponse>} - Promise with response data.
+ */
 export const fetchProductCategoryList = async (page: number = 1, limit: number = 10, search?: string): Promise<ProductCategoryResponse> => {
   const params: Record<string, string | number> = {
     page,

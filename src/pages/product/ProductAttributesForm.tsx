@@ -40,6 +40,7 @@ export default function ProductAttributesForm() {
     resolver: zodResolver(productAttributeSchema),
     defaultValues: {
       name: "",
+      name_ar: "",
       code: "",
       sort_order: 1,
       status: true,
@@ -61,6 +62,7 @@ export default function ProductAttributesForm() {
       if (data) {
         form.reset({
           name: data.name || "",
+          name_ar: data.name_ar || "",
           code: data.code || "",
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
@@ -83,6 +85,7 @@ export default function ProductAttributesForm() {
 
       const payload = {
         name: data.name,
+        name_ar: data.name_ar,
         code: data.code,
         sort_order: data.sort_order,
         status: data.status,
@@ -170,6 +173,22 @@ export default function ProductAttributesForm() {
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="name_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name (Arabic)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter attribute name (e.g., Color, Size)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="code"

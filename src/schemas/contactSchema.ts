@@ -42,7 +42,7 @@ export const contactCmsSchema = z.object({
   social_media_title_ar: commonValidations.requiredText("Social Media Title (Arabic)"),
 
   // Map Integration
-  url: commonValidations.requiredText("Map Embed Code"),
+  url: z.string().optional()
 });
 
 
