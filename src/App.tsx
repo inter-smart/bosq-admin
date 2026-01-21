@@ -26,10 +26,14 @@ const ProductCategoriesList = lazy(() => import("./pages/product/ProductCategori
 const ProductCategoriesForm = lazy(() => import("./pages/product/ProductCategoriesForm"));
 const ProductAttributesList = lazy(() => import("./pages/product/ProductAttributesList"));
 const ProductAttributesForm = lazy(() => import("./pages/product/ProductAttributesForm"));
+const AttributeValuesList = lazy(() => import("./pages/product/AttributeValuesList"));
+const AttributeValuesForm = lazy(() => import("./pages/product/AttributeValuesForm"));
 const ProductSectoresList = lazy(() => import("./pages/product/ProductSectorsList"));
 const ProductSectorsForm = lazy(() => import("./pages/product/ProductSectorsForm"));
 const ProductSellingPointsList = lazy(() => import("./pages/product/ProductSellingPointList"));
 const ProductSellingPointsForm = lazy(() => import("./pages/product/ProductSellingPointForm"));
+const BaseProductList = lazy(() => import("./pages/product/BaseProductList"));
+const BaseProductForm = lazy(() => import("./pages/product/BaseProductForm"));
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -310,6 +314,32 @@ const App = () => (
               }
             />
 
+            {/* Attribute Values Routes */}
+            <Route
+              path="/product-attributes/:attributeId/values"
+              element={
+                <ProtectedRoute>
+                  <AttributeValuesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-attributes/:attributeId/values/create"
+              element={
+                <ProtectedRoute>
+                  <AttributeValuesForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-attributes/:attributeId/values/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AttributeValuesForm />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Product Sectors Routes */}
             <Route
               path="/product-sectors"
@@ -358,6 +388,32 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductSellingPointsForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Base Product Routes */}
+            <Route
+              path="/base-products"
+              element={
+                <ProtectedRoute>
+                  <BaseProductList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/base-products/create"
+              element={
+                <ProtectedRoute>
+                  <BaseProductForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/base-products/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <BaseProductForm />
                 </ProtectedRoute>
               }
             />

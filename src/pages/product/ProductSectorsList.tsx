@@ -114,7 +114,7 @@ export default function ProductSectorsList() {
       header: "ID",
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
-     {
+    {
       accessorKey: "media_path",
       header: "Image",
       cell: ({ row }) => {
@@ -161,17 +161,11 @@ export default function ProductSectorsList() {
         return (
           <div className="flex items-center gap-2">
             <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
-            <Badge variant={status ? "default" : "secondary"}>{status ? "active" : "inactive"}</Badge>
           </div>
         );
       },
     },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      enableSorting: true,
-      cell: ({ row }) => <div className="text-sm text-muted-foreground">{new Date(row.getValue("createdAt")).toLocaleDateString()}</div>,
-    },
+
     {
       id: "actions",
       cell: ({ row }) => {

@@ -34,6 +34,7 @@ import {
   Sliders,
   PieChart,
   Star,
+  Box,
 } from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
@@ -174,6 +175,7 @@ const productsSection = [
   { title: "Product Attributes", url: "/product-attributes", icon: Sliders },
   { title: "Product Sectors", url: "/product-sectors", icon: PieChart },
   { title: "Product Selling Points", url: "/product-selling-points", icon: Star },
+  { title: "Base Product", url: "/base-products", icon: Box },
 ];
 
 const projectsSection = [
@@ -372,7 +374,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Products section
-    if (["/product-categories", "/product-attributes", "/product-sectors", "/product-selling-points"].some((r) => path.includes(r))) {
+    if (["/product-categories", "/product-attributes", "/product-sectors", "/product-selling-points", "/base-products"].some((r) => path.includes(r))) {
       setProductsOpen(true);
       return;
     }

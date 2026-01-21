@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
@@ -17,15 +16,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { fetchDataList, deleteData, ProductSellingPoint } from "@/services/product/productSellingPointsApi";
+import { fetchBaseProductList, deleteBaseProduct, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
-import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
-export default function ProductSellingPointsList() {
+export default function BaseProductList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [categories, setCategories] = useState<ProductSellingPoint[]>([]);
+  const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -34,12 +31,6 @@ export default function ProductSellingPointsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
-
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductSellingPoint>({
-    modelName: "ProductSellingPoints",
-    data: categories,
-    setData: setCategories,
-  });
 
   // Debounce search query
   useEffect(() => {
@@ -51,10 +42,10 @@ export default function ProductSellingPointsList() {
   }, [searchQuery]);
 
   useEffect(() => {
-    loadCategories();
+    loadBaseProducts();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
-  const loadCategories = async () => {
+  const loadBaseProducts = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -62,16 +53,16 @@ export default function ProductSellingPointsList() {
         setLoading(true);
       }
 
-      const response = await fetchDataList(currentPage, pageSize, debouncedSearchQuery);
+      const response = await fetchBaseProductList(currentPage, pageSize, debouncedSearchQuery);
 
       if (response.success) {
-        setCategories(response.data.list);
+        setBaseProducts(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load data",
+        description: "Failed to load base products",
         variant: "destructive",
       });
     } finally {
@@ -84,17 +75,17 @@ export default function ProductSellingPointsList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteData(deleteItemId);
-      setCategories((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteBaseProduct(deleteItemId);
+      setBaseProducts((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
         title: "Success",
-        description: "Data deleted successfully",
+        description: "Base product deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete data",
+        description: "Failed to delete base product",
         variant: "destructive",
       });
     } finally {
@@ -102,7 +93,7 @@ export default function ProductSellingPointsList() {
     }
   };
 
-  const columns: ColumnDef<ProductSellingPoint>[] = [
+  const columns: ColumnDef<BaseProduct>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -114,52 +105,48 @@ export default function ProductSellingPointsList() {
       cell: ({ row }) => {
         const mediaPath = row.getValue("media_path") as string | null;
         return mediaPath ? (
-          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("name")} className="h-10 w-10 object-cover rounded" />
+          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("title")} className="h-10 w-10 object-cover rounded" />
         ) : (
           <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
         );
       },
     },
     {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
     },
     {
       accessorKey: "slug",
       header: "Slug",
-      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
+      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">{row.getValue("slug")}</div>,
+    },
+    {
+      accessorKey: "category",
+      header: "Category",
+      cell: ({ row }) => {
+        const category = row.original.category;
+        return <div className="text-sm">{category?.name || "N/A"}</div>;
+      },
     },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      enableSorting: true,
-      cell: ({ row }) => {
-        const item = row.original;
-        return (
-          <Input
-            type="number"
-            value={editingSortOrder[item.id!] !== undefined ? editingSortOrder[item.id!] : row.getValue("sort_order") || 0}
-            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
-            className="w-20"
-          />
-        );
-      },
+      cell: ({ row }) => <div className="text-sm">{row.getValue("sort_order") || 0}</div>,
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "createdAt",
+      header: "Created At",
+      enableSorting: true,
       cell: ({ row }) => {
-        const item = row.original;
-        const status = row.getValue("status") as boolean;
-        return (
-          <div className="flex items-center gap-2">
-            <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
-          </div>
+        const createdAt = row.getValue("createdAt") as string;
+        return createdAt ? (
+          <div className="text-sm text-muted-foreground">{new Date(createdAt).toLocaleDateString()}</div>
+        ) : (
+          <div className="text-sm text-muted-foreground">N/A</div>
         );
       },
     },
-
     {
       id: "actions",
       cell: ({ row }) => {
@@ -174,7 +161,7 @@ export default function ProductSellingPointsList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/product-selling-points/edit/${item.id}`)}>
+              <DropdownMenuItem onClick={() => navigate(`/base-products/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
@@ -193,7 +180,7 @@ export default function ProductSellingPointsList() {
     <>
       <DataTable
         columns={columns}
-        data={categories}
+        data={baseProducts}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -206,10 +193,10 @@ export default function ProductSellingPointsList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Product Selling Points"
-        searchPlaceholder="Search points..."
-        onAdd={() => navigate("/product-selling-points/create")}
-        addButtonText="Add Point"
+        title="Base Products"
+        searchPlaceholder="Search base products..."
+        onAdd={() => navigate("/base-products/create")}
+        addButtonText="Add Base Product"
       />
 
       {/* Delete Confirmation Dialog */}
@@ -218,7 +205,7 @@ export default function ProductSellingPointsList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the product category and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the base product and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
