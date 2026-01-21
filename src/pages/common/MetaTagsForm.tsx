@@ -1,9 +1,10 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams, useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { X, Save } from "lucide-react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Save, ArrowLeft } from "lucide-react";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
@@ -11,8 +12,8 @@ import {
   FormTextareaField,
 } from "@/components/forms/FormFieldComponents";
 import {
+  fetchMetaTagById,
   updateMetaTag,
-  MetaTag,
   UpdateMetaTagRequest,
 } from "@/services/common/metaTagsApi";
 import { toast } from "sonner";
@@ -26,49 +27,74 @@ const metaTagSchema = z.object({
     "Meta description (AR)",
   ),
   meta_keywords: commonValidations.requiredString("Meta keywords"),
-  meta_keywords_ar: commonValidations.requiredString(
-    "Meta keywords (AR)",
-  ),
+  meta_keywords_ar: commonValidations.requiredString("Meta keywords (AR)"),
   other_meta: commonValidations.requiredString("Other meta tags"),
-
-  other_meta_ar: commonValidations.requiredString(
-    "Other meta tags (AR)",
-  ),
+  other_meta_ar: commonValidations.requiredString("Other meta tags (AR)"),
 });
 
 type MetaTagFormData = z.infer<typeof metaTagSchema>;
 
-interface MetaTagsFormProps {
-  metaTag: MetaTag;
-  onClose: () => void;
-  onSuccess: () => void;
-}
+export default function MetaTagsForm() {
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-export const MetaTagsForm: React.FC<MetaTagsFormProps> = ({
-  metaTag,
-  onClose,
-  onSuccess,
-}) => {
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [pageName, setPageName] = useState("");
+
   const form = useForm<MetaTagFormData>({
     resolver: zodResolver(metaTagSchema),
     defaultValues: {
-      meta_title: metaTag.meta_title ?? "",
-      meta_title_ar: metaTag.meta_title_ar ?? "",
-      meta_description: metaTag.meta_description ?? "",
-      meta_description_ar: metaTag.meta_description_ar ?? "",
-      meta_keywords: metaTag.meta_keywords ?? "",
-      meta_keywords_ar: metaTag.meta_keywords_ar ?? "",
-      other_meta: metaTag.other_meta ?? "",
-      other_meta_ar: metaTag.other_meta_ar ?? "",
+      meta_title: "",
+      meta_title_ar: "",
+      meta_description: "",
+      meta_description_ar: "",
+      meta_keywords: "",
+      meta_keywords_ar: "",
+      other_meta: "",
+      other_meta_ar: "",
     },
   });
 
-  const {
-    formState: { isSubmitting },
-  } = form;
+  useEffect(() => {
+    if (id) {
+      loadMetaTagData(parseInt(id));
+    }
+  }, [id]);
+
+  const loadMetaTagData = async (itemId: number) => {
+    try {
+      setInitialLoading(true);
+      const response = await fetchMetaTagById(itemId);
+      const data = response.data;
+
+      if (data) {
+        setPageName(data.page);
+        form.reset({
+          meta_title: data.meta_title ?? "",
+          meta_title_ar: data.meta_title_ar ?? "",
+          meta_description: data.meta_description ?? "",
+          meta_description_ar: data.meta_description_ar ?? "",
+          meta_keywords: data.meta_keywords ?? "",
+          meta_keywords_ar: data.meta_keywords_ar ?? "",
+          other_meta: data.other_meta ?? "",
+          other_meta_ar: data.other_meta_ar ?? "",
+        });
+      }
+    } catch (error) {
+      toast.error("Failed to load meta tag data");
+      navigate("/meta-tags");
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
   const onSubmit = async (data: MetaTagFormData) => {
+    if (!id) return;
+
     try {
+      setLoading(true);
+
       const payload: UpdateMetaTagRequest = {
         meta_title: data.meta_title,
         meta_title_ar: data.meta_title_ar,
@@ -80,41 +106,52 @@ export const MetaTagsForm: React.FC<MetaTagsFormProps> = ({
         other_meta_ar: data.other_meta_ar,
       };
 
-      await updateMetaTag(metaTag.id, payload);
+      await updateMetaTag(parseInt(id), payload);
 
       toast.success("Meta tag updated successfully");
-      onSuccess();
+      navigate("/meta-tags");
     } catch (error: any) {
       toast.error(
         error?.message || "Failed to update meta tags. Please try again.",
       );
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <Card className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
-      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 rounded-lg border bg-background p-6 shadow-lg">
-        <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <div>
-            <h2 className="text-lg font-semibold">Edit Meta Tags</h2>
-            <p className="text-sm text-muted-foreground">
-              Page: <span className="font-medium">{metaTag.page}</span>
-            </p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-muted-foreground">Loading meta tag data...</div>
+      </div>
+    );
+  }
 
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Meta Title Section */}
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => navigate("/meta-tags")}
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold">Edit Meta Tags</h1>
+          <p className="text-muted-foreground">
+            Page: <span className="font-medium">{pageName}</span>
+          </p>
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Meta Title</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <FormTextField
                   form={form}
@@ -130,8 +167,14 @@ export const MetaTagsForm: React.FC<MetaTagsFormProps> = ({
                   dir="rtl"
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Meta Description Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Meta Description</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <FormTextareaField
                   form={form}
@@ -149,8 +192,14 @@ export const MetaTagsForm: React.FC<MetaTagsFormProps> = ({
                   dir="rtl"
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Meta Keywords Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Meta Keywords</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <FormTextField
                   form={form}
@@ -166,8 +215,14 @@ export const MetaTagsForm: React.FC<MetaTagsFormProps> = ({
                   dir="rtl"
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Other Meta Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Other Meta Tags</CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <FormTextareaField
                   form={form}
@@ -185,31 +240,24 @@ export const MetaTagsForm: React.FC<MetaTagsFormProps> = ({
                   dir="rtl"
                 />
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="flex justify-end gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onClose}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    "Updating..."
-                  ) : (
-                    <>
-                      <Save className="mr-1 h-4 w-4" />
-                      Update Meta Tags
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </div>
-    </Card>
+          <div className="flex justify-end gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/meta-tags")}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading}>
+              <Save className="h-4 w-4 mr-2" />
+              {loading ? "Updating..." : "Update Meta Tags"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
-};
+}
