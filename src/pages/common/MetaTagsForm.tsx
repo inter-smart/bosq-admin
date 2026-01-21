@@ -8,16 +8,13 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
-  FormTextField,
-  FormTextareaField,
-} from "@/components/forms/FormFieldComponents";
-import {
   fetchMetaTagById,
   updateMetaTag,
   UpdateMetaTagRequest,
 } from "@/services/common/metaTagsApi";
 import { toast } from "sonner";
 import { commonValidations } from "@/utils/formUtils";
+import { FormTextareaField } from "@/components/forms/FormFieldComponents";
 
 const metaTagSchema = z.object({
   meta_title: commonValidations.requiredString("Meta title"),
@@ -153,13 +150,13 @@ export default function MetaTagsForm() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <FormTextField
+                <FormTextareaField
                   form={form}
                   name="meta_title"
                   label="Meta Title"
                   placeholder="Enter meta title (50–60 characters)"
                 />
-                <FormTextField
+                <FormTextareaField
                   form={form}
                   name="meta_title_ar"
                   label="Meta Title (Arabic)"
@@ -201,13 +198,13 @@ export default function MetaTagsForm() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <FormTextField
+                <FormTextareaField
                   form={form}
                   name="meta_keywords"
                   label="Meta Keywords"
                   placeholder="Comma-separated keywords"
                 />
-                <FormTextField
+                <FormTextareaField
                   form={form}
                   name="meta_keywords_ar"
                   label="Meta Keywords (Arabic)"
@@ -224,21 +221,32 @@ export default function MetaTagsForm() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <FormTextareaField
-                  form={form}
-                  name="other_meta"
-                  label="Other Meta Tags"
-                  placeholder="Enter other meta tags"
-                  rows={3}
-                />
-                <FormTextareaField
-                  form={form}
-                  name="other_meta_ar"
-                  label="Other Meta Tags (Arabic)"
-                  placeholder="أدخل علامات ميتا أخرى"
-                  rows={3}
-                  dir="rtl"
-                />
+                <div>
+                  <FormTextareaField
+                    form={form}
+                    name="other_meta"
+                    label="Other Meta Tags"
+                    placeholder="Enter other meta tags"
+                    rows={3}
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {`eg: <meta name="description" content="John Doe" />`}
+                  </p>
+                </div>
+                <div>
+                  <FormTextareaField
+                    form={form}
+                    name="other_meta_ar"
+                    label="Other Meta Tags (Arabic)"
+                    placeholder="أدخل علامات ميتا أخرى"
+                    rows={3}
+                    dir="rtl"
+                  />
+
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {`eg: <meta name="description" content="John Doe" />`}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

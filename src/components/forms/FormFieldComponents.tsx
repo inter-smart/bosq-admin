@@ -99,6 +99,7 @@ export function FormNumberField<T extends FieldValues>({
 // Textarea Field Component
 interface FormTextareaFieldProps<T extends FieldValues> extends BaseFormFieldProps<T> {
   rows?: number;
+  dir?: "ltr" | "rtl";
 }
 
 export function FormTextareaField<T extends FieldValues>({
@@ -107,6 +108,7 @@ export function FormTextareaField<T extends FieldValues>({
   label,
   placeholder,
   rows = 3,
+  dir,
 }: FormTextareaFieldProps<T>) {
   return (
     <FormField
@@ -116,7 +118,7 @@ export function FormTextareaField<T extends FieldValues>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Textarea {...field} placeholder={placeholder} rows={rows} />
+            <Textarea {...field} placeholder={placeholder} rows={rows} dir={dir} />
           </FormControl>
           <FormMessage />
         </FormItem>
