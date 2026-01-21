@@ -24,6 +24,8 @@ const ProductCategoriesList = lazy(() => import("./pages/product/ProductCategori
 const ProductCategoriesForm = lazy(() => import("./pages/product/ProductCategoriesForm"));
 const ProductAttributesList = lazy(() => import("./pages/product/ProductAttributesList"));
 const ProductAttributesForm = lazy(() => import("./pages/product/ProductAttributesForm"));
+const AttributeValuesList = lazy(() => import("./pages/product/AttributeValuesList"));
+const AttributeValuesForm = lazy(() => import("./pages/product/AttributeValuesForm"));
 const ProductSectoresList = lazy(() => import("./pages/product/ProductSectorsList"));
 const ProductSectorsForm = lazy(() => import("./pages/product/ProductSectorsForm"));
 const ProductSellingPointsList = lazy(() => import("./pages/product/ProductSellingPointList"));
@@ -297,6 +299,32 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductAttributesForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Attribute Values Routes */}
+            <Route
+              path="/product-attributes/:attributeId/values"
+              element={
+                <ProtectedRoute>
+                  <AttributeValuesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-attributes/:attributeId/values/create"
+              element={
+                <ProtectedRoute>
+                  <AttributeValuesForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-attributes/:attributeId/values/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AttributeValuesForm />
                 </ProtectedRoute>
               }
             />

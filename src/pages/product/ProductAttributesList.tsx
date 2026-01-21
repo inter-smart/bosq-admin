@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ListPlus } from "lucide-react";
 import { fetchProductAttributeList, deleteProductAttribute, ProductAttribute } from "@/services/product/productAttributesApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -143,17 +143,11 @@ export default function ProductAttributesList() {
         return (
           <div className="flex items-center gap-2">
             <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
-            <Badge variant={status ? "default" : "secondary"}>{status ? "active" : "inactive"}</Badge>
           </div>
         );
       },
     },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      enableSorting: true,
-      cell: ({ row }) => <div className="text-sm text-muted-foreground">{new Date(row.getValue("createdAt")).toLocaleDateString()}</div>,
-    },
+
     {
       id: "actions",
       cell: ({ row }) => {
@@ -171,6 +165,10 @@ export default function ProductAttributesList() {
               <DropdownMenuItem onClick={() => navigate(`/product-attributes/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/product-attributes/${item.id}/values`)}>
+                <ListPlus className="mr-2 h-4 w-4" />
+                Add Values
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
