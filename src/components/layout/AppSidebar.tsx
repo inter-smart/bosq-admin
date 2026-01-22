@@ -35,6 +35,7 @@ import {
   PieChart,
   Star,
   Box,
+  Inbox,
 } from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
@@ -43,6 +44,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const bosqLogo = "/bosq-logo-light.png";
 
 const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
+
+const enquiriesSection = [
+  { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
+];
 
 const cmsSection = [
   {
@@ -289,6 +294,7 @@ export function AppSidebar() {
   const [returnPolicyOpen, setReturnPolicyOpen] = useState(false);
   const [sustainabilityOpen, setSustainabilityOpen] = useState(false);
   const [productsOpen, setProductsOpen] = useState(false);
+  const [enquiriesOpen, setEnquiriesOpen] = useState(false);
   const isCollapsed = state === "collapsed";
 
   // Helper function to close all sections
@@ -315,6 +321,7 @@ export function AppSidebar() {
     setReturnPolicyOpen(false);
     setSustainabilityOpen(false);
     setProductsOpen(false);
+    setEnquiriesOpen(false);
   };
 
   // Auto-open based on current path and close others
@@ -323,6 +330,12 @@ export function AppSidebar() {
 
     // Close all first
     closeAllSections();
+
+    // Auto-open Enquiries section
+    if (["/contact-enquiries"].some((r) => path.includes(r))) {
+      setEnquiriesOpen(true);
+      return;
+    }
 
     // Auto-open Home section
     if (["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) => path.includes(r))) {
@@ -498,6 +511,17 @@ export function AppSidebar() {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* Enquiries */}
+        <SidebarCollapsibleSection
+          title="Enquiries"
+          icon={Inbox}
+          open={enquiriesOpen}
+          setOpen={setEnquiriesOpen}
+          items={enquiriesSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
 
         {/* CMS Section with Nested Structure */}
         <SidebarGroup>

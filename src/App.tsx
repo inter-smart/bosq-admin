@@ -66,6 +66,10 @@ const FaqListForm = lazy(() => import("./pages/cms/faq/FaqListForm"));
 // Contact pages
 const ContactCmsForm = lazy(() => import("./pages/cms/contact/ContactCmsForm"));
 
+// Contact Enquiries pages
+const ContactEnquiriesList = lazy(() => import("./pages/enquiries/ContactEnquiriesList"));
+const ContactEnquiryDetails = lazy(() => import("./pages/enquiries/ContactEnquiryDetails"));
+
 // Projects pages
 const ProjectsCmsForm = lazy(() => import("./pages/cms/projects/ProjectsCmsForm"));
 const ProjectCategoryList = lazy(() => import("./pages/cms/projects/ProjectCategoryList"));
@@ -723,6 +727,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ContactCmsForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Contact Enquiries Routes */}
+            <Route
+              path="/contact-enquiries"
+              element={
+                <ProtectedRoute>
+                  <ContactEnquiriesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contact-enquiries/:id"
+              element={
+                <ProtectedRoute>
+                  <ContactEnquiryDetails />
                 </ProtectedRoute>
               }
             />
