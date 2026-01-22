@@ -40,6 +40,16 @@ export interface ProductVariantImageItemResponse {
   data: ProductVariantImage;
 }
 
+export interface ProductVariantImageDeleteResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  statusCode: number;
+  data?: {
+    deleted_ids: number[];
+  };
+}
+
 export interface ProductVariantImagesUploadResponse {
   success: boolean;
   message: string;
@@ -92,8 +102,8 @@ export const deleteProductVariantImage = async (id: number): Promise<void> => {
 };
 
 // Delete product variant image bulk
-export const bulkDeleteProductVariantImages = async (ids: number[]): Promise<void> => {
-  return apiCall(`/resources/product-variant-images-bulk`, {
+export const bulkDeleteProductVariantImages = async (ids: number[]): Promise<ProductVariantImageDeleteResponse> => {
+  return apiCall(`/resources/product-variant-images/all`, {
     method: "DELETE",
     data: { ids },
   });

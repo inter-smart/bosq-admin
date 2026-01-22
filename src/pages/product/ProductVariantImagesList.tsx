@@ -101,13 +101,21 @@ export default function ProductVariantImagesList() {
   const handleBulkDelete = async () => {
     try {
       const imageIds = Array.from(selectedImages);
-      await bulkDeleteProductVariantImages(imageIds);
-      setImages((prev) => prev.filter((item) => !selectedImages.has(item.id!)));
+      const response = await bulkDeleteProductVariantImages(imageIds);
+
+      // Remove deleted images from local state
+      setImages((prev) => prev.filter((img) => !selectedImages.has(img.id!)));
+
+      // Clear selection
       setSelectedImages(new Set());
+
       toast({
         title: "Success",
-        description: `${imageIds.length} image(s) deleted successfully`,
+        description: response.message || `${imageIds.length} image(s) deleted successfully`,
       });
+
+      // Navigate back to variant listing page
+      navigate(getBackUrl());
     } catch (error) {
       toast({
         title: "Error",

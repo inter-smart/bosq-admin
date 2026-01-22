@@ -32,6 +32,7 @@ export default function BaseProductForm() {
   const [loadingSubCategories, setLoadingSubCategories] = useState(false);
   const [sectors, setSectors] = useState<ProductSector[]>([]);
   const [sellingPoints, setSellingPoints] = useState<ProductSellingPoint[]>([]);
+  const [initialBasePrice, setInitialBasePrice] = useState<string | null>(null);
 
   const form = useForm<BaseProductFormData>({
     resolver: zodResolver(baseProductSchema),
@@ -144,6 +145,9 @@ export default function BaseProductForm() {
           }
         }
 
+        // Store the initial base price for change detection
+        setInitialBasePrice(data.base_price || "");
+
         form.reset({
           title: data.title || "",
           title_ar: data.title_ar || "",
@@ -216,6 +220,12 @@ export default function BaseProductForm() {
 
       // Base price (required, DECIMAL(10,2) format)
       formData.append("base_price", data.base_price);
+
+      // Send flag indicating if base_price has changed (only for updates)
+      if (isEditing && initialBasePrice !== null) {
+        const basePriceChanged = data.base_price !== initialBasePrice;
+        formData.append("base_price_changed", basePriceChanged ? "1" : "0");
+      }
 
       // Only append media_path if it's a new file
       if (data.media_path instanceof File) {
