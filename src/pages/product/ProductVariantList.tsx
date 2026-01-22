@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ArrowLeft } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
@@ -80,12 +80,7 @@ export default function ProductVariantList() {
         setLoading(true);
       }
 
-      const response = await fetchProductVariantList(
-        currentPage,
-        pageSize,
-        debouncedSearchQuery,
-        parseInt(productId)
-      );
+      const response = await fetchProductVariantList(currentPage, pageSize, debouncedSearchQuery, parseInt(productId));
 
       if (response.success) {
         setVariants(response.data.list);
@@ -144,18 +139,14 @@ export default function ProductVariantList() {
     {
       accessorKey: "price",
       header: "Price",
-      cell: ({ row }) => <div className="font-medium">${row.getValue("price")}</div>,
+      cell: ({ row }) => <div className="font-medium">{row.getValue("price")}</div>,
     },
     {
       accessorKey: "stock",
       header: "Stock",
       cell: ({ row }) => {
         const stock = row.getValue("stock") as number;
-        return (
-          <Badge variant={stock > 0 ? "default" : "destructive"}>
-            {stock}
-          </Badge>
-        );
+        return <Badge variant={stock > 0 ? "default" : "destructive"}>{stock}</Badge>;
       },
     },
     {
@@ -163,11 +154,7 @@ export default function ProductVariantList() {
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as boolean;
-        return (
-          <Badge variant={status ? "default" : "secondary"}>
-            {status ? "Active" : "Inactive"}
-          </Badge>
-        );
+        return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
       },
     },
     {
@@ -199,6 +186,10 @@ export default function ProductVariantList() {
               <DropdownMenuItem onClick={() => navigate(`/product-variants/${productId}/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/product-variant-images/${item.id}`)}>
+                <Image className="mr-2 h-4 w-4" />
+                Manage Images
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />

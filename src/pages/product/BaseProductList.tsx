@@ -117,6 +117,11 @@ export default function BaseProductList() {
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
     },
     {
+      accessorKey: "base_price",
+      header: "Price",
+      cell: ({ row }) => <div className="font-medium">{row.getValue("base_price")}</div>,
+    },
+    {
       accessorKey: "slug",
       header: "Slug",
       cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">{row.getValue("slug")}</div>,

@@ -33,6 +33,7 @@ export interface BaseProduct {
   id?: number;
   title: string;
   title_ar: string;
+  base_price: string;
   slug?: string;
   description?: string;
   description_ar?: string;

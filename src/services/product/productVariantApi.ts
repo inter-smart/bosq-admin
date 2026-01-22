@@ -22,7 +22,7 @@ export interface ProductVariant {
     title_ar: string;
     slug: string;
   };
-  attributes?: VariantAttribute[];
+  variant_attributes?: VariantAttribute[];
 }
 
 export interface VariantAttribute {

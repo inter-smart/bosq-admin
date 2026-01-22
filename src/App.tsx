@@ -36,6 +36,8 @@ const BaseProductList = lazy(() => import("./pages/product/BaseProductList"));
 const BaseProductForm = lazy(() => import("./pages/product/BaseProductForm"));
 const ProductVariantList = lazy(() => import("./pages/product/ProductVariantList"));
 const ProductVariantForm = lazy(() => import("./pages/product/ProductVariantForm"));
+const ProductVariantImagesList = lazy(() => import("./pages/product/ProductVariantImagesList"));
+const ProductVariantImagesForm = lazy(() => import("./pages/product/ProductVariantImagesForm"));
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -454,6 +456,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductVariantForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Variant Images Routes */}
+            <Route
+              path="/product-variant-images/:variantId"
+              element={
+                <ProtectedRoute>
+                  <ProductVariantImagesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-variant-images/:variantId/add"
+              element={
+                <ProtectedRoute>
+                  <ProductVariantImagesForm />
                 </ProtectedRoute>
               }
             />
