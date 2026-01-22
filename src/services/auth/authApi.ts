@@ -156,7 +156,7 @@ export const verifyResetOtp = async (
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "OTP verification failed");
+    throw new Error(data?.error?.message || "OTP verification failed");
   }
 
   return data;
