@@ -9,6 +9,8 @@ export interface MetaTag {
   meta_description_ar?: string;
   meta_keywords: string;
   meta_keywords_ar?: string;
+  other_meta?: string;
+  other_meta_ar?: string;
   status?: boolean;
   deleted_at?: string | null;
   createdAt?: string;
@@ -48,14 +50,20 @@ export interface CreateMetaTagData {
   meta_description_ar?: string;
   meta_keywords: string;
   meta_keywords_ar?: string;
+  other_meta?: string;
+  other_meta_ar?: string;
   status?: boolean;
 }
 
 export interface UpdateMetaTagRequest {
   meta_title: string;
+  meta_title_ar: string;
   meta_description: string;
+  meta_description_ar: string;
   meta_keywords: string;
-  other_meta_tags?: string;
+  meta_keywords_ar: string;
+  other_meta?: string;
+  other_meta_ar?: string;
 }
 
 

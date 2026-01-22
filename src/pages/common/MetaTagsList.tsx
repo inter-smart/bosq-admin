@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
+import { useNavigate } from "react-router-dom";
 import { Edit, Tags } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/common/DataTable";
 import { fetchMetaTagsList, MetaTag } from "@/services/common/metaTagsApi";
-import { MetaTagsForm } from "./MetaTagsForm";
-
 
 export default function MetaTagsList() {
-  const [editingMetaTag, setEditingMetaTag] = useState<MetaTag | null>(null);
+  const navigate = useNavigate();
   const [metaTagsData, setMetaTagsData] = useState<MetaTag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [totalCount, setTotalCount] = useState(0);
-  const [reload, setReload] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -56,7 +54,7 @@ export default function MetaTagsList() {
     };
 
     loadMetaTags();
-  }, [currentPage, debouncedSearchQuery, reload]);
+  }, [currentPage, debouncedSearchQuery]);
 
   const columns: ColumnDef<MetaTag>[] = [
     {
@@ -113,7 +111,7 @@ export default function MetaTagsList() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setEditingMetaTag(row.original)}
+          onClick={() => navigate(`/meta-tags/${row.original.id}/edit`)}
         >
           <Edit className="h-4 w-4 mr-1" />
           Edit
@@ -121,12 +119,6 @@ export default function MetaTagsList() {
       ),
     },
   ];
-
-  const handleEditComplete = () => {
-    setEditingMetaTag(null);
-    setCurrentPage(1); // Reset to first page and reload
-    setReload((prev) => !prev); // 👈 Trigger reload
-  };
 
   if (error) {
     return (
@@ -181,14 +173,6 @@ export default function MetaTagsList() {
           />
         </CardContent>
       </Card>
-
-      {editingMetaTag && (
-        <MetaTagsForm
-          metaTag={editingMetaTag}
-          onClose={() => setEditingMetaTag(null)}
-          onSuccess={handleEditComplete}
-        />
-      )}
     </div>
   );
-};
+}

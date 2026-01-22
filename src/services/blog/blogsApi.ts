@@ -14,6 +14,8 @@ export interface Blog {
   meta_description_ar?: string;
   meta_keywords: string;
   meta_keywords_ar?: string;
+  other_meta?: string;
+  other_meta_ar?: string;
   
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
