@@ -21,16 +21,16 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Eye, Trash2 } from "lucide-react";
 import {
-  fetchLeadGenerations,
-  deleteLeadGeneration,
-  LeadGeneration,
-} from "@/services/enquiries/leadGenerationApi";
+  fetchNewsletterSubscriptions,
+  deleteNewsletterSubscription,
+  NewsletterSubscription,
+} from "@/services/enquiries/newsletterApi";
 import { useToast } from "@/hooks/use-toast";
 
-export default function LeadGenerationList() {
+export default function NewsletterSubscriptionsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [leads, setLeads] = useState<LeadGeneration[]>([]);
+  const [subscriptions, setSubscriptions] = useState<NewsletterSubscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -49,12 +49,12 @@ export default function LeadGenerationList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch leads
+  // Fetch subscriptions
   useEffect(() => {
-    loadLeads();
+    loadSubscriptions();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
-  const loadLeads = async () => {
+  const loadSubscriptions = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -62,20 +62,20 @@ export default function LeadGenerationList() {
         setLoading(true);
       }
 
-      const response = await fetchLeadGenerations(
+      const response = await fetchNewsletterSubscriptions(
         currentPage,
         pageSize,
-        debouncedSearchQuery,
+        debouncedSearchQuery
       );
 
       if (response.success) {
-        setLeads(response.data.list);
+        setSubscriptions(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load lead generation data",
+        description: "Failed to load newsletter subscriptions",
         variant: "destructive",
       });
     } finally {
@@ -88,16 +88,16 @@ export default function LeadGenerationList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteLeadGeneration(deleteItemId);
+      await deleteNewsletterSubscription(deleteItemId);
       toast({
         title: "Success",
-        description: "Lead deleted successfully",
+        description: "Newsletter subscription deleted successfully",
       });
-      loadLeads();
+      loadSubscriptions();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete lead",
+        description: "Failed to delete newsletter subscription",
         variant: "destructive",
       });
     } finally {
@@ -105,7 +105,7 @@ export default function LeadGenerationList() {
     }
   };
 
-  const columns: ColumnDef<LeadGeneration>[] = [
+  const columns: ColumnDef<NewsletterSubscription>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -116,42 +116,17 @@ export default function LeadGenerationList() {
       ),
     },
     {
-      accessorKey: "name",
-      header: "Name",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[150px] truncate">
-          {row.getValue("name")}
-        </div>
-      ),
-    },
-    {
       accessorKey: "email",
       header: "Email",
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[200px] truncate">
+        <div className="font-medium max-w-[300px] truncate">
           {row.getValue("email")}
         </div>
       ),
     },
     {
-      accessorKey: "phone",
-      header: "Phone",
-      cell: ({ row }) => (
-        <div className="text-sm">{row.getValue("phone") || "-"}</div>
-      ),
-    },
-    {
-      accessorKey: "message",
-      header: "Message",
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground max-w-[250px] truncate">
-          {row.getValue("message")}
-        </div>
-      ),
-    },
-    {
       accessorKey: "createdAt",
-      header: "Submitted At",
+      header: "Subscribed At",
       cell: ({ row }) => (
         <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString("en-US", {
@@ -181,7 +156,7 @@ export default function LeadGenerationList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/lead-generation/${item.id}`)}
+                onClick={() => navigate(`/newsletter-subscriptions/${item.id}`)}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 View Details
@@ -204,7 +179,7 @@ export default function LeadGenerationList() {
     <>
       <DataTable
         columns={columns}
-        data={leads}
+        data={subscriptions}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -217,8 +192,8 @@ export default function LeadGenerationList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Lead Generation"
-        searchPlaceholder="Search leads..."
+        title="Newsletter Subscriptions"
+        searchPlaceholder="Search by email..."
       />
 
       {/* Delete Confirmation Dialog */}
@@ -231,7 +206,7 @@ export default function LeadGenerationList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              lead and remove its data from the servers.
+              newsletter subscription and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -74,6 +74,10 @@ const ContactEnquiryDetails = lazy(() => import("./pages/enquiries/ContactEnquir
 const LeadGenerationList = lazy(() => import("./pages/enquiries/LeadGenerationList"));
 const LeadGenerationDetails = lazy(() => import("./pages/enquiries/LeadGenerationDetails"));
 
+// Newsletter Subscription pages
+const NewsletterSubscriptionsList = lazy(() => import("./pages/enquiries/NewsletterSubscriptionsList"));
+const NewsletterSubscriptionDetails = lazy(() => import("./pages/enquiries/NewsletterSubscriptionDetails"));
+
 // Projects pages
 const ProjectsCmsForm = lazy(() => import("./pages/cms/projects/ProjectsCmsForm"));
 const ProjectCategoryList = lazy(() => import("./pages/cms/projects/ProjectCategoryList"));
@@ -767,6 +771,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <LeadGenerationDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Newsletter Subscriptions Routes */}
+            <Route
+              path="/newsletter-subscriptions"
+              element={
+                <ProtectedRoute>
+                  <NewsletterSubscriptionsList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/newsletter-subscriptions/:id"
+              element={
+                <ProtectedRoute>
+                  <NewsletterSubscriptionDetails />
                 </ProtectedRoute>
               }
             />

@@ -48,6 +48,7 @@ const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 const enquiriesSection = [
   { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
   { title: "Lead Generation", url: "/lead-generation", icon: Users },
+  { title: "Newsletter Subscriptions", url: "/newsletter-subscriptions", icon: Newspaper },
 ];
 
 const cmsSection = [
@@ -333,7 +334,7 @@ export function AppSidebar() {
     closeAllSections();
 
     // Auto-open Enquiries section
-    if (["/contact-enquiries", "/lead-generation"].some((r) => path.includes(r))) {
+    if (["/contact-enquiries", "/lead-generation", "/newsletter-subscriptions"].some((r) => path.includes(r))) {
       setEnquiriesOpen(true);
       return;
     }

@@ -155,8 +155,16 @@ export default function ContactEnquiriesList() {
       accessorKey: "createdAt",
       header: "Submitted At",
       cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {new Date(row.getValue("createdAt")).toLocaleDateString()} {new Date(row.getValue("createdAt")).toLocaleTimeString()}
+           <div className="text-sm text-muted-foreground">
+          {new Date(row.getValue("createdAt")).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+          })}{" "}
+          {new Date(row.getValue("createdAt")).toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </div>
       ),
     },
