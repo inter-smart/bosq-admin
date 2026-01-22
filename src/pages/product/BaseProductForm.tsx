@@ -9,6 +9,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchBaseProductById, createBaseProduct, updateBaseProduct, fetchChildCategories, ChildCategory } from "@/services/product/baseProductApi";
@@ -36,7 +37,15 @@ export default function BaseProductForm() {
     resolver: zodResolver(baseProductSchema),
     defaultValues: {
       title: "",
+      title_ar: "",
       description: "",
+      description_ar: "",
+      details: "",
+      details_ar: "",
+      details_points: "",
+      details_points_ar: "",
+      additional_details: "",
+      additional_details_ar: "",
       category_id: null,
       sub_category_id: null,
       media_path: null,
@@ -136,7 +145,15 @@ export default function BaseProductForm() {
 
         form.reset({
           title: data.title || "",
+          title_ar: data.title_ar || "",
           description: data.description || "",
+          description_ar: data.description_ar || "",
+          details: data.details || "",
+          details_ar: data.details_ar || "",
+          details_points: data.details_points || "",
+          details_points_ar: data.details_points_ar || "",
+          additional_details: data.additional_details || "",
+          additional_details_ar: data.additional_details_ar || "",
           category_id: parentCategoryId,
           sub_category_id: subCategoryId,
           sort_order: data.sort_order || 1,
@@ -162,11 +179,31 @@ export default function BaseProductForm() {
 
       const formData = new FormData();
 
+      // Required fields
       formData.append("title", data.title);
+      formData.append("title_ar", data.title_ar);
+      formData.append("description", data.description);
+      formData.append("description_ar", data.description_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
 
-      if (data.description) {
-        formData.append("description", data.description);
+      // Optional TEXT fields
+      if (data.details) {
+        formData.append("details", data.details);
+      }
+      if (data.details_ar) {
+        formData.append("details_ar", data.details_ar);
+      }
+      if (data.details_points) {
+        formData.append("details_points", data.details_points);
+      }
+      if (data.details_points_ar) {
+        formData.append("details_points_ar", data.details_points_ar);
+      }
+      if (data.additional_details) {
+        formData.append("additional_details", data.additional_details);
+      }
+      if (data.additional_details_ar) {
+        formData.append("additional_details_ar", data.additional_details_ar);
       }
 
       // Send sub_category_id if selected, otherwise send category_id (parent)
@@ -267,14 +304,57 @@ export default function BaseProductForm() {
 
                 <FormField
                   control={form.control}
+                  name="title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title (Arabic)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="أدخل عنوان المنتج" {...field} dir="rtl" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Enter product description" className="min-h-[100px]" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description (Arabic)</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="أدخل وصف المنتج" className="min-h-[100px]" {...field} dir="rtl" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <FormField
+                  control={form.control}
                   name="category_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category (Optional)</FormLabel>
-                      <Select
-                        onValueChange={handleCategoryChange}
-                        value={field.value ? String(field.value) : "none"}
-                      >
+                      <Select onValueChange={handleCategoryChange} value={field.value ? String(field.value) : "none"}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a category (optional)" />
@@ -294,11 +374,9 @@ export default function BaseProductForm() {
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {/* Sub Category Dropdown - Only show when parent category is selected */}
-              {selectedCategoryId && (
-                <div className="mt-6">
+                {/* Sub Category Dropdown - Only show when parent category is selected */}
+                {selectedCategoryId && (
                   <FormField
                     control={form.control}
                     name="sub_category_id"
@@ -335,27 +413,7 @@ export default function BaseProductForm() {
                       </FormItem>
                     )}
                   />
-                </div>
-              )}
-
-              <div className="mt-6">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter product description"
-                          className="min-h-[100px]"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                )}
               </div>
 
               <div className="mt-6">
@@ -385,6 +443,102 @@ export default function BaseProductForm() {
             </CardContent>
           </Card>
 
+          {/* Product Details Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="details"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Details (Optional)</FormLabel>
+                    <FormControl>
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter detailed product information..." />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="details_ar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Details (Arabic) (Optional)</FormLabel>
+                    <FormControl>
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل المنتج..." dir="rtl" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="details_points"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Details Points (Optional)</FormLabel>
+                    <FormControl>
+                      <RichTextEditor
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                        placeholder="Enter product detail points (bullet points, features, etc.)..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="details_points_ar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Details Points (Arabic) (Optional)</FormLabel>
+                    <FormControl>
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل نقاط تفاصيل المنتج..." dir="rtl" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="additional_details"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Additional Details (Optional)</FormLabel>
+                    <FormControl>
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter any additional product details..." />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="additional_details_ar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Additional Details (Arabic) (Optional)</FormLabel>
+                    <FormControl>
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إضافية للمنتج..." dir="rtl" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
           {/* Selling Points Card */}
           <Card>
             <CardHeader>
@@ -404,27 +558,18 @@ export default function BaseProductForm() {
                           name="selling_points"
                           render={({ field }) => {
                             return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
+                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value?.includes(item.id!)}
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange([...(field.value || []), item.id])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                        : field.onChange(field.value?.filter((value) => value !== item.id));
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal cursor-pointer">
-                                  {item.name}
-                                </FormLabel>
+                                <FormLabel className="font-normal cursor-pointer">{item.name}</FormLabel>
                               </FormItem>
                             );
                           }}
@@ -457,27 +602,18 @@ export default function BaseProductForm() {
                           name="sectors"
                           render={({ field }) => {
                             return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
+                              <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value?.includes(item.id!)}
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange([...(field.value || []), item.id])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                        : field.onChange(field.value?.filter((value) => value !== item.id));
                                     }}
                                   />
                                 </FormControl>
-                                <FormLabel className="font-normal cursor-pointer">
-                                  {item.name}
-                                </FormLabel>
+                                <FormLabel className="font-normal cursor-pointer">{item.name}</FormLabel>
                               </FormItem>
                             );
                           }}
