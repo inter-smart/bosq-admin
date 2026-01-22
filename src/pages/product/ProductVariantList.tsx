@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ArrowLeft } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
@@ -186,6 +186,10 @@ export default function ProductVariantList() {
               <DropdownMenuItem onClick={() => navigate(`/product-variants/${productId}/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/product-variant-images/${item.id}`)}>
+                <Image className="mr-2 h-4 w-4" />
+                Manage Images
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
