@@ -68,6 +68,18 @@ const FaqListForm = lazy(() => import("./pages/cms/faq/FaqListForm"));
 // Contact pages
 const ContactCmsForm = lazy(() => import("./pages/cms/contact/ContactCmsForm"));
 
+// Contact Enquiries pages
+const ContactEnquiriesList = lazy(() => import("./pages/enquiries/ContactEnquiriesList"));
+const ContactEnquiryDetails = lazy(() => import("./pages/enquiries/ContactEnquiryDetails"));
+
+// Lead Generation pages
+const LeadGenerationList = lazy(() => import("./pages/enquiries/LeadGenerationList"));
+const LeadGenerationDetails = lazy(() => import("./pages/enquiries/LeadGenerationDetails"));
+
+// Newsletter Subscription pages
+const NewsletterSubscriptionsList = lazy(() => import("./pages/enquiries/NewsletterSubscriptionsList"));
+const NewsletterSubscriptionDetails = lazy(() => import("./pages/enquiries/NewsletterSubscriptionDetails"));
+
 // Projects pages
 const ProjectsCmsForm = lazy(() => import("./pages/cms/projects/ProjectsCmsForm"));
 const ProjectCategoryList = lazy(() => import("./pages/cms/projects/ProjectCategoryList"));
@@ -743,6 +755,60 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ContactCmsForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Contact Enquiries Routes */}
+            <Route
+              path="/contact-enquiries"
+              element={
+                <ProtectedRoute>
+                  <ContactEnquiriesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contact-enquiries/:id"
+              element={
+                <ProtectedRoute>
+                  <ContactEnquiryDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Lead Generation Routes */}
+            <Route
+              path="/lead-generation"
+              element={
+                <ProtectedRoute>
+                  <LeadGenerationList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/lead-generation/:id"
+              element={
+                <ProtectedRoute>
+                  <LeadGenerationDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Newsletter Subscriptions Routes */}
+            <Route
+              path="/newsletter-subscriptions"
+              element={
+                <ProtectedRoute>
+                  <NewsletterSubscriptionsList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/newsletter-subscriptions/:id"
+              element={
+                <ProtectedRoute>
+                  <NewsletterSubscriptionDetails />
                 </ProtectedRoute>
               }
             />
