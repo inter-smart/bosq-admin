@@ -15,7 +15,7 @@ import {
   fetchAttributesWithValues,
   AttributeWithValues,
 } from "@/services/product/productVariantApi";
-import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
+import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
 
 interface AttributeValueSelection {
   id: string;
@@ -30,12 +30,12 @@ interface AttributeSelectionState {
 export default function ProductVariantForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { productId, id } = useParams();
+  const { productId, id } = useParams(); // productId is now model ID
   const isEditing = Boolean(id);
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [model, setModel] = useState<ProductModel | null>(null);
   const [attributes, setAttributes] = useState<AttributeWithValues[]>([]);
 
   // Form state
@@ -57,10 +57,10 @@ export default function ProductVariantForm() {
     try {
       setInitialLoading(true);
 
-      // Load product info
+      // Load model info
       if (productId) {
-        const productResponse = await fetchBaseProductById(parseInt(productId));
-        setProduct(productResponse.data);
+        const modelResponse = await fetchProductModelById(parseInt(productId));
+        setModel(modelResponse.data);
       }
 
       // Load attributes with values
@@ -245,7 +245,7 @@ export default function ProductVariantForm() {
         <div>
           <h1 className="text-2xl font-bold">
             {isEditing ? "Edit" : "Add"} Product Variant
-            {product ? ` for "${product.title}"` : ""}
+            {model ? ` for "${model.title}"` : ""}
           </h1>
           <p className="text-muted-foreground">{isEditing ? "Update" : "Create a new"} product variant</p>
         </div>

@@ -34,6 +34,8 @@ const ProductSellingPointsList = lazy(() => import("./pages/product/ProductSelli
 const ProductSellingPointsForm = lazy(() => import("./pages/product/ProductSellingPointForm"));
 const BaseProductList = lazy(() => import("./pages/product/BaseProductList"));
 const BaseProductForm = lazy(() => import("./pages/product/BaseProductForm"));
+const ProductModelList = lazy(() => import("./pages/product/ProductModelList"));
+const ProductModelForm = lazy(() => import("./pages/product/ProductModelForm"));
 const ProductVariantList = lazy(() => import("./pages/product/ProductVariantList"));
 const ProductVariantForm = lazy(() => import("./pages/product/ProductVariantForm"));
 const ProductVariantImagesList = lazy(() => import("./pages/product/ProductVariantImagesList"));
@@ -430,6 +432,32 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <BaseProductForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Model Routes */}
+            <Route
+              path="/product-models/:productId/list"
+              element={
+                <ProtectedRoute>
+                  <ProductModelList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-models/:productId/create"
+              element={
+                <ProtectedRoute>
+                  <ProductModelForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-models/:productId/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductModelForm />
                 </ProtectedRoute>
               }
             />
