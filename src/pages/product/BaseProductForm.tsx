@@ -48,6 +48,7 @@ export default function BaseProductForm() {
       additional_details_ar: "",
       category_id: null,
       sub_category_id: null,
+      base_price: "",
       media_path: null,
       sort_order: 1,
       selling_points: [],
@@ -156,6 +157,7 @@ export default function BaseProductForm() {
           additional_details_ar: data.additional_details_ar || "",
           category_id: parentCategoryId,
           sub_category_id: subCategoryId,
+          base_price: data.base_price || "",
           sort_order: data.sort_order || 1,
           media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
           selling_points: data.sellingPoints?.map((sp) => sp.id) || [],
@@ -211,6 +213,9 @@ export default function BaseProductForm() {
       if (categoryToSend) {
         formData.append("category_id", categoryToSend.toString());
       }
+
+      // Base price (required, DECIMAL(10,2) format)
+      formData.append("base_price", data.base_price);
 
       // Only append media_path if it's a new file
       if (data.media_path instanceof File) {
@@ -353,11 +358,11 @@ export default function BaseProductForm() {
                   name="category_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category (Optional)</FormLabel>
+                      <FormLabel>Category</FormLabel>
                       <Select onValueChange={handleCategoryChange} value={field.value ? String(field.value) : "none"}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a category (optional)" />
+                            <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -382,7 +387,7 @@ export default function BaseProductForm() {
                     name="sub_category_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Sub Category (Optional)</FormLabel>
+                        <FormLabel>Sub Category</FormLabel>
                         <Select
                           onValueChange={(value) => {
                             field.onChange(value === "none" ? null : parseInt(value));
@@ -414,6 +419,22 @@ export default function BaseProductForm() {
                     )}
                   />
                 )}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <FormField
+                  control={form.control}
+                  name="base_price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Base Price</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" min="0" placeholder="Enter base price (e.g., 99.99)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="mt-6">

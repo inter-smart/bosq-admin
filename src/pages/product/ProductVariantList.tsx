@@ -80,12 +80,7 @@ export default function ProductVariantList() {
         setLoading(true);
       }
 
-      const response = await fetchProductVariantList(
-        currentPage,
-        pageSize,
-        debouncedSearchQuery,
-        parseInt(productId)
-      );
+      const response = await fetchProductVariantList(currentPage, pageSize, debouncedSearchQuery, parseInt(productId));
 
       if (response.success) {
         setVariants(response.data.list);
@@ -144,18 +139,14 @@ export default function ProductVariantList() {
     {
       accessorKey: "price",
       header: "Price",
-      cell: ({ row }) => <div className="font-medium">${row.getValue("price")}</div>,
+      cell: ({ row }) => <div className="font-medium">{row.getValue("price")}</div>,
     },
     {
       accessorKey: "stock",
       header: "Stock",
       cell: ({ row }) => {
         const stock = row.getValue("stock") as number;
-        return (
-          <Badge variant={stock > 0 ? "default" : "destructive"}>
-            {stock}
-          </Badge>
-        );
+        return <Badge variant={stock > 0 ? "default" : "destructive"}>{stock}</Badge>;
       },
     },
     {
@@ -163,11 +154,7 @@ export default function ProductVariantList() {
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as boolean;
-        return (
-          <Badge variant={status ? "default" : "secondary"}>
-            {status ? "Active" : "Inactive"}
-          </Badge>
-        );
+        return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
       },
     },
     {

@@ -89,7 +89,7 @@ export default function ProductVariantForm() {
         setStatus(data.status ?? true);
 
         // Set attribute selections if available
-        if (data.attributes && data.attributes.length > 0) {
+        if (data.variant_attributes && data.variant_attributes.length > 0) {
           const loadedSelections: AttributeSelectionState = {};
 
           // Initialize with empty arrays for all attributes
@@ -98,7 +98,7 @@ export default function ProductVariantForm() {
           });
 
           // Populate with existing data
-          data.attributes.forEach((attr) => {
+          data.variant_attributes.forEach((attr) => {
             if (!loadedSelections[attr.attribute_id]) {
               loadedSelections[attr.attribute_id] = [];
             }
@@ -262,7 +262,7 @@ export default function ProductVariantForm() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="sku">SKU</Label>
-                  <Input id="sku" placeholder="Enter SKU" value={sku} onChange={(e) => setSku(e.target.value)} required />
+                  <Input id="sku" placeholder="Enter SKU" value={sku} onChange={(e) => setSku(e.target.value)} required disabled />
                 </div>
 
                 <div className="space-y-2">
@@ -273,6 +273,7 @@ export default function ProductVariantForm() {
                     value={productCode}
                     onChange={(e) => setProductCode(e.target.value)}
                     required
+                    disabled
                   />
                 </div>
 
@@ -286,6 +287,7 @@ export default function ProductVariantForm() {
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     required
+                    disabled
                   />
                 </div>
 
@@ -340,15 +342,17 @@ export default function ProductVariantForm() {
                 <Card key={attribute.id}>
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <CardTitle className="text-lg">{attribute.name}</CardTitle>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addValueSelection(attribute.id)}
-                      disabled={selections.length >= attribute.values.length}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
+                    {!isEditing && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addValueSelection(attribute.id)}
+                        disabled={selections.length >= attribute.values.length}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    )}
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {selections.length === 0 ? (
@@ -381,15 +385,17 @@ export default function ProductVariantForm() {
                               className="w-full"
                             />
                           </div>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="text-destructive hover:text-destructive shrink-0"
-                            onClick={() => removeValueSelection(attribute.id, selection.id)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
+                          {!isEditing && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:text-destructive shrink-0"
+                              onClick={() => removeValueSelection(attribute.id, selection.id)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       ))
                     )}
