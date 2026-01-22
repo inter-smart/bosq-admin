@@ -32,8 +32,18 @@ export interface RelationItem {
 export interface BaseProduct {
   id?: number;
   title: string;
+  title_ar: string;
   slug?: string;
   description?: string;
+  description_ar?: string;
+  details?: string;
+  details_ar?: string;
+  details_points?: string;
+  details_points_ar?: string;
+  additional_details?: string;
+  additional_details_ar?: string;
+  sub_category_id?: number | null;
+  sub_category?: Category | null;
   category_id?: number | null;
   category?: Category | null;
   sort_order?: number;
