@@ -70,6 +70,10 @@ const ContactCmsForm = lazy(() => import("./pages/cms/contact/ContactCmsForm"));
 const ContactEnquiriesList = lazy(() => import("./pages/enquiries/ContactEnquiriesList"));
 const ContactEnquiryDetails = lazy(() => import("./pages/enquiries/ContactEnquiryDetails"));
 
+// Lead Generation pages
+const LeadGenerationList = lazy(() => import("./pages/enquiries/LeadGenerationList"));
+const LeadGenerationDetails = lazy(() => import("./pages/enquiries/LeadGenerationDetails"));
+
 // Projects pages
 const ProjectsCmsForm = lazy(() => import("./pages/cms/projects/ProjectsCmsForm"));
 const ProjectCategoryList = lazy(() => import("./pages/cms/projects/ProjectCategoryList"));
@@ -745,6 +749,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ContactEnquiryDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Lead Generation Routes */}
+            <Route
+              path="/lead-generation"
+              element={
+                <ProtectedRoute>
+                  <LeadGenerationList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/lead-generation/:id"
+              element={
+                <ProtectedRoute>
+                  <LeadGenerationDetails />
                 </ProtectedRoute>
               }
             />
