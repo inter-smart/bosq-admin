@@ -335,7 +335,10 @@ export default function ProductVariantForm() {
           </Card>
         ) : (
           <div className="grid grid-cols-2 gap-6">
-            {attributes.map((attribute) => {
+            {(isEditing
+              ? attributes.filter((attr) => (attributeSelections[attr.id] || []).length > 0)
+              : attributes
+            ).map((attribute) => {
               const selections = attributeSelections[attribute.id] || [];
 
               return (
