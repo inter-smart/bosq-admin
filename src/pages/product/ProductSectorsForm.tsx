@@ -252,7 +252,7 @@ export default function ProductSectorsForm() {
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate("/product-categories")}>
+            <Button type="button" variant="outline" onClick={() => navigate("/product-sectors")}>
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>

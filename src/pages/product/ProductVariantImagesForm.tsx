@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Upload, X, GripVertical, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { uploadProductVariantImages } from "@/services/product/productVariantImagesApi";
+import { uploadProductVariantImages, fetchProductVariantImages } from "@/services/product/productVariantImagesApi";
 import { fetchProductVariantById, ProductVariant } from "@/services/product/productVariantApi";
 import { useEffect } from "react";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
@@ -30,9 +30,11 @@ interface SortableImageCardProps {
   onRemove: (id: string) => void;
   onUpdate: (id: string, field: keyof ImageItem, value: string | number | boolean) => void;
   onSetPrimary: (id: string) => void;
+  hasPrimaryImage: boolean;
 }
 
-function SortableImageCard({ image, onRemove, onUpdate, onSetPrimary }: SortableImageCardProps) {
+function 
+SortableImageCard({ image, onRemove, onUpdate, onSetPrimary, hasPrimaryImage }: SortableImageCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: image.id });
 
   const style = {
@@ -85,21 +87,23 @@ function SortableImageCard({ image, onRemove, onUpdate, onSetPrimary }: Sortable
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>Primary Image</Label>
-          <div className="flex items-center gap-2 pt-2">
-            <Button
-              type="button"
-              variant={image.is_primary ? "default" : "outline"}
-              size="sm"
-              onClick={() => onSetPrimary(image.id)}
-              className={image.is_primary ? "bg-yellow-500 hover:bg-yellow-600" : ""}
-            >
-              <Star className={`h-4 w-4 mr-1 ${image.is_primary ? "fill-current" : ""}`} />
-              {image.is_primary ? "Primary" : "Set Primary"}
-            </Button>
+        {!hasPrimaryImage && (
+          <div className="space-y-2">
+            <Label>Primary Image</Label>
+            <div className="flex items-center gap-2 pt-2">
+              <Button
+                type="button"
+                variant={image.is_primary ? "default" : "outline"}
+                size="sm"
+                onClick={() => onSetPrimary(image.id)}
+                className={image.is_primary ? "bg-yellow-500 hover:bg-yellow-600" : ""}
+              >
+                <Star className={`h-4 w-4 mr-1 ${image.is_primary ? "fill-current" : ""}`} />
+                {image.is_primary ? "Primary" : "Set Primary"}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <Button type="button" variant="ghost" size="icon" className="text-destructive mt-2" onClick={() => onRemove(image.id)}>
@@ -119,6 +123,7 @@ export default function ProductVariantImagesForm() {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [dragActive, setDragActive] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [existingPrimaryImage, setExistingPrimaryImage] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -135,8 +140,13 @@ export default function ProductVariantImagesForm() {
 
   const loadVariant = async (id: number) => {
     try {
-      const response = await fetchProductVariantById(id);
-      setVariant(response.data);
+      const [variantResponse, imagesResponse] = await Promise.all([
+        fetchProductVariantById(id),
+        fetchProductVariantImages(id),
+      ]);
+      setVariant(variantResponse.data);
+      const hasPrimary = imagesResponse.data.list.some((img) => img.is_primary);
+      setExistingPrimaryImage(hasPrimary);
     } catch (error) {
       toast({
         title: "Error",
@@ -211,7 +221,7 @@ export default function ProductVariantImagesForm() {
       sort_order: images.length + index,
       media_type: getMediaType(file), // ✅ auto set
       status: true,
-      is_primary: images.length === 0 && index === 0,
+      is_primary: !existingPrimaryImage && images.length === 0 && index === 0,
     }));
 
     setImages((prev) => [...prev, ...newImages]);
@@ -391,7 +401,7 @@ export default function ProductVariantImagesForm() {
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={images.map((img) => img.id)} strategy={verticalListSortingStrategy}>
                   {images.map((image) => (
-                    <SortableImageCard key={image.id} image={image} onRemove={removeImage} onUpdate={updateImage} onSetPrimary={setPrimaryImage} />
+                    <SortableImageCard key={image.id} image={image} onRemove={removeImage} onUpdate={updateImage} onSetPrimary={setPrimaryImage} hasPrimaryImage={existingPrimaryImage} />
                   ))}
                 </SortableContext>
               </DndContext>

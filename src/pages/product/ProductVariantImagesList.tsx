@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertDialog,
@@ -14,7 +15,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ArrowLeft, Plus, Trash2, Star } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Trash2, Star, MoreHorizontal } from "lucide-react";
 import {
   fetchProductVariantImages,
   deleteProductVariantImage,
@@ -24,6 +26,9 @@ import {
 } from "@/services/product/productVariantImagesApi";
 import { fetchProductVariantById, ProductVariant } from "@/services/product/productVariantApi";
 import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
 export default function ProductVariantImagesList() {
   const navigate = useNavigate();
@@ -64,7 +69,9 @@ export default function ProductVariantImagesList() {
       const response = await fetchProductVariantImages(parseInt(variantId));
 
       if (response.success) {
-        setImages(response.data.list);
+        // Sort images by sort_order
+        const sortedImages = response.data.list.sort((a, b) => a.sort_order - b.sort_order);
+        setImages(sortedImages);
       }
     } catch (error) {
       toast({
@@ -103,19 +110,13 @@ export default function ProductVariantImagesList() {
       const imageIds = Array.from(selectedImages);
       const response = await bulkDeleteProductVariantImages(imageIds);
 
-      // Remove deleted images from local state
       setImages((prev) => prev.filter((img) => !selectedImages.has(img.id!)));
-
-      // Clear selection
       setSelectedImages(new Set());
 
       toast({
         title: "Success",
         description: response.message || `${imageIds.length} image(s) deleted successfully`,
       });
-
-      // Navigate back to variant listing page
-      navigate(getBackUrl());
     } catch (error) {
       toast({
         title: "Error",
@@ -129,17 +130,13 @@ export default function ProductVariantImagesList() {
 
   const handleSetPrimary = async (imageId: number) => {
     try {
-      // First, unset all other images as primary
       const updatePromises = images
         .filter((img) => img.is_primary && img.id !== imageId)
         .map((img) => updateProductVariantImage(img.id!, { is_primary: false }));
 
       await Promise.all(updatePromises);
-
-      // Set the selected image as primary
       await updateProductVariantImage(imageId, { is_primary: true });
 
-      // Update local state
       setImages((prev) =>
         prev.map((img) => ({
           ...img,
@@ -187,112 +184,227 @@ export default function ProductVariantImagesList() {
     return "/base-products";
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading images...</div>
-      </div>
-    );
-  }
+
+
+    const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+      useCommonTableActions<ProductVariantImage>({
+        modelName: "ProductVariantImages",
+        data: images,
+        setData: setImages,
+      });
+  
+  const columns: ColumnDef<ProductVariantImage>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={selectedImages.size === images.length && images.length > 0}
+          onCheckedChange={toggleSelectAll}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={selectedImages.has(row.original.id!)}
+          onCheckedChange={() => toggleImageSelection(row.original.id!)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "id",
+      header: "S.No",
+      cell: ({ row }) => <div className="w-12 text-center">{row.index + 1}</div>,
+    },
+    {
+      accessorKey: "media_path",
+      header: "Preview",
+      cell: ({ row }) => {
+        const image = row.original;
+        return (
+          <div className="min-w-[100px]">
+            {image.media_type === "video" ? (
+              <video
+                src={`${import.meta.env.VITE_IMAGE_URL}/${image.media_path}`}
+                className="w-20 h-20 object-cover rounded border"
+                preload="metadata"
+                playsInline
+              />
+            ) : (
+              <img
+                src={`${import.meta.env.VITE_IMAGE_URL}/${image.media_path}`}
+                alt={`Image ${image.id}`}
+                className="w-20 h-20 object-cover rounded border"
+              />
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "media_type",
+      header: "Media Type",
+      cell: ({ row }) => {
+        const mediaType = row.getValue("media_type") as string;
+        return (
+          <div className="min-w-[100px]">
+            <Badge variant="outline">{mediaType === "video" ? "Video" : "Image"}</Badge>
+          </div>
+        );
+      },
+    },
+     {
+      accessorKey: "sort_order",
+      header: "Sort Order",
+      enableSorting: true,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },
+    },
+    {
+      accessorKey: "is_primary",
+      header: "Primary",
+      cell: ({ row }) => {
+        const isPrimary = row.getValue("is_primary") as boolean;
+        return (
+          <div className="min-w-[100px]">
+            {isPrimary ? (
+              <Badge className="bg-yellow-500">
+                <Star className="h-3 w-3 mr-1 fill-current" />
+                Primary
+              </Badge>
+            ) : (
+              <Button size="sm" variant="outline" onClick={() => handleSetPrimary(row.original.id!)}>
+                <Star className="h-3 w-3 mr-1" />
+                Set Primary
+              </Button>
+            )}
+          </div>
+        );
+      },
+    },
+  
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const item = row.original;
+        const status = row.getValue("status") as boolean;
+        return (
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "active" : "inactive"}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: ({ row }) => {
+        const createdAt = row.getValue("createdAt") as string;
+        return createdAt ? (
+          <div className="text-sm text-muted-foreground min-w-[120px]">{new Date(createdAt).toLocaleDateString()}</div>
+        ) : (
+          <div className="text-sm text-muted-foreground min-w-[120px]">N/A</div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const item = row.original;
+
+        return (
+          <div className="min-w-[80px]">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {!item.is_primary && (
+                  <DropdownMenuItem onClick={() => handleSetPrimary(item.id!)}>
+                    <Star className="mr-2 h-4 w-4" />
+                    Set as Primary
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" onClick={() => navigate(getBackUrl())}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">Variant Media{variant ? `: ${variant.sku}` : ""}</h1>
-              <p className="text-muted-foreground">Manage images for this product variant</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            {selectedImages.size > 0 && (
-              <Button variant="destructive" onClick={() => setShowBulkDeleteDialog(true)}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected ({selectedImages.size})
-              </Button>
-            )}
-            <Button onClick={() => navigate(`/product-variant-images/${variantId}/add`)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Images
-            </Button>
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" onClick={() => navigate(getBackUrl())}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Variant Media{variant ? `: ${variant.sku}` : ""}</h1>
+            <p className="text-muted-foreground">Manage images for this product variant</p>
           </div>
         </div>
 
-        {images.length === 0 ? (
-          <Card>
-            <CardContent className="py-12">
-              <p className="text-muted-foreground text-center">No images found for this variant. Click "Add Images" to upload some.</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
-            <div className="flex items-center gap-2 pb-2">
-              <Checkbox id="select-all" checked={selectedImages.size === images.length} onCheckedChange={toggleSelectAll} />
-              <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
-                Select All ({selectedImages.size}/{images.length})
-              </label>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {images
-                .sort((a, b) => a.sort_order - b.sort_order)
-                .map((image) => (
-                  <Card key={image.id} className="overflow-hidden group relative">
-                    <div className="absolute top-2 right-2 z-10">
-                      <Checkbox
-                        checked={selectedImages.has(image.id!)}
-                        onCheckedChange={() => toggleImageSelection(image.id!)}
-                        className="bg-white border-2"
-                      />
-                    </div>
-                    <div className="aspect-square relative">
-                      {image?.media_type == "video" ? (
-                        <video
-                          src={`${import.meta.env.VITE_IMAGE_URL}/${image.media_path}`}
-                          className="w-full h-full object-cover"
-                          controls
-                          preload="metadata"
-                          playsInline
-                        />
-                      ) : (
-                        <img
-                          src={`${import.meta.env.VITE_IMAGE_URL}/${image.media_path}`}
-                          alt={`Variant image ${image.id}`}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      {image.is_primary && (
-                        <Badge className="absolute top-2 left-2 bg-yellow-500">
-                          <Star className="h-3 w-3 mr-1 fill-current" />
-                          Primary
-                        </Badge>
-                      )}
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        {!image.is_primary && (
-                          <Button size="sm" variant="secondary" onClick={() => handleSetPrimary(image.id!)}>
-                            <Star className="h-4 w-4 mr-1" />
-                            Set Primary
-                          </Button>
-                        )}
-                        <Button size="sm" variant="destructive" onClick={() => setDeleteItemId(image.id!)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <CardContent className="p-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Order: {image.sort_order}</span>
-                        <Badge variant={image.status ? "default" : "secondary"}>{image.status ? "Active" : "Inactive"}</Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-            </div>
-          </>
+        {selectedImages.size > 0 && (
+          <div className="flex justify-end">
+            <Button variant="destructive" onClick={() => setShowBulkDeleteDialog(true)}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Selected ({selectedImages.size})
+            </Button>
+          </div>
         )}
+
+        <DataTable
+          columns={columns}
+          data={images}
+          loading={loading}
+          searchQuery=""
+          onSearchChange={() => {}}
+          searching={false}
+          pagination={{
+            currentPage: 1,
+            pageSize: images.length,
+            totalCount: images.length,
+            totalPages: 1,
+            onPageChange: () => {},
+            onPageSizeChange: () => {},
+          }}
+          title=""
+          searchPlaceholder="Search images..."
+          onAdd={() => navigate(`/product-variant-images/${variantId}/add`)}
+          addButtonText="Add Images"
+        />
       </div>
 
       {/* Single Delete Confirmation Dialog */}

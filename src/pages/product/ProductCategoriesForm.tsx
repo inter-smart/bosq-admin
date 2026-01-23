@@ -246,7 +246,7 @@ export default function ProductCategoriesForm() {
                           }}
                           accept="image/*"
                           preview={true}
-                          recommendedDimensions="400px x 400px"
+                          recommendedDimensions="16px x 16px"
                         />
                       </FormControl>
                       <FormDescription>Upload a category image (optional)</FormDescription>

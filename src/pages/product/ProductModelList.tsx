@@ -4,7 +4,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,10 +20,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ArrowLeft, ListPlus } from "lucide-react";
-import { fetchProductModelList, deleteProductModel, ProductModel } from "@/services/product/productModelApi";
-import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
+import {
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  ArrowLeft,
+  ListPlus,
+} from "lucide-react";
+import {
+  fetchProductModelList,
+  deleteProductModel,
+  ProductModel,
+} from "@/services/product/productModelApi";
+import {
+  fetchBaseProductById,
+  BaseProduct,
+} from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { Input } from "@/components/ui/input";
 
 export default function ProductModelList() {
   const navigate = useNavigate();
@@ -80,7 +101,12 @@ export default function ProductModelList() {
         setLoading(true);
       }
 
-      const response = await fetchProductModelList(currentPage, pageSize, debouncedSearchQuery, parseInt(productId));
+      const response = await fetchProductModelList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery,
+        parseInt(productId),
+      );
 
       if (response.success) {
         setModels(response.data.list);
@@ -120,33 +146,77 @@ export default function ProductModelList() {
     }
   };
 
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<ProductModel>({
+      modelName: "ProductModels",
+      data: models,
+      setData: setModels,
+    });
+
   const columns: ColumnDef<ProductModel>[] = [
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
+      cell: ({ row }) => (
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
+      ),
     },
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[200px] truncate">
+          {row.getValue("title")}
+        </div>
+      ),
     },
     {
       accessorKey: "code",
       header: "Code",
-      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("code")}</div>,
+      cell: ({ row }) => (
+        <div className="font-mono text-sm max-w-[150px] truncate">
+          {row.getValue("code")}
+        </div>
+      ),
     },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div className="text-sm">{row.getValue("sort_order") || 0}</div>,
+      cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
+        const item = row.original;
         const status = row.getValue("status") as boolean;
-        return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
+        return (
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "Active" : "Inactive"}
+            </Badge>
+          </div>
+        );
       },
     },
     {
@@ -155,7 +225,9 @@ export default function ProductModelList() {
       cell: ({ row }) => {
         const createdAt = row.getValue("createdAt") as string;
         return createdAt ? (
-          <div className="text-sm text-muted-foreground">{new Date(createdAt).toLocaleDateString()}</div>
+          <div className="text-sm text-muted-foreground">
+            {new Date(createdAt).toLocaleDateString()}
+          </div>
         ) : (
           <div className="text-sm text-muted-foreground">N/A</div>
         );
@@ -175,15 +247,24 @@ export default function ProductModelList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/product-models/${productId}/edit/${item.id}`)}>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigate(`/product-models/${productId}/edit/${item.id}`)
+                }
+              >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.id}/list`)}>
+              <DropdownMenuItem
+                onClick={() => navigate(`/product-variants/${item.id}/list`)}
+              >
                 <ListPlus className="mr-2 h-4 w-4" />
                 Manage Variants
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => setDeleteItemId(item.id!)}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -198,12 +279,20 @@ export default function ProductModelList() {
     <>
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={() => navigate("/base-products")}>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigate("/base-products")}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Product Models{product ? `: ${product.title}` : ""}</h1>
-            <p className="text-muted-foreground">Manage models for this product</p>
+            <h1 className="text-2xl font-bold">
+              Product Models{product ? `: ${product.title}` : ""}
+            </h1>
+            <p className="text-muted-foreground">
+              Manage models for this product
+            </p>
           </div>
         </div>
 
@@ -230,17 +319,24 @@ export default function ProductModelList() {
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
+      <AlertDialog
+        open={!!deleteItemId}
+        onOpenChange={() => setDeleteItemId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the product model and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the
+              product model and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
