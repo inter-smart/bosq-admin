@@ -30,8 +30,8 @@ import {
   createFaqList,
   updateFaqList,
   FaqList,
+  getDropdown,
 } from "@/services/cms/faq/faqListApi";
-import { fetchFaqCategoryList } from "@/services/cms/faq/faqCategoryApi";
 import { Switch } from "@/components/ui/switch";
 import { FaqListFormData, faqListSchema } from "@/schemas/faqSchema";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
@@ -47,6 +47,10 @@ export default function FaqListForm() {
   const [categories, setCategories] = useState<
     Array<{ id: number; title: string }>
   >([]);
+  const [products, setProducts] = useState<Array<{ id: number; title: string }>>(
+    [],
+  );
+
 
   const form = useForm<FaqListFormData>({
     resolver: zodResolver(faqListSchema),
@@ -55,26 +59,32 @@ export default function FaqListForm() {
       question_ar: "",
       answer: "",
       answer_ar: "",
-      category: undefined,
+      type: "general",
+      faq_category_id: undefined,
+      product_id: undefined,
       sort_order: 1,
       status: true,
     },
   });
 
+  const selectedType = form.watch("type");
+
   useEffect(() => {
-    loadCategories();
+    loadDrpDownData();
     if (isEditing && id) {
       loadFaqData(parseInt(id));
     }
   }, [id, isEditing]);
 
-  const loadCategories = async () => {
+  const loadDrpDownData = async () => {
     try {
-      const response = await fetchFaqCategoryList(1, 100);
-      const activeCategories = response.data.list.filter((cat) => cat.status);
-      setCategories(
-        activeCategories.map((cat) => ({ id: cat?.id!, title: cat.title }))
-      );
+      const response = await getDropdown();
+      const categoryData = response.data.categories;
+      const productData = response?.data?.products;
+
+      console.log("Dropdown Data:", response?.data?.products);
+      setCategories(categoryData);
+      setProducts(productData)
     } catch (error) {
       toast({
         title: "Error",
@@ -83,6 +93,7 @@ export default function FaqListForm() {
       });
     }
   };
+
 
   const loadFaqData = async (itemId: number) => {
     try {
@@ -96,7 +107,9 @@ export default function FaqListForm() {
           question_ar: data.question_ar || "",
           answer: data.answer || "",
           answer_ar: data.answer_ar || "",
-          category: data.category || 0,
+          type: data.type || "general",
+          faq_category_id: data.faq_category_id || undefined,
+          product_id: data.product_id || undefined,
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
         });
@@ -116,12 +129,15 @@ export default function FaqListForm() {
     try {
       setLoading(true);
 
-      const payload:  FaqList = {
+      const payload: FaqList = {
         question: data.question,
         question_ar: data.question_ar,
         answer: data.answer.toString(),
-        answer_ar: data.answer_ar.toString(),
-        category: data.category,
+        answer_ar: data.answer_ar?.toString(),
+        type: data.type,
+        faq_category_id:
+          data.type === "general" ? data.faq_category_id : undefined,
+        product_id: data.type === "product" ? data.product_id : undefined,
         sort_order: data.sort_order,
         status: data.status,
       };
@@ -263,41 +279,110 @@ export default function FaqListForm() {
                 </div>
               </div>
 
-              {/* Category Field - Full Width */}
-              <div className="mt-4">
+              {/* Type and Category/Product Fields */}
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="category"
+                  name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel>Type</FormLabel>
                       <Select
                         onValueChange={(value) => {
-                          field.onChange(parseInt(value));
-                          form.trigger("category");
+                          field.onChange(value);
+                          // Clear the other field when type changes
+                          if (value === "general") {
+                            form.setValue("product_id", undefined);
+                          } else {
+                            form.setValue("faq_category_id", undefined);
+                          }
                         }}
-                        value={field.value ? String(field.value) : ""}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
+                            <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem
-                              key={category.id}
-                              value={String(category.id)}
-                            >
-                              {category.title}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="general">General</SelectItem>
+                          <SelectItem value="product">Product</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {selectedType === "general" && (
+                  <FormField
+                    control={form.control}
+                    name="faq_category_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(parseInt(value));
+                          }}
+                          value={field.value ? String(field.value) : ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem
+                                key={category.id}
+                                value={String(category.id)}
+                              >
+                                {category.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {selectedType === "product" && (
+                  <FormField
+                    control={form.control}
+                    name="product_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Product</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            field.onChange(parseInt(value));
+                          }}
+                          value={field.value ? String(field.value) : ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a product" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {products.map((product) => (
+                              <SelectItem
+                                key={product?.id}
+                                value={String(product?.id)}
+                              >
+                                {product?.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>

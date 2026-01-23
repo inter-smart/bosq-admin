@@ -30,11 +30,13 @@ export const faqCategorySchema = z.object({
 
 export const faqListSchema = z.object({
   question: commonValidations.requiredString("Question"),
-  question_ar: commonValidations.requiredString("Question (Arabic)"),
+  question_ar: z.string().optional(),
   answer: commonValidations.requiredText("Answer"),
-  answer_ar: commonValidations.requiredText("Answer (Arabic)"),
-  category: commonValidations.requiredNumber("Category"),
-  sort_order:commonValidations.sortOrder(),
+  answer_ar: z.string().optional(),
+  type: z.enum(["general", "product"], { required_error: "Type is required" }),
+  faq_category_id: z.number().optional(),
+  product_id: z.number().optional(),
+  sort_order: commonValidations.sortOrder(),
   status: commonValidations.booleanStatus(),
 });
 

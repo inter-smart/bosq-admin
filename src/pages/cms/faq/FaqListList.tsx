@@ -33,11 +33,8 @@ import {
   fetchFaqListList,
   deleteFaqList,
   FaqList,
+  getDropdown,
 } from "@/services/cms/faq/faqListApi";
-import {
-  fetchFaqCategoryList,
-  FaqCategory,
-} from "@/services/cms/faq/faqCategoryApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
@@ -49,8 +46,11 @@ export default function FaqListList() {
   const [faqItems, setFaqItems] = useState<FaqList[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
-  const [categories, setCategories] = useState<FaqCategory[]>([]);
+  const [categories, setCategories] = useState<{ id: number; title: string }[]>([]);
+  const [products, setProducts] = useState<{ id: number; title: string }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedProduct, setSelectedProduct] = useState<string>("all");
+  const [selectedType, setSelectedType] = useState<string>("all");
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,7 +65,7 @@ export default function FaqListList() {
     });
 
   useEffect(() => {
-    loadCategories();
+    loadDropdownData();
   }, []);
 
   // Debounce search query
@@ -77,24 +77,37 @@ export default function FaqListList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Reset to page 1 when search or category changes
+  // Reset to page 1 when search, category, product, or type changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchQuery, selectedCategory]);
+  }, [debouncedSearchQuery, selectedCategory, selectedProduct, selectedType]);
+
+  // Reset category/product when type changes
+  useEffect(() => {
+    if (selectedType === "product") {
+      setSelectedCategory("all");
+    } else if (selectedType === "general") {
+      setSelectedProduct("all");
+    } else {
+      setSelectedCategory("all");
+      setSelectedProduct("all");
+    }
+  }, [selectedType]);
 
   // Load FAQ items when dependencies change
   useEffect(() => {
     loadFaqItems();
-  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory]);
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory, selectedProduct, selectedType]);
 
-  const loadCategories = async () => {
+  const loadDropdownData = async () => {
     try {
-      const response = await fetchFaqCategoryList(1, 100);
-      setCategories(response?.data?.list);
+      const response = await getDropdown();
+      setCategories(response?.data?.categories || []);
+      setProducts(response?.data?.products || []);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load FAQ categories",
+        description: "Failed to load dropdown data",
         variant: "destructive",
       });
     }
@@ -111,12 +124,18 @@ export default function FaqListList() {
 
       const categoryParam =
         selectedCategory === "all" ? undefined : parseInt(selectedCategory);
+      const typeParam =
+        selectedType === "all" ? undefined : (selectedType as "general" | "product");
+      const productParam =
+        selectedProduct === "all" ? undefined : parseInt(selectedProduct);
 
       const response = await fetchFaqListList(
         currentPage,
         pageSize,
         debouncedSearchQuery || undefined,
-        categoryParam
+        categoryParam,
+        typeParam,
+        productParam
       );
 
       setFaqItems(response.data.list);
@@ -183,12 +202,29 @@ export default function FaqListList() {
       ),
     },
     {
-      accessorKey: "faq_category",
-      header: "Category",
+      accessorKey: "type",
+      header: "Type",
       cell: ({ row }) => {
-        const category = row.original.faq_category;
+        const type = row.getValue("type") as string;
         return (
-          <Badge variant="outline">{category?.title || "No Category"}</Badge>
+          <Badge variant={type === "general" ? "default" : "secondary"}>
+            {type === "general" ? "General" : "Product"}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: "faq_category",
+      header: "Category/Product",
+      cell: ({ row }) => {
+        const item = row.original;
+        if (item.type === "product") {
+          return (
+            <Badge variant="outline">{item.product?.title || "No Product"}</Badge>
+          );
+        }
+        return (
+          <Badge variant="outline">{item.faq_category?.title || "No Category"}</Badge>
         );
       },
     },
@@ -281,44 +317,113 @@ export default function FaqListList() {
           <div className="flex items-center gap-4">
             <div className="flex flex-col gap-2">
               <label
-                htmlFor="category-filter"
+                htmlFor="type-filter"
                 className="text-sm font-medium text-muted-foreground"
               >
-                Filter by Category
+                Filter by Type
               </label>
 
               <div className="flex items-center gap-4">
                 <Select
-                  value={selectedCategory}
-                  onValueChange={setSelectedCategory}
+                  value={selectedType}
+                  onValueChange={setSelectedType}
                 >
-                  <SelectTrigger id="category-filter" className="w-[200px]">
-                    <SelectValue placeholder="Select category" />
+                  <SelectTrigger id="type-filter" className="w-[200px]">
+                    <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem
-                        key={category?.id}
-                        value={String(category?.id)}
-                      >
-                        {category.title}
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="general">General</SelectItem>
+                    <SelectItem value="product">Product</SelectItem>
                   </SelectContent>
                 </Select>
-
-                {selectedCategory !== "all" && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedCategory("all")}
-                  >
-                    Clear Filter
-                  </Button>
-                )}
               </div>
             </div>
+
+            {selectedType === "general" && (
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="category-filter"
+                  className="text-sm font-medium text-muted-foreground"
+                >
+                  Filter by Category
+                </label>
+
+                <div className="flex items-center gap-4">
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={setSelectedCategory}
+                  >
+                    <SelectTrigger id="category-filter" className="w-[200px]">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {categories.map((category) => (
+                        <SelectItem
+                          key={category?.id}
+                          value={String(category?.id)}
+                        >
+                          {category.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {selectedType === "product" && (
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="product-filter"
+                  className="text-sm font-medium text-muted-foreground"
+                >
+                  Filter by Product
+                </label>
+
+                <div className="flex items-center gap-4">
+                  <Select
+                    value={selectedProduct}
+                    onValueChange={setSelectedProduct}
+                  >
+                    <SelectTrigger id="product-filter" className="w-[200px]">
+                      <SelectValue placeholder="Select product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Products</SelectItem>
+                      {products.map((product) => (
+                        <SelectItem
+                          key={product?.id}
+                          value={String(product?.id)}
+                        >
+                          {product.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {(selectedType !== "all" || selectedCategory !== "all" || selectedProduct !== "all") && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-muted-foreground invisible">
+                  Clear
+                </label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedType("all");
+                    setSelectedCategory("all");
+                    setSelectedProduct("all");
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 

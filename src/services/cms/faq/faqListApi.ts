@@ -3,10 +3,12 @@ import { apiCall } from '@/utils/apiUtils';
 export interface FaqList {
   id?: number;
   question: string;
-  question_ar: string;
+  question_ar?: string;
   answer: string;
-  answer_ar: string;
-  category: number;
+  answer_ar?: string;
+  type: 'general' | 'product';
+  faq_category_id?: number;
+  product_id?: number;
   sort_order?: number;
   status?: boolean;
   deleted_at?: string | null;
@@ -16,6 +18,10 @@ export interface FaqList {
     id: number;
     title: string;
     status: boolean;
+  };
+  product?: {
+    id: number;
+    name: string;
   };
 }
 
@@ -44,25 +50,42 @@ export interface FaqListItemResponse {
   data: FaqList;
 }
 
+export interface FaqListDropdownResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  statusCode: number;
+  data: {
+      categories: {
+        id: number;
+        title: string;
+      }[];
+      products: {
+        id: number;
+        title: string;
+      }[];
+  };
+}
+
 // Fetch all FAQ lists
 export const fetchFaqListList = async (
   page: number = 1,
   limit: number = 10,
   search?: string,
-  category?: number
+  faq_category?: number,
+  type?: 'general' | 'product',
+  product?: number
 ): Promise<FaqListResponse> => {
   const params: Record<string, string | number> = {
     page,
     limit,
   };
 
-  if (search) {
-    params.search = search;
-  }
-
-  if (category) {
-    params.category = category;
-  }
+  
+  if (search) params.search = search;
+  if (faq_category) params.faq_category = faq_category;
+  if (type) params.type = type;
+  if (product) params.product = product;
 
   return apiCall('/cms/faq/faq-list', { params });
 };
@@ -80,6 +103,7 @@ export const createFaqList = async (payload: FaqList): Promise<FaqListItemRespon
   });
 };
 
+
 export const updateFaqList = async (
   id: number,
   payload: FaqList
@@ -96,3 +120,10 @@ export const deleteFaqList = async (id: number): Promise<void> => {
     method: 'DELETE',
   });
 };
+
+
+
+
+export const getDropdown = async(): Promise<FaqListDropdownResponse> => {
+  return apiCall('/cms/faq/faq-list/dropdown');
+}
