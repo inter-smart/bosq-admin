@@ -290,11 +290,13 @@ export default function FaqListForm() {
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value);
-                          // Clear the other field when type changes
+                          // Clear the other field and its validation error when type changes
                           if (value === "general") {
                             form.setValue("product_id", undefined);
+                            form.clearErrors("product_id");
                           } else {
                             form.setValue("faq_category_id", undefined);
+                            form.clearErrors("faq_category_id");
                           }
                         }}
                         value={field.value}

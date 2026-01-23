@@ -48,7 +48,7 @@ export default function BaseProductForm() {
       details_points_ar: "",
       additional_details: "",
       additional_details_ar: "",
-      category_id: null,
+      category_id: undefined,
       sub_category_id: null,
       base_price: "",
       media_path: null,
@@ -77,6 +77,19 @@ export default function BaseProductForm() {
       form.setValue("sub_category_id", null);
     }
   }, [selectedCategoryId]);
+
+  // Validate sub-category when subCategories are loaded
+  useEffect(() => {
+    if (!loadingSubCategories && subCategories.length > 0) {
+      const currentSubCategoryId = form.getValues("sub_category_id");
+      if (!currentSubCategoryId) {
+        form.setError("sub_category_id", {
+          type: "manual",
+          message: "Sub-category is required",
+        });
+      }
+    }
+  }, [subCategories, loadingSubCategories]);
 
   const loadDropdownData = async () => {
     try {
@@ -274,9 +287,10 @@ export default function BaseProductForm() {
 
   // Handle parent category change - reset sub category
   const handleCategoryChange = (value: string) => {
-    const newValue = value === "none" ? null : parseInt(value);
+    const newValue = parseInt(value);
     form.setValue("category_id", newValue);
     form.setValue("sub_category_id", null);
+    form.clearErrors("sub_category_id");
   };
 
   if (initialLoading) {
@@ -373,14 +387,13 @@ export default function BaseProductForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
-                      <Select onValueChange={handleCategoryChange} value={field.value ? String(field.value) : "none"}>
+                      <Select onValueChange={handleCategoryChange} value={field.value ? String(field.value) : ""}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="none">No Category</SelectItem>
                           {categories.map((category) => (
                             <SelectItem key={category.id} value={String(category.id)}>
                               {category.name}
@@ -401,17 +414,28 @@ export default function BaseProductForm() {
                     name="sub_category_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Sub Category</FormLabel>
+                        <FormLabel>
+                          Sub Category{subCategories.length > 0 && <span className="text-destructive"> *</span>}
+                        </FormLabel>
                         <Select
                           onValueChange={(value) => {
-                            field.onChange(value === "none" ? null : parseInt(value));
+                            const newValue = value === "none" ? null : parseInt(value);
+                            field.onChange(newValue);
+                            if (newValue) {
+                              form.clearErrors("sub_category_id");
+                            } else if (subCategories.length > 0) {
+                              form.setError("sub_category_id", {
+                                type: "manual",
+                                message: "Sub-category is required",
+                              });
+                            }
                           }}
                           value={field.value ? String(field.value) : "none"}
-                          disabled={loadingSubCategories}
+                          disabled={loadingSubCategories || subCategories.length === 0}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={loadingSubCategories ? "Loading..." : "Select a sub-category (optional)"} />
+                              <SelectValue placeholder={loadingSubCategories ? "Loading..." : subCategories.length === 0 ? "No sub-categories available" : "Select a sub-category"} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
