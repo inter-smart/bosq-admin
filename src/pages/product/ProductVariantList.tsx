@@ -17,15 +17,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
-import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
+import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
 import { useToast } from "@/hooks/use-toast";
 
 export default function ProductVariantList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { productId } = useParams();
+  const { productId } = useParams(); // This is now the model ID
   const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [model, setModel] = useState<ProductModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -35,10 +35,10 @@ export default function ProductVariantList() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
 
-  // Load product info on mount
+  // Load model info on mount
   useEffect(() => {
     if (productId) {
-      loadProduct(parseInt(productId));
+      loadModel(parseInt(productId));
     }
   }, [productId]);
 
@@ -57,14 +57,14 @@ export default function ProductVariantList() {
     }
   }, [currentPage, pageSize, debouncedSearchQuery, productId]);
 
-  const loadProduct = async (id: number) => {
+  const loadModel = async (id: number) => {
     try {
-      const response = await fetchBaseProductById(id);
-      setProduct(response.data);
+      const response = await fetchProductModelById(id);
+      setModel(response.data);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load product information",
+        description: "Failed to load model information",
         variant: "destructive",
       });
     }
@@ -206,12 +206,16 @@ export default function ProductVariantList() {
     <>
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={() => navigate("/base-products")}>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigate(model?.product_id ? `/product-models/${model.product_id}/list` : "/base-products")}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Product Variants{product ? `: ${product.title}` : ""}</h1>
-            <p className="text-muted-foreground">Manage variants for this product</p>
+            <h1 className="text-2xl font-bold">Product Variants{model ? `: ${model.title}` : ""}</h1>
+            <p className="text-muted-foreground">Manage variants for this model</p>
           </div>
         </div>
 

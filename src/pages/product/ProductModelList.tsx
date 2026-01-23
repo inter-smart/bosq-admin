@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
@@ -15,14 +15,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ListPlus } from "lucide-react";
-import { fetchBaseProductList, deleteBaseProduct, BaseProduct } from "@/services/product/baseProductApi";
+import { MoreHorizontal, Edit, Trash2, ArrowLeft, ListPlus } from "lucide-react";
+import { fetchProductModelList, deleteProductModel, ProductModel } from "@/services/product/productModelApi";
+import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 
-export default function BaseProductList() {
+export default function ProductModelList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
+  const { productId } = useParams();
+  const [models, setModels] = useState<ProductModel[]>([]);
+  const [product, setProduct] = useState<BaseProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -31,6 +34,13 @@ export default function BaseProductList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+
+  // Load product info on mount
+  useEffect(() => {
+    if (productId) {
+      loadProduct(parseInt(productId));
+    }
+  }, [productId]);
 
   // Debounce search query
   useEffect(() => {
@@ -42,10 +52,27 @@ export default function BaseProductList() {
   }, [searchQuery]);
 
   useEffect(() => {
-    loadBaseProducts();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+    if (productId) {
+      loadModels();
+    }
+  }, [currentPage, pageSize, debouncedSearchQuery, productId]);
 
-  const loadBaseProducts = async () => {
+  const loadProduct = async (id: number) => {
+    try {
+      const response = await fetchBaseProductById(id);
+      setProduct(response.data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load product information",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const loadModels = async () => {
+    if (!productId) return;
+
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -53,16 +80,16 @@ export default function BaseProductList() {
         setLoading(true);
       }
 
-      const response = await fetchBaseProductList(currentPage, pageSize, debouncedSearchQuery);
+      const response = await fetchProductModelList(currentPage, pageSize, debouncedSearchQuery, parseInt(productId));
 
       if (response.success) {
-        setBaseProducts(response.data.list);
+        setModels(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load base products",
+        description: "Failed to load product models",
         variant: "destructive",
       });
     } finally {
@@ -75,17 +102,17 @@ export default function BaseProductList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteBaseProduct(deleteItemId);
-      setBaseProducts((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteProductModel(deleteItemId);
+      setModels((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
         title: "Success",
-        description: "Base product deleted successfully",
+        description: "Product model deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete base product",
+        description: "Failed to delete product model",
         variant: "destructive",
       });
     } finally {
@@ -93,42 +120,21 @@ export default function BaseProductList() {
     }
   };
 
-  const columns: ColumnDef<BaseProduct>[] = [
+  const columns: ColumnDef<ProductModel>[] = [
     {
       accessorKey: "id",
       header: "ID",
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
     {
-      accessorKey: "media_path",
-      header: "Image",
-      cell: ({ row }) => {
-        const mediaPath = row.getValue("media_path") as string | null;
-        return mediaPath ? (
-          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("title")} className="h-10 w-10 object-cover rounded" />
-        ) : (
-          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
-        );
-      },
-    },
-    {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
     },
-
     {
-      accessorKey: "slug",
-      header: "Slug",
-      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">{row.getValue("slug")}</div>,
-    },
-    {
-      accessorKey: "category",
-      header: "Category",
-      cell: ({ row }) => {
-        const category = row.original.category;
-        return <div className="text-sm">{category?.name || "N/A"}</div>;
-      },
+      accessorKey: "code",
+      header: "Code",
+      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("code")}</div>,
     },
     {
       accessorKey: "sort_order",
@@ -136,9 +142,16 @@ export default function BaseProductList() {
       cell: ({ row }) => <div className="text-sm">{row.getValue("sort_order") || 0}</div>,
     },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as boolean;
+        return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
+      },
+    },
+    {
       accessorKey: "createdAt",
       header: "Created At",
-      enableSorting: true,
       cell: ({ row }) => {
         const createdAt = row.getValue("createdAt") as string;
         return createdAt ? (
@@ -162,13 +175,13 @@ export default function BaseProductList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/base-products/edit/${item.id}`)}>
+              <DropdownMenuItem onClick={() => navigate(`/product-models/${productId}/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`/product-models/${item.id}/list`)}>
+              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.id}/list`)}>
                 <ListPlus className="mr-2 h-4 w-4" />
-                Manage Models
+                Manage Variants
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -183,26 +196,38 @@ export default function BaseProductList() {
 
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={baseProducts}
-        loading={loading}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        searching={searching}
-        pagination={{
-          currentPage,
-          pageSize,
-          totalCount,
-          totalPages: Math.ceil(totalCount / pageSize),
-          onPageChange: setCurrentPage,
-          onPageSizeChange: setPageSize,
-        }}
-        title="Base Products"
-        searchPlaceholder="Search base products..."
-        onAdd={() => navigate("/base-products/create")}
-        addButtonText="Add Base Product"
-      />
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button variant="outline" size="icon" onClick={() => navigate("/base-products")}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Product Models{product ? `: ${product.title}` : ""}</h1>
+            <p className="text-muted-foreground">Manage models for this product</p>
+          </div>
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={models}
+          loading={loading}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          searching={searching}
+          pagination={{
+            currentPage,
+            pageSize,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+            onPageChange: setCurrentPage,
+            onPageSizeChange: setPageSize,
+          }}
+          title=""
+          searchPlaceholder="Search models..."
+          onAdd={() => navigate(`/product-models/${productId}/create`)}
+          addButtonText="Add Model"
+        />
+      </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
@@ -210,7 +235,7 @@ export default function BaseProductList() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the base product and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the product model and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

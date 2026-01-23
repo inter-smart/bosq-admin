@@ -48,6 +48,7 @@ export interface BaseProduct {
   category_id?: number | null;
   category?: Category | null;
   sort_order?: number;
+  status?: boolean;
   media_path?: string | File | null;
   sellingPoints?: RelationItem[];
   sectors?: RelationItem[];

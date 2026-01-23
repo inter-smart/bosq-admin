@@ -18,6 +18,7 @@ import { fetchProductSectorList, ProductSector } from "@/services/product/produc
 import { fetchDataList as fetchSellingPointsList, ProductSellingPoint } from "@/services/product/productSellingPointsApi";
 import { BaseProductFormData, baseProductSchema } from "@/schemas/baseProductSchema";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 
 export default function BaseProductForm() {
   const { toast } = useToast();
@@ -52,6 +53,7 @@ export default function BaseProductForm() {
       base_price: "",
       media_path: null,
       sort_order: 1,
+      status: true,
       selling_points: [],
       sectors: [],
     },
@@ -163,6 +165,7 @@ export default function BaseProductForm() {
           sub_category_id: subCategoryId,
           base_price: data.base_price || "",
           sort_order: data.sort_order || 1,
+          status: data.status ?? true,
           media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
           selling_points: data.sellingPoints?.map((sp) => sp.id) || [],
           sectors: data.sectors?.map((s) => s.id) || [],
@@ -191,6 +194,7 @@ export default function BaseProductForm() {
       formData.append("description", data.description);
       formData.append("description_ar", data.description_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
+      formData.append("status", data.status ? "1" : "0");
 
       // Optional TEXT fields
       if (data.details) {
@@ -431,7 +435,7 @@ export default function BaseProductForm() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                 <FormField
                   control={form.control}
                   name="base_price"
@@ -445,7 +449,7 @@ export default function BaseProductForm() {
                     </FormItem>
                   )}
                 />
-              </div>
+              </div> */}
 
               <div className="mt-6">
                 <FormField
@@ -675,6 +679,21 @@ export default function BaseProductForm() {
                         <Input type="number" placeholder="1" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Status</FormLabel>
+                        <FormDescription>Enable or disable this attribute</FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
