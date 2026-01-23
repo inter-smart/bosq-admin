@@ -192,7 +192,7 @@ export default function ProductVariantForm() {
       setLoading(true);
 
       const variantData = {
-        product_id: parseInt(productId),
+        product_model_id: parseInt(productId),
         sku,
         product_code: productCode,
         price,

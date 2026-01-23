@@ -5,17 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { FileUpload } from "@/components/common/FileUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { productModelSchema, ProductModelFormData } from "@/schemas/productModelSchema";
-import {
-  fetchProductModelById,
-  createProductModel,
-  updateProductModel,
-} from "@/services/product/productModelApi";
+import { fetchProductModelById, createProductModel, updateProductModel } from "@/services/product/productModelApi";
 import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
 
 export default function ProductModelForm() {
@@ -27,15 +24,16 @@ export default function ProductModelForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [initialBasePrice, setInitialBasePrice] = useState<string | null>(null);
 
   const form = useForm<ProductModelFormData>({
     resolver: zodResolver(productModelSchema),
     defaultValues: {
-      name: "",
-      name_ar: "",
+      title: "",
+      title_ar: "",
       code: "",
-      description: "",
-      description_ar: "",
+      base_price: "",
+      media_path: null,
       sort_order: 1,
       status: true,
     },
@@ -60,12 +58,15 @@ export default function ProductModelForm() {
         const modelResponse = await fetchProductModelById(parseInt(id));
         const data = modelResponse.data;
 
+        // Store the initial base price for change detection
+        setInitialBasePrice(data.base_price || "");
+
         form.reset({
-          name: data.name || "",
-          name_ar: data.name_ar || "",
+          title: data.title || "",
+          title_ar: data.title_ar || "",
           code: data.code || "",
-          description: data.description || "",
-          description_ar: data.description_ar || "",
+          base_price: data.base_price || "",
+          media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
         });
@@ -87,25 +88,35 @@ export default function ProductModelForm() {
     try {
       setLoading(true);
 
-      const payload = {
-        product_id: parseInt(productId),
-        name: data.name,
-        name_ar: data.name_ar,
-        code: data.code,
-        description: data.description,
-        description_ar: data.description_ar,
-        sort_order: data.sort_order,
-        status: data.status,
-      };
+      const formData = new FormData();
+
+      formData.append("product_id", productId);
+      formData.append("title", data.title);
+      formData.append("title_ar", data.title_ar);
+      formData.append("code", data.code);
+      formData.append("base_price", data.base_price);
+      formData.append("sort_order", (data.sort_order || 1).toString());
+      formData.append("status", (data.status ?? true).toString());
+
+      // Send flag indicating if base_price has changed (only for updates)
+      if (isEditing && initialBasePrice !== null) {
+        const basePriceChanged = data.base_price !== initialBasePrice;
+        formData.append("base_price_changed", basePriceChanged ? "1" : "0");
+      }
+
+      // Only append media_path if it's a new file
+      if (data.media_path instanceof File) {
+        formData.append("media_path", data.media_path);
+      }
 
       if (isEditing && id) {
-        await updateProductModel(parseInt(id), payload);
+        await updateProductModel(parseInt(id), formData);
         toast({
           title: "Success",
           description: "Product model updated successfully",
         });
       } else {
-        await createProductModel(payload);
+        await createProductModel(formData);
         toast({
           title: "Success",
           description: "Product model created successfully",
@@ -157,10 +168,10 @@ export default function ProductModelForm() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter model name" {...field} />
                       </FormControl>
@@ -171,10 +182,10 @@ export default function ProductModelForm() {
 
                 <FormField
                   control={form.control}
-                  name="name_ar"
+                  name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name (Arabic)</FormLabel>
+                      <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter model name in Arabic" dir="rtl" {...field} />
                       </FormControl>
@@ -199,45 +210,59 @@ export default function ProductModelForm() {
 
                 <FormField
                   control={form.control}
+                  name="base_price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Base Price</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" min="0" placeholder="Enter base price (e.g., 99.99)" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="mt-6">
+                <FormField
+                  control={form.control}
+                  name="media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Icon</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                          }}
+                          accept="image/*"
+                          preview={true}
+                          recommendedDimensions="16px x 16px"
+                        />
+                      </FormControl>
+                      <FormDescription>Upload a icon</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
                   name="sort_order"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sort Order</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="1"
-                          {...field}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="lg:col-span-2">
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter model description" rows={3} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description_ar"
-                  render={({ field }) => (
-                    <FormItem className="lg:col-span-2">
-                      <FormLabel>Description (Arabic)</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter model description in Arabic" dir="rtl" rows={3} {...field} />
+                        <Input type="number" placeholder="1" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,10 +273,10 @@ export default function ProductModelForm() {
                   control={form.control}
                   name="status"
                   render={({ field }) => (
-                    <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel>Status</FormLabel>
-                        <FormDescription>Enable or disable this model</FormDescription>
+                        <FormLabel className="text-base">Status</FormLabel>
+                        <FormDescription>Enable or disable this data</FormDescription>
                       </div>
                       <FormControl>
                         <Switch checked={field.value} onCheckedChange={field.onChange} />

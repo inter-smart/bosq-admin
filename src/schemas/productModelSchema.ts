@@ -2,11 +2,11 @@ import { z } from "zod";
 import { commonValidations } from "@/utils/formUtils";
 
 export const productModelSchema = z.object({
-  name: commonValidations.requiredString("Name"),
-  name_ar: commonValidations.requiredString("Name (Arabic)"),
+  title: commonValidations.requiredString("Title"),
+  title_ar: commonValidations.requiredString("Title (Arabic)"),
   code: commonValidations.requiredString("Code"),
-  description: z.string().optional(),
-  description_ar: z.string().optional(),
+  base_price: z.string().min(1, "Base price is required"),
+  media_path: commonValidations.validateFileUpload("Image"),
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
 });

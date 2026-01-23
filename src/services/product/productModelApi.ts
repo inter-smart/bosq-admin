@@ -11,8 +11,8 @@ export interface ProductModel {
   title_ar: string;
   code: string;
   slug?: string;
-  description?: string;
-  description_ar?: string;
+  base_price: string;
+  media_path?: string | File | null;
   sort_order?: number;
   status?: boolean;
   createdAt?: string;
@@ -21,7 +21,6 @@ export interface ProductModel {
   product?: {
     id: number;
     title: string;
-    title_ar: string;
     slug: string;
   };
 }
@@ -85,23 +84,18 @@ export const fetchProductModelById = async (id: number): Promise<ProductModelIte
 };
 
 // Create product model
-export const createProductModel = async (
-  data: Omit<ProductModel, "id" | "slug" | "createdAt" | "updatedAt" | "deletedAt" | "product">,
-): Promise<ProductModelItemResponse> => {
+export const createProductModel = async (formData: FormData): Promise<ProductModelItemResponse> => {
   return apiCall("/resources/product-models", {
     method: "POST",
-    data,
+    data: formData,
   });
 };
 
 // Update product model
-export const updateProductModel = async (
-  id: number,
-  data: Omit<ProductModel, "id" | "slug" | "createdAt" | "updatedAt" | "deletedAt" | "product">,
-): Promise<ProductModelItemResponse> => {
+export const updateProductModel = async (id: number, formData: FormData): Promise<ProductModelItemResponse> => {
   return apiCall(`/resources/product-models/${id}`, {
     method: "PUT",
-    data,
+    data: formData,
   });
 };
 
