@@ -40,6 +40,8 @@ const ProductVariantList = lazy(() => import("./pages/product/ProductVariantList
 const ProductVariantForm = lazy(() => import("./pages/product/ProductVariantForm"));
 const ProductVariantImagesList = lazy(() => import("./pages/product/ProductVariantImagesList"));
 const ProductVariantImagesForm = lazy(() => import("./pages/product/ProductVariantImagesForm"));
+const ProductProjectImagesList = lazy(() => import("./pages/product/ProductProjectImagesList"));
+const ProductProjectImagesForm = lazy(() => import("./pages/product/ProductProjectImagesForm"));
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -502,6 +504,32 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductVariantImagesForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Project Images Routes */}
+            <Route
+              path="/product-project-images/:productId/list"
+              element={
+                <ProtectedRoute>
+                  <ProductProjectImagesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-project-images/:productId/create"
+              element={
+                <ProtectedRoute>
+                  <ProductProjectImagesForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-project-images/:productId/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductProjectImagesForm />
                 </ProtectedRoute>
               }
             />
