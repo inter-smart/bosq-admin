@@ -13,13 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+ 
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -40,9 +34,8 @@ export default function ErgoGuideForm() {
     File | string | null
   >(null);
   const [mediaMobileFile, setMediaMobileFile] = useState<File | string | null>(
-    null
+    null,
   );
-  const [prevMediaType, setPrevMediaType] = useState<string | null>(null);
 
   const form = useForm<ErgonomicGuideFormData>({
     resolver: zodResolver(ergonomicGuideSchema),
@@ -55,34 +48,25 @@ export default function ErgoGuideForm() {
       media_mobile_path: null,
       media_alt: "",
       media_alt_ar: "",
-      media_type: "image",
     },
   });
 
-  const watchMediaType = form.watch("media_type");
-
   // Effect to reset media fields when media type changes
   useEffect(() => {
-    if (
-      !initialLoading &&
-      prevMediaType !== null &&
-      prevMediaType !== watchMediaType
-    ) {
+    if (initialLoading) {
       form.setValue("media_desktop_path", null);
       form.setValue("media_mobile_path", null);
       setMediaDesktopFile(null);
       setMediaMobileFile(null);
     }
-
-    // Update prevMediaType after initial loading is complete
-    if (!initialLoading) {
-      setPrevMediaType(watchMediaType);
-    }
-  }, [watchMediaType, initialLoading, form, prevMediaType]);
+  }, [initialLoading, form]);
 
   useEffect(() => {
     loadErgonomicGuideData();
   }, []);
+
+
+  
 
   const loadErgonomicGuideData = async () => {
     try {
@@ -100,23 +84,21 @@ export default function ErgoGuideForm() {
           media_mobile_path: data.media_mobile_path || null,
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
-          media_type: (data.media_type as "image" | "video") || "image",
         });
 
-        // Set media file states with full URL
-        if (data.media_desktop_path) {
-          setMediaDesktopFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path}`
-          );
-        }
-        if (data.media_mobile_path) {
-          setMediaMobileFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`
-          );
+        if (data?.media_desktop_path) {
+          const desktopUrl = `${import.meta.env.VITE_IMAGE_URL}/${data?.media_desktop_path}`;
+
+          form.setValue("media_desktop_path", desktopUrl);
+          setMediaDesktopFile(desktopUrl);
         }
 
-        // Set initial media type for watcher
-        setPrevMediaType(data.media_type || "image");
+        if (data.media_mobile_path) {
+          const mobileUrl = `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`;
+
+          form.setValue("media_mobile_path", mobileUrl);
+          setMediaMobileFile(mobileUrl);
+        }
       }
     } catch (error) {
       console.log("No existing data found, starting with empty form");
@@ -135,7 +117,7 @@ export default function ErgoGuideForm() {
     (errors) => {
       // Get the first error field and focus it
       const firstErrorField = Object.keys(
-        errors
+        errors,
       )[0] as keyof ErgonomicGuideFormData;
 
       if (firstErrorField) {
@@ -143,7 +125,7 @@ export default function ErgoGuideForm() {
           form.setFocus(firstErrorField);
         }, 100);
       }
-    }
+    },
   );
 
   const onSubmit = async (data: ErgonomicGuideFormData) => {
@@ -159,7 +141,6 @@ export default function ErgoGuideForm() {
         formData.append("description_ar", data.description_ar);
       if (data.media_alt) formData.append("media_alt", data.media_alt);
       if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
-      if (data.media_type) formData.append("media_type", data.media_type);
 
       // Add file uploads (only if they are new File instances)
       if (mediaDesktopFile instanceof File) {
@@ -217,9 +198,7 @@ export default function ErgoGuideForm() {
               <CardTitle>Banner Section</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Media Type Selector */}
-
-                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* English Fields */}
                 <div className="space-y-4">
                   <FormField
@@ -295,31 +274,6 @@ export default function ErgoGuideForm() {
                   />
                 </div>
               </div>
-              <FormField
-                control={form.control}
-                name="media_type"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Media Type</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value || "image"}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select media type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="image">Image</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               {/* Desktop & Mobile Media */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -327,10 +281,7 @@ export default function ErgoGuideForm() {
                   name="media_desktop_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        {watchMediaType === "image" ? "Image" : "Video"}{" "}
-                        (Desktop)
-                      </FormLabel>
+                      <FormLabel>Media Desktop</FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
@@ -338,13 +289,11 @@ export default function ErgoGuideForm() {
                             field.onChange(file);
                             setMediaDesktopFile(file);
                           }}
-                          accept={
-                            watchMediaType === "image" ? "image/*" : "video/*"
-                          }
+                          accept={"image"}
                           recommendedDimensions="1920px x 1080px"
-                          placeholder={`Upload desktop ${
-                            watchMediaType === "image" ? "image" : "video"
-                          }`}
+                          placeholder={`Upload desktop
+                            image
+                          `}
                         />
                       </FormControl>
                       <FormMessage />
@@ -358,7 +307,8 @@ export default function ErgoGuideForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        {watchMediaType === "image" ? "Image" : "Video"} (Mobile)
+                        {"image"}
+                        (Mobile)
                       </FormLabel>
                       <FormControl>
                         <FileUpload
@@ -367,13 +317,9 @@ export default function ErgoGuideForm() {
                             field.onChange(file);
                             setMediaMobileFile(file);
                           }}
-                          accept={
-                            watchMediaType === "image" ? "image/*" : "video/*"
-                          }
+                          accept={"image"}
                           recommendedDimensions="768px x 1024px"
-                          placeholder={`Upload mobile ${
-                            watchMediaType === "image" ? "image" : "video"
-                          }`}
+                          placeholder={`Upload mobile media`}
                         />
                       </FormControl>
                       <FormMessage />
