@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { updateStatus, updateSortOrder } from "@/services/commonApi";
+import { updateStatus, updateSortOrder, updateIsPrimary } from "@/services/commonApi";
 
 interface UseCommonTableActionsProps<T> {
   modelName: string;
@@ -37,6 +37,28 @@ export const useCommonTableActions = <T extends { id?: number }>({
       toast({ title: "Success", description: "Status updated successfully" });
     } catch {
       toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
+    }
+  };
+
+  const handleIsPrimaryChange = async (id: number, currentIsPrimary: boolean) => {
+    const newIsPrimary = !currentIsPrimary;
+
+    try {
+      await updateIsPrimary({
+        model_name: modelName,
+        row_id: id,
+        is_primary: newIsPrimary,
+      });
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, is_primary: newIsPrimary } : item
+        )
+      );
+
+      toast({ title: "Success", description: "Primary status updated successfully" });
+    } catch {
+      toast({ title: "Error", description: "Failed to update primary status", variant: "destructive" });
     }
   };
 
@@ -85,5 +107,6 @@ export const useCommonTableActions = <T extends { id?: number }>({
     editingSortOrder,
     handleStatusChange,
     handleSortOrderChange,
+    handleIsPrimaryChange,
   };
 };

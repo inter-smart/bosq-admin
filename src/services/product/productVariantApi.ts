@@ -13,6 +13,7 @@ export interface ProductVariant {
   product_code: string;
   sort_order: number;
   status: boolean;
+  is_primary: boolean;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;
