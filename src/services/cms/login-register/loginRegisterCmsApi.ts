@@ -17,12 +17,12 @@ export interface LoginRegisterCms {
   otp_subtitle_ar?: string | null;
   otp_media_path?: string | null;
 
-  // Your Password Section
-  your_password_title?: string | null;
-  your_password_title_ar?: string | null;
-  your_password_subtitle?: string | null;
-  your_password_subtitle_ar?: string | null;
-  your_password_media_path?: string | null;
+  // Create Password Section
+  create_password_title?: string | null;
+  create_password_title_ar?: string | null;
+  create_password_subtitle?: string | null;
+  create_password_subtitle_ar?: string | null;
+  create_password_media_path?: string | null;
 
   // Login Section
   login_title?: string | null;
@@ -38,17 +38,17 @@ export interface LoginRegisterCms {
   recover_email_subtitle_ar?: string | null;
   recover_email_media_path?: string | null;
 
+  // Recover Password OTP Section
+  recover_password_otp_title?: string | null;
+  recover_password_otp_title_ar?: string | null;
+  recover_password_otp_subtitle?: string | null;
+  recover_password_otp_subtitle_ar?: string | null;
+  recover_password_otp_media_path?: string | null;
+
   // Recover Password Section
   recover_password_title?: string | null;
   recover_password_title_ar?: string | null;
-  recover_password_subtitle?: string | null;
-  recover_password_subtitle_ar?: string | null;
   recover_password_media_path?: string | null;
-
-  // New Password Section
-  new_password_title?: string | null;
-  new_password_title_ar?: string | null;
-  new_password_media_path?: string | null;
 
   status?: boolean;
   createdAt?: string;

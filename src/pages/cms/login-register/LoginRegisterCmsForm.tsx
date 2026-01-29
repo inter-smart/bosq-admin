@@ -35,7 +35,7 @@ export default function LoginRegisterCmsForm() {
     null
   );
   const [otpMediaFile, setOtpMediaFile] = useState<File | string | null>(null);
-  const [yourPasswordMediaFile, setYourPasswordMediaFile] = useState<
+  const [createPasswordMediaFile, setCreatePasswordMediaFile] = useState<
     File | string | null
   >(null);
   const [loginMediaFile, setLoginMediaFile] = useState<File | string | null>(
@@ -44,10 +44,10 @@ export default function LoginRegisterCmsForm() {
   const [recoverEmailMediaFile, setRecoverEmailMediaFile] = useState<
     File | string | null
   >(null);
-  const [recoverPasswordMediaFile, setRecoverPasswordMediaFile] = useState<
+  const [recoverPasswordOtpMediaFile, setRecoverPasswordOtpMediaFile] = useState<
     File | string | null
   >(null);
-  const [newPasswordMediaFile, setNewPasswordMediaFile] = useState<
+  const [recoverPasswordMediaFile, setRecoverPasswordMediaFile] = useState<
     File | string | null
   >(null);
 
@@ -64,11 +64,11 @@ export default function LoginRegisterCmsForm() {
       otp_subtitle: "",
       otp_subtitle_ar: "",
       otp_media_path: null,
-      your_password_title: "",
-      your_password_title_ar: "",
-      your_password_subtitle: "",
-      your_password_subtitle_ar: "",
-      your_password_media_path: null,
+      create_password_title: "",
+      create_password_title_ar: "",
+      create_password_subtitle: "",
+      create_password_subtitle_ar: "",
+      create_password_media_path: null,
       login_title: "",
       login_title_ar: "",
       login_subtitle: "",
@@ -79,14 +79,14 @@ export default function LoginRegisterCmsForm() {
       recover_email_subtitle: "",
       recover_email_subtitle_ar: "",
       recover_email_media_path: null,
+      recover_password_otp_title: "",
+      recover_password_otp_title_ar: "",
+      recover_password_otp_subtitle: "",
+      recover_password_otp_subtitle_ar: "",
+      recover_password_otp_media_path: null,
       recover_password_title: "",
       recover_password_title_ar: "",
-      recover_password_subtitle: "",
-      recover_password_subtitle_ar: "",
       recover_password_media_path: null,
-      new_password_title: "",
-      new_password_title_ar: "",
-      new_password_media_path: null,
     },
   });
 
@@ -112,11 +112,11 @@ export default function LoginRegisterCmsForm() {
           otp_subtitle: data.otp_subtitle || "",
           otp_subtitle_ar: data.otp_subtitle_ar || "",
           otp_media_path: data.otp_media_path || null,
-          your_password_title: data.your_password_title || "",
-          your_password_title_ar: data.your_password_title_ar || "",
-          your_password_subtitle: data.your_password_subtitle || "",
-          your_password_subtitle_ar: data.your_password_subtitle_ar || "",
-          your_password_media_path: data.your_password_media_path || null,
+          create_password_title: data.create_password_title || "",
+          create_password_title_ar: data.create_password_title_ar || "",
+          create_password_subtitle: data.create_password_subtitle || "",
+          create_password_subtitle_ar: data.create_password_subtitle_ar || "",
+          create_password_media_path: data.create_password_media_path || null,
           login_title: data.login_title || "",
           login_title_ar: data.login_title_ar || "",
           login_subtitle: data.login_subtitle || "",
@@ -127,14 +127,14 @@ export default function LoginRegisterCmsForm() {
           recover_email_subtitle: data.recover_email_subtitle || "",
           recover_email_subtitle_ar: data.recover_email_subtitle_ar || "",
           recover_email_media_path: data.recover_email_media_path || null,
+          recover_password_otp_title: data.recover_password_otp_title || "",
+          recover_password_otp_title_ar: data.recover_password_otp_title_ar || "",
+          recover_password_otp_subtitle: data.recover_password_otp_subtitle || "",
+          recover_password_otp_subtitle_ar: data.recover_password_otp_subtitle_ar || "",
+          recover_password_otp_media_path: data.recover_password_otp_media_path || null,
           recover_password_title: data.recover_password_title || "",
           recover_password_title_ar: data.recover_password_title_ar || "",
-          recover_password_subtitle: data.recover_password_subtitle || "",
-          recover_password_subtitle_ar: data.recover_password_subtitle_ar || "",
           recover_password_media_path: data.recover_password_media_path || null,
-          new_password_title: data.new_password_title || "",
-          new_password_title_ar: data.new_password_title_ar || "",
-          new_password_media_path: data.new_password_media_path || null,
         });
 
         // Set media file states with full URL
@@ -148,9 +148,9 @@ export default function LoginRegisterCmsForm() {
             `${import.meta.env.VITE_IMAGE_URL}/${data.otp_media_path}`
           );
         }
-        if (data.your_password_media_path) {
-          setYourPasswordMediaFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.your_password_media_path}`
+        if (data.create_password_media_path) {
+          setCreatePasswordMediaFile(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.create_password_media_path}`
           );
         }
         if (data.login_media_path) {
@@ -163,14 +163,14 @@ export default function LoginRegisterCmsForm() {
             `${import.meta.env.VITE_IMAGE_URL}/${data.recover_email_media_path}`
           );
         }
+        if (data.recover_password_otp_media_path) {
+          setRecoverPasswordOtpMediaFile(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.recover_password_otp_media_path}`
+          );
+        }
         if (data.recover_password_media_path) {
           setRecoverPasswordMediaFile(
             `${import.meta.env.VITE_IMAGE_URL}/${data.recover_password_media_path}`
-          );
-        }
-        if (data.new_password_media_path) {
-          setNewPasswordMediaFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${data.new_password_media_path}`
           );
         }
       }
@@ -228,17 +228,17 @@ export default function LoginRegisterCmsForm() {
       if (data.otp_subtitle_ar)
         formData.append("otp_subtitle_ar", data.otp_subtitle_ar);
 
-      // Your Password Section
-      if (data.your_password_title)
-        formData.append("your_password_title", data.your_password_title);
-      if (data.your_password_title_ar)
-        formData.append("your_password_title_ar", data.your_password_title_ar);
-      if (data.your_password_subtitle)
-        formData.append("your_password_subtitle", data.your_password_subtitle);
-      if (data.your_password_subtitle_ar)
+      // Create Password Section
+      if (data.create_password_title)
+        formData.append("create_password_title", data.create_password_title);
+      if (data.create_password_title_ar)
+        formData.append("create_password_title_ar", data.create_password_title_ar);
+      if (data.create_password_subtitle)
+        formData.append("create_password_subtitle", data.create_password_subtitle);
+      if (data.create_password_subtitle_ar)
         formData.append(
-          "your_password_subtitle_ar",
-          data.your_password_subtitle_ar
+          "create_password_subtitle_ar",
+          data.create_password_subtitle_ar
         );
 
       // Login Section
@@ -263,6 +263,25 @@ export default function LoginRegisterCmsForm() {
           data.recover_email_subtitle_ar
         );
 
+      // Recover Password OTP Section
+      if (data.recover_password_otp_title)
+        formData.append("recover_password_otp_title", data.recover_password_otp_title);
+      if (data.recover_password_otp_title_ar)
+        formData.append(
+          "recover_password_otp_title_ar",
+          data.recover_password_otp_title_ar
+        );
+      if (data.recover_password_otp_subtitle)
+        formData.append(
+          "recover_password_otp_subtitle",
+          data.recover_password_otp_subtitle
+        );
+      if (data.recover_password_otp_subtitle_ar)
+        formData.append(
+          "recover_password_otp_subtitle_ar",
+          data.recover_password_otp_subtitle_ar
+        );
+
       // Recover Password Section
       if (data.recover_password_title)
         formData.append("recover_password_title", data.recover_password_title);
@@ -271,22 +290,6 @@ export default function LoginRegisterCmsForm() {
           "recover_password_title_ar",
           data.recover_password_title_ar
         );
-      if (data.recover_password_subtitle)
-        formData.append(
-          "recover_password_subtitle",
-          data.recover_password_subtitle
-        );
-      if (data.recover_password_subtitle_ar)
-        formData.append(
-          "recover_password_subtitle_ar",
-          data.recover_password_subtitle_ar
-        );
-
-      // New Password Section
-      if (data.new_password_title)
-        formData.append("new_password_title", data.new_password_title);
-      if (data.new_password_title_ar)
-        formData.append("new_password_title_ar", data.new_password_title_ar);
 
       // Add media file uploads (only if they are new File objects)
       if (signupMediaFile instanceof File) {
@@ -295,8 +298,8 @@ export default function LoginRegisterCmsForm() {
       if (otpMediaFile instanceof File) {
         formData.append("otp_media_path", otpMediaFile);
       }
-      if (yourPasswordMediaFile instanceof File) {
-        formData.append("your_password_media_path", yourPasswordMediaFile);
+      if (createPasswordMediaFile instanceof File) {
+        formData.append("create_password_media_path", createPasswordMediaFile);
       }
       if (loginMediaFile instanceof File) {
         formData.append("login_media_path", loginMediaFile);
@@ -304,11 +307,11 @@ export default function LoginRegisterCmsForm() {
       if (recoverEmailMediaFile instanceof File) {
         formData.append("recover_email_media_path", recoverEmailMediaFile);
       }
+      if (recoverPasswordOtpMediaFile instanceof File) {
+        formData.append("recover_password_otp_media_path", recoverPasswordOtpMediaFile);
+      }
       if (recoverPasswordMediaFile instanceof File) {
         formData.append("recover_password_media_path", recoverPasswordMediaFile);
-      }
-      if (newPasswordMediaFile instanceof File) {
-        formData.append("new_password_media_path", newPasswordMediaFile);
       }
 
       await saveLoginRegisterCms(formData);
@@ -571,10 +574,10 @@ export default function LoginRegisterCmsForm() {
             </CardContent>
           </Card>
 
-          {/* Your Password Section */}
+          {/* Create Password Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Your Password Section</CardTitle>
+              <CardTitle>Create Password Section</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -582,13 +585,13 @@ export default function LoginRegisterCmsForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="your_password_title"
+                    name="create_password_title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Your Password Title</FormLabel>
+                        <FormLabel>Create Password Title</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter your password title"
+                            placeholder="Enter create password title"
                             {...field}
                           />
                         </FormControl>
@@ -599,13 +602,13 @@ export default function LoginRegisterCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="your_password_subtitle"
+                    name="create_password_subtitle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Your Password Subtitle</FormLabel>
+                        <FormLabel>Create Password Subtitle</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Enter your password subtitle"
+                            placeholder="Enter create password subtitle"
                             rows={3}
                             {...field}
                           />
@@ -620,13 +623,13 @@ export default function LoginRegisterCmsForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="your_password_title_ar"
+                    name="create_password_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Your Password Title (AR)</FormLabel>
+                        <FormLabel>Create Password Title (AR)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="أدخل عنوان كلمة المرور"
+                            placeholder="أدخل عنوان إنشاء كلمة المرور"
                             {...field}
                             dir="rtl"
                           />
@@ -638,15 +641,15 @@ export default function LoginRegisterCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="your_password_subtitle_ar"
+                    name="create_password_subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Your Password Subtitle (AR)
+                          Create Password Subtitle (AR)
                         </FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="أدخل العنوان الفرعي لكلمة المرور"
+                            placeholder="أدخل العنوان الفرعي لإنشاء كلمة المرور"
                             rows={3}
                             {...field}
                             dir="rtl"
@@ -662,20 +665,20 @@ export default function LoginRegisterCmsForm() {
               {/* Media Upload */}
               <FormField
                 control={form.control}
-                name="your_password_media_path"
+                name="create_password_media_path"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Your Password Media</FormLabel>
+                    <FormLabel>Create Password Media</FormLabel>
                     <FormControl>
                       <FileUpload
-                        value={yourPasswordMediaFile}
+                        value={createPasswordMediaFile}
                         onChange={(file) => {
                           field.onChange(file);
-                          setYourPasswordMediaFile(file);
+                          setCreatePasswordMediaFile(file);
                         }}
                         recommendedDimensions="1920x1080"
                         accept="image/*"
-                        placeholder="Upload your password media"
+                        placeholder="Upload create password media"
                         preview={true}
                       />
                     </FormControl>
@@ -911,10 +914,10 @@ export default function LoginRegisterCmsForm() {
             </CardContent>
           </Card>
 
-          {/* Recover Password Section */}
+          {/* Recover Password OTP Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Recover Password Section</CardTitle>
+              <CardTitle>Recover Password OTP Section</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -922,13 +925,13 @@ export default function LoginRegisterCmsForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="recover_password_title"
+                    name="recover_password_otp_title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Recover Password Title</FormLabel>
+                        <FormLabel>Recover Password OTP Title</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter recover password title"
+                            placeholder="Enter recover password OTP title"
                             {...field}
                           />
                         </FormControl>
@@ -939,13 +942,13 @@ export default function LoginRegisterCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="recover_password_subtitle"
+                    name="recover_password_otp_subtitle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Recover Password Subtitle</FormLabel>
+                        <FormLabel>Recover Password OTP Subtitle</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Enter recover password subtitle"
+                            placeholder="Enter recover password OTP subtitle"
                             rows={3}
                             {...field}
                           />
@@ -960,13 +963,13 @@ export default function LoginRegisterCmsForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="recover_password_title_ar"
+                    name="recover_password_otp_title_ar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Recover Password Title (AR)</FormLabel>
+                        <FormLabel>Recover Password OTP Title (AR)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="أدخل عنوان استرداد كلمة المرور"
+                            placeholder="أدخل عنوان OTP استرداد كلمة المرور"
                             {...field}
                             dir="rtl"
                           />
@@ -978,15 +981,15 @@ export default function LoginRegisterCmsForm() {
 
                   <FormField
                     control={form.control}
-                    name="recover_password_subtitle_ar"
+                    name="recover_password_otp_subtitle_ar"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Recover Password Subtitle (AR)
+                          Recover Password OTP Subtitle (AR)
                         </FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="أدخل العنوان الفرعي لاسترداد كلمة المرور"
+                            placeholder="أدخل العنوان الفرعي لـ OTP استرداد كلمة المرور"
                             rows={3}
                             {...field}
                             dir="rtl"
@@ -997,6 +1000,78 @@ export default function LoginRegisterCmsForm() {
                     )}
                   />
                 </div>
+              </div>
+
+              {/* Media Upload */}
+              <FormField
+                control={form.control}
+                name="recover_password_otp_media_path"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Recover Password OTP Media</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        value={recoverPasswordOtpMediaFile}
+                        onChange={(file) => {
+                          field.onChange(file);
+                          setRecoverPasswordOtpMediaFile(file);
+                        }}
+                        recommendedDimensions="1920x1080"
+                        accept="image/*"
+                        placeholder="Upload recover password OTP media"
+                        preview={true}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Recover Password Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recover Password Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <FormField
+                  control={form.control}
+                  name="recover_password_title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Recover Password Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter recover password title"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Arabic Fields */}
+                <FormField
+                  control={form.control}
+                  name="recover_password_title_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Recover Password Title (AR)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل عنوان استرداد كلمة المرور"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               {/* Media Upload */}
@@ -1016,78 +1091,6 @@ export default function LoginRegisterCmsForm() {
                         recommendedDimensions="1920x1080"
                         accept="image/*"
                         placeholder="Upload recover password media"
-                        preview={true}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
-
-          {/* New Password Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>New Password Section</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* English Fields */}
-                <FormField
-                  control={form.control}
-                  name="new_password_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New Password Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter new password title"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Arabic Fields */}
-                <FormField
-                  control={form.control}
-                  name="new_password_title_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New Password Title (AR)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان كلمة المرور الجديدة"
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Media Upload */}
-              <FormField
-                control={form.control}
-                name="new_password_media_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>New Password Media</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        value={newPasswordMediaFile}
-                        onChange={(file) => {
-                          field.onChange(file);
-                          setNewPasswordMediaFile(file);
-                        }}
-                        recommendedDimensions="1920x1080"
-                        accept="image/*"
-                        placeholder="Upload new password media"
                         preview={true}
                       />
                     </FormControl>
