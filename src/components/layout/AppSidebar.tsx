@@ -142,17 +142,17 @@ const cmsSection = [
       },
     ],
   },
-  {
-    title: "Auth",
-    icon: ShieldCheck,
-    subItems: [
-      {
-        title: "Auth CMS",
-        url: "/auth-cms",
-        icon: FileText,
-      },
-    ],
-  },
+  // {
+  //   title: "Auth",
+  //   icon: ShieldCheck,
+  //   subItems: [
+  //     {
+  //       title: "Auth CMS",
+  //       url: "/auth-cms",
+  //       icon: FileText,
+  //     },
+  //   ],
+  // },
   {
     title: "Customisation",
     icon: Palette,
