@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Save, ArrowLeft, Plus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
+import { FileUpload } from "@/components/common/FileUpload";
 import {
   fetchProductVariantById,
   createProductVariant,
@@ -45,6 +46,9 @@ export default function ProductVariantForm() {
   const [stock, setStock] = useState(0);
   const [sortOrder, setSortOrder] = useState(1);
   const [status, setStatus] = useState(true);
+  const [title, setTitle] = useState("");
+  const [titleAr, setTitleAr] = useState("");
+  const [coverImage, setCoverImage] = useState<File | string | null>(null);
 
   // Attribute selections organized by attribute ID
   const [attributeSelections, setAttributeSelections] = useState<AttributeSelectionState>({});
@@ -87,6 +91,9 @@ export default function ProductVariantForm() {
         setStock(data.stock || 0);
         setSortOrder(data.sort_order || 1);
         setStatus(data.status ?? true);
+        setTitle(data.title || "");
+        setTitleAr(data.title_ar || "");
+        setCoverImage(data.media_path || null);
 
         // Set attribute selections if available
         if (data.variant_attributes && data.variant_attributes.length > 0) {
@@ -191,24 +198,42 @@ export default function ProductVariantForm() {
     try {
       setLoading(true);
 
-      const variantData = {
-        product_model_id: parseInt(productId),
-        sku,
-        product_code: productCode,
-        price,
-        stock,
-        sort_order: sortOrder,
-        status,
-        attributes: allSelections,
-      };
-
       if (isEditing && id) {
-        await updateProductVariant(parseInt(id), variantData);
+        // Use FormData for update
+        const formData = new FormData();
+        formData.append("product_model_id", productId);
+        formData.append("sku", sku);
+        formData.append("product_code", productCode);
+        formData.append("price", price);
+        formData.append("stock", stock.toString());
+        formData.append("sort_order", sortOrder.toString());
+        formData.append("status", status.toString());
+        formData.append("title", title);
+        formData.append("title_ar", titleAr);
+        formData.append("attributes", JSON.stringify(allSelections));
+
+        if (coverImage instanceof File) {
+          formData.append("media_path", coverImage);
+        }
+
+        await updateProductVariant(parseInt(id), formData);
         toast({
           title: "Success",
           description: "Product variant updated successfully",
         });
       } else {
+        // Use JSON for create (no change)
+        const variantData = {
+          product_model_id: parseInt(productId),
+          sku,
+          product_code: productCode,
+          price,
+          stock,
+          sort_order: sortOrder,
+          status,
+          attributes: allSelections,
+        };
+
         await createProductVariant(variantData);
         toast({
           title: "Success",
@@ -260,6 +285,26 @@ export default function ProductVariantForm() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" placeholder="Enter variant title" value={title} onChange={(e) => setTitle(e.target.value)} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="title_ar">Title (Arabic)</Label>
+                  <Input id="title_ar" placeholder="أدخل عنوان المنتج" value={titleAr} onChange={(e) => setTitleAr(e.target.value)} dir="rtl" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Cover Image</Label>
+                  <FileUpload
+                    value={coverImage}
+                    onChange={(file) => setCoverImage(file)}
+                    accept="image/*"
+                    placeholder="Drop cover image here or click to browse"
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="sku">SKU</Label>
                   <Input id="sku" placeholder="Enter SKU" value={sku} onChange={(e) => setSku(e.target.value)} required disabled />
@@ -335,10 +380,7 @@ export default function ProductVariantForm() {
           </Card>
         ) : (
           <div className="grid grid-cols-2 gap-6">
-            {(isEditing
-              ? attributes.filter((attr) => (attributeSelections[attr.id] || []).length > 0)
-              : attributes
-            ).map((attribute) => {
+            {(isEditing ? attributes.filter((attr) => (attributeSelections[attr.id] || []).length > 0) : attributes).map((attribute) => {
               const selections = attributeSelections[attribute.id] || [];
 
               return (
