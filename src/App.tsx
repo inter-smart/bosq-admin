@@ -22,45 +22,101 @@ const MetaTagsList = lazy(() => import("./pages/common/MetaTagsList"));
 const MetaTagsForm = lazy(() => import("./pages/common/MetaTagsForm"));
 
 // Product pages
-const ProductCategoriesList = lazy(() => import("./pages/product/ProductCategoriesList"));
-const ProductCategoriesForm = lazy(() => import("./pages/product/ProductCategoriesForm"));
-const ProductAttributesList = lazy(() => import("./pages/product/ProductAttributesList"));
-const ProductAttributesForm = lazy(() => import("./pages/product/ProductAttributesForm"));
-const AttributeValuesList = lazy(() => import("./pages/product/AttributeValuesList"));
-const AttributeValuesForm = lazy(() => import("./pages/product/AttributeValuesForm"));
-const ProductSectoresList = lazy(() => import("./pages/product/ProductSectorsList"));
-const ProductSectorsForm = lazy(() => import("./pages/product/ProductSectorsForm"));
-const ProductSellingPointsList = lazy(() => import("./pages/product/ProductSellingPointList"));
-const ProductSellingPointsForm = lazy(() => import("./pages/product/ProductSellingPointForm"));
+const ProductCategoriesList = lazy(
+  () => import("./pages/product/ProductCategoriesList"),
+);
+const ProductCategoriesForm = lazy(
+  () => import("./pages/product/ProductCategoriesForm"),
+);
+const ProductAttributesList = lazy(
+  () => import("./pages/product/ProductAttributesList"),
+);
+const ProductAttributesForm = lazy(
+  () => import("./pages/product/ProductAttributesForm"),
+);
+const AttributeValuesList = lazy(
+  () => import("./pages/product/AttributeValuesList"),
+);
+const AttributeValuesForm = lazy(
+  () => import("./pages/product/AttributeValuesForm"),
+);
+const ProductSectoresList = lazy(
+  () => import("./pages/product/ProductSectorsList"),
+);
+const ProductSectorsForm = lazy(
+  () => import("./pages/product/ProductSectorsForm"),
+);
+const ProductSellingPointsList = lazy(
+  () => import("./pages/product/ProductSellingPointList"),
+);
+const ProductSellingPointsForm = lazy(
+  () => import("./pages/product/ProductSellingPointForm"),
+);
 const BaseProductList = lazy(() => import("./pages/product/BaseProductList"));
 const BaseProductForm = lazy(() => import("./pages/product/BaseProductForm"));
 const ProductModelList = lazy(() => import("./pages/product/ProductModelList"));
 const ProductModelForm = lazy(() => import("./pages/product/ProductModelForm"));
-const ProductVariantList = lazy(() => import("./pages/product/ProductVariantList"));
-const ProductVariantForm = lazy(() => import("./pages/product/ProductVariantForm"));
-const ProductVariantImagesList = lazy(() => import("./pages/product/ProductVariantImagesList"));
-const ProductVariantImagesForm = lazy(() => import("./pages/product/ProductVariantImagesForm"));
-const ProductProjectImagesList = lazy(() => import("./pages/product/ProductProjectImagesList"));
-const ProductProjectImagesForm = lazy(() => import("./pages/product/ProductProjectImagesForm"));
+const ProductVariantList = lazy(
+  () => import("./pages/product/ProductVariantList"),
+);
+const ProductVariantForm = lazy(
+  () => import("./pages/product/ProductVariantForm"),
+);
+const ProductVariantImagesList = lazy(
+  () => import("./pages/product/ProductVariantImagesList"),
+);
+const ProductVariantImagesForm = lazy(
+  () => import("./pages/product/ProductVariantImagesForm"),
+);
+const ProductProjectImagesList = lazy(
+  () => import("./pages/product/ProductProjectImagesList"),
+);
+const ProductProjectImagesForm = lazy(
+  () => import("./pages/product/ProductProjectImagesForm"),
+);
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
-const HomeBannerSliderList = lazy(() => import("./pages/cms/home/HomeBannerSliderList"));
-const HomeBannerSliderForm = lazy(() => import("./pages/cms/home/HomeBannerSliderForm"));
+const HomeBannerSliderList = lazy(
+  () => import("./pages/cms/home/HomeBannerSliderList"),
+);
+const HomeBannerSliderForm = lazy(
+  () => import("./pages/cms/home/HomeBannerSliderForm"),
+);
 const HomeBrandsList = lazy(() => import("./pages/cms/home/HomeBrandsList"));
 const HomeBrandsForm = lazy(() => import("./pages/cms/home/HomeBrandsForm"));
-const SmartSpaceCalculatorList = lazy(() => import("./pages/cms/home/SmartSpaceCalculatorList"));
-const SmartSpaceCalculatorForm = lazy(() => import("./pages/cms/home/SmartSpaceCalculatorForm"));
-const FindYourFitsList = lazy(() => import("./pages/cms/home/FindYourFitsList"));
-const FindYourFitsForm = lazy(() => import("./pages/cms/home/FindYourFitsForm"));
+const SmartSpaceCalculatorList = lazy(
+  () => import("./pages/cms/home/SmartSpaceCalculatorList"),
+);
+const SmartSpaceCalculatorForm = lazy(
+  () => import("./pages/cms/home/SmartSpaceCalculatorForm"),
+);
+const FindYourFitsList = lazy(
+  () => import("./pages/cms/home/FindYourFitsList"),
+);
+const FindYourFitsForm = lazy(
+  () => import("./pages/cms/home/FindYourFitsForm"),
+);
 
 // Customization pages
-const CustomizationFeaturesList = lazy(() => import("./pages/customization/CustomizationFeaturesList"));
-const CustomizationFeaturesForm = lazy(() => import("./pages/customization/CustomizationFeaturesForm"));
-const CustomizationProcessList = lazy(() => import("./pages/customization/CustomizationProcessList"));
-const CustomizationProcessForm = lazy(() => import("./pages/customization/CustomizationProcessForm"));
-const CustomizationOptionsList = lazy(() => import("./pages/customization/CustomizationOptionsList"));
-const CustomizationOptionsForm = lazy(() => import("./pages/customization/CustomizationOptionsForm"));
+const CustomizationFeaturesList = lazy(
+  () => import("./pages/customization/CustomizationFeaturesList"),
+);
+const CustomizationFeaturesForm = lazy(
+  () => import("./pages/customization/CustomizationFeaturesForm"),
+);
+const CustomizationProcessList = lazy(
+  () => import("./pages/customization/CustomizationProcessList"),
+);
+const CustomizationProcessForm = lazy(
+  () => import("./pages/customization/CustomizationProcessForm"),
+);
+const CustomizationOptionsList = lazy(
+  () => import("./pages/customization/CustomizationOptionsList"),
+);
+const CustomizationOptionsForm = lazy(
+  () => import("./pages/customization/CustomizationOptionsForm"),
+);
 
 // FAQ pages
 const FaqCmsForm = lazy(() => import("./pages/cms/faq/FaqCmsForm"));
@@ -73,65 +129,131 @@ const FaqListForm = lazy(() => import("./pages/cms/faq/FaqListForm"));
 const ContactCmsForm = lazy(() => import("./pages/cms/contact/ContactCmsForm"));
 
 // Contact Enquiries pages
-const ContactEnquiriesList = lazy(() => import("./pages/enquiries/ContactEnquiriesList"));
-const ContactEnquiryDetails = lazy(() => import("./pages/enquiries/ContactEnquiryDetails"));
+const ContactEnquiriesList = lazy(
+  () => import("./pages/enquiries/ContactEnquiriesList"),
+);
+const ContactEnquiryDetails = lazy(
+  () => import("./pages/enquiries/ContactEnquiryDetails"),
+);
 
 // Lead Generation pages
-const LeadGenerationList = lazy(() => import("./pages/enquiries/LeadGenerationList"));
-const LeadGenerationDetails = lazy(() => import("./pages/enquiries/LeadGenerationDetails"));
+const LeadGenerationList = lazy(
+  () => import("./pages/enquiries/LeadGenerationList"),
+);
+const LeadGenerationDetails = lazy(
+  () => import("./pages/enquiries/LeadGenerationDetails"),
+);
 
 // Newsletter Subscription pages
-const NewsletterSubscriptionsList = lazy(() => import("./pages/enquiries/NewsletterSubscriptionsList"));
-const NewsletterSubscriptionDetails = lazy(() => import("./pages/enquiries/NewsletterSubscriptionDetails"));
+const NewsletterSubscriptionsList = lazy(
+  () => import("./pages/enquiries/NewsletterSubscriptionsList"),
+);
+const NewsletterSubscriptionDetails = lazy(
+  () => import("./pages/enquiries/NewsletterSubscriptionDetails"),
+);
+
+// Users pages
+const UsersList = lazy(() => import("./pages/users/UsersList"));
+const UserDetails = lazy(() => import("./pages/users/UserDetails"));
 
 // Projects pages
-const ProjectsCmsForm = lazy(() => import("./pages/cms/projects/ProjectsCmsForm"));
-const ProjectCategoryList = lazy(() => import("./pages/cms/projects/ProjectCategoryList"));
-const ProjectCategoryForm = lazy(() => import("./pages/cms/projects/ProjectCategoryForm"));
+const ProjectsCmsForm = lazy(
+  () => import("./pages/cms/projects/ProjectsCmsForm"),
+);
+const ProjectCategoryList = lazy(
+  () => import("./pages/cms/projects/ProjectCategoryList"),
+);
+const ProjectCategoryForm = lazy(
+  () => import("./pages/cms/projects/ProjectCategoryForm"),
+);
 const ProjectsList = lazy(() => import("./pages/cms/projects/ProjectsList"));
 const ProjectsForm = lazy(() => import("./pages/cms/projects/ProjectsForm"));
-const SpecialisedAreasList = lazy(() => import("./pages/cms/projects/SpecialisedAreasList"));
-const SpecialisedAreasForm = lazy(() => import("./pages/cms/projects/SpecialisedAreasForm"));
+const SpecialisedAreasList = lazy(
+  () => import("./pages/cms/projects/SpecialisedAreasList"),
+);
+const SpecialisedAreasForm = lazy(
+  () => import("./pages/cms/projects/SpecialisedAreasForm"),
+);
 
 // Login/Register pages
-const LoginRegisterCmsForm = lazy(() => import("./pages/cms/login-register/LoginRegisterCmsForm"));
+const LoginRegisterCmsForm = lazy(
+  () => import("./pages/cms/login-register/LoginRegisterCmsForm"),
+);
 
 // Auth pages
 const AuthCmsForm = lazy(() => import("./pages/cms/auth/AuthCmsForm"));
 
 // About pages
 const AboutCmsForm = lazy(() => import("./pages/cms/about/aboutCmsForm"));
-const AboutTestimonialsList = lazy(() => import("./pages/cms/about/AboutTestimonialsList"));
+const AboutTestimonialsList = lazy(
+  () => import("./pages/cms/about/AboutTestimonialsList"),
+);
 
 // Materials pages
-const MaterialsCmsForm = lazy(() => import("./pages/cms/materials/MaterialsCmsForm"));
-const MaterialsCategoryList = lazy(() => import("./pages/cms/materials/MaterialsCategoryList"));
-const MaterialsCategoryForm = lazy(() => import("./pages/cms/materials/MaterialsCategoryForm"));
+const MaterialsCmsForm = lazy(
+  () => import("./pages/cms/materials/MaterialsCmsForm"),
+);
+const MaterialsCategoryList = lazy(
+  () => import("./pages/cms/materials/MaterialsCategoryList"),
+);
+const MaterialsCategoryForm = lazy(
+  () => import("./pages/cms/materials/MaterialsCategoryForm"),
+);
 const MaterialsList = lazy(() => import("./pages/cms/materials/MaterialsList"));
 const MaterialsForm = lazy(() => import("./pages/cms/materials/MaterialsForm"));
-const ExtraMaterialsList = lazy(() => import("./pages/cms/materials/ExtraMaterialsList"));
-const ExtraMaterialsForm = lazy(() => import("./pages/cms/materials/ExtraMaterialsForm"));
+const ExtraMaterialsList = lazy(
+  () => import("./pages/cms/materials/ExtraMaterialsList"),
+);
+const ExtraMaterialsForm = lazy(
+  () => import("./pages/cms/materials/ExtraMaterialsForm"),
+);
 
 // Delivery pages
-const DeliveryCmsForm = lazy(() => import("./pages/cms/delivery/DeliveryCmsForm"));
-const DeliveryTimeList = lazy(() => import("./pages/cms/delivery/DeliveryTimeList"));
-const DeliveryTimeForm = lazy(() => import("./pages/cms/delivery/DeliveryTimeForm"));
-const DeliveryMethodList = lazy(() => import("./pages/cms/delivery/DeliveryMethodList"));
-const DeliveryMethodForm = lazy(() => import("./pages/cms/delivery/DeliveryMethodForm"));
+const DeliveryCmsForm = lazy(
+  () => import("./pages/cms/delivery/DeliveryCmsForm"),
+);
+const DeliveryTimeList = lazy(
+  () => import("./pages/cms/delivery/DeliveryTimeList"),
+);
+const DeliveryTimeForm = lazy(
+  () => import("./pages/cms/delivery/DeliveryTimeForm"),
+);
+const DeliveryMethodList = lazy(
+  () => import("./pages/cms/delivery/DeliveryMethodList"),
+);
+const DeliveryMethodForm = lazy(
+  () => import("./pages/cms/delivery/DeliveryMethodForm"),
+);
 
-const AboutTestimonialsForm = lazy(() => import("./pages/cms/about/AboutTestimonialsForm"));
-const AboutJourneysList = lazy(() => import("./pages/cms/about/AboutJourneysList"));
-const AboutJourneysForm = lazy(() => import("./pages/cms/about/AboutJourneysForm"));
-const AboutOurClientsList = lazy(() => import("./pages/cms/about/AboutOurClientsList"));
-const AboutOurClientsForm = lazy(() => import("./pages/cms/about/AboutOurClientsForm"));
+const AboutTestimonialsForm = lazy(
+  () => import("./pages/cms/about/AboutTestimonialsForm"),
+);
+const AboutJourneysList = lazy(
+  () => import("./pages/cms/about/AboutJourneysList"),
+);
+const AboutJourneysForm = lazy(
+  () => import("./pages/cms/about/AboutJourneysForm"),
+);
+const AboutOurClientsList = lazy(
+  () => import("./pages/cms/about/AboutOurClientsList"),
+);
+const AboutOurClientsForm = lazy(
+  () => import("./pages/cms/about/AboutOurClientsForm"),
+);
 const WhyBosqList = lazy(() => import("./pages/cms/about/WhyBosqList"));
 const WhyBosqForm = lazy(() => import("./pages/cms/about/WhyBosqForm"));
 
 // ERGONOMICS
-const ErgonomicGuideCmsForm = lazy(() => import("./pages/cms/ergonomic-guide/ErgoGuideForm"));
+const ErgonomicGuideCmsForm = lazy(
+  () => import("./pages/cms/ergonomic-guide/ErgoGuideForm"),
+);
 // ergogomicsfeatures
-const ErgonomicFeaturesList = lazy(() => import("./pages/cms/ergonomic-guide/ErgonomicsChairFeatureList"));
-const ErgonomicFeaturesForm = lazy(() => import("./pages/cms/ergonomic-guide/ErgonomicsChairFeatureForm"));
+const ErgonomicFeaturesList = lazy(
+  () => import("./pages/cms/ergonomic-guide/ErgonomicsChairFeatureList"),
+);
+const ErgonomicFeaturesForm = lazy(
+  () => import("./pages/cms/ergonomic-guide/ErgonomicsChairFeatureForm"),
+);
 
 // Blog pages
 const BlogCmsForm = lazy(() => import("./pages/blog/BlogCmsForm"));
@@ -143,22 +265,42 @@ const NewsList = lazy(() => import("./pages/news/NewsList"));
 const NewsForm = lazy(() => import("./pages/news/NewsForm"));
 
 // Customization pages
-const CustomizationCmsForm = lazy(() => import("./pages/customization/CustomizationCmsForm"));
+const CustomizationCmsForm = lazy(
+  () => import("./pages/customization/CustomizationCmsForm"),
+);
 
 // Policy pages
-const PrivacyPolicyCmsForm = lazy(() => import("./pages/policy/PrivacyPolicyCmsForm"));
-const PrivacyPolicyForm = lazy(() => import("./pages/policy/PrivacyPolicyForm"));
-const PrivacyPolicyList = lazy(() => import("./pages/policy/PrivacyPolicyList"));
+const PrivacyPolicyCmsForm = lazy(
+  () => import("./pages/policy/PrivacyPolicyCmsForm"),
+);
+const PrivacyPolicyForm = lazy(
+  () => import("./pages/policy/PrivacyPolicyForm"),
+);
+const PrivacyPolicyList = lazy(
+  () => import("./pages/policy/PrivacyPolicyList"),
+);
 
-const WarrantyPolicyList = lazy(() => import("./pages/policy/WarrantyPolicyList"));
-const WarrantyPolicyForm = lazy(() => import("./pages/policy/WarrantyPolicyForm"));
+const WarrantyPolicyList = lazy(
+  () => import("./pages/policy/WarrantyPolicyList"),
+);
+const WarrantyPolicyForm = lazy(
+  () => import("./pages/policy/WarrantyPolicyForm"),
+);
 
-const TermsAndConditionsCmsForm = lazy(() => import("./pages/policy/TermsAndConditionsCmsForm"));
-const TermsAndConditionsFaqListForm = lazy(() => import("./pages/policy/TermsAndConditionsFaqListForm"));
-const TermsAndConditionsList = lazy(() => import("./pages/policy/TermsAndConditionsList"));
+const TermsAndConditionsCmsForm = lazy(
+  () => import("./pages/policy/TermsAndConditionsCmsForm"),
+);
+const TermsAndConditionsFaqListForm = lazy(
+  () => import("./pages/policy/TermsAndConditionsFaqListForm"),
+);
+const TermsAndConditionsList = lazy(
+  () => import("./pages/policy/TermsAndConditionsList"),
+);
 
 // Return Policy pages
-const ReturnPolicyCmsForm = lazy(() => import("./pages/policy/ReturnPolicyCmsForm"));
+const ReturnPolicyCmsForm = lazy(
+  () => import("./pages/policy/ReturnPolicyCmsForm"),
+);
 const ReturnPolicyForm = lazy(() => import("./pages/policy/ReturnPolicyForm"));
 const ReturnPolicyList = lazy(() => import("./pages/policy/ReturnPolicyList"));
 
@@ -1552,6 +1694,22 @@ const App = () => (
               }
             />
 
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute>
+                  <UsersList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/users/:id"
+              element={
+                <ProtectedRoute>
+                  <UserDetails />
+                </ProtectedRoute>
+              }
+            />
             {/* Catch all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
