@@ -295,6 +295,20 @@ export default function HeaderFooterForm() {
                     )}
                   />
 
+                    <FormField
+                    control={form.control}
+                    name="header_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Header Logo Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter alt text (AR)" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormField
                     control={form.control}
                     name="header_logo_media_path"
@@ -329,6 +343,20 @@ export default function HeaderFooterForm() {
                         <FormLabel>Footer Logo Alt Text</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter alt text" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                    <FormField
+                    control={form.control}
+                    name="footer_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Footer Logo Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter alt text (AR)" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

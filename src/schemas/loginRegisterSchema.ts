@@ -16,19 +16,19 @@ export const loginRegisterCmsSchema = z.object({
   otp_subtitle_ar: commonValidations.requiredText("OTP Subtitle (Arabic)"),
   otp_media_path: commonValidations.validateFileUpload("OTP Media"),
 
-  // Your Password Section
-  your_password_title: commonValidations.requiredString("Your Password Title"),
-  your_password_title_ar: commonValidations.requiredText(
-    "Your Password Title (Arabic)"
+  // Create Password Section
+  create_password_title: commonValidations.requiredString("Create Password Title"),
+  create_password_title_ar: commonValidations.requiredText(
+    "Create Password Title (Arabic)"
   ),
-  your_password_subtitle: commonValidations.requiredText(
-    "Your Password Subtitle"
+  create_password_subtitle: commonValidations.requiredText(
+    "Create Password Subtitle"
   ),
-  your_password_subtitle_ar: commonValidations.requiredText(
-    "Your Password Subtitle (Arabic)"
+  create_password_subtitle_ar: commonValidations.requiredText(
+    "Create Password Subtitle (Arabic)"
   ),
-  your_password_media_path: commonValidations.validateFileUpload(
-    "Your Password Media"
+  create_password_media_path: commonValidations.validateFileUpload(
+    "Create Password Media"
   ),
 
   // Login Section
@@ -53,6 +53,23 @@ export const loginRegisterCmsSchema = z.object({
     "Recover Email Media"
   ),
 
+  // Recover Password OTP Section
+  recover_password_otp_title: commonValidations.requiredString(
+    "Recover Password OTP Title"
+  ),
+  recover_password_otp_title_ar: commonValidations.requiredText(
+    "Recover Password OTP Title (Arabic)"
+  ),
+  recover_password_otp_subtitle: commonValidations.requiredText(
+    "Recover Password OTP Subtitle"
+  ),
+  recover_password_otp_subtitle_ar: commonValidations.requiredText(
+    "Recover Password OTP Subtitle (Arabic)"
+  ),
+  recover_password_otp_media_path: commonValidations.validateFileUpload(
+    "Recover Password OTP Media"
+  ),
+
   // Recover Password Section
   recover_password_title: commonValidations.requiredString(
     "Recover Password Title"
@@ -60,23 +77,8 @@ export const loginRegisterCmsSchema = z.object({
   recover_password_title_ar: commonValidations.requiredText(
     "Recover Password Title (Arabic)"
   ),
-  recover_password_subtitle: commonValidations.requiredText(
-    "Recover Password Subtitle"
-  ),
-  recover_password_subtitle_ar: commonValidations.requiredText(
-    "Recover Password Subtitle (Arabic)"
-  ),
   recover_password_media_path: commonValidations.validateFileUpload(
     "Recover Password Media"
-  ),
-
-  // New Password Section
-  new_password_title: commonValidations.requiredString("New Password Title"),
-  new_password_title_ar: commonValidations.requiredText(
-    "New Password Title (Arabic)"
-  ),
-  new_password_media_path: commonValidations.validateFileUpload(
-    "New Password Media"
   ),
 });
 
