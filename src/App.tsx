@@ -1726,7 +1726,7 @@ const App = () => (
               }
             />
             <Route
-              path="/coupons/:id"
+              path="/coupons/create"
               element={
                 <ProtectedRoute>
                   <CouponsForm />

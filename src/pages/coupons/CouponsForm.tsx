@@ -66,12 +66,9 @@ export default function CouponsForm() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
 
   // Selected IDs for cascade
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null,
-  );
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(
-    null,
-  );
+  const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<number | null>(null);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
 
   const form = useForm<CouponFormData>({
@@ -107,17 +104,18 @@ export default function CouponsForm() {
     }
   }, [id, isEditing]);
 
-  // Load products when category is selected
+  // Load products when category/subcategory is selected
   useEffect(() => {
+    const categoryId = selectedSubCategoryId || selectedParentCategoryId;
     if (
-      selectedCategoryId &&
+      categoryId &&
       (watchScopeType === "product" ||
         watchScopeType === "model" ||
         watchScopeType === "variant")
     ) {
-      loadProducts(selectedCategoryId);
+      loadProducts(categoryId);
     }
-  }, [selectedCategoryId, watchScopeType]);
+  }, [selectedSubCategoryId, selectedParentCategoryId, watchScopeType]);
 
   // Load models when product is selected
   useEffect(() => {
@@ -138,12 +136,14 @@ export default function CouponsForm() {
 
   // Reset scope selections when scope_type changes
   useEffect(() => {
-    if (watchScopeType === "common") {
-      form.setValue("scope_id", null);
-      setSelectedCategoryId(null);
-      setSelectedProductId(null);
-      setSelectedModelId(null);
-    }
+    form.setValue("scope_id", null);
+    setSelectedParentCategoryId(null);
+    setSelectedSubCategoryId(null);
+    setSelectedProductId(null);
+    setSelectedModelId(null);
+    setProducts([]);
+    setModels([]);
+    setVariants([]);
   }, [watchScopeType]);
 
   const loadCategories = async () => {
@@ -316,12 +316,6 @@ export default function CouponsForm() {
       </div>
     );
   }
-
-  // Flatten categories for dropdown (parent + children)
-  const flattenedCategories = categories.flatMap((cat) => [
-    cat,
-    ...(cat.children || []),
-  ]);
 
   return (
     <div className="space-y-6">
@@ -606,20 +600,17 @@ export default function CouponsForm() {
                 )}
               />
 
-              {/* Category Selection */}
-              {(watchScopeType === "category" ||
-                watchScopeType === "product" ||
-                watchScopeType === "model" ||
-                watchScopeType === "variant") && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Unified Cascade: Parent Category → Subcategory → Product → Model → Variant */}
+              {watchScopeType !== "common" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {/* 1. Parent Category - always shown for non-common scope */}
                   <FormItem>
-                    <FormLabel>
-                      Category {watchScopeType === "category" && "*"}
-                    </FormLabel>
+                    <FormLabel>Parent Category *</FormLabel>
                     <Select
                       onValueChange={(value) => {
                         const catId = parseInt(value);
-                        setSelectedCategoryId(catId);
+                        setSelectedParentCategoryId(catId);
+                        setSelectedSubCategoryId(null);
                         setSelectedProductId(null);
                         setSelectedModelId(null);
                         setProducts([]);
@@ -631,15 +622,15 @@ export default function CouponsForm() {
                           form.setValue("scope_id", null);
                         }
                       }}
-                      value={selectedCategoryId?.toString() || ""}
+                      value={selectedParentCategoryId?.toString() || ""}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
+                          <SelectValue placeholder="Select parent category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {flattenedCategories.map((cat) => (
+                        {categories.map((cat) => (
                           <SelectItem key={cat.id} value={cat.id.toString()}>
                             {cat.name}
                           </SelectItem>
@@ -648,15 +639,54 @@ export default function CouponsForm() {
                     </Select>
                   </FormItem>
 
-                  {/* Product Selection */}
+                  {/* 2. Subcategory - shown after parent category is selected */}
+                  {selectedParentCategoryId && (
+                    <FormItem>
+                      <FormLabel>
+                        Subcategory {watchScopeType === "category" ? "(Optional)" : "*"}
+                      </FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          const subCatId = parseInt(value);
+                          setSelectedSubCategoryId(subCatId);
+                          setSelectedProductId(null);
+                          setSelectedModelId(null);
+                          setProducts([]);
+                          setModels([]);
+                          setVariants([]);
+                          if (watchScopeType === "category") {
+                            form.setValue("scope_id", subCatId);
+                          } else {
+                            form.setValue("scope_id", null);
+                          }
+                        }}
+                        value={selectedSubCategoryId?.toString() || ""}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select subcategory" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories
+                            .find((c) => c.id === selectedParentCategoryId)
+                            ?.children?.map((sub) => (
+                              <SelectItem key={sub.id} value={sub.id.toString()}>
+                                {sub.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+
+                  {/* 3. Product - shown for product/model/variant scope after category is selected */}
                   {(watchScopeType === "product" ||
                     watchScopeType === "model" ||
                     watchScopeType === "variant") &&
-                    selectedCategoryId && (
+                    (selectedSubCategoryId || selectedParentCategoryId) && (
                       <FormItem>
-                        <FormLabel>
-                          Product {watchScopeType === "product" && "*"}
-                        </FormLabel>
+                        <FormLabel>Product *</FormLabel>
                         <Select
                           onValueChange={(value) => {
                             const prodId = parseInt(value);
@@ -691,14 +721,11 @@ export default function CouponsForm() {
                       </FormItem>
                     )}
 
-                  {/* Model Selection */}
-                  {(watchScopeType === "model" ||
-                    watchScopeType === "variant") &&
+                  {/* 4. Model - shown for model/variant scope after product is selected */}
+                  {(watchScopeType === "model" || watchScopeType === "variant") &&
                     selectedProductId && (
                       <FormItem>
-                        <FormLabel>
-                          Model {watchScopeType === "model" && "*"}
-                        </FormLabel>
+                        <FormLabel>Model *</FormLabel>
                         <Select
                           onValueChange={(value) => {
                             const modelId = parseInt(value);
@@ -731,7 +758,7 @@ export default function CouponsForm() {
                       </FormItem>
                     )}
 
-                  {/* Variant Selection */}
+                  {/* 5. Variant - shown for variant scope after model is selected */}
                   {watchScopeType === "variant" && selectedModelId && (
                     <FormField
                       control={form.control}
