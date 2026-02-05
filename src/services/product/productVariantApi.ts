@@ -13,6 +13,10 @@ export interface ProductVariant {
   product_code: string;
   sort_order: number;
   status: boolean;
+  is_primary: boolean;
+  title?: string;
+  title_ar?: string;
+  media_path?: string;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;
@@ -121,10 +125,10 @@ export const createProductVariant = async (data: Partial<ProductVariant>): Promi
 };
 
 // Update product variant
-export const updateProductVariant = async (id: number, data: Partial<ProductVariant>): Promise<ProductVariantItemResponse> => {
+export const updateProductVariant = async (id: number, data: Partial<ProductVariant> | FormData): Promise<ProductVariantItemResponse> => {
   return apiCall(`/resources/product-variants/${id}`, {
     method: "PUT",
-    data,
+    data: data as any,
   });
 };
 

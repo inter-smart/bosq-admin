@@ -23,6 +23,8 @@ interface ImageItem {
   media_type: string;
   status: boolean;
   is_primary: boolean;
+  thumbnail?: File | null;
+  thumbnailPreview?: string | null;
 }
 
 interface SortableImageCardProps {
@@ -30,16 +32,27 @@ interface SortableImageCardProps {
   onRemove: (id: string) => void;
   onUpdate: (id: string, field: keyof ImageItem, value: string | number | boolean) => void;
   onSetPrimary: (id: string) => void;
+  onThumbnailChange: (id: string, file: File | null) => void;
   hasPrimaryImage: boolean;
 }
 
-function 
-SortableImageCard({ image, onRemove, onUpdate, onSetPrimary, hasPrimaryImage }: SortableImageCardProps) {
+function SortableImageCard({ image, onRemove, onUpdate, onSetPrimary, onThumbnailChange, hasPrimaryImage }: SortableImageCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: image.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  const handleThumbnailSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      onThumbnailChange(image.id, file);
+    }
+  };
+
+  const handleRemoveThumbnail = () => {
+    onThumbnailChange(image.id, null);
   };
 
   return (
@@ -48,17 +61,54 @@ SortableImageCard({ image, onRemove, onUpdate, onSetPrimary, hasPrimaryImage }: 
         <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
 
-      {image.media_type === "image" && (
-        <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border">
-          <img src={image.preview} alt="Preview" className="w-full h-full object-cover" />
-        </div>
-      )}
+      <div className="flex flex-col gap-2">
+        {image.media_type === "image" && (
+          <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border">
+            <img src={image.preview} alt="Preview" className="w-full h-full object-cover" />
+          </div>
+        )}
 
-      {image.media_type === "video" && (
-        <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border bg-black">
-          <video src={image.preview} className="w-full h-full object-cover" controls preload="metadata" playsInline />
-        </div>
-      )}
+        {image.media_type === "video" && (
+          <>
+            <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border bg-black">
+              <video src={image.preview} className="w-full h-full object-cover" controls preload="metadata" playsInline />
+            </div>
+            {/* Thumbnail section for videos */}
+            <div className="w-24">
+              <Label className="text-xs text-muted-foreground">Thumbnail</Label>
+              {image.thumbnailPreview ? (
+                <div className="relative w-24 h-16 mt-1 rounded border overflow-hidden">
+                  <img src={image.thumbnailPreview} alt="Thumbnail" className="w-full h-full object-cover" />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-0 right-0 h-5 w-5"
+                    onClick={handleRemoveThumbnail}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="mt-1">
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailSelect}
+                    className="hidden"
+                    id={`thumbnail-${image.id}`}
+                  />
+                  <Label htmlFor={`thumbnail-${image.id}`} className="cursor-pointer">
+                    <div className="w-24 h-16 border-2 border-dashed rounded flex items-center justify-center text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors">
+                      <Upload className="h-4 w-4" />
+                    </div>
+                  </Label>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
 
       <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="space-y-2">
@@ -244,6 +294,11 @@ export default function ProductVariantImagesForm() {
 
   const removeImage = (id: string) => {
     setImages((prev) => {
+      const imageToRemove = prev.find((img) => img.id === id);
+      // Revoke thumbnail preview URL if exists
+      if (imageToRemove?.thumbnailPreview) {
+        URL.revokeObjectURL(imageToRemove.thumbnailPreview);
+      }
       const filtered = prev.filter((img) => img.id !== id);
       // Recalculate sort order
       return filtered.map((img, index) => ({ ...img, sort_order: index }));
@@ -260,6 +315,25 @@ export default function ProductVariantImagesForm() {
         ...img,
         is_primary: img.id === id,
       })),
+    );
+  };
+
+  const handleThumbnailChange = (id: string, file: File | null) => {
+    setImages((prev) =>
+      prev.map((img) => {
+        if (img.id === id) {
+          // Revoke old thumbnail preview URL if exists
+          if (img.thumbnailPreview) {
+            URL.revokeObjectURL(img.thumbnailPreview);
+          }
+          return {
+            ...img,
+            thumbnail: file,
+            thumbnailPreview: file ? URL.createObjectURL(file) : null,
+          };
+        }
+        return img;
+      }),
     );
   };
 
@@ -306,6 +380,10 @@ export default function ProductVariantImagesForm() {
         formData.append(`status[${index}]`, image.status ? "1" : "0");
         formData.append(`media_type[${index}]`, image.media_type);
         formData.append(`is_primary[${index}]`, image.is_primary ? "1" : "0");
+        // Include thumbnail if it's a video and has a thumbnail
+        if (image.media_type === "video" && image.thumbnail) {
+          formData.append(`thumbnail[${index}]`, image.thumbnail);
+        }
       });
 
       await uploadProductVariantImages(formData);
@@ -401,7 +479,7 @@ export default function ProductVariantImagesForm() {
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={images.map((img) => img.id)} strategy={verticalListSortingStrategy}>
                   {images.map((image) => (
-                    <SortableImageCard key={image.id} image={image} onRemove={removeImage} onUpdate={updateImage} onSetPrimary={setPrimaryImage} hasPrimaryImage={existingPrimaryImage} />
+                    <SortableImageCard key={image.id} image={image} onRemove={removeImage} onUpdate={updateImage} onSetPrimary={setPrimaryImage} onThumbnailChange={handleThumbnailChange} hasPrimaryImage={existingPrimaryImage} />
                   ))}
                 </SortableContext>
               </DndContext>

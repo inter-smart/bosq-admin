@@ -3,26 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  fetchHeaderFooterSettings,
-  saveHeaderFooterSettings,
-} from "@/services/common/siteSettingsApi";
-import {
-  headerFooterSchema,
-  HeaderFooterFormData,
-} from "@/schemas/siteSettingsSchema";
+import { fetchHeaderFooterSettings, saveHeaderFooterSettings } from "@/services/common/siteSettingsApi";
+import { headerFooterSchema, HeaderFooterFormData } from "@/schemas/siteSettingsSchema";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 
 export default function HeaderFooterForm() {
@@ -97,14 +84,10 @@ export default function HeaderFooterForm() {
 
         // Set header/footer logo URLs
         if (data.header_logo_media_path) {
-          setHeaderLogo(
-            `${import.meta.env.VITE_URL}/${data.header_logo_media_path}`
-          );
+          setHeaderLogo(`${import.meta.env.VITE_URL}/${data.header_logo_media_path}`);
         }
         if (data.footer_logo_media_path) {
-          setFooterLogo(
-            `${import.meta.env.VITE_URL}/${data.footer_logo_media_path}`
-          );
+          setFooterLogo(`${import.meta.env.VITE_URL}/${data.footer_logo_media_path}`);
         }
       }
     } catch (error) {
@@ -125,10 +108,8 @@ export default function HeaderFooterForm() {
         }
       });
 
-      if (headerLogo instanceof File)
-        formData.append("header_logo_media_path", headerLogo);
-      if (footerLogo instanceof File)
-        formData.append("footer_logo_media_path", footerLogo);
+      if (headerLogo instanceof File) formData.append("header_logo_media_path", headerLogo);
+      if (footerLogo instanceof File) formData.append("footer_logo_media_path", footerLogo);
 
       await saveHeaderFooterSettings(formData);
 
@@ -159,146 +140,138 @@ export default function HeaderFooterForm() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Header & Footer Settings</h1>
-        <p className="text-muted-foreground">
-          Manage global header/footer logos, contact info, and newsletter
-          settings.
-        </p>
+        <p className="text-muted-foreground">Manage global header/footer logos, contact info, and newsletter settings.</p>
       </div>
 
       <Form {...form}>
         <form onSubmit={handleFormSubmit} className="space-y-6">
           {/* Contact Info */}
           <Card>
-  <CardHeader>
-    <CardTitle>Contact Information</CardTitle>
-  </CardHeader>
-  <CardContent className="space-y-4">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Address */}
-      <FormField
-        control={form.control}
-        name="address"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Address</FormLabel>
-            <FormControl>
-              <RichTextEditor placeholder="Enter address" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="address_ar"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Address (AR)</FormLabel>
-            <FormControl>
-              <RichTextEditor
-                placeholder="أدخل العنوان"
-                {...field}
-                dir="rtl"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Address */}
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <RichTextEditor placeholder="Enter address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="address_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address (AR)</FormLabel>
+                      <FormControl>
+                        <RichTextEditor placeholder="أدخل العنوان" {...field} dir="rtl" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      {/* Phone Number */}
-      <FormField
-        control={form.control}
-        name="phone_number"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Phone Number</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter phone number" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                {/* Phone Number */}
+                <FormField
+                  control={form.control}
+                  name="phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      {/* Sales Phone Number */}
-      <FormField
-        control={form.control}
-        name="sales_phone_number"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Sales Phone Number</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter sales phone number" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                {/* Sales Phone Number */}
+                <FormField
+                  control={form.control}
+                  name="sales_phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sales Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter sales phone number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      {/* PO Box Number */}
-      <FormField
-        control={form.control}
-        name="po_box_number"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>PO Box Number</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter PO box number" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                {/* PO Box Number */}
+                <FormField
+                  control={form.control}
+                  name="po_box_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PO Box Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter PO box number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      {/* General Email */}
-      <FormField
-        control={form.control}
-        name="email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Email</FormLabel>
-            <FormControl>
-              <Input type="email" placeholder="Enter email" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                {/* General Email */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Enter email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      {/* Sale Enquiry Email */}
-      <FormField
-        control={form.control}
-        name="sale_enquiry_email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Sale Enquiry Email</FormLabel>
-            <FormControl>
-              <Input type="email" placeholder="Enter email" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+                {/* Sale Enquiry Email */}
+                <FormField
+                  control={form.control}
+                  name="sale_enquiry_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sale Enquiry Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Enter email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-      {/* Support Email */}
-      <FormField
-        control={form.control}
-        name="support_email"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Support Email</FormLabel>
-            <FormControl>
-              <Input type="email" placeholder="Enter email" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
-  </CardContent>
-</Card>
-
+                {/* Support Email */}
+                <FormField
+                  control={form.control}
+                  name="support_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Support Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Enter email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Header & Footer Logos */}
           <Card>
@@ -446,12 +419,7 @@ export default function HeaderFooterForm() {
                     <FormItem>
                       <FormLabel>Sale Enquiry Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل العنوان"
-                          {...field}
-                          dir="rtl"
-                          className="text-right"
-                        />
+                        <Input placeholder="أدخل العنوان" {...field} dir="rtl" className="text-right" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -479,12 +447,7 @@ export default function HeaderFooterForm() {
                     <FormItem>
                       <FormLabel>Support Enquiry Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل العنوان"
-                          {...field}
-                          dir="rtl"
-                          className="text-right"
-                        />
+                        <Input placeholder="أدخل العنوان" {...field} dir="rtl" className="text-right" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -512,12 +475,7 @@ export default function HeaderFooterForm() {
                     <FormItem>
                       <FormLabel>Newsletter Main Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل العنوان الرئيسي"
-                          {...field}
-                          dir="rtl"
-                          className="text-right"
-                        />
+                        <Input placeholder="أدخل العنوان الرئيسي" {...field} dir="rtl" className="text-right" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -532,10 +490,7 @@ export default function HeaderFooterForm() {
                     <FormItem>
                       <FormLabel>Newsletter Title</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter newsletter title"
-                          {...field}
-                        />
+                        <Input placeholder="Enter newsletter title" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -548,12 +503,7 @@ export default function HeaderFooterForm() {
                     <FormItem>
                       <FormLabel>Newsletter Title (AR)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="أدخل عنوان النشرة"
-                          {...field}
-                          dir="rtl"
-                          className="text-right"
-                        />
+                        <Input placeholder="أدخل عنوان النشرة" {...field} dir="rtl" className="text-right" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -12,6 +12,12 @@ export interface SortOrderUpdatePayload {
   sort_order: number;
 }
 
+export interface IsPrimaryUpdatePayload {
+  model_name: string;
+  row_id?: number;
+  is_primary: boolean;
+}
+
 export interface CommonResponse<T = any> {
   success: boolean;
   message: string;
@@ -38,5 +44,15 @@ export const updateSortOrder = async (
   return apiCall(`/common-actions/sort-order/${payload.model_name}/${payload.row_id}`, {
     method: "PUT",
     data: { sort_order: payload.sort_order },
+  });
+};
+
+// 🔥 Update Is Primary (common)
+export const updateIsPrimary = async (
+  payload: IsPrimaryUpdatePayload
+): Promise<CommonResponse> => {
+  return apiCall(`/common-actions/is-primary/${payload.model_name}/${payload.row_id}`, {
+    method: "PUT",
+    data: { is_primary: payload.is_primary },
   });
 };
