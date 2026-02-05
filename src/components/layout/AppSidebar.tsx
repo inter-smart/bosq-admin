@@ -291,6 +291,10 @@ const policiesSection = [
 ];
 
 const usersSection = [{ title: "Users List", url: "/users", icon: Users }];
+const couponsSection = [
+  { title: "Coupons", url: "/coupons", icon: Tags },
+  // { title: "Coupon Usage", url: "/coupon-usage", icon: PieChart },
+];
 
 export function AppSidebar() {
   const { state } = useSidebar();
@@ -320,6 +324,7 @@ export function AppSidebar() {
   const [productsOpen, setProductsOpen] = useState(false);
   const [enquiriesOpen, setEnquiriesOpen] = useState(false);
   const [usersOpen, setUsersOpen] = useState(false);
+  const [couponsOpen, setCouponsOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
 
@@ -349,6 +354,7 @@ export function AppSidebar() {
     setProductsOpen(false);
     setEnquiriesOpen(false);
     setUsersOpen(false);
+    setCouponsOpen(false);
   };
 
   // Auto-open based on current path and close others
@@ -579,6 +585,12 @@ export function AppSidebar() {
       setUsersOpen(true);
       return;
     }
+
+    // Auto-open Coupons section
+    if (["/coupons"].some((r) => path.includes(r))) {
+      setCouponsOpen(true);
+      return;
+    }
   }, [location.pathname]);
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
@@ -768,6 +780,16 @@ export function AppSidebar() {
           open={usersOpen}
           setOpen={setUsersOpen}
           items={usersSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
+
+        <SidebarCollapsibleSection
+          title="Coupons"
+          icon={Tags}
+          open={couponsOpen}
+          setOpen={setCouponsOpen}
+          items={couponsSection}
           isCollapsed={isCollapsed}
           getNavCls={getNavCls}
         />

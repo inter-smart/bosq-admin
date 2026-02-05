@@ -21,6 +21,11 @@ const SocialMediaForm = lazy(() => import("./pages/common/SocialMediaForm"));
 const MetaTagsList = lazy(() => import("./pages/common/MetaTagsList"));
 const MetaTagsForm = lazy(() => import("./pages/common/MetaTagsForm"));
 
+
+// coupons
+const CouponsList = lazy(() => import("./pages/coupons/CouponsList"));
+const CouponsForm = lazy(() => import("./pages/coupons/CouponsForm"));
+
 // Product pages
 const ProductCategoriesList = lazy(
   () => import("./pages/product/ProductCategoriesList"),
@@ -1707,6 +1712,33 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <UserDetails />
+                </ProtectedRoute>
+              }
+            />
+
+
+            <Route
+              path="/coupons"
+              element={
+                <ProtectedRoute>
+                  <CouponsList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/coupons/:id"
+              element={
+                <ProtectedRoute>
+                  <CouponsForm />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/coupons/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <CouponsForm />
                 </ProtectedRoute>
               }
             />
