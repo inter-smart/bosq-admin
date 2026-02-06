@@ -179,6 +179,12 @@ const SpecialisedAreasList = lazy(
 const SpecialisedAreasForm = lazy(
   () => import("./pages/cms/projects/SpecialisedAreasForm"),
 );
+const ProjectImagesList = lazy(
+  () => import("./pages/cms/projects/ProjectImagesList"),
+);
+const ProjectImagesForm = lazy(
+  () => import("./pages/cms/projects/ProjectImagesForm"),
+);
 
 // Login/Register pages
 const LoginRegisterCmsForm = lazy(
@@ -1100,6 +1106,32 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <SpecialisedAreasForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Project Images Routes */}
+            <Route
+              path="/project-images"
+              element={
+                <ProtectedRoute>
+                  <ProjectImagesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/project-images/create"
+              element={
+                <ProtectedRoute>
+                  <ProjectImagesForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/project-images/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ProjectImagesForm />
                 </ProtectedRoute>
               }
             />

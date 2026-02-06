@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -28,30 +21,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, Filter, Award, Image } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import {
-  fetchProjectsList,
-  deleteProject,
-  Project,
-  updateProject,
-} from "@/services/cms/projects/projectsApi";
+  fetchProjectImagesList,
+  deleteProjectImage,
+  ProjectImage,
+} from "@/services/cms/projects/projectImagesApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
-import {
-  fetchProjectCategoryList,
-  ProjectCategory,
-} from "@/services/cms/projects/projectCategoryApi";
 
-export default function ProjectsList() {
+export default function ProjectImagesList() {
+  const [searchParams] = useSearchParams();
+  const projectId = searchParams.get("projectId");
+
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectImages, setProjectImages] = useState<ProjectImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
-  const [categories, setCategories] = useState<ProjectCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,15 +48,11 @@ export default function ProjectsList() {
   const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<Project>({
-      modelName: "Projects",
-      data: projects,
-      setData: setProjects,
+    useCommonTableActions<ProjectImage>({
+      modelName: "ProjectImage",
+      data: projectImages,
+      setData: setProjectImages,
     });
-
-  useEffect(() => {
-    loadCategories();
-  }, []);
 
   // Debounce search query
   useEffect(() => {
@@ -78,41 +63,37 @@ export default function ProjectsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Reset to page 1 when search or category changes
+  // Reset to page 1 when search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchQuery, selectedCategory]);
+  }, [debouncedSearchQuery]);
 
-  // Load projects when dependencies change
+  // Load project images when dependencies change
   useEffect(() => {
-    loadProjects();
-  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory]);
+    loadProjectImages();
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
-  const loadProjects = async () => {
+  const loadProjectImages = async () => {
     try {
-      // Set appropriate loading state
       if (debouncedSearchQuery) {
         setSearching(true);
       } else {
         setLoading(true);
       }
 
-      const categoryParam =
-        selectedCategory === "all" ? undefined : parseInt(selectedCategory);
-
-      const response = await fetchProjectsList(
+      const response = await fetchProjectImagesList(
         currentPage,
         pageSize,
         debouncedSearchQuery || undefined,
-        categoryParam
+        projectId
       );
 
-      setProjects(response.data.list);
+      setProjectImages(response.data.list);
       setTotalCount(response.data.pagination.totalCount);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load projects",
+        description: "Failed to load project images",
         variant: "destructive",
       });
     } finally {
@@ -121,62 +102,22 @@ export default function ProjectsList() {
     }
   };
 
-  const loadCategories = async () => {
-    try {
-      const response = await fetchProjectCategoryList(1, 100);
-      setCategories(response?.data?.list || []);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load Project categories",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleShowInHomeToggle = async (id: number, currentValue: boolean) => {
-    try {
-      // Create FormData to match your API signature
-      const formData = new FormData();
-      formData.append("show_in_home", String(!currentValue));
-
-      // Call API
-      await updateProject(id, formData);
-
-      // Update local state optimistically
-      setProjects((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, show_in_home: !currentValue } : item
-        )
-      );
-
-      toast({
-        title: "Success",
-        description: "Show In Home status updated",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update Show In Home",
-        variant: "destructive",
-      });
-    }
-  };
-
   const confirmDelete = async () => {
     if (!deleteItemId) return;
 
     try {
-      await deleteProject(deleteItemId);
-      setProjects((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteProjectImage(deleteItemId);
+      setProjectImages((prev) =>
+        prev.filter((item) => item.id !== deleteItemId)
+      );
       toast({
         title: "Success",
-        description: "Project deleted successfully",
+        description: "Project image deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete project",
+        description: "Failed to delete project image",
         variant: "destructive",
       });
     } finally {
@@ -184,7 +125,7 @@ export default function ProjectsList() {
     }
   };
 
-  const columns: ColumnDef<Project>[] = [
+  const columns: ColumnDef<ProjectImage>[] = [
     {
       accessorKey: "id",
       header: "ID",
@@ -195,15 +136,15 @@ export default function ProjectsList() {
       ),
     },
     {
-      accessorKey: "thumbnail",
+      accessorKey: "media_path",
       header: "Thumbnail",
       cell: ({ row }) => {
-        const thumbnail = row.getValue("thumbnail") as string;
-        if (thumbnail) {
+        const media_path = row.getValue("media_path") as string;
+        if (media_path) {
           return (
             <img
-              src={`${import.meta.env.VITE_IMAGE_URL}/${thumbnail}`}
-              alt={row.original.title || "Project"}
+              src={`${import.meta.env.VITE_IMAGE_URL}/${media_path}`}
+              alt={row.original.media_alt || "Project Image"}
               className="h-10 w-10 object-cover rounded"
             />
           );
@@ -212,22 +153,22 @@ export default function ProjectsList() {
       },
     },
     {
-      accessorKey: "title",
-      header: "Title",
+      accessorKey: "media_alt",
+      header: "Alt Text (EN)",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[300px] truncate">
-          {row.getValue("title")}
+        <div className="font-medium max-w-[200px] truncate">
+          {row.getValue("media_alt") || "N/A"}
         </div>
       ),
     },
     {
-      accessorKey: "category_id",
-      header: "Category",
-      cell: ({ row }) => {
-        const categoryId = row.original.category_id;
-        const category = categories.find((cat) => cat.id === categoryId);
-        return <div className="text-sm">{category?.name || "N/A"}</div>;
-      },
+      accessorKey: "media_alt_ar",
+      header: "Alt Text (AR)",
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[200px] truncate" dir="rtl">
+          {row.getValue("media_alt_ar") || "N/A"}
+        </div>
+      ),
     },
     {
       accessorKey: "sort_order",
@@ -249,29 +190,6 @@ export default function ProjectsList() {
         );
       },
     },
-    {
-      accessorKey: "show_in_home",
-      header: "Show In Home",
-      cell: ({ row }) => {
-        const item = row.original;
-        const show_in_home = row.getValue("show_in_home") as boolean;
-
-        return (
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={show_in_home}
-              onCheckedChange={() =>
-                handleShowInHomeToggle(item.id!, show_in_home)
-              }
-            />
-            <Badge variant={show_in_home ? "default" : "secondary"}>
-              {show_in_home ? "active" : "inactive"}
-            </Badge>
-          </div>
-        );
-      },
-    },
-
     {
       accessorKey: "status",
       header: "Status",
@@ -316,26 +234,14 @@ export default function ProjectsList() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => navigate(`/projects/edit/${item.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/project-images/edit/${item.id}?projectId=${projectId}`
+                  )
+                }
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/specialised-areas?projectId=${item.id}`)
-                }
-              >
-                <Award className="mr-2 h-4 w-4" />
-                Specialised Areas
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/project-images?projectId=${item.id}`)
-                }
-              >
-                <Image className="mr-2 h-4 w-4" />
-                Project Images
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
@@ -354,44 +260,9 @@ export default function ProjectsList() {
   return (
     <>
       <div className="space-y-4">
-        {/* Filter Section */}
-        <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
-
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">Filter by Category:</span>
-
-        <div className="flex items-center gap-4">
-
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id!.toString()}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {selectedCategory !== "all" && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedCategory("all")}
-            >
-              Clear Filter
-            </Button>
-          )}
-        </div>
-        </div>
-          </div>
-
         <DataTable
           columns={columns}
-          data={projects}
+          data={projectImages}
           loading={loading}
           searching={searching}
           searchQuery={searchQuery}
@@ -404,10 +275,12 @@ export default function ProjectsList() {
             onPageChange: setCurrentPage,
             onPageSizeChange: setPageSize,
           }}
-          title="Projects"
-          searchPlaceholder="Search projects..."
-          onAdd={() => navigate("/projects/create")}
-          addButtonText="Add Project"
+          title="Project Images"
+          searchPlaceholder="Search project images..."
+          onAdd={() => navigate(`/project-images/create?projectId=${projectId}`)}
+          addButtonText="Add Project Image"
+          navigateBack={() => navigate(`/projects`)}
+          isBackNavigation={true}
         />
       </div>
 
@@ -421,7 +294,7 @@ export default function ProjectsList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              project.
+              project image.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
