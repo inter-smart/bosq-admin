@@ -20,13 +20,6 @@ export interface Project {
   section1_media_alt: string;
   section1_media_alt_ar: string;
 
-  // Section 2 - Dual Images
-  section2_first_media_path: string | File | null;
-  section2_first_media_alt: string;
-  section2_first_media_alt_ar: string;
-  section2_second_media_path: string | File | null;
-  section2_second_alt: string;
-  section2_second_media_alt_ar: string;
 
   // Section 3 - Content with media
   section3_title: string;

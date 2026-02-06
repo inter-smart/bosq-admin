@@ -57,12 +57,6 @@ export default function ProjectsForm() {
   const [section1MobileFile, setSection1MobileFile] = useState<
     File | string | null
   >(null);
-  const [section2FirstFile, setSection2FirstFile] = useState<
-    File | string | null
-  >(null);
-  const [section2SecondFile, setSection2SecondFile] = useState<
-    File | string | null
-  >(null);
   const [section3MediaFile, setSection3MediaFile] = useState<
     File | string | null
   >(null);
@@ -97,12 +91,6 @@ export default function ProjectsForm() {
       section1_mobile_media_path: null,
       section1_media_alt: "",
       section1_media_alt_ar: "",
-      section2_first_media_path: null,
-      section2_first_media_alt: "",
-      section2_first_media_alt_ar: "",
-      section2_second_media_path: null,
-      section2_second_alt: "",
-      section2_second_media_alt_ar: "",
       section3_title: "",
       section3_title_ar: "",
       section3_description: "",
@@ -180,12 +168,7 @@ export default function ProjectsForm() {
           section1_mobile_media_path: data.section1_mobile_media_path || null,
           section1_media_alt: data.section1_media_alt || "",
           section1_media_alt_ar: data.section1_media_alt_ar || "",
-          section2_first_media_path: data.section2_first_media_path || null,
-          section2_first_media_alt: data.section2_first_media_alt || "",
-          section2_first_media_alt_ar: data.section2_first_media_alt_ar || "",
-          section2_second_media_path: data.section2_second_media_path || null,
-          section2_second_alt: data.section2_second_alt || "",
-          section2_second_media_alt_ar: data.section2_second_media_alt_ar || "",
+          
           section3_title: data.section3_title || "",
           section3_title_ar: data.section3_title_ar || "",
           section3_description: data.section3_description || "",
@@ -241,20 +224,7 @@ export default function ProjectsForm() {
             }`
           );
         }
-        if (data.section2_first_media_path) {
-          setSection2FirstFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${
-              data.section2_first_media_path
-            }`
-          );
-        }
-        if (data.section2_second_media_path) {
-          setSection2SecondFile(
-            `${import.meta.env.VITE_IMAGE_URL}/${
-              data.section2_second_media_path
-            }`
-          );
-        }
+    
         if (data.section3_media_path) {
           setSection3MediaFile(
             `${import.meta.env.VITE_IMAGE_URL}/${data.section3_media_path}`
@@ -413,24 +383,7 @@ export default function ProjectsForm() {
       if (data.section1_media_alt_ar)
         formData.append("section1_media_alt_ar", data.section1_media_alt_ar);
 
-      // Section 2
-      if (data.section2_first_media_alt)
-        formData.append(
-          "section2_first_media_alt",
-          data.section2_first_media_alt
-        );
-      if (data.section2_first_media_alt_ar)
-        formData.append(
-          "section2_first_media_alt_ar",
-          data.section2_first_media_alt_ar
-        );
-      if (data.section2_second_alt)
-        formData.append("section2_second_alt", data.section2_second_alt);
-      if (data.section2_second_media_alt_ar)
-        formData.append(
-          "section2_second_media_alt_ar",
-          data.section2_second_media_alt_ar
-        );
+     
 
       // Section 3
       if (data.section3_title)
@@ -506,12 +459,6 @@ export default function ProjectsForm() {
       }
       if (section1MobileFile instanceof File) {
         formData.append("section1_mobile_media_path", section1MobileFile);
-      }
-      if (section2FirstFile instanceof File) {
-        formData.append("section2_first_media_path", section2FirstFile);
-      }
-      if (section2SecondFile instanceof File) {
-        formData.append("section2_second_media_path", section2SecondFile);
       }
       if (section3MediaFile instanceof File) {
         formData.append("section3_media_path", section3MediaFile);
@@ -946,144 +893,7 @@ export default function ProjectsForm() {
             </CardContent>
           </Card>
 
-          {/* 4. Section 2 Dual Images */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Section 2 Dual Images</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="text-sm font-medium mb-4">First Image</h3>
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="section2_first_media_path"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>First Media</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={section2FirstFile}
-                            onChange={(file) => {
-                              field.onChange(file);
-                              setSection2FirstFile(file);
-                            }}
-                            accept="image/*"
-                            recommendedDimensions="800x600"
-                            placeholder="Upload first image"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="section2_first_media_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>First Alt Text</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter first alt text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="section2_first_media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>First Alt Text (AR)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل النص البديل الأول"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-medium mb-4">Second Image</h3>
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="section2_second_media_path"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Second Media</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={section2SecondFile}
-                            onChange={(file) => {
-                              field.onChange(file);
-                              setSection2SecondFile(file);
-                            }}
-                            accept="image/*"
-                            recommendedDimensions="800x600"
-                            placeholder="Upload second image"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="section2_second_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Second Alt Text</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter second alt text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="section2_second_media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Second Alt Text (AR)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل النص البديل الثاني"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
+      
           {/* 5. Section 3 Content */}
           <Card>
             <CardHeader>

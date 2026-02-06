@@ -61,14 +61,6 @@ export const projectSchema = z.object({
   section1_media_alt: commonValidations.requiredString("Section 1 Media Alt"),
   section1_media_alt_ar: commonValidations.requiredString("Section 1 Media Alt (Arabic)"),
 
-  // Section 2 - Dual Images
-  section2_first_media_path: commonValidations.validateFileUpload("Section 2 First Media"),
-  section2_first_media_alt: commonValidations.requiredString("Section 2 First Alt"),
-  section2_first_media_alt_ar: commonValidations.requiredString("Section 2 First Alt (Arabic)"),
-  section2_second_media_path: commonValidations.validateFileUpload("Section 2 Second Media"),
-  section2_second_alt: commonValidations.requiredString("Section 2 Second Alt"),
-  section2_second_media_alt_ar: commonValidations.requiredString("Section 2 Second Alt (Arabic)"),
-
   // Section 3 - Content Block
   section3_title: commonValidations.requiredString("Section 3 Title"),
   section3_title_ar: commonValidations.requiredString("Section 3 Title (Arabic)"),
