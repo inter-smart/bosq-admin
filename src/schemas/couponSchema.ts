@@ -7,38 +7,27 @@ export const couponSchema = z.object({
     .min(1, "Coupon code is required")
     .max(50, "Coupon code must not exceed 50 characters"),
 
-  title: z
-    .string()
-    .max(255, "Title must not exceed 255 characters")
-    .optional()
-    .or(z.literal("")),
+  title: commonValidations.optionalString("Title"),
 
-  title_ar: z
-    .string()
-    .max(255, "Title (Arabic) must not exceed 255 characters")
-    .optional()
-    .or(z.literal("")),
+  title_ar: commonValidations.optionalString("Title (Arabic)"),
 
-  description: z.string().optional().or(z.literal("")),
+  description: commonValidations.optionalString("Description"),
 
-  description_ar: z.string().optional().or(z.literal("")),
+  description_ar: commonValidations.optionalString("Description (Arabic)"),
 
-  media_path: z
-    .union([z.instanceof(File), z.string(), z.null(), z.undefined()])
-    .optional(),
+  media_path: commonValidations.fileUpload,
 
   discount_type: z.enum(["percentage", "flat"], {
     required_error: "Discount type is required",
   }),
 
-discount_value: z.coerce
+  discount_value: z.coerce
     .number({ required_error: "Discount value is required" })
     .min(0, "Discount value must be 0 or greater"),
 
   min_order_amount: z.coerce
     .number({ required_error: "Min order amount is required" })
     .min(0, "Min order amount must be 0 or greater"),
-
 
   max_discount_amount: z.coerce
     .number({ required_error: "Maximum discount amount is required" })
@@ -50,20 +39,21 @@ discount_value: z.coerce
 
   scope_id: z.coerce.number().nullable().optional(),
 
-   usage_limit_total: z.coerce
+  usage_limit_total: z.coerce
     .number({ required_error: "Total usage limit is required" })
     .int()
-    .min(1),
+    .min(1, "Total usage limit must be at least 1"),
 
   usage_limit_per_user: z.coerce
     .number({ required_error: "Per-user usage limit is required" })
     .int()
-    .min(1),
-  start_at: z.string().min(1, "Start date is required"),
+    .min(1, "Per-user usage limit must be at least 1"),
 
-  end_at: z.string().min(1, "End date is required"),
+  start_at: commonValidations.dateString,
 
-  status: z.boolean(),
+  end_at: commonValidations.dateString,
+
+  status: commonValidations.booleanStatus(),
 }).refine(
   (data) => {
     if (data.discount_type === "percentage" && data.discount_value > 100) {
@@ -96,6 +86,18 @@ discount_value: z.coerce
   {
     message: "End date must be after start date",
     path: ["end_at"],
+  }
+).refine(
+  (data) => {
+    // Validate scope_id is required for non-common scope types
+    if (data.scope_type !== "common" && !data.scope_id) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Please complete the selection for the chosen scope type",
+    path: ["scope_id"],
   }
 );
 

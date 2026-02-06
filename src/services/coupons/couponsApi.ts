@@ -52,6 +52,66 @@ export interface CouponItemResponse {
   data: Coupon;
 }
 
+// Extended coupon type with nested relations for edit mode
+export interface CouponWithRelations extends Coupon {
+  variant?: {
+    id: number;
+    sku: string;
+    productModel: {
+      id: number;
+      title: string;
+      product: {
+        id: number;
+        title: string;
+        category: {
+          id: number;
+          name: string;
+          parent_id: number | null;
+          parent?: { id: number; name: string };
+        };
+      };
+    };
+  };
+  model?: {
+    id: number;
+    title: string;
+    product: {
+      id: number;
+      title: string;
+      category: {
+        id: number;
+        name: string;
+        parent_id: number | null;
+        parent?: { id: number; name: string };
+      };
+    };
+  };
+  product?: {
+    id: number;
+    title: string;
+    category: {
+      id: number;
+      name: string;
+      parent_id: number | null;
+      parent?: { id: number; name: string };
+    };
+  };
+  category?: {
+    id: number;
+    name: string;
+    parent_id: number | null;
+    parent?: { id: number; name: string };
+  };
+}
+
+export interface CouponWithRelationsResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  statusCode: number;
+  data: CouponWithRelations;
+}
+
 export interface ProductCategory {
   id: number;
   name: string;
@@ -123,7 +183,7 @@ export const fetchCouponList = async (
 };
 
 // Fetch single coupon by ID
-export const fetchCouponById = async (id: number): Promise<CouponItemResponse> => {
+export const fetchCouponById = async (id: number): Promise<CouponWithRelationsResponse> => {
   return apiCall(`/coupons/${id}`);
 };
 
