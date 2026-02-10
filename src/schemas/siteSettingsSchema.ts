@@ -31,8 +31,6 @@ export const headerFooterSchema = z.object({
   support_email: commonValidations.validateEmail("Support Email"),
 
   // Newsletter
-  news_letter_main_title: commonValidations.requiredString("Newsletter Main Title"),
-  news_letter_main_title_ar: commonValidations.requiredString("Newsletter Main Title (Arabic)").optional(),
   news_letter_title: commonValidations.requiredString("Newsletter Title"),
   news_letter_title_ar: commonValidations.requiredString("Newsletter Title (Arabic)").optional(),
 

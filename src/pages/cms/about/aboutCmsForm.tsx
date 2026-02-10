@@ -328,13 +328,7 @@ export default function AboutCmsForm() {
     }
   };
 
-  if (initialLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading About CMS data...</div>
-      </div>
-    );
-  }
+ 
 
   return (
     <div className="space-y-6">
@@ -1121,18 +1115,6 @@ export default function AboutCmsForm() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Media Uploads Section - Outside Tabs */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Media Uploads</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-      
-   
-            </CardContent>
-          </Card>
-
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>
               <Save className="h-4 w-4 mr-2" />

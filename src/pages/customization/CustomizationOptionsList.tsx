@@ -30,6 +30,7 @@ import {
 } from "@/services/customization/customizationOptionsApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { renderHTML } from "@/lib/utils";
 
 export default function CustomizationOptionsList() {
   const navigate = useNavigate();
@@ -136,7 +137,7 @@ export default function CustomizationOptionsList() {
       cell: ({ row }) => (
         <div className="max-w-[400px]">
           <div className="text-sm text-muted-foreground truncate">
-            {row.getValue("description")}
+            {renderHTML(row.getValue("description"))}
           </div>
         </div>
       ),

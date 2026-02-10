@@ -27,10 +27,6 @@ export interface HeaderFooterSettings {
   support_enquiry_title_ar: string;
   support_email: string;
 
-
-  news_letter_main_title: string;
-  news_letter_main_title_ar: string;
-
   news_letter_title: string;
   news_letter_title_ar: string;
 

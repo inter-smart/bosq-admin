@@ -141,6 +141,14 @@ const ContactEnquiryDetails = lazy(
   () => import("./pages/enquiries/ContactEnquiryDetails"),
 );
 
+// Customization Enquiries pages
+const CustomizationEnquiriesList = lazy(
+  () => import("./pages/enquiries/CustomizationEnquiriesList"),
+);
+const CustomizationEnquiryDetails = lazy(
+  () => import("./pages/enquiries/CustomizationEnquiryDetails"),
+);
+
 // Lead Generation pages
 const LeadGenerationList = lazy(
   () => import("./pages/enquiries/LeadGenerationList"),
@@ -982,6 +990,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ContactEnquiryDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Customization Enquiries Routes */}
+            <Route
+              path="/customization-enquiries"
+              element={
+                <ProtectedRoute>
+                  <CustomizationEnquiriesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/customization-enquiries/:id"
+              element={
+                <ProtectedRoute>
+                  <CustomizationEnquiryDetails />
                 </ProtectedRoute>
               }
             />

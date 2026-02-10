@@ -59,6 +59,7 @@ const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 
 const enquiriesSection = [
   { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
+  { title: "Customization Enquiries", url: "/customization-enquiries", icon: Palette },
   { title: "Lead Generation", url: "/lead-generation", icon: Users },
   {
     title: "Newsletter Subscriptions",
@@ -368,6 +369,7 @@ export function AppSidebar() {
     if (
       [
         "/contact-enquiries",
+        "/customization-enquiries",
         "/lead-generation",
         "/newsletter-subscriptions",
       ].some((r) => path.includes(r))

@@ -679,7 +679,7 @@ export default function ContactCmsForm() {
                 name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Map URL</FormLabel>
+                    <FormLabel>Map URL (iframe)</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Enter map URL" rows={4} {...field} />
                     </FormControl>

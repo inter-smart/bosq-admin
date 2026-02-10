@@ -38,8 +38,6 @@ export default function HeaderFooterForm() {
       support_enquiry_title: "",
       support_enquiry_title_ar: "",
       support_email: "",
-      news_letter_main_title: "",
-      news_letter_main_title_ar: "",
       news_letter_title: "",
       news_letter_title_ar: "",
       po_box_number: null,
@@ -75,8 +73,6 @@ export default function HeaderFooterForm() {
           support_enquiry_title: data.support_enquiry_title || "",
           support_enquiry_title_ar: data.support_enquiry_title_ar || "",
           support_email: data.support_email || "",
-          news_letter_main_title: data.news_letter_main_title || "",
-          news_letter_main_title_ar: data.news_letter_main_title_ar || "",
           news_letter_title: data.news_letter_title || "",
           news_letter_title_ar: data.news_letter_title_ar || "",
           po_box_number: data.po_box_number || null,
@@ -454,34 +450,7 @@ export default function HeaderFooterForm() {
                   )}
                 />
 
-                {/* Newsletter Main Title */}
-                <FormField
-                  control={form.control}
-                  name="news_letter_main_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Newsletter Main Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter main title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="news_letter_main_title_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Newsletter Main Title (AR)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="أدخل العنوان الرئيسي" {...field} dir="rtl" className="text-right" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+      
                 {/* Newsletter Title */}
                 <FormField
                   control={form.control}

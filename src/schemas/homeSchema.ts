@@ -108,13 +108,13 @@ export const smartSpaceCalculatorSchema = z.object({
   // English fields (required)
   title: commonValidations.requiredString("Title"),
   description: commonValidations.requiredText("Description"),
-  link: commonValidations.externalUrl("Link"),
+  link: commonValidations.requiredUrl("Link"),
   button_text: commonValidations.requiredString("Button Text"),
   media_alt: commonValidations.requiredString("Media Alt Text"),
 
   // Arabic fields (required)
   title_ar: commonValidations.requiredString("Arabic Title"),
-  description_ar: commonValidations.requiredString("Arabic Description"),
+  description_ar: commonValidations.requiredText("Arabic Description"),
   button_text_ar: commonValidations.requiredString("Arabic Button Text"),
   media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
 
