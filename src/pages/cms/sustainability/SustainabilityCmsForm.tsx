@@ -30,6 +30,7 @@ export default function SustainabilityCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [prevBannerMediaType, setPrevBannerMediaType] = useState<string | null>(null);
 
   const form = useForm<SustainabilityCmsFormData>({
     resolver: zodResolver(sustainabilityCmsSchema),
@@ -46,13 +47,23 @@ export default function SustainabilityCmsForm() {
       section1_title_ar: "",
       section1_description: "",
       section1_description_ar: "",
-      section1_media_desktop_path: null,
-      section1_media_mobile_path: null,
+      section1_media_path: null,
       section1_media_alt: "",
       section1_media_alt_ar: "",
-      section1_media_type: null,
     },
   });
+
+  const watchBannerMediaType = form.watch("banner_media_type");
+
+  useEffect(() => {
+    if (!initialLoading && prevBannerMediaType !== null && prevBannerMediaType !== watchBannerMediaType) {
+      form.setValue("banner_media_desktop_path", null);
+      form.setValue("banner_media_mobile_path", null);
+    }
+    if (!initialLoading) {
+      setPrevBannerMediaType(watchBannerMediaType);
+    }
+  }, [watchBannerMediaType, initialLoading, form, prevBannerMediaType]);
 
   useEffect(() => {
     loadSustainabilityCmsData();
@@ -81,15 +92,11 @@ export default function SustainabilityCmsForm() {
           section1_title_ar: data.section1_title_ar || "",
           section1_description: data.section1_description || "",
           section1_description_ar: data.section1_description_ar || "",
-          section1_media_desktop_path: data.section1_media_desktop_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.section1_media_desktop_path}`
-            : null,
-          section1_media_mobile_path: data.section1_media_mobile_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.section1_media_mobile_path}`
+          section1_media_path: data.section1_media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.section1_media_path}`
             : null,
           section1_media_alt: data.section1_media_alt || "",
           section1_media_alt_ar: data.section1_media_alt_ar || "",
-          section1_media_type: data.section1_media_type || null,
         });
       }
     } catch (error) {
@@ -164,20 +171,11 @@ export default function SustainabilityCmsForm() {
         formData.append("section1_media_alt", data.section1_media_alt);
       if (data.section1_media_alt_ar)
         formData.append("section1_media_alt_ar", data.section1_media_alt_ar);
-      if (data.section1_media_type)
-        formData.append("section1_media_type", data.section1_media_type);
-
-      // Add section1 file uploads
-      if (data.section1_media_desktop_path instanceof File) {
+      // Add section1 file upload
+      if (data.section1_media_path instanceof File) {
         formData.append(
-          "section1_media_desktop_path",
-          data.section1_media_desktop_path
-        );
-      }
-      if (data.section1_media_mobile_path instanceof File) {
-        formData.append(
-          "section1_media_mobile_path",
-          data.section1_media_mobile_path
+          "section1_media_path",
+          data.section1_media_path
         );
       }
 
@@ -200,13 +198,13 @@ export default function SustainabilityCmsForm() {
     }
   };
 
-  if (initialLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading Sustainability CMS data...</div>
-      </div>
-    );
-  }
+  // if (initialLoading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-64">
+  //       <div className="text-muted-foreground">Loading Sustainability CMS data...</div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-6">
@@ -468,84 +466,26 @@ export default function SustainabilityCmsForm() {
                 />
               </div>
 
-              {/* Section 1 Media Type */}
+              {/* Section 1 Media Upload */}
               <FormField
                 control={form.control}
-                name="section1_media_type"
+                name="section1_media_path"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Section Media Type</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || undefined}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select media type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="image">Image</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Section Media</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        accept="image/*"
+                        placeholder="Upload section media"
+                        preview={true}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              {/* Section 1 Media Uploads */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="section1_media_desktop_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Section Media (Desktop)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept={
-                            form.watch("section1_media_type") === "video"
-                              ? "video/*"
-                              : "image/*"
-                          }
-                          recommendedDimensions="1920px x 1080px"
-                          placeholder="Upload desktop section media"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="section1_media_mobile_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Section Media (Mobile)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept={
-                            form.watch("section1_media_type") === "video"
-                              ? "video/*"
-                              : "image/*"
-                          }
-                          recommendedDimensions="768px x 1024px"
-                          placeholder="Upload mobile section media"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               {/* Section 1 Alt Text */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

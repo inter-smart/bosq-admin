@@ -30,11 +30,8 @@ export const sustainabilityCmsSchema = z.object({
   section1_description_ar: commonValidations.requiredString(
     "Section 1 Description (Arabic)"
   ),
-  section1_media_desktop_path: commonValidations.validateFileUpload(
-    "Section 1 Desktop Media"
-  ),
-  section1_media_mobile_path: commonValidations.validateFileUpload(
-    "Section 1 Mobile Media"
+  section1_media_path: commonValidations.validateFileUpload(
+    "Section 1 Media"
   ),
   section1_media_alt: commonValidations.requiredString(
     "Section 1 Media Alt Text"
@@ -42,7 +39,6 @@ export const sustainabilityCmsSchema = z.object({
   section1_media_alt_ar: commonValidations.requiredString(
     "Section 1 Media Alt Text (Arabic)"
   ),
-  section1_media_type: z.enum(["image", "video"]).optional().nullable(),
 });
 
 export type SustainabilityCmsFormData = z.infer<typeof sustainabilityCmsSchema>;

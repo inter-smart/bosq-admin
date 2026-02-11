@@ -17,12 +17,9 @@ export interface SustainabilityCms {
   section1_title_ar?: string | null;
   section1_description?: string | null;
   section1_description_ar?: string | null;
-  section1_media_desktop_path?: string | null;
-  section1_media_mobile_path?: string | null;
+  section1_media_path?: string | null;
   section1_media_alt?: string | null;
   section1_media_alt_ar?: string | null;
-  section1_media_type?: 'image' | 'video' | null;
-
   createdAt?: string;
   updatedAt?: string;
 }
