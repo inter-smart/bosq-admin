@@ -61,9 +61,6 @@ export default function newsList() {
     loadNewsItems();
   }, [currentPage, pageSize, debouncedSearchQuery]);
 
-
-    console.count("ReturnPolicyList rendered");
-
     
   const loadNewsItems = async () => {
     try {

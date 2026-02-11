@@ -41,7 +41,7 @@ export default function FaqListForm() {
       question_ar: "",
       answer: "",
       answer_ar: "",
-      sort_order: 0,
+      sort_order: 1,
       status: true,
     },
   });

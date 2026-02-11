@@ -64,7 +64,7 @@ export default function WarrantyPolicyList() {
   // Fetch warranty policies
   useEffect(() => {
     loadPolicies();
-  }, [currentPage,pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   const loadPolicies = async () => {
     try {
@@ -77,7 +77,7 @@ export default function WarrantyPolicyList() {
       const response = await fetchWarrantyPoliciesList(
         currentPage,
         pageSize,
-        debouncedSearchQuery
+        debouncedSearchQuery,
       );
 
       if (response.success) {
@@ -128,24 +128,6 @@ export default function WarrantyPolicyList() {
       ),
     },
     {
-      accessorKey: "title",
-      header: "Title",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[300px] truncate">
-          {row.getValue("title")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "title_ar",
-      header: "Title (AR)",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[300px] truncate" dir="rtl">
-          {row.getValue("title_ar")}
-        </div>
-      ),
-    },
-    {
       accessorKey: "media_path",
       header: "Media",
       cell: ({ row }) => {
@@ -162,6 +144,15 @@ export default function WarrantyPolicyList() {
           </div>
         );
       },
+    },
+    {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[300px] truncate">
+          {row.getValue("title")}
+        </div>
+      ),
     },
     {
       accessorKey: "sort_order",

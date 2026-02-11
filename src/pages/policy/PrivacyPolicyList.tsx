@@ -133,16 +133,7 @@ export default function PrivacyPolicyList() {
         </div>
       ),
     },
-    {
-      accessorKey: "title_ar",
-      header: "Title (AR)",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[300px] truncate" dir="rtl">
-          {row.getValue("title_ar")}
-        </div>
-      ),
-    },
-    {
+   {
       accessorKey: "description",
       header: "Description",
       cell: ({ row }) => (
