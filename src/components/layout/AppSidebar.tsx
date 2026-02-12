@@ -540,7 +540,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Landing Pages section
-    if (["/landing-page-cms", "/landing-pages"].some((r) => path.includes(r))) {
+    if (["/landing-page-cms", "/landing-pages", "/landing-page", "/product-types"].some((r) => path.includes(r))) {
       setLandingPagesOpen(true);
       return;
     }

@@ -337,6 +337,13 @@ const LandingPageList = lazy(
   () => import("./pages/landingPage/LandingPageList"),
 );
 
+const ProductTypeList = lazy(
+  () => import("./pages/landingPage/ProductTypeList"),
+);
+const ProductTypeForm = lazy(
+  () => import("./pages/landingPage/ProductTypeForm"),
+);
+
 const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -1829,6 +1836,32 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <LandingPageForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Type Routes (nested under Landing Page) */}
+            <Route
+              path="/product-types/:landingPageId/list"
+              element={
+                <ProtectedRoute>
+                  <ProductTypeList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-types/:landingPageId/create"
+              element={
+                <ProtectedRoute>
+                  <ProductTypeForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-types/:landingPageId/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductTypeForm />
                 </ProtectedRoute>
               }
             />
