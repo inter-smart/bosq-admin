@@ -4,6 +4,8 @@ import { commonValidations } from "@/utils/formUtils";
 export const baseProductSchema = z.object({
   title: commonValidations.requiredString("Title"),
   title_ar: commonValidations.requiredString("Title (Arabic)"),
+  enhance_title: commonValidations.optionalString("Enhance Title"),
+  enhance_title_ar: commonValidations.optionalString("Enhance Title (Arabic)"),
   description: commonValidations.requiredString("Description"),
   description_ar: commonValidations.requiredString("Description (Arabic)"),
   details: z.string().optional(),
