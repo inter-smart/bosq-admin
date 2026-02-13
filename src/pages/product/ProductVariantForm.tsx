@@ -179,6 +179,29 @@ export default function ProductVariantForm() {
 
     if (!productId) return;
 
+    // Validate selections
+    for (const [attrId, selections] of Object.entries(attributeSelections)) {
+        for (const selection of selections) {
+          if (!selection.valueId) {
+            toast({
+              title: "Validation Error",
+              description: "Please select a value for all added attributes.",
+              variant: "destructive",
+            });
+            return;
+          }
+          // Check if price is empty or arguably invalid (allow 0)
+          if (selection.price === "" || selection.price === null || selection.price === undefined) {
+               toast({
+              title: "Validation Error",
+              description: "Please enter a valid price for all added attributes.",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+      }
+
     // Collect all valid attribute selections
     const allSelections: { attribute_id: number; attribute_value_id: number; price: string; sku_code: string }[] = [];
 

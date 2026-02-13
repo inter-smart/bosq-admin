@@ -103,9 +103,11 @@ export default function ProductCategoriesForm() {
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
-      // Only append parent_id if it has a value
+      // Append parent_id: send empty string if null to indicate removal
       if (data.parent_id) {
         formData.append("parent_id", data.parent_id.toString());
+      } else {
+        formData.append("parent_id", "");
       }
 
       // Only append media_path if it's a new file
