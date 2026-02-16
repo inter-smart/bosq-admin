@@ -21,7 +21,6 @@ const SocialMediaForm = lazy(() => import("./pages/common/SocialMediaForm"));
 const MetaTagsList = lazy(() => import("./pages/common/MetaTagsList"));
 const MetaTagsForm = lazy(() => import("./pages/common/MetaTagsForm"));
 
-
 // coupons
 const CouponsList = lazy(() => import("./pages/coupons/CouponsList"));
 const CouponsForm = lazy(() => import("./pages/coupons/CouponsForm"));
@@ -329,6 +328,21 @@ import SustainabilityList from "./pages/cms/sustainability/SustainabilityList";
 import SustainabilityForm from "./pages/cms/sustainability/SustainabilityForm";
 import PaymentMethodsForm from "./pages/common/PaymentMethodsForm";
 import PaymentMethodsList from "./pages/common/PaymentMethodsList";
+
+const LandingPageForm = lazy(
+  () => import("./pages/landingPage/LandingPageForm"),
+);
+
+const LandingPageList = lazy(
+  () => import("./pages/landingPage/LandingPageList"),
+);
+
+const ProductTypeList = lazy(
+  () => import("./pages/landingPage/ProductTypeList"),
+);
+const ProductTypeForm = lazy(
+  () => import("./pages/landingPage/ProductTypeForm"),
+);
 
 const queryClient = new QueryClient();
 // Protected Route Component
@@ -1774,7 +1788,6 @@ const App = () => (
               }
             />
 
-
             <Route
               path="/coupons"
               element={
@@ -1800,6 +1813,59 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+
+            <Route
+              path="/landing-page"
+              element={
+                <ProtectedRoute>
+                  <LandingPageList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/landing-page/create"
+              element={
+                <ProtectedRoute>
+                  <LandingPageForm />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/landing-page/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <LandingPageForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Type Routes (nested under Landing Page) */}
+            <Route
+              path="/product-types/:landingPageId/list"
+              element={
+                <ProtectedRoute>
+                  <ProductTypeList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-types/:landingPageId/create"
+              element={
+                <ProtectedRoute>
+                  <ProductTypeForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-types/:landingPageId/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductTypeForm />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Catch all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>

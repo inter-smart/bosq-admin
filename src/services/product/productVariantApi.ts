@@ -17,6 +17,9 @@ export interface ProductVariant {
   title?: string;
   title_ar?: string;
   media_path?: string;
+  design_title?: string;
+  design_title_ar?: string;
+  hover_media_path?: string;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;

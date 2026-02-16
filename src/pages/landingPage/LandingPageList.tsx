@@ -3,14 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,70 +15,60 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import {
-  fetchPoliciesList,
-  deletePolicy,
-  Policy,
-} from "@/services/policy/privacyPolicyApi";
+import { MoreHorizontal, Edit, Trash2, ListPlus } from "lucide-react";
+import { fetchLandingPageList, deleteLandingPage, LandingPage } from "@/services/landingPage/landingPageApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
-import { renderHTML } from "@/lib/utils";
 
-export default function PrivacyPolicyList() {
+export default function LandingPageList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [items, setItems] = useState<LandingPage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [searching, setSearching] = useState(false);
   const [pageSize, setPageSize] = useState(10);
 
-  const {
-    editingSortOrder,
-    handleStatusChange,
-    handleSortOrderChange,
-  } = useCommonTableActions<Policy>({
-    modelName: "Policies",
-    data: policies,
-    setData: setPolicies,
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<LandingPage>({
+    modelName: "LandingPage",
+    data: items,
+    setData: setItems,
   });
-
-  useEffect(() => {
-    loadPolicies();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
     }, 600);
-
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const loadPolicies = async () => {
+  useEffect(() => {
+    loadItems();
+  }, [currentPage, pageSize, debouncedSearchQuery]);
+
+  const loadItems = async () => {
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
       } else {
         setLoading(true);
       }
-      const response = await fetchPoliciesList(
-        currentPage,
-        pageSize,
-        debouncedSearchQuery
-      );
-      setPolicies(response.data.list);
-      setTotalCount(response.data.pagination.totalCount);
+
+      const response = await fetchLandingPageList(currentPage, pageSize, debouncedSearchQuery);
+
+      if (response.success) {
+        setItems(response.data.list);
+        setTotalCount(response.data.pagination.totalCount);
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load privacy policies",
+        description: "Failed to load landing pages",
         variant: "destructive",
       });
     } finally {
@@ -97,16 +81,17 @@ export default function PrivacyPolicyList() {
     if (!deleteItemId) return;
 
     try {
-      await deletePolicy(deleteItemId);
-      setPolicies((prev) => prev.filter((item) => item.id !== deleteItemId));
+      await deleteLandingPage(deleteItemId);
+      setItems((prev) => prev.filter((item) => item.id !== deleteItemId));
+      setTotalCount((prev) => prev - 1);
       toast({
         title: "Success",
-        description: "Policy deleted successfully",
+        description: "Landing page deleted successfully",
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete policy",
+        description: "Failed to delete landing page",
         variant: "destructive",
       });
     } finally {
@@ -114,33 +99,33 @@ export default function PrivacyPolicyList() {
     }
   };
 
-  const columns: ColumnDef<Policy>[] = [
+  const columns: ColumnDef<LandingPage>[] = [
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm">
-          {(currentPage - 1) * pageSize + row.index + 1}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
+    },
+    {
+      accessorKey: "media_desktop_path",
+      header: "Image",
+      cell: ({ row }) => {
+        const mediaPath = row.getValue("media_desktop_path") as string | null;
+        return mediaPath ? (
+          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.original.media_alt || row.original.title} className="h-10 w-10 object-cover rounded" />
+        ) : (
+          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
+        );
+      },
     },
     {
       accessorKey: "title",
       header: "Title",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[300px] truncate">
-          {row.getValue("title")}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
     },
-   {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <div className="max-w-[400px] truncate text-sm text-muted-foreground">
-          {renderHTML(row.getValue("description"))}
-        </div>
-      ),
+    {
+      accessorKey: "slug",
+      header: "Slug",
+      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
     },
     {
       accessorKey: "sort_order",
@@ -151,11 +136,7 @@ export default function PrivacyPolicyList() {
         return (
           <Input
             type="number"
-            value={
-              editingSortOrder[item.id!] !== undefined
-                ? editingSortOrder[item.id!]
-                : row.getValue("sort_order") || 0
-            }
+            value={editingSortOrder[item.id!] !== undefined ? editingSortOrder[item.id!] : row.getValue("sort_order") || 0}
             onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
             className="w-20"
           />
@@ -170,32 +151,15 @@ export default function PrivacyPolicyList() {
         const status = row.getValue("status") as boolean;
         return (
           <div className="flex items-center gap-2">
-            <Switch
-              checked={status}
-              onCheckedChange={() => handleStatusChange(item.id!, status)}
-            />
-            <Badge variant={status ? "default" : "secondary"}>
-              {status ? "active" : "inactive"}
-            </Badge>
+            <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
           </div>
         );
       },
     },
     {
-      accessorKey: "createdAt",
-      header: "Created At",
-      enableSorting: true,
-      cell: ({ row }) => (
-        <div className="text-sm text-muted-foreground">
-          {new Date(row.getValue("createdAt")).toLocaleDateString()}
-        </div>
-      ),
-    },
-    {
       id: "actions",
       cell: ({ row }) => {
         const item = row.original;
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -205,16 +169,15 @@ export default function PrivacyPolicyList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => navigate(`/privacy-policy/${item.id}/edit`)}
-              >
+              <DropdownMenuItem onClick={() => navigate(`/landing-page/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setDeleteItemId(item.id!)}
-              >
+              <DropdownMenuItem onClick={() => navigate(`/product-types/${item.id}/list`)}>
+                <ListPlus className="mr-2 h-4 w-4" />
+                Manage Product Types
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -225,15 +188,11 @@ export default function PrivacyPolicyList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading privacy policies...</div>;
-  }
-
   return (
     <>
       <DataTable
         columns={columns}
-        data={policies}
+        data={items}
         loading={loading}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -246,31 +205,23 @@ export default function PrivacyPolicyList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
-        title="Privacy Policy Items"
-        searchPlaceholder="Search policies..."
-        onAdd={() => navigate("/privacy-policy/new")}
-        addButtonText="Add Policy Item"
+        title="Landing Pages"
+        searchPlaceholder="Search landing pages..."
+        onAdd={() => navigate("/landing-page/create")}
+        addButtonText="Add Landing Page"
       />
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={!!deleteItemId}
-        onOpenChange={() => setDeleteItemId(null)}
-      >
+      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              policy item and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the landing page and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

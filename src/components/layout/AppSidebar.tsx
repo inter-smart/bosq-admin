@@ -222,6 +222,10 @@ const newsSection = [
   { title: "News", url: "/news", icon: List },
 ];
 
+const landingPagesSection = [
+  { title: "Landing Pages", url: "/landing-page", icon: List },
+];
+
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
   { title: "Social Media", url: "/social-media", icon: Share2 },
@@ -315,6 +319,7 @@ export function AppSidebar() {
   const [customisationOpen, setCustomisationOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
+  const [landingPagesOpen, setLandingPagesOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
   const [policiesOpen, setPoliciesOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
@@ -345,6 +350,7 @@ export function AppSidebar() {
     setCustomisationOpen(false);
     setBlogOpen(false);
     setNewsOpen(false);
+    setLandingPagesOpen(false);
     setCommonOpen(false);
     setPoliciesOpen(false);
     setPrivacyOpen(false);
@@ -530,6 +536,12 @@ export function AppSidebar() {
     // Auto-open News section
     if (["/news-cms", "/news"].some((r) => path.includes(r))) {
       setNewsOpen(true);
+      return;
+    }
+
+    // Auto-open Landing Pages section
+    if (["/landing-page-cms", "/landing-pages", "/landing-page", "/product-types"].some((r) => path.includes(r))) {
+      setLandingPagesOpen(true);
       return;
     }
 
@@ -760,6 +772,17 @@ export function AppSidebar() {
           open={newsOpen}
           setOpen={setNewsOpen}
           items={newsSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
+
+        {/* Landing Pages */}
+        <SidebarCollapsibleSection
+          title="Landing Pages"
+          icon={Layers}
+          open={landingPagesOpen}
+          setOpen={setLandingPagesOpen}
+          items={landingPagesSection}
           isCollapsed={isCollapsed}
           getNavCls={getNavCls}
         />

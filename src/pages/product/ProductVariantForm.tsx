@@ -49,6 +49,9 @@ export default function ProductVariantForm() {
   const [title, setTitle] = useState("");
   const [titleAr, setTitleAr] = useState("");
   const [coverImage, setCoverImage] = useState<File | string | null>(null);
+  const [designTitle, setDesignTitle] = useState("");
+  const [designTitleAr, setDesignTitleAr] = useState("");
+  const [hoverImage, setHoverImage] = useState<File | string | null>(null);
 
   // Attribute selections organized by attribute ID
   const [attributeSelections, setAttributeSelections] = useState<AttributeSelectionState>({});
@@ -94,6 +97,9 @@ export default function ProductVariantForm() {
         setTitle(data.title || "");
         setTitleAr(data.title_ar || "");
         setCoverImage(data.media_path || null);
+        setDesignTitle(data.design_title || "");
+        setDesignTitleAr(data.design_title_ar || "");
+        setHoverImage(data.hover_media_path || null);
 
         // Set attribute selections if available
         if (data.variant_attributes && data.variant_attributes.length > 0) {
@@ -233,10 +239,16 @@ export default function ProductVariantForm() {
         formData.append("status", status.toString());
         formData.append("title", title);
         formData.append("title_ar", titleAr);
+        formData.append("design_title", designTitle);
+        formData.append("design_title_ar", designTitleAr);
         formData.append("attributes", JSON.stringify(allSelections));
 
         if (coverImage instanceof File) {
           formData.append("media_path", coverImage);
+        }
+
+        if (hoverImage instanceof File) {
+          formData.append("hover_media_path", hoverImage);
         }
 
         await updateProductVariant(parseInt(id), formData);
@@ -326,6 +338,26 @@ export default function ProductVariantForm() {
                     accept="image/*"
                     placeholder="Drop cover image here or click to browse"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Hover Image</Label>
+                  <FileUpload
+                    value={hoverImage}
+                    onChange={(file) => setHoverImage(file)}
+                    accept="image/*"
+                    placeholder="Drop hover image here or click to browse"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="design_title">Design Title</Label>
+                  <Input id="design_title" placeholder="Enter design title" value={designTitle} onChange={(e) => setDesignTitle(e.target.value)} />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="design_title_ar">Design Title (Arabic)</Label>
+                  <Input id="design_title_ar" placeholder="أدخل عنوان التصميم" value={designTitleAr} onChange={(e) => setDesignTitleAr(e.target.value)} dir="rtl" />
                 </div>
 
                 <div className="space-y-2">
