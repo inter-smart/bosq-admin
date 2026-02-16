@@ -204,6 +204,8 @@ const productsSection = [
     icon: Star,
   },
   { title: "Base Product", url: "/base-products", icon: Box },
+  { title: "All Models", url: "/product-models/all", icon: Layers },
+  { title: "All Variants", url: "/product-variants/all", icon: Package },
 ];
 
 const projectsSection = [
@@ -474,6 +476,8 @@ export function AppSidebar() {
         "/product-sectors",
         "/product-selling-points",
         "/base-products",
+        "/product-models/all",
+        "/product-variants/all",
       ].some((r) => path.includes(r))
     ) {
       setProductsOpen(true);
