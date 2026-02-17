@@ -59,6 +59,7 @@ const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 
 const enquiriesSection = [
   { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
+  { title: "Product Enquiries", url: "/product-enquiries", icon: Package },
   { title: "Customization Enquiries", url: "/customization-enquiries", icon: Palette },
   { title: "Lead Generation", url: "/lead-generation", icon: Users },
   {
@@ -375,6 +376,7 @@ export function AppSidebar() {
     if (
       [
         "/contact-enquiries",
+        "/product-enquiries",
         "/customization-enquiries",
         "/lead-generation",
         "/newsletter-subscriptions",
@@ -608,10 +610,9 @@ export function AppSidebar() {
   }, [location.pathname]);
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center w-full text-left ${
-      isActive
-        ? "bg-sidebar-accent text-sidebar-primary focus:text-sidebar-foreground focus:bg-sidebar-accent/50 font-medium"
-        : "text-sidebar-foreground hover:bg-sidebar-accent/50"
+    `flex items-center w-full text-left ${isActive
+      ? "bg-sidebar-accent text-sidebar-primary focus:text-sidebar-foreground focus:bg-sidebar-accent/50 font-medium"
+      : "text-sidebar-foreground hover:bg-sidebar-accent/50"
     }`;
 
   return (

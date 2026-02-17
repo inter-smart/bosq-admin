@@ -140,6 +140,14 @@ const ContactEnquiryDetails = lazy(
   () => import("./pages/enquiries/ContactEnquiryDetails"),
 );
 
+// Product Enquiries pages
+const ProductEnquiriesList = lazy(
+  () => import("./pages/enquiries/ProductEnquiriesList"),
+);
+const ProductEnquiryDetails = lazy(
+  () => import("./pages/enquiries/ProductEnquiryDetails"),
+);
+
 // Customization Enquiries pages
 const CustomizationEnquiriesList = lazy(
   () => import("./pages/enquiries/CustomizationEnquiriesList"),
@@ -1004,6 +1012,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ContactEnquiryDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Enquiries Routes */}
+            <Route
+              path="/product-enquiries"
+              element={
+                <ProtectedRoute>
+                  <ProductEnquiriesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-enquiries/:id"
+              element={
+                <ProtectedRoute>
+                  <ProductEnquiryDetails />
                 </ProtectedRoute>
               }
             />
