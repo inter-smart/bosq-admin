@@ -29,6 +29,10 @@ export const couponSchema = z.object({
     .number({ required_error: "Min order amount is required" })
     .min(0, "Min order amount must be 0 or greater"),
 
+  min_product_amount: z.coerce
+    .number({ required_error: "Min product amount is required" })
+    .min(0, "Min product amount must be 0 or greater"),
+
   max_discount_amount: z.coerce
     .number({ required_error: "Maximum discount amount is required" })
     .min(0, "Maximum discount amount must be 0 or greater"),
