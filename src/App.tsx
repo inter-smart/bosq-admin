@@ -78,6 +78,12 @@ const ProductProjectImagesList = lazy(
 const ProductProjectImagesForm = lazy(
   () => import("./pages/product/ProductProjectImagesForm"),
 );
+const AllProductModelsList = lazy(
+  () => import("./pages/product/AllProductModelsList"),
+);
+const AllProductVariantsList = lazy(
+  () => import("./pages/product/AllProductVariantsList"),
+);
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -669,6 +675,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductVariantForm />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/product-models/all"
+              element={
+                <ProtectedRoute>
+                  <AllProductModelsList />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/product-variants/all"
+              element={
+                <ProtectedRoute>
+                  <AllProductVariantsList />
                 </ProtectedRoute>
               }
             />

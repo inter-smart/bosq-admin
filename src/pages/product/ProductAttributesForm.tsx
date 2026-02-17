@@ -166,6 +166,16 @@ export default function ProductAttributesForm() {
                         <Input
                           placeholder="Enter attribute name (e.g., Color, Size)"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            if (!isEditing) {
+                              const generatedCode = e.target.value
+                                .toLowerCase()
+                                .replace(/\s+/g, "_")
+                                .replace(/[^a-z0-9_]/g, "");
+                              form.setValue("code", generatedCode);
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

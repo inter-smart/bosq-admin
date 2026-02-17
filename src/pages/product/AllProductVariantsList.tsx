@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,19 +20,39 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image } from "lucide-react";
-import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
-import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
+import { MoreHorizontal, Edit, Trash2, Image, XCircle } from "lucide-react";
+import {
+  fetchProductVariantList,
+  deleteProductVariant,
+  ProductVariant,
+} from "@/services/product/productVariantApi";
+import {
+  fetchProductModelList,
+  ProductModel,
+} from "@/services/product/productModelApi";
+import {
+  fetchBaseProductList,
+  BaseProduct,
+} from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-export default function ProductVariantList() {
+export default function AllProductVariantsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { productId } = useParams(); // This is now the model ID
   const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [model, setModel] = useState<ProductModel | null>(null);
+  const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
+  const [models, setModels] = useState<ProductModel[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState<string>("all");
+  const [selectedModelId, setSelectedModelId] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -37,12 +62,42 @@ export default function ProductVariantList() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
 
-  // Load model info on mount
+  // Load base products
   useEffect(() => {
-    if (productId) {
-      loadModel(parseInt(productId));
+    loadBaseProducts();
+  }, []);
+
+  // Load models when base product changes
+  useEffect(() => {
+    setSelectedModelId("all");
+    if (selectedProductId !== "all") {
+      loadModels(parseInt(selectedProductId));
+    } else {
+      setModels([]);
     }
-  }, [productId]);
+  }, [selectedProductId]);
+
+  const loadBaseProducts = async () => {
+    try {
+      const response = await fetchBaseProductList(1, 100);
+      if (response.success) {
+        setBaseProducts(response.data.list);
+      }
+    } catch (error) {
+      console.error("Failed to load base products", error);
+    }
+  };
+
+  const loadModels = async (productId: number) => {
+    try {
+      const response = await fetchProductModelList(1, 100, undefined, productId);
+      if (response.success) {
+        setModels(response.data.list);
+      }
+    } catch (error) {
+      console.error("Failed to load models", error);
+    }
+  };
 
   // Debounce search query
   useEffect(() => {
@@ -54,27 +109,10 @@ export default function ProductVariantList() {
   }, [searchQuery]);
 
   useEffect(() => {
-    if (productId) {
-      loadVariants();
-    }
-  }, [currentPage, pageSize, debouncedSearchQuery, productId]);
-
-  const loadModel = async (id: number) => {
-    try {
-      const response = await fetchProductModelById(id);
-      setModel(response.data);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load model information",
-        variant: "destructive",
-      });
-    }
-  };
+    loadVariants();
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedProductId, selectedModelId]);
 
   const loadVariants = async () => {
-    if (!productId) return;
-
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -82,7 +120,13 @@ export default function ProductVariantList() {
         setLoading(true);
       }
 
-      const response = await fetchProductVariantList(currentPage, pageSize, debouncedSearchQuery, parseInt(productId));
+      const response = await fetchProductVariantList(
+        currentPage,
+        pageSize,
+        debouncedSearchQuery,
+        selectedModelId === "all" ? undefined : parseInt(selectedModelId),
+        selectedProductId === "all" ? undefined : parseInt(selectedProductId),
+      );
 
       if (response.success) {
         setVariants(response.data.list);
@@ -135,14 +179,27 @@ export default function ProductVariantList() {
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
     {
-      accessorKey: "sku",
-      header: "SKU",
-      cell: ({ row }) => <div className="font-mono text-sm max-w-[200px] truncate">{row.getValue("sku")}</div>,
+      accessorKey: "productModel.product.title",
+      header: "Base Product",
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[150px] truncate">
+          {row.original.productModel?.product?.title || "N/A"}
+        </div>
+      ),
     },
     {
-      accessorKey: "product_code",
-      header: "Product Code",
-      cell: ({ row }) => <div className="font-mono text-sm max-w-[200px] truncate">{row.getValue("product_code")}</div>,
+      accessorKey: "productModel.title",
+      header: "Model",
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[150px] truncate">
+          {row.original.productModel?.title || "N/A"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "sku",
+      header: "SKU",
+      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("sku")}</div>,
     },
     {
       accessorKey: "price",
@@ -158,14 +215,6 @@ export default function ProductVariantList() {
       },
     },
     {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = row.getValue("status") as boolean;
-        return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
-      },
-    },
-    {
       accessorKey: "is_primary",
       header: "Primary",
       cell: ({ row }) => {
@@ -177,22 +226,7 @@ export default function ProductVariantList() {
               checked={isPrimary}
               onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
             />
-            <Badge variant={isPrimary ? "default" : "secondary"}>
-              {isPrimary ? "Yes" : "No"}
-            </Badge>
           </div>
-        );
-      },
-    },
-    {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ row }) => {
-        const createdAt = row.getValue("createdAt") as string;
-        return createdAt ? (
-          <div className="text-sm text-muted-foreground">{new Date(createdAt).toLocaleDateString()}</div>
-        ) : (
-          <div className="text-sm text-muted-foreground">N/A</div>
         );
       },
     },
@@ -232,17 +266,75 @@ export default function ProductVariantList() {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate(model?.product_id ? `/product-models/${model.product_id}/list` : "/base-products")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Product Variants{model ? `: ${model.title}` : ""}</h1>
-            <p className="text-muted-foreground">Manage variants for this model</p>
+            <h1 className="text-2xl font-bold">All Product Variants</h1>
+            <p className="text-muted-foreground">Manage all variants across all models</p>
+          </div>
+
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="w-56">
+                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Base Product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Products</SelectItem>
+                    {baseProducts.map((p) => (
+                      <SelectItem key={p.id} value={p.id?.toString() || ""}>
+                        {p.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedProductId !== "all" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSelectedProductId("all");
+                    setSelectedModelId("all");
+                  }}
+                  title="Clear Product Filter"
+                >
+                  <XCircle className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="w-56">
+                <Select 
+                  value={selectedModelId} 
+                  onValueChange={setSelectedModelId}
+                  disabled={selectedProductId === "all"}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Models</SelectItem>
+                    {models.map((m) => (
+                      <SelectItem key={m.id} value={m.id?.toString() || ""}>
+                        {m.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedModelId !== "all" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSelectedModelId("all")}
+                  title="Clear Model Filter"
+                >
+                  <XCircle className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -263,12 +355,9 @@ export default function ProductVariantList() {
           }}
           title=""
           searchPlaceholder="Search variants..."
-          onAdd={() => navigate(`/product-variants/${productId}/create`)}
-          addButtonText="Add Variant"
         />
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>

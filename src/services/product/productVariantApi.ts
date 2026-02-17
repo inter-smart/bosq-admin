@@ -6,7 +6,7 @@ import { apiCall } from "@/utils/apiUtils";
 
 export interface ProductVariant {
   id?: number;
-  product_id: number;
+  product_model_id: number;
   sku: string;
   price: string;
   stock: number;
@@ -23,11 +23,14 @@ export interface ProductVariant {
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;
-  product?: {
+  productModel?: {
     id: number;
     title: string;
-    title_ar: string;
-    slug: string;
+    product_id: number;
+    product?: {
+      id: number;
+      title: string;
+    };
   };
   variant_attributes?: VariantAttribute[];
 }
@@ -96,7 +99,8 @@ export const fetchProductVariantList = async (
   page: number = 1,
   limit: number = 10,
   search?: string,
-  productId?: number,
+  productModelId?: number,
+  baseProductId?: number,
 ): Promise<ProductVariantResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -107,8 +111,12 @@ export const fetchProductVariantList = async (
     params.search = search;
   }
 
-  if (productId) {
-    params.product_id = productId;
+  if (productModelId) {
+    params.product_model_id = productModelId;
+  }
+
+  if (baseProductId) {
+    params.product_id = baseProductId;
   }
 
   return apiCall("/resources/product-variants", { params });
