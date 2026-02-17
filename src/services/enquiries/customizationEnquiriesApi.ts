@@ -7,17 +7,22 @@ export interface CustomizationEnquiry {
   company_name: string;
   email: string;
   phone: string | null;
-  options_id: number;
+  dropdown_id: number;
   message: string;
-  state:{
+  state: {
     id: number;
     name: string
   }
   createdAt: string;
   updatedAt: string;
-  options: {
+  dropdown: {
     id: number;
     title: string;
+    title_ar?: string;
+    sort_order?: number;
+    status?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
   };
 }
 

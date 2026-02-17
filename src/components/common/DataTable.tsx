@@ -124,6 +124,7 @@ export function DataTable<TData, TValue>({
 
   const normalizedColumns = columns.map((col) => ({
     ...col,
+    header: col.header ?? (col.id === "actions" ? "Actions" : undefined),
     enableSorting: col.enableSorting ?? false, // default false
   }));
 
@@ -147,7 +148,7 @@ export function DataTable<TData, TValue>({
 
   // Use external search query if provided, otherwise use internal globalFilter
   const effectiveSearchQuery = searchQuery;
-  const setEffectiveSearchQuery = onSearchChange 
+  const setEffectiveSearchQuery = onSearchChange
 
   // Show brief animation for local search (when no external search management)
   useEffect(() => {
@@ -209,37 +210,37 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       {/* Header */}
-   <div className="flex items-center justify-between">
-  <div className="flex items-center gap-3">
-    {/* Back Button */}
-    {isBackNavigation && navigateBack && (
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={navigateBack}
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
-    )}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {/* Back Button */}
+          {isBackNavigation && navigateBack && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={navigateBack}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          )}
 
-    <div>
-      {title && (
-        <h1 className="text-2xl font-bold text-foreground">
-          {title}
-        </h1>
-      )}
-      <p className="text-muted-foreground">
-        Manage your {title?.toLowerCase() || "items"}
-      </p>
-    </div>
-  </div>
+          <div>
+            {title && (
+              <h1 className="text-2xl font-bold text-foreground">
+                {title}
+              </h1>
+            )}
+            <p className="text-muted-foreground">
+              Manage your {title?.toLowerCase() || "items"}
+            </p>
+          </div>
+        </div>
 
-  {onAdd && showAddButton && (
-    <Button onClick={onAdd} className="bg-primary hover:bg-primary/90">
-      {addButtonText}
-    </Button>
-  )}
-</div>
+        {onAdd && showAddButton && (
+          <Button onClick={onAdd} className="bg-primary hover:bg-primary/90">
+            {addButtonText}
+          </Button>
+        )}
+      </div>
 
 
       <Card>
@@ -273,9 +274,8 @@ export function DataTable<TData, TValue>({
                   <Filter className="mr-2 h-4 w-4" />
                   Filters
                   <ChevronDown
-                    className={`ml-2 h-4 w-4 transition-transform ${
-                      showFilters ? "rotate-180" : ""
-                    }`}
+                    className={`ml-2 h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""
+                      }`}
                   />
                 </Button>
               )}
@@ -446,9 +446,8 @@ export function DataTable<TData, TValue>({
                             ? header.column.getToggleSortingHandler()
                             : undefined
                         }
-                        className={`select-none ${
-                          header.column.getCanSort() ? "cursor-pointer" : ""
-                        }`}
+                        className={`select-none ${header.column.getCanSort() ? "cursor-pointer" : ""
+                          }`}
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -457,8 +456,8 @@ export function DataTable<TData, TValue>({
                         {header.column.getIsSorted() === "asc"
                           ? " 🔼"
                           : header.column.getIsSorted() === "desc"
-                          ? " 🔽"
-                          : null}
+                            ? " 🔽"
+                            : null}
                       </TableHead>
                     ))}
                   </TableRow>
@@ -593,9 +592,9 @@ export function DataTable<TData, TValue>({
                     onClick={() =>
                       pagination.onPageChange(
                         pagination.totalPages ||
-                          Math.ceil(
-                            pagination.totalCount / (pagination.pageSize || 10)
-                          )
+                        Math.ceil(
+                          pagination.totalCount / (pagination.pageSize || 10)
+                        )
                       )
                     }
                     disabled={

@@ -182,6 +182,9 @@ const NewsletterSubscriptionDetails = lazy(
 const UsersList = lazy(() => import("./pages/users/UsersList"));
 const UserDetails = lazy(() => import("./pages/users/UserDetails"));
 
+// Orders pages
+const OrdersList = lazy(() => import("./pages/orders/OrdersList"));
+
 // Projects pages
 const ProjectsCmsForm = lazy(
   () => import("./pages/cms/projects/ProjectsCmsForm"),
@@ -200,12 +203,17 @@ const SpecialisedAreasList = lazy(
 const SpecialisedAreasForm = lazy(
   () => import("./pages/cms/projects/SpecialisedAreasForm"),
 );
+// Project images
 const ProjectImagesList = lazy(
   () => import("./pages/cms/projects/ProjectImagesList"),
 );
 const ProjectImagesForm = lazy(
   () => import("./pages/cms/projects/ProjectImagesForm"),
 );
+
+// Master pages
+const EnquiryDropdownList = lazy(() => import("./pages/master/enquiryDropdown/EnquiryDropdownList"));
+const EnquiryDropdownForm = lazy(() => import("./pages/master/enquiryDropdown/EnquiryDropdownForm"));
 
 // Login/Register pages
 const LoginRegisterCmsForm = lazy(
@@ -1795,6 +1803,32 @@ const App = () => (
               }
             />
 
+            {/* Enquiry Dropdown Routes */}
+            <Route
+              path="/master/enquiry-dropdown"
+              element={
+                <ProtectedRoute>
+                  <EnquiryDropdownList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/master/enquiry-dropdown/create"
+              element={
+                <ProtectedRoute>
+                  <EnquiryDropdownForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/master/enquiry-dropdown/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <EnquiryDropdownForm />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Sustainability */}
             <Route
               path="/sustainability"
@@ -1834,6 +1868,16 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <UserDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Orders Routes */}
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <OrdersList />
                 </ProtectedRoute>
               }
             />

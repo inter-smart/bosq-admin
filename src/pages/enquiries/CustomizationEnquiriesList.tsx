@@ -126,7 +126,7 @@ export default function CustomizationEnquiriesList() {
         "Name": `${item.first_name} ${item.last_name}`,
         "Company": item.company_name || "-",
         "Email": item.email,
-        "Option": item.options?.title || "-",
+        "Option": item.dropdown?.title || "-",
         "Message": item.message,
         "State": item.state?.name || "-",
         "Submitted At": formatDateForExcel(item.createdAt),
@@ -198,11 +198,11 @@ export default function CustomizationEnquiriesList() {
       ),
     },
     {
-      id: "options",
-      header: "Option",
+      id: "dropdown",
+      header: "Request Data",
       cell: ({ row }) => (
         <div className="text-sm max-w-[150px] truncate">
-          {row.original.options?.title || "-"}
+          {row.original.dropdown?.title || "-"}
         </div>
       ),
     },

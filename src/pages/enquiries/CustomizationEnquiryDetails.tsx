@@ -267,12 +267,12 @@ export default function CustomizationEnquiryDetails() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="h-5 w-5" />
-            Customization Option
+            Request data
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-lg bg-muted p-4">
-            <p className="text-base font-medium">{enquiry.options?.title || "N/A"}</p>
+            <p className="text-base font-medium">{enquiry.dropdown?.title || "N/A"}</p>
           </div>
         </CardContent>
       </Card>

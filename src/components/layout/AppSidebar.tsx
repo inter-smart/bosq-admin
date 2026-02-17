@@ -55,12 +55,18 @@ import {
 
 const bosqLogo = "/bosq-logo-light.png";
 
-const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
+const mainNavItems = [
+  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+];
+
+const ordersSection = [
+  { title: "All Orders", url: "/orders", icon: ShoppingBag },
+];
 
 const enquiriesSection = [
   { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
   { title: "Product Enquiries", url: "/product-enquiries", icon: Package },
-  { title: "Customization Enquiries", url: "/customization-enquiries", icon: Palette },
+  { title: "Request Enquiries", url: "/customization-enquiries", icon: Palette },
   { title: "Lead Generation", url: "/lead-generation", icon: Users },
   {
     title: "Newsletter Subscriptions",
@@ -234,6 +240,7 @@ const commonSection = [
   { title: "Social Media", url: "/social-media", icon: Share2 },
   { title: "Payment Methods", url: "/payment-methods", icon: List },
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
+  { title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List },
 ];
 
 const policiesSection = [
@@ -334,6 +341,7 @@ export function AppSidebar() {
   const [enquiriesOpen, setEnquiriesOpen] = useState(false);
   const [usersOpen, setUsersOpen] = useState(false);
   const [couponsOpen, setCouponsOpen] = useState(false);
+  const [ordersOpen, setOrdersOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
 
@@ -365,6 +373,7 @@ export function AppSidebar() {
     setEnquiriesOpen(false);
     setUsersOpen(false);
     setCouponsOpen(false);
+    setOrdersOpen(false);
   };
 
   // Auto-open based on current path and close others
@@ -373,6 +382,12 @@ export function AppSidebar() {
 
     // Close all first
     closeAllSections();
+
+    // Orders
+    if (path.includes("/orders")) {
+      setOrdersOpen(true);
+      return;
+    }
 
     // Auto-open Enquiries section
     if (
@@ -656,6 +671,17 @@ export function AppSidebar() {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+
+        {/* Orders */}
+        <SidebarCollapsibleSection
+          title="Orders"
+          icon={ShoppingBag}
+          open={ordersOpen}
+          setOpen={setOrdersOpen}
+          items={ordersSection}
+          isCollapsed={isCollapsed}
+          getNavCls={getNavCls}
+        />
 
         {/* Enquiries */}
         <SidebarCollapsibleSection
