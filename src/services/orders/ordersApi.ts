@@ -20,6 +20,47 @@ export interface Order {
         email: string;
         mobile: string;
     };
+    items?: OrderItem[];
+    addresses?: OrderAddress[];
+}
+
+export interface OrderItem {
+    id: number;
+    order_id: number;
+    product_id: number;
+    variant_id: number;
+    quantity: number;
+    price: string;
+    discount_amount: string;
+    product?: {
+        id: number;
+        title: string;
+        media_path: string;
+    };
+    variant?: {
+        id: number;
+        sku: string;
+        title: string;
+        media_path: string;
+        price: string;
+    };
+}
+
+export interface OrderAddress {
+    id: number;
+    address_type: 'billing' | 'shipping';
+    name: string;
+    company_name: string;
+    email: string;
+    country_code: string;
+    phone: string;
+    street_address: string;
+    apartment?: string;
+    state_id: number;
+    state?: {
+        id: number;
+        name: string;
+    };
 }
 
 export interface OrdersResponse {

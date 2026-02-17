@@ -184,6 +184,7 @@ const UserDetails = lazy(() => import("./pages/users/UserDetails"));
 
 // Orders pages
 const OrdersList = lazy(() => import("./pages/orders/OrdersList"));
+const OrderDetails = lazy(() => import("./pages/orders/OrderDetails"));
 
 // Projects pages
 const ProjectsCmsForm = lazy(
@@ -1878,6 +1879,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <OrdersList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/orders/:id"
+              element={
+                <ProtectedRoute>
+                  <OrderDetails />
                 </ProtectedRoute>
               }
             />
