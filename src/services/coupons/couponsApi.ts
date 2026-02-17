@@ -15,6 +15,7 @@ export interface Coupon {
   discount_type: "percentage" | "flat";
   discount_value: number;
   min_order_amount: number;
+  min_product_amount: number;
   max_discount_amount: number;
   scope_type: "common" | "category" | "product" | "variant" | "model";
   scope_id?: number | null;
