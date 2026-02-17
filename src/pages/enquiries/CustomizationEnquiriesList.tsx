@@ -26,6 +26,7 @@ import {
   CustomizationEnquiry,
 } from "@/services/enquiries/customizationEnquiriesApi";
 import { useToast } from "@/hooks/use-toast";
+import { exportToExcel, formatDateForExcel } from "@/utils/exportUtils";
 
 export default function CustomizationEnquiriesList() {
   const navigate = useNavigate();
@@ -102,6 +103,60 @@ export default function CustomizationEnquiriesList() {
       });
     } finally {
       setDeleteItemId(null);
+    }
+  };
+
+  const handleExport = async (type: "csv" | "excel" | "pdf", selectedRows?: CustomizationEnquiry[]) => {
+    if (type !== "excel") return;
+
+    try {
+      let dataToExport = selectedRows;
+
+      if (!dataToExport || dataToExport.length === 0) {
+        const response = await fetchCustomizationEnquiries(1, 100000, debouncedSearchQuery);
+        if (response.success) {
+          dataToExport = response.data.list;
+        } else {
+          throw new Error("Failed to fetch data for export");
+        }
+      }
+
+      const formattedData = dataToExport.map((item, index) => ({
+        "S.No": index + 1,
+        "Name": `${item.first_name} ${item.last_name}`,
+        "Company": item.company_name || "-",
+        "Email": item.email,
+        "Option": item.options?.title || "-",
+        "Message": item.message,
+        "State": item.state?.name || "-",
+        "Submitted At": formatDateForExcel(item.createdAt),
+      }));
+
+      const dateStr = new Date().toISOString().split('T')[0];
+
+      const columnWidths = [
+        { wch: 10 }, // S.No
+        { wch: 25 }, // Name
+        { wch: 25 }, // Company
+        { wch: 35 }, // Email
+        { wch: 25 }, // Option
+        { wch: 50 }, // Message
+        { wch: 20 }, // State
+        { wch: 25 }, // Submitted At
+      ];
+
+      exportToExcel(formattedData, `customization_enquiries_${dateStr}`, 'Customization Enquiries', columnWidths);
+
+      toast({
+        title: "Success",
+        description: "Excel file exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export data",
+        variant: "destructive",
+      });
     }
   };
 
@@ -237,6 +292,7 @@ export default function CustomizationEnquiriesList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
+        onExport={handleExport}
         title="Customization Enquiries"
         searchPlaceholder="Search enquiries..."
       />

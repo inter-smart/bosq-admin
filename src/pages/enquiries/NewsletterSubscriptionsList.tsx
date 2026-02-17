@@ -26,6 +26,7 @@ import {
   NewsletterSubscription,
 } from "@/services/enquiries/newsletterApi";
 import { useToast } from "@/hooks/use-toast";
+import { exportToExcel, formatDateForExcel } from "@/utils/exportUtils";
 
 export default function NewsletterSubscriptionsList() {
   const navigate = useNavigate();
@@ -102,6 +103,50 @@ export default function NewsletterSubscriptionsList() {
       });
     } finally {
       setDeleteItemId(null);
+    }
+  };
+
+  const handleExport = async (type: "csv" | "excel" | "pdf", selectedRows?: NewsletterSubscription[]) => {
+    if (type !== "excel") return;
+
+    try {
+      let dataToExport = selectedRows;
+
+      if (!dataToExport || dataToExport.length === 0) {
+        const response = await fetchNewsletterSubscriptions(1, 100000, debouncedSearchQuery);
+        if (response.success) {
+          dataToExport = response.data.list;
+        } else {
+          throw new Error("Failed to fetch data for export");
+        }
+      }
+
+      const formattedData = dataToExport.map((item, index) => ({
+        "S.No": index + 1,
+        "Email": item.email,
+        "Subscribed At": formatDateForExcel(item.createdAt),
+      }));
+
+      const dateStr = new Date().toISOString().split('T')[0];
+
+      const columnWidths = [
+        { wch: 10 }, // S.No
+        { wch: 40 }, // Email
+        { wch: 25 }, // Subscribed At
+      ];
+
+      exportToExcel(formattedData, `newsletter_subscriptions_${dateStr}`, 'Newsletter Subscriptions', columnWidths);
+
+      toast({
+        title: "Success",
+        description: "Excel file exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export data",
+        variant: "destructive",
+      });
     }
   };
 
@@ -192,6 +237,7 @@ export default function NewsletterSubscriptionsList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
+        onExport={handleExport}
         title="Newsletter Subscriptions"
         searchPlaceholder="Search by email..."
       />

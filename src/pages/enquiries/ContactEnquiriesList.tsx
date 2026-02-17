@@ -26,6 +26,7 @@ import {
   ContactEnquiry,
 } from "@/services/enquiries/contactEnquiriesApi";
 import { useToast } from "@/hooks/use-toast";
+import { exportToExcel, formatDateForExcel } from "@/utils/exportUtils";
 
 export default function ContactEnquiriesList() {
   const navigate = useNavigate();
@@ -105,6 +106,58 @@ export default function ContactEnquiriesList() {
     }
   };
 
+  const handleExport = async (type: "csv" | "excel" | "pdf", selectedRows?: ContactEnquiry[]) => {
+    if (type !== "excel") return;
+
+    try {
+      let dataToExport = selectedRows;
+
+      // If no rows selected, export all data (from the current view/search)
+      if (!dataToExport || dataToExport.length === 0) {
+        // Fetch all data for export (using a large limit)
+        const response = await fetchContactEnquiries(1, 100000, debouncedSearchQuery);
+        if (response.success) {
+          dataToExport = response.data.list;
+        } else {
+          throw new Error("Failed to fetch data for export");
+        }
+      }
+
+      const formattedData = dataToExport.map((item, index) => ({
+        "S.No": index + 1,
+        "Name": item.name,
+        "Email": item.email,
+        "Phone": item.phone || "-",
+        "Message": item.message,
+        "Submitted At": formatDateForExcel(item.createdAt),
+      }));
+
+      const dateStr = new Date().toISOString().split('T')[0];
+
+      const columnWidths = [
+        { wch: 10 }, // S.No
+        { wch: 25 }, // Name
+        { wch: 35 }, // Email
+        { wch: 20 }, // Phone
+        { wch: 50 }, // Message
+        { wch: 25 }, // Submitted At
+      ];
+
+      exportToExcel(formattedData, `contact_enquiries_${dateStr}`, 'Contact Enquiries', columnWidths);
+
+      toast({
+        title: "Success",
+        description: "Excel file exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export data",
+        variant: "destructive",
+      });
+    }
+  };
+
   const columns: ColumnDef<ContactEnquiry>[] = [
     {
       accessorKey: "id",
@@ -155,7 +208,7 @@ export default function ContactEnquiriesList() {
       accessorKey: "createdAt",
       header: "Submitted At",
       cell: ({ row }) => (
-           <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground">
           {new Date(row.getValue("createdAt")).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
@@ -219,6 +272,7 @@ export default function ContactEnquiriesList() {
           onPageChange: setCurrentPage,
           onPageSizeChange: setPageSize,
         }}
+        onExport={handleExport}
         title="Contact Enquiries"
         searchPlaceholder="Search enquiries..."
       />
