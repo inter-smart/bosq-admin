@@ -91,11 +91,12 @@ export default function OrdersList() {
             const formattedData = dataToExport.map((item, index) => ({
                 "S.No": index + 1,
                 "Order ID": item.order_id,
-                "User": item.user ? `${item.user.first_name} ${item.user.last_name}` : "Guest",
+                "Name": item.user ? `${item.user.first_name} ${item.user.last_name}` : "Guest",
                 "Email": item.user?.email || "-",
-                "Grand Total": `₹${item.grand_total}`,
+                "Phone": item.user?.mobile || "-",
                 "Status": item.status,
                 "Payment Status": item.payment_status,
+                "Grand Total": `₹${item.grand_total}`,
                 "Ordered At": formatDateForExcel(item.createdAt),
             }));
 
@@ -104,11 +105,12 @@ export default function OrdersList() {
             const columnWidths = [
                 { wch: 10 }, // S.No
                 { wch: 20 }, // Order ID
-                { wch: 25 }, // User
+                { wch: 25 }, // Name
                 { wch: 35 }, // Email
-                { wch: 15 }, // Grand Total
+                { wch: 20 }, // Phone
                 { wch: 15 }, // Status
                 { wch: 15 }, // Payment Status
+                { wch: 15 }, // Grand Total
                 { wch: 25 }, // Ordered At
             ];
 
@@ -138,32 +140,40 @@ export default function OrdersList() {
             ),
         },
         {
-            accessorKey: "user",
-            header: "User",
+            accessorKey: "name",
+            header: "Name",
             cell: ({ row }) => {
                 const user = row.original.user;
                 return (
-                    <div className="flex flex-col">
-                        <span className="font-medium">
-                            {user ? `${user.first_name} ${user.last_name}` : "Guest"}
-                        </span>
-                        {user && (
-                            <span className="text-xs text-muted-foreground truncate max-w-[150px]">
-                                {user.email}
-                            </span>
-                        )}
-                    </div>
+                    <span className="font-medium">
+                        {user ? `${user.first_name} ${user.last_name}` : "Guest"}
+                    </span>
                 );
             },
         },
         {
-            accessorKey: "grand_total",
-            header: "Grand Total",
-            cell: ({ row }) => (
-                <div className="font-medium">
-                    ₹{row.getValue("grand_total")}
-                </div>
-            ),
+            accessorKey: "email",
+            header: "Email",
+            cell: ({ row }) => {
+                const user = row.original.user;
+                return (
+                    <span className="text-sm">
+                        {user?.email || "-"}
+                    </span>
+                );
+            },
+        },
+        {
+            accessorKey: "mobile",
+            header: "Phone",
+            cell: ({ row }) => {
+                const user = row.original.user;
+                return (
+                    <span className="text-sm">
+                        {user?.mobile || "-"}
+                    </span>
+                );
+            },
         },
         {
             accessorKey: "status",
@@ -185,40 +195,6 @@ export default function OrdersList() {
                     </span>
                 );
             },
-        },
-        {
-            accessorKey: "payment_status",
-            header: "Payment",
-            cell: ({ row }) => {
-                const status = row.getValue("payment_status") as string;
-                const colors: Record<string, string> = {
-                    pending: "bg-yellow-100 text-yellow-800",
-                    paid: "bg-green-100 text-green-800",
-                    failed: "bg-red-100 text-red-800",
-                };
-                return (
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[status] || "bg-gray-100 text-gray-800"}`}>
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                    </span>
-                );
-            },
-        },
-        {
-            accessorKey: "createdAt",
-            header: "Ordered At",
-            cell: ({ row }) => (
-                <div className="text-sm text-muted-foreground">
-                    {new Date(row.getValue("createdAt")).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "2-digit",
-                    })}{" "}
-                    {new Date(row.getValue("createdAt")).toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}
-                </div>
-            ),
         },
         {
             id: "actions",
@@ -266,7 +242,7 @@ export default function OrdersList() {
                 }}
                 onExport={handleExport}
                 title="Orders"
-                searchPlaceholder="Search order ID, status..."
+                searchPlaceholder="Search order ID, email, phone..."
             />
         </>
     );
