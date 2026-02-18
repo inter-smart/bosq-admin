@@ -38,18 +38,12 @@ export const commonValidations = {
 
   optionalNumber: z.number().optional(),
 
-
   validatePhoneNumber: (fieldName: string) =>
-     z.string()
-  .nonempty("Phone number is required")
-  .regex(
-    /^\+?\d[\d ]*$/,
-    "Invalid phone number. Only numbers"
-  ),
+    z
+      .string()
+      .nonempty("Phone number is required")
+      .regex(/^\+?\d[\d ]*$/, "Invalid phone number. Only numbers"),
 
-
-
-  
   // Status validations
   booleanStatus: () => z.boolean(),
 
@@ -85,7 +79,7 @@ export const commonValidations = {
         },
         {
           message: `${fieldName} is required. Please upload ${fieldName}.`,
-        }
+        },
       ),
 
   validateEmail: (fieldName: string) =>
@@ -105,11 +99,11 @@ export const commonValidations = {
           .refine(
             (f) =>
               ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(
-                f.type
+                f.type,
               ),
             {
               message: "Only JPEG, PNG, WEBP, and GIF images are allowed",
-            }
+            },
           ),
         z.string().min(1), // existing file URL
         z.null(),
@@ -123,7 +117,7 @@ export const commonValidations = {
         },
         {
           message: `${fieldName} is required. Please upload an image.`,
-        }
+        },
       ),
 
   // URL validations
@@ -134,14 +128,20 @@ export const commonValidations = {
     .or(z.literal("")),
 
   requiredUrl: (fieldName: string) =>
-    z.string().regex(/^\/.*/, `${fieldName} must start with /`),
+    z
+      .string()
+      .trim()
+      .regex(
+        /^(\/.*|https?:\/\/[^\s/$.?#].[^\s]*)$/,
+        `${fieldName} must be a valid internal path (starting with /) or an external URL`,
+      ),
 
   externalUrl: (fieldName: string) =>
     z
       .string({ required_error: `${fieldName} is required` })
       .refine(
         (val) => /^https?:\/\/.+/.test(val),
-        `${fieldName} must be a valid external link starting with http:// or https://`
+        `${fieldName} must be a valid external link starting with http:// or https://`,
       ),
 
   // Date validations
@@ -166,7 +166,7 @@ export const commonValidations = {
 // Form data construction utilities
 export const createFormDataWithFiles = (
   data: Record<string, any>,
-  files: Record<string, File | string | null> = {}
+  files: Record<string, File | string | null> = {},
 ): FormData => {
   const formData = new FormData();
 
@@ -207,7 +207,7 @@ export const submitFormData = async (
   options: {
     method?: "POST" | "PUT" | "PATCH";
     token?: string;
-  } = {}
+  } = {},
 ): Promise<Response> => {
   const { method = "POST", token } = options;
 
@@ -249,7 +249,7 @@ export const generateSlug = (text: string): string => {
 
 // Default values generators
 export const createDefaultFormValues = <T extends Record<string, any>>(
-  schema: z.ZodSchema<T>
+  schema: z.ZodSchema<T>,
 ): Partial<T> => {
   // This is a helper to create default values based on schema
   // You can extend this based on your specific needs
@@ -259,7 +259,7 @@ export const createDefaultFormValues = <T extends Record<string, any>>(
 // Form field error extractors
 export const getFieldError = (
   errors: Record<string, any>,
-  fieldName: string
+  fieldName: string,
 ): string | undefined => {
   return errors[fieldName]?.message;
 };
@@ -267,14 +267,14 @@ export const getFieldError = (
 // File validation utilities
 export const validateFileType = (
   file: File,
-  allowedTypes: string[]
+  allowedTypes: string[],
 ): boolean => {
   return allowedTypes.some((type) => file.type.startsWith(type));
 };
 
 export const validateFileSize = (
   file: File,
-  maxSizeInBytes: number
+  maxSizeInBytes: number,
 ): boolean => {
   return file.size <= maxSizeInBytes;
 };
@@ -298,7 +298,7 @@ export const handleFormSubmission = async <T>(
     onError?: (error: Error) => void;
     successMessage?: string;
     errorMessage?: string;
-  } = {}
+  } = {},
 ) => {
   try {
     const result = await submitFn(data);
