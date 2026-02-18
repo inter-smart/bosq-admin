@@ -44,7 +44,7 @@ export const newsSchema = z.object({
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
   name_ar: commonValidations.requiredString("Arabic Name"),
-  description_ar: commonValidations.requiredString("Arabic Description"),
+  description_ar: commonValidations.requiredText("Arabic Description"),
   meta_title_ar: commonValidations.requiredString("Arabic Meta Title"),
   meta_description_ar: commonValidations.requiredText(
     "Arabic Meta Description"
