@@ -165,25 +165,25 @@ export default function ProductVariantList() {
         return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
       },
     },
-    {
-      accessorKey: "is_primary",
-      header: "Primary",
-      cell: ({ row }) => {
-        const item = row.original;
-        const isPrimary = row.getValue("is_primary") as boolean;
-        return (
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={isPrimary}
-              onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
-            />
-            <Badge variant={isPrimary ? "default" : "secondary"}>
-              {isPrimary ? "Yes" : "No"}
-            </Badge>
-          </div>
-        );
-      },
-    },
+    // {
+    //   accessorKey: "is_primary",
+    //   header: "Primary",
+    //   cell: ({ row }) => {
+    //     const item = row.original;
+    //     const isPrimary = row.getValue("is_primary") as boolean;
+    //     return (
+    //       <div className="flex items-center gap-2">
+    //         <Switch
+    //           checked={isPrimary}
+    //           onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
+    //         />
+    //         <Badge variant={isPrimary ? "default" : "secondary"}>
+    //           {isPrimary ? "Yes" : "No"}
+    //         </Badge>
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       accessorKey: "createdAt",
       header: "Created At",
