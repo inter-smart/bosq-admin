@@ -87,9 +87,6 @@ export default function CouponsForm() {
       code: "",
       title: "",
       title_ar: "",
-      description: "",
-      description_ar: "",
-      media_path: null,
       discount_type: "percentage",
       discount_value: 0,
       min_order_amount: 0,
@@ -99,7 +96,7 @@ export default function CouponsForm() {
       scope_id: null,
       usage_limit_total: 1,
       usage_limit_per_user: 1,
-      start_at: "",
+      start_at: format(new Date(), "yyyy-MM-dd"),
       end_at: "",
       status: true,
     },
@@ -231,8 +228,6 @@ export default function CouponsForm() {
           code: data.code || "",
           title: data.title || "",
           title_ar: data.title_ar || "",
-          description: data.description || "",
-          description_ar: data.description_ar || "",
           discount_type: data.discount_type,
           discount_value: data.discount_value,
           min_order_amount: data.min_order_amount,
@@ -244,10 +239,7 @@ export default function CouponsForm() {
           usage_limit_per_user: data.usage_limit_per_user,
           start_at: data.start_at ? data.start_at.split("T")[0] : "",
           end_at: data.end_at ? data.end_at.split("T")[0] : "",
-          status: data.status ?? true,
-          media_path: data.media_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}`
-            : null,
+          status: data.status ?? true
         });
 
         // Then populate cascading dropdowns based on scope_type
@@ -345,18 +337,12 @@ export default function CouponsForm() {
 
       if (data.title) formData.append("title", data.title);
       if (data.title_ar) formData.append("title_ar", data.title_ar);
-      if (data.description) formData.append("description", data.description);
-      if (data.description_ar)
-        formData.append("description_ar", data.description_ar);
 
       if (data.scope_id) {
         formData.append("scope_id", data.scope_id.toString());
       }
 
-      if (data.media_path instanceof File) {
-        formData.append("media_path", data.media_path);
-      }
-
+  
       if (isEditing && id) {
         await updateCoupon(parseInt(id), formData);
         toast({
@@ -480,65 +466,8 @@ export default function CouponsForm() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter description"
-                          rows={3}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Arabic)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Enter Arabic description"
-                          rows={3}
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
-              <FormField
-                control={form.control}
-                name="media_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Coupon Image (Optional)</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        value={field.value}
-                        onChange={(file) => field.onChange(file)}
-                        accept="image/*"
-                        preview={true}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Upload a coupon banner or image
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+         
             </CardContent>
           </Card>
 
@@ -687,7 +616,7 @@ export default function CouponsForm() {
                           Common (All Products)
                         </SelectItem>
                         <SelectItem value="category">Category</SelectItem>
-                        <SelectItem value="product">Product</SelectItem>
+                        <SelectItem value="product">Base Product</SelectItem>
                         <SelectItem value="model">Product Model</SelectItem>
                         <SelectItem value="variant">Product Variant</SelectItem>
                       </SelectContent>
@@ -793,7 +722,7 @@ export default function CouponsForm() {
                       watchScopeType === "variant") &&
                       (selectedSubCategoryId || selectedParentCategoryId) && (
                         <div className="space-y-2">
-                          <FormLabel>Product *</FormLabel>
+                          <FormLabel>Base Product *</FormLabel>
                           <Select
                             onValueChange={(value) => {
                               const prodId = parseInt(value);
@@ -828,7 +757,7 @@ export default function CouponsForm() {
                               watchScopeType === "model" ||
                               watchScopeType === "variant") && (
                               <p className="text-sm text-destructive">
-                                Product is required
+                                Base product is required
                               </p>
                             )}
                         </div>
@@ -1032,6 +961,9 @@ export default function CouponsForm() {
                                 date ? format(date, "yyyy-MM-dd") : "",
                               )
                             }
+                            disabled={(date) =>
+                              date < new Date(new Date().setHours(0, 0, 0, 0))
+                            }
                             initialFocus
                           />
                         </PopoverContent>
@@ -1077,6 +1009,10 @@ export default function CouponsForm() {
                                 date ? format(date, "yyyy-MM-dd") : "",
                               )
                             }
+                            disabled={(date) => {
+                              const startAt = form.getValues("start_at");
+                              return startAt ? date < new Date(startAt) : false;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>

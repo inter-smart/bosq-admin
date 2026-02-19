@@ -39,7 +39,7 @@ export default function AttributeValuesList() {
   const [pageSize, setPageSize] = useState(10);
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<AttributeValue>({
-    modelName: "AttributeValue",
+    modelName: "AttributeValues",
     data: attributeValues,
     setData: setAttributeValues,
   });

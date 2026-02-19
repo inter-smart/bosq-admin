@@ -5,7 +5,6 @@ export interface AttributeValue {
   value: string;
   value_ar: string;
   attribute_id: number;
-  media_path?: string;
   sort_order?: number;
   status?: boolean;
   deletedAt?: string | null;
