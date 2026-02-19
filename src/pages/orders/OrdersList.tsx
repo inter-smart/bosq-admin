@@ -91,7 +91,7 @@ export default function OrdersList() {
             const formattedData = dataToExport.map((item, index) => ({
                 "S.No": index + 1,
                 "Order ID": item.order_id,
-                "Name": item.user ? `${item.user.first_name} ${item.user.last_name}` : "Guest",
+                "Name": item.user ? item.user.name : "Guest",
                 "Email": item.user?.email || "-",
                 "Phone": item.user?.mobile || "-",
                 "Status": item.status,
@@ -146,7 +146,7 @@ export default function OrdersList() {
                 const user = row.original.user;
                 return (
                     <span className="font-medium">
-                        {user ? `${user.first_name} ${user.last_name}` : "Guest"}
+                        {user ? user.name : "Guest"}
                     </span>
                 );
             },
