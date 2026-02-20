@@ -126,7 +126,7 @@ export default function SocialMediaList() {
       accessorKey: "icon_media_path",
       header: "Icon",
       cell: ({ row }) => (
-        <div className="w-10 h-10 rounded-md bg-black flex items-center justify-center">
+        <div className="w-10 h-10 rounded-md flex items-center justify-center">
           {row.getValue("icon_media_path") ? (
             <img
               src={`${MEDIA_URL}/${row.getValue("icon_media_path")}`}
@@ -140,19 +140,23 @@ export default function SocialMediaList() {
       ),
     },
     {
-      accessorKey: "icon_alt",
-      header: "Title",
-      cell: ({ row }) => {
-        const link = row.getValue("icon_alt") as string;
-        return (
-          <div className="flex items-center gap-2">
-            <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">
-              {link}
-            </div>
-          </div>
-        );
-      },
+      accessorKey: "footer_icon_media_path",
+      header: "Footer Icon",
+      cell: ({ row }) => (
+        <div className="w-10 h-10 rounded-md bg-black flex items-center justify-center">
+          {row.getValue("footer_icon_media_path") ? (
+            <img
+              src={`${MEDIA_URL}/${row.getValue("footer_icon_media_path")}`}
+              alt={row.original.icon_alt}
+              className="w-8 h-8 rounded object-contain"
+            />
+          ) : (
+            <div className="w-8 h-8 rounded bg-muted-foreground/20" />
+          )}
+        </div>
+      ),
     },
+
     {
       accessorKey: "link",
       header: "Link",

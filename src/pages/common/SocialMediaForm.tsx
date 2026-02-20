@@ -64,8 +64,9 @@ export default function SocialMediaForm() {
           icon_alt_ar: data.icon_alt_ar || "",
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
-             icon_media_path: data.icon_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.icon_media_path}` : null,
-     
+          icon_media_path: data.icon_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.icon_media_path}` : null,
+          footer_icon_media_path: data.footer_icon_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.footer_icon_media_path}` : null,
+
         });
       }
     } catch (error) {
@@ -94,6 +95,10 @@ export default function SocialMediaForm() {
         formData.append("icon_media_path", data.icon_media_path);
       }
 
+      if (data.footer_icon_media_path instanceof File) {
+        formData.append("footer_icon_media_path", data.footer_icon_media_path);
+      }
+
       if (isEditing && id) {
         await updateSocialMedia(parseInt(id), formData);
         toast({
@@ -112,9 +117,8 @@ export default function SocialMediaForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to ${
-          isEditing ? "update" : "create"
-        } social media item`,
+        description: `Failed to ${isEditing ? "update" : "create"
+          } social media item`,
         variant: "destructive",
       });
     } finally {
@@ -159,19 +163,19 @@ export default function SocialMediaForm() {
               <CardTitle>Social Media Content</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Link</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <FormField
+                control={form.control}
+                name="link"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
@@ -186,7 +190,7 @@ export default function SocialMediaForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Icon <span className="text-red-500">*</span>
+                      Icon (For Contact Page) <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <FileUpload
@@ -206,7 +210,32 @@ export default function SocialMediaForm() {
                   </FormItem>
                 )}
               />
-
+              <FormField
+                control={form.control}
+                name="footer_icon_media_path"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Footer Icon <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        value={field.value}
+                        onChange={(file) => field.onChange(file)}
+                        accept="image/*"
+                        preview={true}
+                        recommendedDimensions="300px x 300px"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {isEditing
+                        ? "Upload a new icon to replace the current one (optional)"
+                        : "Upload a social media icon (required)"}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

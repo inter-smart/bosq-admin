@@ -168,8 +168,8 @@ export function FileUpload({
       return fileOrUrl.type.startsWith("image/")
         ? "image"
         : fileOrUrl.type.startsWith("video/")
-        ? "video"
-        : "unknown";
+          ? "video"
+          : "unknown";
     }
 
     if (typeof fileOrUrl === "string") {
