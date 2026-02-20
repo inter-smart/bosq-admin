@@ -231,7 +231,7 @@ export default function CouponsForm() {
           discount_type: data.discount_type,
           discount_value: data.discount_value,
           min_order_amount: data.min_order_amount,
-          min_product_amount : data.min_product_amount,
+          min_product_amount: data.min_product_amount ?? 0,
           max_discount_amount: data.max_discount_amount,
           scope_type: data.scope_type,
           scope_id: data.scope_id || null,
@@ -323,7 +323,11 @@ export default function CouponsForm() {
       formData.append("discount_type", data.discount_type);
       formData.append("discount_value", String(data.discount_value));
       formData.append("min_order_amount", String(data.min_order_amount));
-      formData.append("min_product_amount", String(data.min_product_amount));
+      if (data.scope_type !== "common") {
+        formData.append("min_product_amount", String(data.min_product_amount));
+      } else {
+        formData.append("min_product_amount", "0");
+      }
       formData.append("max_discount_amount", String(data.max_discount_amount));
       formData.append("scope_type", data.scope_type);
       formData.append("usage_limit_total", String(data.usage_limit_total));
@@ -528,27 +532,30 @@ export default function CouponsForm() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="min_product_amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Minimum Product Amount *{" "}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          placeholder="0.00"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {watchScopeType !== "common" && (
+                  <FormField
+                    control={form.control}
+                    name="min_product_amount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Minimum Product Amount *{" "}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="0.00"
+                            {...field}
+                            value={field.value ?? ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}

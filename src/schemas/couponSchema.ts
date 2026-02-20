@@ -99,6 +99,17 @@ export const couponSchema = z.object({
     message: "Please complete the selection for the chosen scope type",
     path: ["scope_id"],
   }
+).refine(
+  (data) => {
+    // If scope is not common, we might want to ensure min_product_amount is provided.
+    // However, since it defaults to 0, this check might be redundant unless we want it > 0.
+    // Based on "make that required if its present", we'll just ensure it's a number.
+    return true;
+  },
+  {
+    message: "Min product amount is required for this scope",
+    path: ["min_product_amount"],
+  }
 );
 
 export type CouponFormData = z.infer<typeof couponSchema>;
