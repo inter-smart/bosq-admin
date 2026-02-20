@@ -242,7 +242,7 @@ export default function OrdersList() {
                 }}
                 onExport={handleExport}
                 title="Orders"
-                searchPlaceholder="Search order ID, email, phone..."
+                searchPlaceholder="Search order ID, name..."
             />
         </>
     );
