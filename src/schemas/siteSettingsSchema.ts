@@ -33,18 +33,6 @@ export const headerFooterSchema = z.object({
   // Newsletter
   news_letter_title: commonValidations.requiredString("Newsletter Title"),
   news_letter_title_ar: commonValidations.requiredString("Newsletter Title (Arabic)").optional(),
-
-
-
-  // Optional
-  po_box_number: z.preprocess((val) => {
-    // Convert string to number if needed
-    if (typeof val === "string") return Number(val);
-    return val;
-  }, 
-  z
-    .number({ required_error: "This field is required", invalid_type_error: "Must be a number" })
-    .min(0, "Number must be 0 or greater"))
 });
 
 

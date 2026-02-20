@@ -29,9 +29,6 @@ export interface HeaderFooterSettings {
 
   news_letter_title: string;
   news_letter_title_ar: string;
-
-  po_box_number: number;
-
   createdAt?: string;
   updatedAt?: string;
 }

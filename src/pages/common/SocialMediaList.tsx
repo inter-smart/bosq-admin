@@ -156,7 +156,6 @@ export default function SocialMediaList() {
         </div>
       ),
     },
-
     {
       accessorKey: "link",
       header: "Link",
