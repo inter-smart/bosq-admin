@@ -417,21 +417,6 @@ export default function CouponsForm() {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="media_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Coupon Image (Optional)</FormLabel>
-                    <FormControl>
-                      <FileUpload value={field.value} onChange={(file) => field.onChange(file)} accept="image/*" preview={true} />
-                    </FormControl>
-                    <FormDescription>Upload a coupon banner or image</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
 
