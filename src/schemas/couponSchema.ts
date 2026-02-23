@@ -67,6 +67,23 @@ export const couponSchema = z.object({
   }
 ).refine(
   (data) => {
+    // For flat discounts: the discount cannot be >= the minimum order amount
+    // (only meaningful when min_order_amount is set > 0)
+    if (
+      data.discount_type === "flat" &&
+      data.min_order_amount > 0 &&
+      data.discount_value >= data.min_order_amount
+    ) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Discount value must be less than the minimum order amount",
+    path: ["discount_value"],
+  }
+).refine(
+  (data) => {
     if (data.usage_limit_per_user > data.usage_limit_total) {
       return false;
     }
@@ -79,12 +96,13 @@ export const couponSchema = z.object({
 ).refine(
   (data) => {
     if (data.start_at && data.end_at) {
-      return new Date(data.end_at) > new Date(data.start_at);
+      // Allow same day: end-of-day (23:59:59) >= start-of-day (00:00:00)
+      return new Date(data.end_at) >= new Date(data.start_at);
     }
     return true;
   },
   {
-    message: "End date must be after start date",
+    message: "End date must be on or after start date",
     path: ["end_at"],
   }
 ).refine(
@@ -101,14 +119,37 @@ export const couponSchema = z.object({
   }
 ).refine(
   (data) => {
-    // If scope is not common, we might want to ensure min_product_amount is provided.
-    // However, since it defaults to 0, this check might be redundant unless we want it > 0.
-    // Based on "make that required if its present", we'll just ensure it's a number.
+    // For flat discounts on non-common scope: min_product_amount (when provided > 0)
+    // must be strictly greater than the discount value
+    if (
+      data.discount_type === "flat" &&
+      data.scope_type !== "common" &&
+      data.min_product_amount > 0 &&
+      data.min_product_amount <= data.discount_value
+    ) {
+      return false;
+    }
     return true;
   },
   {
-    message: "Min product amount is required for this scope",
+    message: "Minimum product amount must be greater than the discount value for flat discounts",
     path: ["min_product_amount"],
+  }
+).refine(
+  (data) => {
+    // For flat discounts on non-common scope: max_discount_amount must be >= discount value
+    if (
+      data.discount_type === "flat" &&
+      data.scope_type !== "common" &&
+      data.max_discount_amount < data.discount_value
+    ) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: "Maximum discount amount must be at least the discount value for flat discounts",
+    path: ["max_discount_amount"],
   }
 );
 

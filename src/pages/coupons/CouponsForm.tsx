@@ -237,9 +237,12 @@ export default function CouponsForm() {
           scope_id: data.scope_id || null,
           usage_limit_total: data.usage_limit_total,
           usage_limit_per_user: data.usage_limit_per_user,
-          start_at: data.start_at ? data.start_at.split("T")[0] : "",
-          end_at: data.end_at ? data.end_at.split("T")[0] : "",
-          status: data.status ?? true
+          start_at: data.start_at ? data.start_at.split("T")[0] + "T00:00:00" : "",
+          end_at: data.end_at ? data.end_at.split("T")[0] + "T23:59:59" : "",
+          status: data.status ?? true,
+          media_path: data.media_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}`
+            : null,
         });
 
         // Then populate cascading dropdowns based on scope_type
@@ -253,7 +256,13 @@ export default function CouponsForm() {
       });
     } finally {
       setInitialLoading(false);
-      isLoadingCouponRef.current = false;
+      // Defer clearing the loading ref until after the next browser paint so
+      // that any React effects triggered by form.reset() (e.g. watchScopeType)
+      // run while the ref is still true, preventing them from wiping the scope
+      // selections that populateCascadeSelections just populated.
+      requestAnimationFrame(() => {
+        isLoadingCouponRef.current = false;
+      });
     }
   };
 
@@ -272,6 +281,7 @@ export default function CouponsForm() {
     } else if (data.scope_type === "model" && data.model) {
       category = data.model.product.category;
       productId = data.model.product.id;
+      modelId = data.model.id;
     } else if (data.scope_type === "product" && data.product) {
       category = data.product.category;
     } else if (data.scope_type === "category" && data.category) {
@@ -325,10 +335,15 @@ export default function CouponsForm() {
       formData.append("min_order_amount", String(data.min_order_amount));
       if (data.scope_type !== "common") {
         formData.append("min_product_amount", String(data.min_product_amount));
+        formData.append("max_discount_amount", String(data.max_discount_amount));
       } else {
-        formData.append("min_product_amount", "0");
+        // min_product_amount is not applicable for common scope — omit it entirely
+        // so the backend optional() check skips it (sending "0" is truthy and
+        // would fail the flat-discount cross-check on the server).
+        // max_discount_amount is auto-derived from discount_value so the backend
+        // flat-check (max >= discount) always passes.
+        formData.append("max_discount_amount", String(data.discount_value));
       }
-      formData.append("max_discount_amount", String(data.max_discount_amount));
       formData.append("scope_type", data.scope_type);
       formData.append("usage_limit_total", String(data.usage_limit_total));
       formData.append(
@@ -577,25 +592,30 @@ export default function CouponsForm() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="max_discount_amount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Max Discount Amount *</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          placeholder="0.00"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {watchScopeType !== "common" && (
+                  <FormField
+                    control={form.control}
+                    name="max_discount_amount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Max Discount Amount *{" "}
+                          {watchDiscountType === "flat" && "(≥ discount value)"}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="0.00"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>
@@ -672,12 +692,11 @@ export default function CouponsForm() {
                           ))}
                         </SelectContent>
                       </Select>
-                      {!selectedParentCategoryId &&
-                        watchScopeType !== "common" && (
-                          <p className="text-sm text-destructive">
-                            Parent category is required
-                          </p>
-                        )}
+                      {!selectedParentCategoryId && (
+                        <p className="text-sm text-destructive">
+                          Parent category is required
+                        </p>
+                      )}
                     </div>
 
                     {/* 2. Subcategory - shown after parent category is selected */}
@@ -963,14 +982,19 @@ export default function CouponsForm() {
                             selected={
                               field.value ? new Date(field.value) : undefined
                             }
-                            onSelect={(date) =>
-                              field.onChange(
-                                date ? format(date, "yyyy-MM-dd") : "",
-                              )
-                            }
-                            disabled={(date) =>
-                              date < new Date(new Date().setHours(0, 0, 0, 0))
-                            }
+                            onSelect={(date) => {
+                              if (!date) {
+                                field.onChange("");
+                                return;
+                              }
+                              // Use local date to avoid UTC midnight shifting the day
+                              field.onChange(format(date, "yyyy-MM-dd") + "T00:00:00");
+                            }}
+                            disabled={(date) => {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              return date < today;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>
@@ -1011,14 +1035,18 @@ export default function CouponsForm() {
                             selected={
                               field.value ? new Date(field.value) : undefined
                             }
-                            onSelect={(date) =>
-                              field.onChange(
-                                date ? format(date, "yyyy-MM-dd") : "",
-                              )
-                            }
+                            onSelect={(date) => {
+                              if (!date) {
+                                field.onChange("");
+                                return;
+                              }
+                              // Use local date + end-of-day time to cover the full chosen day
+                              field.onChange(format(date, "yyyy-MM-dd") + "T23:59:59");
+                            }}
                             disabled={(date) => {
-                              const startAt = form.getValues("start_at");
-                              return startAt ? date < new Date(startAt) : false;
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              return date < today;
                             }}
                             initialFocus
                           />
