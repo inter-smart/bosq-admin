@@ -2,16 +2,16 @@ import { z } from "zod";
 import { commonValidations } from "@/utils/formUtils";
 
 export const metaTagSchema = z.object({
-  page: commonValidations.requiredString("Page"),
+  page: commonValidations.optionalString("Page"),
 
-  meta_title: commonValidations.requiredString("Meta Title"),
-  meta_title_ar: commonValidations.requiredString("Meta Title (Arabic)"),
+  meta_title: commonValidations.optionalString("Meta Title"),
+  meta_title_ar: commonValidations.optionalString("Meta Title (Arabic)"),
 
-  meta_description: commonValidations.requiredString("Meta Description"),
-  meta_description_ar: commonValidations.requiredString("Meta Description (Arabic)"),
+  meta_description: commonValidations.optionalString("Meta Description"),
+  meta_description_ar: commonValidations.optionalString("Meta Description (Arabic)"),
 
-  meta_keywords: commonValidations.requiredString("Meta Keywords"),
-  meta_keywords_ar: commonValidations.requiredString("Meta Keywords (Arabic)"),
+  meta_keywords: commonValidations.optionalString("Meta Keywords"),
+  meta_keywords_ar: commonValidations.optionalString("Meta Keywords (Arabic)"),
 
 });
 

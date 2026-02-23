@@ -181,26 +181,6 @@ export default function BlogsList() {
       ),
     },
     {
-      accessorKey: "sort_order",
-      header: "Sort Order",
-      enableSorting: true,
-      cell: ({ row }) => {
-        const item = row.original;
-        return (
-          <Input
-            type="number"
-            value={
-              editingSortOrder[item.id!] !== undefined
-                ? editingSortOrder[item.id!]
-                : row.getValue("sort_order") || 0
-            }
-            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
-            className="w-20"
-          />
-        );
-      },
-    },
-    {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {

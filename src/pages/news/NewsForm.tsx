@@ -63,7 +63,6 @@ export default function NewsForm() {
       thumbnail_alt: "",
       thumbnail_alt_ar: "",
       published_date: new Date().toISOString().split("T")[0],
-      sort_order: 1,
       status: true,
     },
   });
@@ -126,7 +125,6 @@ export default function NewsForm() {
           published_date: data.published_date
             ? new Date(data.published_date).toISOString().split("T")[0]
             : new Date().toISOString().split("T")[0],
-          sort_order: data.sort_order || 1,
           status: data.status ?? true,
         });
 
@@ -188,7 +186,6 @@ export default function NewsForm() {
 
       // Other fields
       formData.append("published_date", data.published_date);
-      formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
 
       if (thumbnailFile instanceof File) {
@@ -681,28 +678,7 @@ export default function NewsForm() {
               <CardTitle>News Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="sort_order"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sort Order</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="1"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 1)
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+              <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <FormField
                   control={form.control}
                   name="status"

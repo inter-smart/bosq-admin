@@ -32,25 +32,25 @@ export const blogCmsSchema = z.object({
 export const blogSchema = z.object({
   // English fields
   title: commonValidations.requiredString("Title"),
-  meta_title: commonValidations.requiredString("Meta Title"),
-  meta_description: commonValidations.requiredText("Meta Description"),
-  meta_keywords: commonValidations.requiredString("Meta Keywords"),
+  meta_title: commonValidations.optionalString("Meta Title"),
+  meta_description: commonValidations.optionalString("Meta Description"),
+  meta_keywords: commonValidations.optionalString("Meta Keywords"),
   other_meta: commonValidations.optionalString("Other Meta"),
   description: commonValidations.requiredText("Description"),
-  media_alt: commonValidations.requiredString("Media Alt Text"),
+  media_alt: commonValidations.optionalString("Media Alt Text"),
   thumbnail_alt: commonValidations.optionalString("Thumbnail Alt Text"),
   slug: commonValidations.requiredString("Slug"),
 
   // Arabic fields
   title_ar: commonValidations.requiredString("Arabic Title"),
   description_ar: commonValidations.requiredText("Arabic Description"),
-  meta_title_ar: commonValidations.requiredString("Arabic Meta Title"),
-  meta_description_ar: commonValidations.requiredText(
+  meta_title_ar: commonValidations.optionalString("Arabic Meta Title"),
+  meta_description_ar: commonValidations.optionalString(
     "Arabic Meta Description"
   ),
-  meta_keywords_ar: commonValidations.requiredString("Arabic Meta Keywords"),
+  meta_keywords_ar: commonValidations.optionalString("Arabic Meta Keywords"),
   other_meta_ar: commonValidations.optionalString("Arabic Other Meta"),
-  media_alt_ar: commonValidations.requiredString("Arabic Media Alt Text"),
+  media_alt_ar: commonValidations.optionalString("Arabic Media Alt Text"),
   thumbnail_alt_ar: commonValidations.optionalString(
     "Arabic Thumbnail Alt Text"
   ),
@@ -62,7 +62,6 @@ export const blogSchema = z.object({
 
   // Other fields
   published_date: z.string().min(1, "Published date is required"),
-  sort_order: commonValidations.sortOrder(),
   status: commonValidations.booleanStatus(),
 });
 

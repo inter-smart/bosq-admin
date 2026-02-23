@@ -22,7 +22,7 @@ export const commonValidations = {
   optionalString: (fieldName: string) =>
     z
       .string()
-      // .max(255, `${fieldName} must be at most 255 characters`)
+      .max(255, `${fieldName} must be at most 255 characters`)
       .optional(),
 
   requiredText: (fieldName: string) =>

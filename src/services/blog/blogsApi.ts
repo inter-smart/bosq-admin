@@ -26,7 +26,6 @@ export interface Blog {
   thumbnail_alt_ar?: string | null;
   published_date: string;
   viewCount?: number;
-  sort_order?: number;
   status?: boolean;
   deleted_at?: string | null;
   createdAt?: string;
