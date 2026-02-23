@@ -208,7 +208,6 @@ export default function CouponsForm() {
           start_at: data.start_at ? data.start_at.split("T")[0] + "T00:00:00" : "",
           end_at: data.end_at ? data.end_at.split("T")[0] + "T23:59:59" : "",
           status: data.status ?? true,
-          media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
         });
 
         // Then populate cascading dropdowns based on scope_type
@@ -312,8 +311,6 @@ export default function CouponsForm() {
 
       if (data.title) formData.append("title", data.title);
       if (data.title_ar) formData.append("title_ar", data.title_ar);
-      if (data.description) formData.append("description", data.description);
-      if (data.description_ar) formData.append("description_ar", data.description_ar);
 
       if (data.scope_id) {
         formData.append("scope_id", data.scope_id.toString());
@@ -414,35 +411,6 @@ export default function CouponsForm() {
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Arabic title" {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter description" rows={3} {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Arabic)</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter Arabic description" rows={3} {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
