@@ -178,6 +178,14 @@ const NewsletterSubscriptionDetails = lazy(
   () => import("./pages/enquiries/NewsletterSubscriptionDetails"),
 );
 
+// Project Enquiries pages
+const ProjectEnquiriesList = lazy(
+  () => import("./pages/enquiries/ProjectEnquiriesList"),
+);
+const ProjectEnquiryDetails = lazy(
+  () => import("./pages/enquiries/ProjectEnquiryDetails"),
+);
+
 // Users pages
 const UsersList = lazy(() => import("./pages/users/UsersList"));
 const UserDetails = lazy(() => import("./pages/users/UserDetails"));
@@ -1117,6 +1125,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <NewsletterSubscriptionDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Project Enquiries Routes */}
+            <Route
+              path="/project-enquiries"
+              element={
+                <ProtectedRoute>
+                  <ProjectEnquiriesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/project-enquiries/:id"
+              element={
+                <ProtectedRoute>
+                  <ProjectEnquiryDetails />
                 </ProtectedRoute>
               }
             />

@@ -4,12 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,29 +16,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2, Image, XCircle } from "lucide-react";
-import {
-  fetchProductVariantList,
-  deleteProductVariant,
-  ProductVariant,
-} from "@/services/product/productVariantApi";
-import {
-  fetchProductModelList,
-  ProductModel,
-} from "@/services/product/productModelApi";
-import {
-  fetchBaseProductList,
-  BaseProduct,
-} from "@/services/product/baseProductApi";
+import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
+import { fetchProductModelList, ProductModel } from "@/services/product/productModelApi";
+import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AllProductVariantsList() {
   const navigate = useNavigate();
@@ -196,20 +175,12 @@ export default function AllProductVariantsList() {
     {
       accessorKey: "productModel.product.title",
       header: "Base Product",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[150px] truncate">
-          {row.original.productModel?.product?.title || "N/A"}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium max-w-[150px] truncate">{row.original.productModel?.product?.title || "N/A"}</div>,
     },
     {
       accessorKey: "productModel.title",
       header: "Model",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[150px] truncate">
-          {row.original.productModel?.title || "N/A"}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium max-w-[150px] truncate">{row.original.productModel?.title || "N/A"}</div>,
     },
     {
       accessorKey: "sku",
@@ -229,22 +200,22 @@ export default function AllProductVariantsList() {
         return <Badge variant={stock > 0 ? "default" : "destructive"}>{stock}</Badge>;
       },
     },
-    {
-      accessorKey: "is_primary",
-      header: "Primary",
-      cell: ({ row }) => {
-        const item = row.original;
-        const isPrimary = row.getValue("is_primary") as boolean;
-        return (
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={isPrimary}
-              onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
-            />
-          </div>
-        );
-      },
-    },
+    // {
+    //   accessorKey: "is_primary",
+    //   header: "Primary",
+    //   cell: ({ row }) => {
+    //     const item = row.original;
+    //     const isPrimary = row.getValue("is_primary") as boolean;
+    //     return (
+    //       <div className="flex items-center gap-2">
+    //         <Switch
+    //           checked={isPrimary}
+    //           onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
+    //         />
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       id: "actions",
       cell: ({ row }) => {
@@ -321,11 +292,7 @@ export default function AllProductVariantsList() {
 
             <div className="flex items-center gap-2">
               <div className="w-56">
-                <Select 
-                  value={selectedModelId} 
-                  onValueChange={setSelectedModelId}
-                  disabled={selectedProductId === "all"}
-                >
+                <Select value={selectedModelId} onValueChange={setSelectedModelId} disabled={selectedProductId === "all"}>
                   <SelectTrigger>
                     <SelectValue placeholder="Model" />
                   </SelectTrigger>
@@ -340,12 +307,7 @@ export default function AllProductVariantsList() {
                 </Select>
               </div>
               {selectedModelId !== "all" && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSelectedModelId("all")}
-                  title="Clear Model Filter"
-                >
+                <Button variant="ghost" size="icon" onClick={() => setSelectedModelId("all")} title="Clear Model Filter">
                   <XCircle className="h-4 w-4 text-muted-foreground" />
                 </Button>
               )}

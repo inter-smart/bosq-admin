@@ -88,9 +88,7 @@ export default function AttributeValuesForm() {
           attribute_id: data.attribute_id,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
-          media_path: data.media_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}`
-            : undefined,
+         
         });
       }
     } catch (error) {
@@ -115,9 +113,6 @@ export default function AttributeValuesForm() {
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
-      if (data.media_path instanceof File) {
-        formData.append("media_path", data.media_path);
-      }
 
       if (isEditing && id) {
         await updateAttributeValue(parseInt(id), formData);
@@ -220,30 +215,6 @@ export default function AttributeValuesForm() {
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="media_path"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Media (Optional)</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        value={field.value}
-                        onChange={(file) => {
-                          field.onChange(file);
-                        }}
-                        accept="image/*"
-                        preview={true}
-                        recommendedDimensions="200px x 200px"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Upload an optional image for this attribute value (e.g., color swatch)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
 

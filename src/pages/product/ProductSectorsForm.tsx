@@ -28,8 +28,6 @@ export default function ProductSectorsForm() {
     defaultValues: {
       name: "",
       name_ar: "",
-      code: "",
-      media_path: null,
       sort_order: 1,
       status: true,
     },
@@ -45,10 +43,8 @@ export default function ProductSectorsForm() {
         form.reset({
           name: data.name || "",
           name_ar: data.name_ar || "",
-          code: data.code || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
-          media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
         });
       }
     } catch (error) {
@@ -70,14 +66,9 @@ export default function ProductSectorsForm() {
 
       formData.append("name", data.name);
       formData.append("name_ar", data.name_ar);
-      formData.append("code", data.code);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
-      // Only append media_path if it's a new file
-      if (data.media_path instanceof File) {
-        formData.append("media_path", data.media_path);
-      }
 
       if (isEditing && id) {
         await updateProductSector(parseInt(id), formData);
@@ -167,47 +158,9 @@ export default function ProductSectorsForm() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter sector code (e.g., health_care, school)" {...field} />
-                      </FormControl>
-                      <FormDescription>Unique identifier for this sector (lowercase, no spaces)</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
 
-              {/* Sector Image */}
-              <div className="mt-6">
-                <FormField
-                  control={form.control}
-                  name="media_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sector Image (Optional)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={(file) => {
-                            field.onChange(file);
-                          }}
-                          accept="image/*"
-                          preview={true}
-                          recommendedDimensions="400px x 400px"
-                        />
-                      </FormControl>
-                      <FormDescription>Upload a image (optional)</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+          
             </CardContent>
           </Card>
 

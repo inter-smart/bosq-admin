@@ -9,9 +9,6 @@ export interface Coupon {
   code: string;
   title?: string;
   title_ar?: string;
-  description?: string;
-  description_ar?: string;
-  media_path?: string | File | null;
   discount_type: "percentage" | "flat";
   discount_value: number;
   min_order_amount: number;

@@ -11,10 +11,6 @@ export const couponSchema = z.object({
 
   title_ar: commonValidations.optionalString("Title (Arabic)"),
 
-  description: commonValidations.optionalString("Description"),
-
-  description_ar: commonValidations.optionalString("Description (Arabic)"),
-
   media_path: commonValidations.fileUpload,
 
   discount_type: z.enum(["percentage", "flat"], {

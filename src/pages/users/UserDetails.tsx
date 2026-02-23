@@ -124,9 +124,6 @@ export default function UserDetails() {
                   Full Name
                 </p>
                 <p className="text-base">{user.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  ({user.first_name} {user.last_name})
-                </p>
               </div>
             </div>
 

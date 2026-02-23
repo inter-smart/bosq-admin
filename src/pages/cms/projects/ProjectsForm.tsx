@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { projectSchema, ProjectFormData } from "@/schemas/projectsSchema";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 
 export default function ProjectsForm() {
   const { toast } = useToast();
@@ -685,9 +686,8 @@ export default function ProjectsForm() {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Textarea
+                          <RichTextEditor
                             placeholder="Enter project description"
-                            rows={4}
                             {...field}
                           />
                         </FormControl>
@@ -703,9 +703,8 @@ export default function ProjectsForm() {
                       <FormItem>
                         <FormLabel>Description (AR)</FormLabel>
                         <FormControl>
-                          <Textarea
+                          <RichTextEditor
                             placeholder="أدخل وصف المشروع"
-                            rows={4}
                             {...field}
                             dir="rtl"
                           />
@@ -940,9 +939,8 @@ export default function ProjectsForm() {
                     <FormItem>
                       <FormLabel>Section 3 Description</FormLabel>
                       <FormControl>
-                        <Textarea
+                        <RichTextEditor
                           placeholder="Enter section description"
-                          rows={4}
                           {...field}
                         />
                       </FormControl>
@@ -958,9 +956,8 @@ export default function ProjectsForm() {
                     <FormItem>
                       <FormLabel>Section 3 Description (AR)</FormLabel>
                       <FormControl>
-                        <Textarea
+                        <RichTextEditor
                           placeholder="أدخل وصف القسم"
-                          rows={4}
                           {...field}
                           dir="rtl"
                         />

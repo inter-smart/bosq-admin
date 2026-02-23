@@ -3,6 +3,7 @@ import { apiCall } from '@/utils/apiUtils';
 export interface SocialMedia {
   id?: number;
   icon_media_path: string | null;
+  footer_icon_media_path: string | null;
   icon_alt: string;
   icon_alt_ar: string;
   link: string;

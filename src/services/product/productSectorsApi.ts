@@ -4,9 +4,7 @@ export interface ProductSector {
   id?: number;
   name: string;
   name_ar: string;
-  code: string;
   slug?: string;
-  media_path?: string | File | null;
   sort_order?: number;
   status?: boolean;
   deletedAt?: string | null;

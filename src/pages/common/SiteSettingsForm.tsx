@@ -40,7 +40,6 @@ export default function HeaderFooterForm() {
       support_email: "",
       news_letter_title: "",
       news_letter_title_ar: "",
-      po_box_number: null,
     },
   });
 
@@ -75,7 +74,6 @@ export default function HeaderFooterForm() {
           support_email: data.support_email || "",
           news_letter_title: data.news_letter_title || "",
           news_letter_title_ar: data.news_letter_title_ar || "",
-          po_box_number: data.po_box_number || null,
         });
 
         // Set header/footer logo URLs
@@ -206,20 +204,7 @@ export default function HeaderFooterForm() {
                   )}
                 />
 
-                {/* PO Box Number */}
-                <FormField
-                  control={form.control}
-                  name="po_box_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>PO Box Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter PO box number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
 
                 {/* General Email */}
                 <FormField
@@ -291,7 +276,7 @@ export default function HeaderFooterForm() {
                     )}
                   />
 
-                    <FormField
+                  <FormField
                     control={form.control}
                     name="header_media_alt_ar"
                     render={({ field }) => (
@@ -345,7 +330,7 @@ export default function HeaderFooterForm() {
                     )}
                   />
 
-                    <FormField
+                  <FormField
                     control={form.control}
                     name="footer_media_alt_ar"
                     render={({ field }) => (
@@ -450,7 +435,7 @@ export default function HeaderFooterForm() {
                   )}
                 />
 
-      
+
                 {/* Newsletter Title */}
                 <FormField
                   control={form.control}

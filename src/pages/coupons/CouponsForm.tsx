@@ -63,9 +63,6 @@ export default function CouponsForm() {
       code: "",
       title: "",
       title_ar: "",
-      description: "",
-      description_ar: "",
-      media_path: null,
       discount_type: "percentage",
       discount_value: 0,
       min_order_amount: 0,
@@ -75,7 +72,7 @@ export default function CouponsForm() {
       scope_id: null,
       usage_limit_total: 1,
       usage_limit_per_user: 1,
-      start_at: "",
+      start_at: format(new Date(), "yyyy-MM-dd"),
       end_at: "",
       status: true,
     },
@@ -199,8 +196,6 @@ export default function CouponsForm() {
           code: data.code || "",
           title: data.title || "",
           title_ar: data.title_ar || "",
-          description: data.description || "",
-          description_ar: data.description_ar || "",
           discount_type: data.discount_type,
           discount_value: data.discount_value,
           min_order_amount: data.min_order_amount,
@@ -322,10 +317,6 @@ export default function CouponsForm() {
 
       if (data.scope_id) {
         formData.append("scope_id", data.scope_id.toString());
-      }
-
-      if (data.media_path instanceof File) {
-        formData.append("media_path", data.media_path);
       }
 
       if (isEditing && id) {
@@ -680,7 +671,7 @@ export default function CouponsForm() {
                     {(watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") &&
                       (selectedSubCategoryId || selectedParentCategoryId) && (
                         <div className="space-y-2">
-                          <FormLabel>Product *</FormLabel>
+                          <FormLabel>Base Product *</FormLabel>
                           <Select
                             onValueChange={(value) => {
                               const prodId = parseInt(value);

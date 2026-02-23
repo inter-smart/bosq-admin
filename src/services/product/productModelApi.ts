@@ -9,7 +9,6 @@ export interface ProductModel {
   product_id: number;
   title: string;
   title_ar: string;
-  code: string;
   slug?: string;
   base_price: string;
   media_path?: string | File | null;

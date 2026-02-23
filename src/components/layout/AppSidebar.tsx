@@ -73,6 +73,7 @@ const enquiriesSection = [
     url: "/newsletter-subscriptions",
     icon: Newspaper,
   },
+  { title: "Project Enquiries", url: "/project-enquiries", icon: Briefcase },
 ];
 
 const cmsSection = [

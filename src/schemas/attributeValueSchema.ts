@@ -7,16 +7,7 @@ export const attributeValueSchema = z.object({
   attribute_id: z.number().min(1, "Attribute ID is required"),
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
-  media_path: z
-    .union([
-      z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, {
-        message: "Max 5MB allowed",
-      }),
-      z.string().min(1),
-      z.null(),
-      z.undefined(),
-    ])
-    .optional(),
+ 
 });
 
 export type AttributeValueFormData = z.infer<typeof attributeValueSchema>;
