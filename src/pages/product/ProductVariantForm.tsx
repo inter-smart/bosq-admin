@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,33 +31,71 @@ interface AttributeSelectionState {
   [attributeId: number]: AttributeValueSelection[];
 }
 
+const baseSchema = z.object({
+  title: z.string(),
+  title_ar: z.string(),
+  cover_image: z.union([z.instanceof(File), z.string()]).nullable(),
+  hover_image: z.union([z.instanceof(File), z.string()]).nullable(),
+  design_title: z.string(),
+  design_title_ar: z.string(),
+  sku: z.string(),
+  product_code: z.string(),
+  price: z.string(),
+  stock: z.coerce.number(),
+  sort_order: z.coerce.number(),
+  status: z.boolean(),
+});
+
+type FormValues = z.infer<typeof baseSchema>;
+
 export default function ProductVariantForm() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { productId, id } = useParams(); // productId is now model ID
+  const { productId, id } = useParams();
   const isEditing = Boolean(id);
 
-  const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [model, setModel] = useState<ProductModel | null>(null);
   const [attributes, setAttributes] = useState<AttributeWithValues[]>([]);
-
-  // Form state
-  const [sku, setSku] = useState("");
-  const [productCode, setProductCode] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState(0);
-  const [sortOrder, setSortOrder] = useState(1);
-  const [status, setStatus] = useState(true);
-  const [title, setTitle] = useState("");
-  const [titleAr, setTitleAr] = useState("");
-  const [coverImage, setCoverImage] = useState<File | string | null>(null);
-  const [designTitle, setDesignTitle] = useState("");
-  const [designTitleAr, setDesignTitleAr] = useState("");
-  const [hoverImage, setHoverImage] = useState<File | string | null>(null);
-
-  // Attribute selections organized by attribute ID
   const [attributeSelections, setAttributeSelections] = useState<AttributeSelectionState>({});
+
+  const schema = useMemo(
+    () =>
+      baseSchema.superRefine((data, ctx) => {
+        if (!isEditing) return;
+        if (!data.title.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Title is required", path: ["title"] });
+        if (!data.title_ar.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Title (Arabic) is required", path: ["title_ar"] });
+        if (!data.cover_image) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Cover image is required", path: ["cover_image"] });
+        if (!data.design_title.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Design title is required", path: ["design_title"] });
+        if (!data.design_title_ar.trim())
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Design title (Arabic) is required", path: ["design_title_ar"] });
+      }),
+    [isEditing],
+  );
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      title: "",
+      title_ar: "",
+      cover_image: null,
+      hover_image: null,
+      design_title: "",
+      design_title_ar: "",
+      sku: "",
+      product_code: "",
+      price: "",
+      stock: 0,
+      sort_order: 1,
+      status: true,
+    },
+  });
 
   useEffect(() => {
     loadInitialData();
@@ -64,18 +105,15 @@ export default function ProductVariantForm() {
     try {
       setInitialLoading(true);
 
-      // Load model info
       if (productId) {
         const modelResponse = await fetchProductModelById(parseInt(productId));
         setModel(modelResponse.data);
       }
 
-      // Load attributes with values
       const attributesResponse = await fetchAttributesWithValues();
       if (attributesResponse.success) {
         setAttributes(attributesResponse.data);
 
-        // Initialize empty selections for each attribute
         const initialSelections: AttributeSelectionState = {};
         attributesResponse.data.forEach((attr) => {
           initialSelections[attr.id] = [];
@@ -83,34 +121,32 @@ export default function ProductVariantForm() {
         setAttributeSelections(initialSelections);
       }
 
-      // Load variant data if editing
       if (isEditing && id) {
         const variantResponse = await fetchProductVariantById(parseInt(id));
         const data = variantResponse.data;
 
-        setSku(data.sku || "");
-        setProductCode(data.product_code || "");
-        setPrice(data.price || "");
-        setStock(data.stock || 0);
-        setSortOrder(data.sort_order || 1);
-        setStatus(data.status ?? true);
-        setTitle(data.title || "");
-        setTitleAr(data.title_ar || "");
-        setCoverImage(data.media_path || null);
-        setDesignTitle(data.design_title || "");
-        setDesignTitleAr(data.design_title_ar || "");
-        setHoverImage(data.hover_media_path || null);
+        reset({
+          title: data.title || "",
+          title_ar: data.title_ar || "",
+          cover_image: data.media_path || null,
+          hover_image: data.hover_media_path || null,
+          design_title: data.design_title || "",
+          design_title_ar: data.design_title_ar || "",
+          sku: data.sku || "",
+          product_code: data.product_code || "",
+          price: data.price || "",
+          stock: data.stock || 0,
+          sort_order: data.sort_order || 1,
+          status: data.status ?? true,
+        });
 
-        // Set attribute selections if available
         if (data.variant_attributes && data.variant_attributes.length > 0) {
           const loadedSelections: AttributeSelectionState = {};
 
-          // Initialize with empty arrays for all attributes
           attributesResponse.data.forEach((attr) => {
             loadedSelections[attr.id] = [];
           });
 
-          // Populate with existing data
           data.variant_attributes.forEach((attr) => {
             if (!loadedSelections[attr.attribute_id]) {
               loadedSelections[attr.attribute_id] = [];
@@ -126,11 +162,7 @@ export default function ProductVariantForm() {
         }
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load data",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to load data", variant: "destructive" });
     } finally {
       setInitialLoading(false);
     }
@@ -157,7 +189,6 @@ export default function ProductVariantForm() {
     }));
   };
 
-  // Get the slug/code for an attribute value
   const getValueSlug = (attributeId: number, valueId: number): string => {
     const attribute = attributes.find((a) => a.id === attributeId);
     if (!attribute) return "";
@@ -165,50 +196,35 @@ export default function ProductVariantForm() {
     return value?.slug || "";
   };
 
-  // Get already selected value IDs for a specific attribute
   const getSelectedValueIds = (attributeId: number, currentSelectionId: string): number[] => {
     const selections = attributeSelections[attributeId] || [];
     return selections.filter((s) => s.id !== currentSelectionId && s.valueId !== null).map((s) => s.valueId as number);
   };
 
-  // Get available values for an attribute (excluding already selected ones)
   const getAvailableValues = (attributeId: number, currentSelectionId: string) => {
     const attribute = attributes.find((a) => a.id === attributeId);
     if (!attribute) return [];
-
     const selectedValueIds = getSelectedValueIds(attributeId, currentSelectionId);
     return attribute.values.filter((v) => !selectedValueIds.includes(v.id));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: FormValues) => {
     if (!productId) return;
 
-    // Validate selections
-    for (const [attrId, selections] of Object.entries(attributeSelections)) {
-        for (const selection of selections) {
-          if (!selection.valueId) {
-            toast({
-              title: "Validation Error",
-              description: "Please select a value for all added attributes.",
-              variant: "destructive",
-            });
-            return;
-          }
-          // Check if price is empty or arguably invalid (allow 0)
-          if (selection.price === "" || selection.price === null || selection.price === undefined) {
-               toast({
-              title: "Validation Error",
-              description: "Please enter a valid price for all added attributes.",
-              variant: "destructive",
-            });
-            return;
-          }
+    // Validate attribute selections (managed outside RHF)
+    for (const selections of Object.values(attributeSelections)) {
+      for (const selection of selections) {
+        if (!selection.valueId) {
+          toast({
+            title: "Validation Error",
+            description: "Please select a value for all added attributes.",
+            variant: "destructive",
+          });
+          return;
         }
       }
+    }
 
-    // Collect all valid attribute selections
     const allSelections: { attribute_id: number; attribute_value_id: number; price: string; sku_code: string }[] = [];
 
     Object.entries(attributeSelections).forEach(([attrId, selections]) => {
@@ -225,55 +241,42 @@ export default function ProductVariantForm() {
     });
 
     try {
-      setLoading(true);
-
       if (isEditing && id) {
-        // Use FormData for update
         const formData = new FormData();
         formData.append("product_model_id", productId);
-        formData.append("sku", sku);
-        formData.append("product_code", productCode);
-        formData.append("price", price);
-        formData.append("stock", stock.toString());
-        formData.append("sort_order", sortOrder.toString());
-        formData.append("status", status.toString());
-        formData.append("title", title);
-        formData.append("title_ar", titleAr);
-        formData.append("design_title", designTitle);
-        formData.append("design_title_ar", designTitleAr);
+        formData.append("sku", data.sku);
+        formData.append("product_code", data.product_code);
+        formData.append("price", data.price);
+        formData.append("stock", data.stock.toString());
+        formData.append("sort_order", data.sort_order.toString());
+        formData.append("status", data.status.toString());
+        formData.append("title", data.title);
+        formData.append("title_ar", data.title_ar);
+        formData.append("design_title", data.design_title);
+        formData.append("design_title_ar", data.design_title_ar);
         formData.append("attributes", JSON.stringify(allSelections));
 
-        if (coverImage instanceof File) {
-          formData.append("media_path", coverImage);
+        if (data.cover_image instanceof File) {
+          formData.append("media_path", data.cover_image);
         }
-
-        if (hoverImage instanceof File) {
-          formData.append("hover_media_path", hoverImage);
+        if (data.hover_image instanceof File) {
+          formData.append("hover_media_path", data.hover_image);
         }
 
         await updateProductVariant(parseInt(id), formData);
-        toast({
-          title: "Success",
-          description: "Product variant updated successfully",
-        });
+        toast({ title: "Success", description: "Product variant updated successfully" });
       } else {
-        // Use JSON for create (no change)
-        const variantData = {
+        await createProductVariant({
           product_model_id: parseInt(productId),
-          sku,
-          product_code: productCode,
-          price,
-          stock,
-          sort_order: sortOrder,
-          status,
-          attributes: allSelections,
-        };
-
-        await createProductVariant(variantData);
-        toast({
-          title: "Success",
-          description: "Product variant created successfully",
+          sku: data.sku,
+          product_code: data.product_code,
+          price: data.price,
+          stock: data.stock,
+          sort_order: data.sort_order,
+          status: data.status,
+          variant_attributes: allSelections,
         });
+        toast({ title: "Success", description: "Product variant created successfully" });
       }
 
       navigate(`/product-variants/${productId}/list`);
@@ -283,8 +286,6 @@ export default function ProductVariantForm() {
         description: error.message || `Failed to ${isEditing ? "update" : "create"} product variant`,
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -311,7 +312,7 @@ export default function ProductVariantForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information - only show when editing */}
         {isEditing && (
           <Card>
@@ -322,96 +323,86 @@ export default function ProductVariantForm() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="title">Title</Label>
-                  <Input id="title" placeholder="Enter variant title" value={title} onChange={(e) => setTitle(e.target.value)} />
+                  <Input id="title" placeholder="Enter variant title" {...register("title")} />
+                  {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="title_ar">Title (Arabic)</Label>
-                  <Input id="title_ar" placeholder="أدخل عنوان المنتج" value={titleAr} onChange={(e) => setTitleAr(e.target.value)} dir="rtl" />
+                  <Input id="title_ar" placeholder="أدخل عنوان المنتج" dir="rtl" {...register("title_ar")} />
+                  {errors.title_ar && <p className="text-sm text-destructive">{errors.title_ar.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Cover Image</Label>
-                  <FileUpload
-                    value={coverImage}
-                    onChange={(file) => setCoverImage(file)}
-                    accept="image/*"
-                    placeholder="Drop cover image here or click to browse"
+                  <Controller
+                    name="cover_image"
+                    control={control}
+                    render={({ field }) => (
+                      <FileUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        accept="image/*"
+                        placeholder="Drop cover image here or click to browse"
+                      />
+                    )}
                   />
+                  {errors.cover_image && <p className="text-sm text-destructive">{errors.cover_image.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label>Hover Image</Label>
-                  <FileUpload
-                    value={hoverImage}
-                    onChange={(file) => setHoverImage(file)}
-                    accept="image/*"
-                    placeholder="Drop hover image here or click to browse"
+                  <Controller
+                    name="hover_image"
+                    control={control}
+                    render={({ field }) => (
+                      <FileUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        accept="image/*"
+                        placeholder="Drop hover image here or click to browse"
+                      />
+                    )}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="design_title">Design Title</Label>
-                  <Input id="design_title" placeholder="Enter design title" value={designTitle} onChange={(e) => setDesignTitle(e.target.value)} />
+                  <Input id="design_title" placeholder="Enter design title" {...register("design_title")} />
+                  {errors.design_title && <p className="text-sm text-destructive">{errors.design_title.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="design_title_ar">Design Title (Arabic)</Label>
-                  <Input id="design_title_ar" placeholder="أدخل عنوان التصميم" value={designTitleAr} onChange={(e) => setDesignTitleAr(e.target.value)} dir="rtl" />
+                  <Input id="design_title_ar" placeholder="أدخل عنوان التصميم" dir="rtl" {...register("design_title_ar")} />
+                  {errors.design_title_ar && <p className="text-sm text-destructive">{errors.design_title_ar.message}</p>}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="sku">SKU</Label>
-                  <Input id="sku" placeholder="Enter SKU" value={sku} onChange={(e) => setSku(e.target.value)} required disabled />
+                  <Input id="sku" placeholder="Enter SKU" disabled {...register("sku")} />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="productCode">Product Code</Label>
-                  <Input
-                    id="productCode"
-                    placeholder="Enter product code"
-                    value={productCode}
-                    onChange={(e) => setProductCode(e.target.value)}
-                    required
-                    disabled
-                  />
+                  <Label htmlFor="product_code">Product Code</Label>
+                  <Input id="product_code" placeholder="Enter product code" disabled {...register("product_code")} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="price">Price</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    placeholder="Enter price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    required
-                    disabled
-                  />
+                  <Input id="price" type="number" step="0.01" placeholder="Enter price" disabled {...register("price")} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="stock">Stock</Label>
-                  <Input
-                    id="stock"
-                    type="number"
-                    placeholder="Enter stock quantity"
-                    value={stock}
-                    onChange={(e) => setStock(parseInt(e.target.value) || 0)}
-                    required
-                  />
+                  <Input id="stock" type="number" placeholder="Enter stock quantity" {...register("stock")} />
+                  {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="sortOrder">Sort Order</Label>
-                  <Input
-                    id="sortOrder"
-                    type="number"
-                    placeholder="1"
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(parseInt(e.target.value) || 1)}
-                  />
+                  <Label htmlFor="sort_order">Sort Order</Label>
+                  <Input id="sort_order" type="number" placeholder="1" {...register("sort_order")} />
+                  {errors.sort_order && <p className="text-sm text-destructive">{errors.sort_order.message}</p>}
                 </div>
 
                 <div className="flex items-center justify-between rounded-lg border p-4">
@@ -419,14 +410,18 @@ export default function ProductVariantForm() {
                     <Label>Status</Label>
                     <p className="text-sm text-muted-foreground">Enable or disable this variant</p>
                   </div>
-                  <Switch checked={status} onCheckedChange={setStatus} />
+                  <Controller
+                    name="status"
+                    control={control}
+                    render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+                  />
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Attribute Cards - One card per attribute */}
+        {/* Attribute Cards */}
         {attributes.length === 0 ? (
           <Card>
             <CardContent className="py-8">
@@ -511,9 +506,9 @@ export default function ProductVariantForm() {
           <Button type="button" variant="outline" onClick={() => navigate(`/product-variants/${productId}/list`)}>
             Cancel
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={isSubmitting}>
             <Save className="h-4 w-4 mr-2" />
-            {loading ? "Saving..." : isEditing ? "Update" : "Create"}
+            {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
           </Button>
         </div>
       </form>

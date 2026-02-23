@@ -32,7 +32,7 @@ export interface ProductVariant {
       title: string;
     };
   };
-  variant_attributes?: VariantAttribute[];
+  attributes?: VariantAttribute[];
 }
 
 export interface VariantAttribute {
