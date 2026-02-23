@@ -240,9 +240,6 @@ export default function CouponsForm() {
           start_at: data.start_at ? data.start_at.split("T")[0] + "T00:00:00" : "",
           end_at: data.end_at ? data.end_at.split("T")[0] + "T23:59:59" : "",
           status: data.status ?? true,
-          media_path: data.media_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}`
-            : null,
         });
 
         // Then populate cascading dropdowns based on scope_type
