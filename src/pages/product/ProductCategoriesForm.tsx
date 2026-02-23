@@ -239,7 +239,7 @@ export default function ProductCategoriesForm() {
                   name="media_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category Image (Optional)</FormLabel>
+                      <FormLabel>Category Image</FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
@@ -251,7 +251,7 @@ export default function ProductCategoriesForm() {
                           recommendedDimensions="16px x 16px"
                         />
                       </FormControl>
-                      <FormDescription>Upload a category image (optional)</FormDescription>
+                      <FormDescription>Upload a category image</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

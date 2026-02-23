@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
@@ -40,6 +40,7 @@ export default function AllProductVariantsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const requestIdRef = useRef(0);
 
   // Load base products
   useEffect(() => {
@@ -49,6 +50,7 @@ export default function AllProductVariantsList() {
   // Load models when base product changes
   useEffect(() => {
     setSelectedModelId("all");
+    setCurrentPage(1);
     if (selectedProductId !== "all") {
       loadModels(parseInt(selectedProductId));
     } else {
@@ -82,16 +84,24 @@ export default function AllProductVariantsList() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
+      setCurrentPage(1);
     }, 600);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  // Reset to page 1 when model filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedModelId]);
 
   useEffect(() => {
     loadVariants();
   }, [currentPage, pageSize, debouncedSearchQuery, selectedProductId, selectedModelId]);
 
   const loadVariants = async () => {
+    const requestId = ++requestIdRef.current;
+
     try {
       if (debouncedSearchQuery) {
         setSearching(true);
@@ -107,19 +117,24 @@ export default function AllProductVariantsList() {
         selectedProductId === "all" ? undefined : parseInt(selectedProductId),
       );
 
+      if (requestId !== requestIdRef.current) return;
+
       if (response.success) {
         setVariants(response.data.list);
         setTotalCount(response.data.pagination.totalCount);
       }
     } catch (error) {
+      if (requestId !== requestIdRef.current) return;
       toast({
         title: "Error",
         description: "Failed to load product variants",
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
-      setSearching(false);
+      if (requestId === requestIdRef.current) {
+        setLoading(false);
+        setSearching(false);
+      }
     }
   };
 

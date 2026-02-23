@@ -5,22 +5,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -41,11 +27,7 @@ import {
 } from "@/services/coupons/couponsApi";
 import { Switch } from "@/components/ui/switch";
 import { CouponFormData, couponSchema } from "@/schemas/couponSchema";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -67,15 +49,9 @@ export default function CouponsForm() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
 
   // Selected IDs for cascade
-  const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<
-    number | null
-  >(null);
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<
-    number | null
-  >(null);
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(
-    null,
-  );
+  const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<number | null>(null);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
 
   // Ref to prevent scope reset when loading coupon data
@@ -115,22 +91,14 @@ export default function CouponsForm() {
   // Load products when category/subcategory is selected
   useEffect(() => {
     const categoryId = selectedSubCategoryId || selectedParentCategoryId;
-    if (
-      categoryId &&
-      (watchScopeType === "product" ||
-        watchScopeType === "model" ||
-        watchScopeType === "variant")
-    ) {
+    if (categoryId && (watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant")) {
       loadProducts(categoryId);
     }
   }, [selectedSubCategoryId, selectedParentCategoryId, watchScopeType]);
 
   // Load models when product is selected
   useEffect(() => {
-    if (
-      selectedProductId &&
-      (watchScopeType === "model" || watchScopeType === "variant")
-    ) {
+    if (selectedProductId && (watchScopeType === "model" || watchScopeType === "variant")) {
       loadModels(selectedProductId);
     }
   }, [selectedProductId, watchScopeType]);
@@ -281,6 +249,7 @@ export default function CouponsForm() {
       modelId = data.model.id;
     } else if (data.scope_type === "product" && data.product) {
       category = data.product.category;
+      productId = data.product.id;
     } else if (data.scope_type === "category" && data.category) {
       category = data.category;
     }
@@ -295,21 +264,13 @@ export default function CouponsForm() {
     if (subCatId) setSelectedSubCategoryId(subCatId);
 
     // Load products if needed (for product/model/variant scope)
-    if (
-      (data.scope_type === "product" ||
-        data.scope_type === "model" ||
-        data.scope_type === "variant") &&
-      (subCatId || parentCatId)
-    ) {
+    if ((data.scope_type === "product" || data.scope_type === "model" || data.scope_type === "variant") && (subCatId || parentCatId)) {
       await loadProducts(subCatId || parentCatId);
       if (productId) setSelectedProductId(productId);
     }
 
     // Load models if needed (for model/variant scope)
-    if (
-      (data.scope_type === "model" || data.scope_type === "variant") &&
-      productId
-    ) {
+    if ((data.scope_type === "model" || data.scope_type === "variant") && productId) {
       await loadModels(productId);
       if (modelId) setSelectedModelId(modelId);
     }
@@ -343,10 +304,7 @@ export default function CouponsForm() {
       }
       formData.append("scope_type", data.scope_type);
       formData.append("usage_limit_total", String(data.usage_limit_total));
-      formData.append(
-        "usage_limit_per_user",
-        String(data.usage_limit_per_user),
-      );
+      formData.append("usage_limit_per_user", String(data.usage_limit_per_user));
       formData.append("start_at", data.start_at);
       formData.append("end_at", data.end_at);
       formData.append("status", data.status.toString());
@@ -358,7 +316,6 @@ export default function CouponsForm() {
         formData.append("scope_id", data.scope_id.toString());
       }
 
-  
       if (isEditing && id) {
         await updateCoupon(parseInt(id), formData);
         toast({
@@ -377,9 +334,7 @@ export default function CouponsForm() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description:
-          error.message ||
-          `Failed to ${isEditing ? "update" : "create"} coupon`,
+        description: error.message || `Failed to ${isEditing ? "update" : "create"} coupon`,
         variant: "destructive",
       });
     } finally {
@@ -398,30 +353,17 @@ export default function CouponsForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => navigate("/coupons")}
-        >
+        <Button variant="outline" size="icon" onClick={() => navigate("/coupons")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">
-            {isEditing ? "Edit" : "Add"} Coupon
-          </h1>
-          <p className="text-muted-foreground">
-            {isEditing ? "Update" : "Create a new"} coupon
-          </p>
+          <h1 className="text-2xl font-bold">{isEditing ? "Edit" : "Add"} Coupon</h1>
+          <p className="text-muted-foreground">{isEditing ? "Update" : "Create a new"} coupon</p>
         </div>
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit, (err) =>
-            console.log("error", err),
-          )}
-          className="space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit, (err) => console.log("error", err))} className="space-y-6">
           {/* Coupon Information */}
           <Card>
             <CardHeader>
@@ -439,9 +381,7 @@ export default function CouponsForm() {
                         placeholder="Enter coupon code (e.g., SAVE20)"
                         {...field}
                         className="uppercase"
-                        onChange={(e) =>
-                          field.onChange(e.target.value.toUpperCase())
-                        }
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                       />
                     </FormControl>
                     <FormMessage />
@@ -470,11 +410,7 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Arabic title"
-                          {...field}
-                          dir="rtl"
-                        />
+                        <Input placeholder="Enter Arabic title" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -482,8 +418,20 @@ export default function CouponsForm() {
                 />
               </div>
 
-
-         
+              <FormField
+                control={form.control}
+                name="media_path"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Coupon Image (Optional)</FormLabel>
+                    <FormControl>
+                      <FileUpload value={field.value} onChange={(file) => field.onChange(file)} accept="image/*" preview={true} />
+                    </FormControl>
+                    <FormDescription>Upload a coupon banner or image</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
@@ -500,19 +448,14 @@ export default function CouponsForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Discount Type *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="percentage">
-                            Percentage (%)
-                          </SelectItem>
+                          <SelectItem value="percentage">Percentage (%)</SelectItem>
                           <SelectItem value="flat">Flat Amount</SelectItem>
                         </SelectContent>
                       </Select>
@@ -526,18 +469,9 @@ export default function CouponsForm() {
                   name="discount_value"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Discount Value *{" "}
-                        {watchDiscountType === "percentage" && "(max 100)"}
-                      </FormLabel>
+                      <FormLabel>Discount Value * {watchDiscountType === "percentage" && "(max 100)"}</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          placeholder="0.00"
-                          {...field}
-                        />
+                        <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -550,18 +484,9 @@ export default function CouponsForm() {
                     name="min_product_amount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Minimum Product Amount *{" "}
-                        </FormLabel>
+                        <FormLabel>Minimum Product Amount * </FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
+                          <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} value={field.value ?? ""} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -576,13 +501,7 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Min Order Amount *</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          placeholder="0.00"
-                          {...field}
-                        />
+                        <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -595,18 +514,9 @@ export default function CouponsForm() {
                     name="max_discount_amount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Max Discount Amount *{" "}
-                          {watchDiscountType === "flat" && "(≥ discount value)"}
-                        </FormLabel>
+                        <FormLabel>Max Discount Amount * {watchDiscountType === "flat" && "(≥ discount value)"}</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            {...field}
-                          />
+                          <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -636,18 +546,14 @@ export default function CouponsForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="common">
-                          Common (All Products)
-                        </SelectItem>
+                        <SelectItem value="common">Common (All Products)</SelectItem>
                         <SelectItem value="category">Category</SelectItem>
                         <SelectItem value="product">Base Product</SelectItem>
                         <SelectItem value="model">Product Model</SelectItem>
                         <SelectItem value="variant">Product Variant</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>
-                      Choose where this coupon can be applied
-                    </FormDescription>
+                    <FormDescription>Choose where this coupon can be applied</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -689,20 +595,13 @@ export default function CouponsForm() {
                           ))}
                         </SelectContent>
                       </Select>
-                      {!selectedParentCategoryId && (
-                        <p className="text-sm text-destructive">
-                          Parent category is required
-                        </p>
-                      )}
+                      {!selectedParentCategoryId && <p className="text-sm text-destructive">Parent category is required</p>}
                     </div>
 
                     {/* 2. Subcategory - shown after parent category is selected */}
                     {selectedParentCategoryId && (
                       <div className="space-y-2">
-                        <FormLabel>
-                          Subcategory{" "}
-                          {watchScopeType === "category" ? "(Optional)" : "*"}
-                        </FormLabel>
+                        <FormLabel>Subcategory {watchScopeType === "category" ? "(Optional)" : "*"}</FormLabel>
                         <Select
                           onValueChange={(value) => {
                             const subCatId = parseInt(value);
@@ -727,10 +626,7 @@ export default function CouponsForm() {
                             {categories
                               .find((c) => c.id === selectedParentCategoryId)
                               ?.children?.map((sub) => (
-                                <SelectItem
-                                  key={sub.id}
-                                  value={sub.id.toString()}
-                                >
+                                <SelectItem key={sub.id} value={sub.id.toString()}>
                                   {sub.name}
                                 </SelectItem>
                               ))}
@@ -740,9 +636,7 @@ export default function CouponsForm() {
                     )}
 
                     {/* 3. Product - shown for product/model/variant scope after category is selected */}
-                    {(watchScopeType === "product" ||
-                      watchScopeType === "model" ||
-                      watchScopeType === "variant") &&
+                    {(watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") &&
                       (selectedSubCategoryId || selectedParentCategoryId) && (
                         <div className="space-y-2">
                           <FormLabel>Base Product *</FormLabel>
@@ -766,68 +660,51 @@ export default function CouponsForm() {
                             </SelectTrigger>
                             <SelectContent>
                               {products.map((prod) => (
-                                <SelectItem
-                                  key={prod.id}
-                                  value={prod.id.toString()}
-                                >
+                                <SelectItem key={prod.id} value={prod.id.toString()}>
                                   {prod.title}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          {!selectedProductId &&
-                            (watchScopeType === "product" ||
-                              watchScopeType === "model" ||
-                              watchScopeType === "variant") && (
-                              <p className="text-sm text-destructive">
-                                Base product is required
-                              </p>
-                            )}
+                          {!selectedProductId && (watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") && (
+                            <p className="text-sm text-destructive">Product is required</p>
+                          )}
                         </div>
                       )}
 
                     {/* 4. Model - shown for model/variant scope after product is selected */}
-                    {(watchScopeType === "model" ||
-                      watchScopeType === "variant") &&
-                      selectedProductId && (
-                        <div className="space-y-2">
-                          <FormLabel>Model *</FormLabel>
-                          <Select
-                            onValueChange={(value) => {
-                              const modelId = parseInt(value);
-                              setSelectedModelId(modelId);
-                              setVariants([]);
-                              if (watchScopeType === "model") {
-                                form.setValue("scope_id", modelId);
-                              } else {
-                                form.setValue("scope_id", null);
-                              }
-                            }}
-                            value={selectedModelId?.toString() || ""}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select model" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {models.map((model) => (
-                                <SelectItem
-                                  key={model.id}
-                                  value={model.id.toString()}
-                                >
-                                  {model.title}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          {!selectedModelId &&
-                            (watchScopeType === "model" ||
-                              watchScopeType === "variant") && (
-                              <p className="text-sm text-destructive">
-                                Model is required
-                              </p>
-                            )}
-                        </div>
-                      )}
+                    {(watchScopeType === "model" || watchScopeType === "variant") && selectedProductId && (
+                      <div className="space-y-2">
+                        <FormLabel>Model *</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            const modelId = parseInt(value);
+                            setSelectedModelId(modelId);
+                            setVariants([]);
+                            if (watchScopeType === "model") {
+                              form.setValue("scope_id", modelId);
+                            } else {
+                              form.setValue("scope_id", null);
+                            }
+                          }}
+                          value={selectedModelId?.toString() || ""}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select model" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {models.map((model) => (
+                              <SelectItem key={model.id} value={model.id.toString()}>
+                                {model.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {!selectedModelId && (watchScopeType === "model" || watchScopeType === "variant") && (
+                          <p className="text-sm text-destructive">Model is required</p>
+                        )}
+                      </div>
+                    )}
 
                     {/* 5. Variant - shown for variant scope after model is selected */}
                     {watchScopeType === "variant" && selectedModelId && (
@@ -837,12 +714,7 @@ export default function CouponsForm() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Variant *</FormLabel>
-                            <Select
-                              onValueChange={(value) =>
-                                field.onChange(parseInt(value))
-                              }
-                              value={field.value?.toString() || ""}
-                            >
+                            <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString() || ""}>
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select variant" />
@@ -850,10 +722,7 @@ export default function CouponsForm() {
                               </FormControl>
                               <SelectContent>
                                 {variants.map((variant) => (
-                                  <SelectItem
-                                    key={variant.id}
-                                    value={variant.id.toString()}
-                                  >
+                                  <SelectItem key={variant.id} value={variant.id.toString()}>
                                     {variant.sku}
                                   </SelectItem>
                                 ))}
@@ -895,19 +764,9 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Total Usage Limit *</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          min="1"
-                          placeholder="1"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 1)
-                          }
-                        />
+                        <Input type="number" min="1" placeholder="1" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
                       </FormControl>
-                      <FormDescription>
-                        Maximum number of times this coupon can be used
-                      </FormDescription>
+                      <FormDescription>Maximum number of times this coupon can be used</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -920,19 +779,9 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Per User Limit *</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          min="1"
-                          placeholder="1"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 1)
-                          }
-                        />
+                        <Input type="number" min="1" placeholder="1" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
                       </FormControl>
-                      <FormDescription>
-                        Maximum times a single user can use this coupon
-                      </FormDescription>
+                      <FormDescription>Maximum times a single user can use this coupon</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -957,18 +806,8 @@ export default function CouponsForm() {
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground",
-                              )}
-                            >
-                              {field.value ? (
-                                format(new Date(field.value), "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
+                            <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                              {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -976,9 +815,7 @@ export default function CouponsForm() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={
-                              field.value ? new Date(field.value) : undefined
-                            }
+                            selected={field.value ? new Date(field.value) : undefined}
                             onSelect={(date) => {
                               if (!date) {
                                 field.onChange("");
@@ -1010,18 +847,8 @@ export default function CouponsForm() {
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground",
-                              )}
-                            >
-                              {field.value ? (
-                                format(new Date(field.value), "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
+                            <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                              {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -1029,9 +856,7 @@ export default function CouponsForm() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={
-                              field.value ? new Date(field.value) : undefined
-                            }
+                            selected={field.value ? new Date(field.value) : undefined}
                             onSelect={(date) => {
                               if (!date) {
                                 field.onChange("");
@@ -1070,15 +895,10 @@ export default function CouponsForm() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Active Status</FormLabel>
-                      <FormDescription>
-                        Enable or disable this coupon
-                      </FormDescription>
+                      <FormDescription>Enable or disable this coupon</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -1087,11 +907,7 @@ export default function CouponsForm() {
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate("/coupons")}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate("/coupons")}>
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
