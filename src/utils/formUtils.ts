@@ -98,7 +98,7 @@ export const commonValidations = {
           })
           .refine(
             (f) =>
-              ["image/jpeg", "image/png", "image/webp", "image/gif"].includes(
+              ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"].includes(
                 f.type,
               ),
             {

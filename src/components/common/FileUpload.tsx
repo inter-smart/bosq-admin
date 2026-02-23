@@ -183,6 +183,7 @@ export function FileUpload({
         "bmp",
         "webp",
         "svg",
+        "avif"
       ];
       const videoExtensions = [
         "mp4",
