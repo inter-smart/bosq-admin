@@ -319,7 +319,7 @@ export default function ProductVariantForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate(`/product-variants/${productId}/list`)}>
+        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -521,42 +521,106 @@ export default function ProductVariantForm() {
         )}
 
         {/* Category Selection */}
-        {isEditing && allCategories.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Categories</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                {allCategories.map((category) => (
-                  <div key={category.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`category-${category.id}`}
-                      checked={selectedCategoryIds.includes(category.id!)}
-                      onCheckedChange={(checked) => {
-                        setSelectedCategoryIds((prev) =>
-                          checked
-                            ? [...prev, category.id!]
-                            : prev.filter((id) => id !== category.id)
-                        );
-                      }}
-                    />
-                    <label
-                      htmlFor={`category-${category.id}`}
-                      className="text-sm font-medium leading-none cursor-pointer"
-                    >
-                      {category.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {isEditing && allCategories.length > 0 && (() => {
+          const parentCategories = allCategories.filter((c) => !c.parent_id);
+          const childrenOf = (parentId: number) =>
+            allCategories.filter((c) => c.parent_id === parentId);
+
+          const toggleParent = (parentId: number, childIds: number[], checked: boolean) => {
+            setSelectedCategoryIds((prev) => {
+              const without = prev.filter((id) => id !== parentId && !childIds.includes(id));
+              return checked ? [...without, parentId, ...childIds] : without;
+            });
+          };
+
+          const toggleChild = (childId: number, parentId: number, childIds: number[], checked: boolean) => {
+            setSelectedCategoryIds((prev) => {
+              const next = checked ? [...prev, childId] : prev.filter((id) => id !== childId);
+              // Add parent if any child is selected; remove parent only when no children remain selected
+              const anyChildSelected = childIds.some((id) => next.includes(id));
+              const withoutParent = next.filter((id) => id !== parentId);
+              return anyChildSelected ? [...withoutParent, parentId] : withoutParent;
+            });
+          };
+
+          return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Categories</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                  {parentCategories.map((parent) => {
+                    const children = childrenOf(parent.id!);
+                    const childIds = children.map((c) => c.id!);
+                    const selectedChildren = childIds.filter((id) => selectedCategoryIds.includes(id));
+                    const allSelected = childIds.length > 0 && selectedChildren.length === childIds.length;
+                    const someSelected = selectedChildren.length > 0 && !allSelected;
+                    const parentChecked = childIds.length === 0
+                      ? selectedCategoryIds.includes(parent.id!)
+                      : allSelected;
+
+                    return (
+                      <div key={parent.id} className="space-y-2">
+                        {/* Parent */}
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`category-${parent.id}`}
+                            checked={someSelected ? "indeterminate" : parentChecked}
+                            onCheckedChange={(checked) => {
+                              if (childIds.length === 0) {
+                                setSelectedCategoryIds((prev) =>
+                                  checked
+                                    ? [...prev, parent.id!]
+                                    : prev.filter((id) => id !== parent.id)
+                                );
+                              } else {
+                                toggleParent(parent.id!, childIds, !!checked);
+                              }
+                            }}
+                          />
+                          <label
+                            htmlFor={`category-${parent.id}`}
+                            className="text-sm font-semibold leading-none cursor-pointer"
+                          >
+                            {parent.name}
+                          </label>
+                        </div>
+
+                        {/* Children */}
+                        {children.length > 0 && (
+                          <div className="ml-6 space-y-2 border-l pl-4">
+                            {children.map((child) => (
+                              <div key={child.id} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`category-${child.id}`}
+                                  checked={selectedCategoryIds.includes(child.id!)}
+                                  onCheckedChange={(checked) =>
+                                    toggleChild(child.id!, parent.id!, childIds, !!checked)
+                                  }
+                                />
+                                <label
+                                  htmlFor={`category-${child.id}`}
+                                  className="text-sm leading-none cursor-pointer text-muted-foreground"
+                                >
+                                  {child.name}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
 
         {/* Submit Buttons */}
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate(`/product-variants/${productId}/list`)}>
+          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>

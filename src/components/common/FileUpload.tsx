@@ -31,7 +31,7 @@ export function FileUpload({
   onChange,
   accept = "image/*",
   maxSize = 5242880, // 5MB
-  maxImageSize = 300 * 1024, // 300KB
+  maxImageSize = 500 * 1024, // 500KB
   maxVideoSize = 5 * 1024 * 1024, // Default 5MB for videos
   placeholder = "Drop files here or click to browse",
   preview = true,
