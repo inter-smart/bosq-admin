@@ -26,6 +26,7 @@ import {
   Trash2,
   ListPlus,
   XCircle,
+  Plus,
 } from "lucide-react";
 import {
   fetchProductModelList,
@@ -311,6 +312,14 @@ export default function AllProductModelsList() {
                 </Button>
               )}
             </div>
+            <Button
+              onClick={() => navigate(`/product-models/${selectedProductId}/create`)}
+              disabled={selectedProductId === "all"}
+              title={selectedProductId === "all" ? "Select a product to add a model" : "Add Model"}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Model
+            </Button>
           </div>
         </div>
 

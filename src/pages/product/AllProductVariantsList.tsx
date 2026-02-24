@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, Image, XCircle } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Image, XCircle, Plus } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchProductModelList, ProductModel } from "@/services/product/productModelApi";
 import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
@@ -312,6 +312,14 @@ export default function AllProductVariantsList() {
                 </Button>
               )}
             </div>
+            <Button
+              onClick={() => navigate(`/product-variants/${selectedModelId}/create`)}
+              disabled={selectedModelId === "all"}
+              title={selectedModelId === "all" ? "Select a model to add a variant" : "Add Variant"}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Variant
+            </Button>
           </div>
         </div>
 

@@ -23,6 +23,8 @@ export interface ProductVariant {
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;
+  category_ids?: number[];
+  categories?: { id: number; name: string; name_ar: string; slug: string; parent_id?: number | null }[];
   productModel?: {
     id: number;
     title: string;

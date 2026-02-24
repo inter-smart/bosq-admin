@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Save, ArrowLeft, Plus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -20,6 +21,7 @@ import {
   AttributeWithValues,
 } from "@/services/product/productVariantApi";
 import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
+import { fetchProductCategoryList, ProductCategory } from "@/services/product/productCategoriesApi";
 
 interface AttributeValueSelection {
   id: string;
@@ -58,6 +60,8 @@ export default function ProductVariantForm() {
   const [model, setModel] = useState<ProductModel | null>(null);
   const [attributes, setAttributes] = useState<AttributeWithValues[]>([]);
   const [attributeSelections, setAttributeSelections] = useState<AttributeSelectionState>({});
+  const [allCategories, setAllCategories] = useState<ProductCategory[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
 
   const schema = useMemo(
     () =>
@@ -110,7 +114,11 @@ export default function ProductVariantForm() {
         setModel(modelResponse.data);
       }
 
-      const attributesResponse = await fetchAttributesWithValues();
+      const [attributesResponse, categoriesResponse] = await Promise.all([
+        fetchAttributesWithValues(),
+        fetchProductCategoryList(1, 200),
+      ]);
+
       if (attributesResponse.success) {
         setAttributes(attributesResponse.data);
 
@@ -119,6 +127,10 @@ export default function ProductVariantForm() {
           initialSelections[attr.id] = [];
         });
         setAttributeSelections(initialSelections);
+      }
+
+      if (categoriesResponse.success) {
+        setAllCategories(categoriesResponse.data.list);
       }
 
       if (isEditing && id) {
@@ -139,6 +151,11 @@ export default function ProductVariantForm() {
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
         });
+
+        // Pre-select existing categories
+        if ((data as any).categories && Array.isArray((data as any).categories)) {
+          setSelectedCategoryIds((data as any).categories.map((c: any) => c.id));
+        }
 
         if (data.variant_attributes && data.variant_attributes.length > 0) {
           const loadedSelections: AttributeSelectionState = {};
@@ -255,6 +272,7 @@ export default function ProductVariantForm() {
         formData.append("design_title", data.design_title);
         formData.append("design_title_ar", data.design_title_ar);
         formData.append("attributes", JSON.stringify(allSelections));
+        formData.append("category_ids", JSON.stringify(selectedCategoryIds));
 
         if (data.cover_image instanceof File) {
           formData.append("media_path", data.cover_image);
@@ -275,7 +293,8 @@ export default function ProductVariantForm() {
           sort_order: data.sort_order,
           status: data.status,
           variant_attributes: allSelections,
-        });
+          category_ids: selectedCategoryIds,
+        } as any);
         toast({ title: "Success", description: "Product variant created successfully" });
       }
 
