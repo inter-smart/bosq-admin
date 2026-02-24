@@ -165,6 +165,34 @@ export default function ProductVariantList() {
         return <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>;
       },
     },
+    {
+      id: "categories",
+      header: "Categories",
+      cell: ({ row }) => {
+        const cats = (row.original.categories ?? []) as { id: number; name: string; parent_id?: number | null }[];
+        if (cats.length === 0) return <span className="text-muted-foreground text-sm">—</span>;
+        const visible = cats.slice(0, 2);
+        const overflow = cats.length - visible.length;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {visible.map((cat) => (
+              <Badge
+                key={cat.id}
+                variant={cat.parent_id ? "outline" : "secondary"}
+                className="text-xs font-normal"
+              >
+                {cat.name}
+              </Badge>
+            ))}
+            {overflow > 0 && (
+              <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
+                +{overflow}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    },
     // {
     //   accessorKey: "is_primary",
     //   header: "Primary",

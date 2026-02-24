@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Save, ArrowLeft, Plus, X } from "lucide-react";
+import { Save, ArrowLeft, Plus, X, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { FileUpload } from "@/components/common/FileUpload";
@@ -298,7 +299,7 @@ export default function ProductVariantForm() {
         toast({ title: "Success", description: "Product variant created successfully" });
       }
 
-      navigate(`/product-variants/${productId}/list`);
+      navigate(`/product-variants/all`);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -536,20 +537,60 @@ export default function ProductVariantForm() {
           const toggleChild = (childId: number, parentId: number, childIds: number[], checked: boolean) => {
             setSelectedCategoryIds((prev) => {
               const next = checked ? [...prev, childId] : prev.filter((id) => id !== childId);
-              // Add parent if any child is selected; remove parent only when no children remain selected
               const anyChildSelected = childIds.some((id) => next.includes(id));
               const withoutParent = next.filter((id) => id !== parentId);
               return anyChildSelected ? [...withoutParent, parentId] : withoutParent;
             });
           };
 
+          const selectedCats = selectedCategoryIds
+            .map((id) => allCategories.find((c) => c.id === id))
+            .filter(Boolean) as typeof allCategories;
+
           return (
             <Card>
-              <CardHeader>
-                <CardTitle>Categories</CardTitle>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-base">Categories</CardTitle>
+                  </div>
+                  {selectedCategoryIds.length > 0 && (
+                    <Badge variant="secondary" className="text-xs font-medium">
+                      {selectedCategoryIds.length} selected
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Selected chips */}
+                {selectedCats.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-2">
+                    {selectedCats.map((cat) => (
+                      <Badge
+                        key={cat.id}
+                        variant="outline"
+                        className="gap-1 pr-1 text-xs font-normal h-6"
+                      >
+                        {cat.name}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedCategoryIds((prev) =>
+                              prev.filter((i) => i !== cat.id)
+                            )
+                          }
+                          className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 transition-opacity"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </CardHeader>
+
               <CardContent>
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {parentCategories.map((parent) => {
                     const children = childrenOf(parent.id!);
                     const childIds = children.map((c) => c.id!);
@@ -559,11 +600,19 @@ export default function ProductVariantForm() {
                     const parentChecked = childIds.length === 0
                       ? selectedCategoryIds.includes(parent.id!)
                       : allSelected;
+                    const isGroupActive = parentChecked || someSelected;
 
                     return (
-                      <div key={parent.id} className="space-y-2">
-                        {/* Parent */}
-                        <div className="flex items-center space-x-2">
+                      <div
+                        key={parent.id}
+                        className={`rounded-lg border p-3 space-y-2.5 transition-colors ${
+                          isGroupActive
+                            ? "border-primary/40 bg-primary/5"
+                            : "border-border bg-muted/20 hover:bg-muted/40"
+                        }`}
+                      >
+                        {/* Parent row */}
+                        <div className={`flex items-center gap-2 ${children.length > 0 ? "pb-2 border-b border-border/60" : ""}`}>
                           <Checkbox
                             id={`category-${parent.id}`}
                             checked={someSelected ? "indeterminate" : parentChecked}
@@ -581,17 +630,25 @@ export default function ProductVariantForm() {
                           />
                           <label
                             htmlFor={`category-${parent.id}`}
-                            className="text-sm font-semibold leading-none cursor-pointer"
+                            className="text-sm font-semibold leading-none cursor-pointer flex-1"
                           >
                             {parent.name}
                           </label>
+                          {someSelected && (
+                            <span className="text-xs text-muted-foreground tabular-nums">
+                              {selectedChildren.length}/{childIds.length}
+                            </span>
+                          )}
                         </div>
 
-                        {/* Children */}
+                        {/* Children rows */}
                         {children.length > 0 && (
-                          <div className="ml-6 space-y-2 border-l pl-4">
+                          <div className="space-y-2">
                             {children.map((child) => (
-                              <div key={child.id} className="flex items-center space-x-2">
+                              <div
+                                key={child.id}
+                                className="flex items-center gap-2 group"
+                              >
                                 <Checkbox
                                   id={`category-${child.id}`}
                                   checked={selectedCategoryIds.includes(child.id!)}
@@ -601,7 +658,7 @@ export default function ProductVariantForm() {
                                 />
                                 <label
                                   htmlFor={`category-${child.id}`}
-                                  className="text-sm leading-none cursor-pointer text-muted-foreground"
+                                  className="text-xs leading-none cursor-pointer text-muted-foreground group-hover:text-foreground transition-colors"
                                 >
                                   {child.name}
                                 </label>

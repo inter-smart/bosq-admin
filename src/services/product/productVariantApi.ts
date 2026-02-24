@@ -103,6 +103,7 @@ export const fetchProductVariantList = async (
   search?: string,
   productModelId?: number,
   baseProductId?: number,
+  categoryId?: number,
 ): Promise<ProductVariantResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -119,6 +120,10 @@ export const fetchProductVariantList = async (
 
   if (baseProductId) {
     params.product_id = baseProductId;
+  }
+
+  if (categoryId) {
+    params.category_id = categoryId;
   }
 
   return apiCall("/resources/product-variants", { params });

@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
@@ -120,7 +119,7 @@ export default function ProductModelForm() {
         });
       }
 
-      navigate(`/product-models/${productId}/list`);
+      navigate(`/product-models/all`);
     } catch (error: any) {
       toast({
         title: "Error",

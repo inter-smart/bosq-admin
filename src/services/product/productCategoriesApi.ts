@@ -7,6 +7,7 @@ import { apiCall } from "@/utils/apiUtils";
 export interface ProductCategory {
   id?: number;
   parent_id?: number | null;
+  parent?: { id: number; name: string; slug: string } | null;
   name: string;
   name_ar: string;
   slug: string;
