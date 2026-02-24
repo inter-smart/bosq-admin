@@ -520,6 +520,40 @@ export default function ProductVariantForm() {
           </div>
         )}
 
+        {/* Category Selection */}
+        {isEditing && allCategories.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Categories</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                {allCategories.map((category) => (
+                  <div key={category.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`category-${category.id}`}
+                      checked={selectedCategoryIds.includes(category.id!)}
+                      onCheckedChange={(checked) => {
+                        setSelectedCategoryIds((prev) =>
+                          checked
+                            ? [...prev, category.id!]
+                            : prev.filter((id) => id !== category.id)
+                        );
+                      }}
+                    />
+                    <label
+                      htmlFor={`category-${category.id}`}
+                      className="text-sm font-medium leading-none cursor-pointer"
+                    >
+                      {category.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Submit Buttons */}
         <div className="flex justify-end gap-4">
           <Button type="button" variant="outline" onClick={() => navigate(`/product-variants/${productId}/list`)}>
