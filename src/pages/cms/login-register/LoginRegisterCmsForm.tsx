@@ -451,7 +451,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setSignupMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload signup media"
                         preview={true}
@@ -561,7 +561,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setOtpMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload OTP media"
                         preview={true}
@@ -676,7 +676,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setCreatePasswordMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload create password media"
                         preview={true}
@@ -786,7 +786,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setLoginMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload login media"
                         preview={true}
@@ -901,7 +901,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setRecoverEmailMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload recover email media"
                         preview={true}
@@ -1016,7 +1016,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setRecoverPasswordOtpMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload recover password OTP media"
                         preview={true}
@@ -1088,7 +1088,7 @@ export default function LoginRegisterCmsForm() {
                           field.onChange(file);
                           setRecoverPasswordMediaFile(file);
                         }}
-                        recommendedDimensions="1920x1080"
+                        recommendedDimensions="960px × 1001px"
                         accept="image/*"
                         placeholder="Upload recover password media"
                         preview={true}

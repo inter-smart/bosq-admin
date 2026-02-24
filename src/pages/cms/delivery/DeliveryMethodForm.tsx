@@ -278,7 +278,7 @@ export default function DeliveryMethodForm() {
                         accept="image/*"
                         placeholder="Upload delivery method image"
                         preview={true}
-                        recommendedDimensions="600px x 400px"
+                        recommendedDimensions="804px × 532px"
                       />
                     </FormControl>
                     <FormMessage />

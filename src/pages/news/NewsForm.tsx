@@ -536,7 +536,7 @@ export default function NewsForm() {
                         }}
                         accept="image/*"
                         placeholder="Upload thumbnail image"
-                        recommendedDimensions="600px x 400px"
+                        recommendedDimensions="497px × 438px"
                         preview={true}
                       />
                     </FormControl>
@@ -601,7 +601,7 @@ export default function NewsForm() {
                           accept="image/*"
                           placeholder="Upload desktop news image"
                           preview={true}
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1920px × 732px"
                         />
                       </FormControl>
 
@@ -625,7 +625,7 @@ export default function NewsForm() {
                           }}
                           accept="image/*"
                           placeholder="Upload mobile news image"
-                          recommendedDimensions="600px x 400px"
+                          recommendedDimensions="583px × 290px"
                           preview={true}
                         />
                       </FormControl>

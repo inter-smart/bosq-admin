@@ -286,7 +286,7 @@ export default function CustomizationFeaturesForm() {
                         }}
                         accept="image/*"
                         preview={true}
-                        recommendedDimensions="1920px x 1080px"
+                        recommendedDimensions="60px × 60px"
                       />
                     </FormControl>
                     <FormDescription>

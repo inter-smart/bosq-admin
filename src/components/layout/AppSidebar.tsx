@@ -77,6 +77,13 @@ const enquiriesSection = [
 ];
 
 const cmsSection = [
+   {
+    title: "Master",
+    icon: List,
+    subItems: [
+      { title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List },
+    ],
+  },
   {
     title: "Home",
     icon: Home,
@@ -200,6 +207,7 @@ const cmsSection = [
       { title: "Sustainability", url: "/sustainability", icon: List },
     ],
   },
+ 
 ];
 
 const productsSection = [
@@ -241,8 +249,8 @@ const commonSection = [
   { title: "Social Media", url: "/social-media", icon: Share2 },
   { title: "Payment Methods", url: "/payment-methods", icon: List },
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
-  { title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List },
 ];
+
 
 const policiesSection = [
   {
@@ -342,6 +350,7 @@ export function AppSidebar() {
   const [enquiriesOpen, setEnquiriesOpen] = useState(false);
   const [usersOpen, setUsersOpen] = useState(false);
   const [couponsOpen, setCouponsOpen] = useState(false);
+  const [masterOpen, setMasterOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
 
   const isCollapsed = state === "collapsed";
@@ -374,6 +383,7 @@ export function AppSidebar() {
     setEnquiriesOpen(false);
     setUsersOpen(false);
     setCouponsOpen(false);
+    setMasterOpen(false);
     setOrdersOpen(false);
   };
 
@@ -580,6 +590,13 @@ export function AppSidebar() {
       return;
     }
 
+    // Auto-open Master section (nested inside CMS)
+    if (path.includes("/master/enquiry-dropdown")) {
+      setCmsOpen(true);
+      setMasterOpen(true);
+      return;
+    }
+
     // Auto-open Privacy Policy section
     if (
       ["/privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))
@@ -745,6 +762,9 @@ export function AppSidebar() {
                   } else if (section.title === "Sustainability") {
                     sectionOpen = sustainabilityOpen;
                     setSectionOpen = setSustainabilityOpen;
+                  } else if (section.title === "Master") {
+                    sectionOpen = masterOpen;
+                    setSectionOpen = setMasterOpen;
                   }
 
                   return (

@@ -437,7 +437,7 @@ export default function ProjectsCmsForm() {
                               ? "image/*"
                               : "video/*"
                           }
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1920px x 730px"
                           placeholder={`Upload desktop banner ${watchBannerMediaType}`}
                         />
                       </FormControl>
@@ -467,7 +467,7 @@ export default function ProjectsCmsForm() {
                               ? "image/*"
                               : "video/*"
                           }
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="640px x 1138px"
                           placeholder={`Upload mobile banner ${watchBannerMediaType}`}
                         />
                       </FormControl>
@@ -611,7 +611,7 @@ export default function ProjectsCmsForm() {
                             field.onChange(file);
                             setFormMediaFile(file);
                           }}
-                          recommendedDimensions="800x600"
+                          recommendedDimensions="541px × 348px"
                           accept="image/*"
                           placeholder="Upload form image"
                           preview={true}

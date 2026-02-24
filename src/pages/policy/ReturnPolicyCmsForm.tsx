@@ -136,7 +136,7 @@ export default function ReturnPolicyCmsForm() {
                         onChange={field.onChange}
                         accept="image/*"
                         placeholder="Upload header media"
-                        recommendedDimensions="1920px x 600px"
+                        recommendedDimensions="828px × 592px"
                       />
                     </FormControl>
                     <FormMessage />

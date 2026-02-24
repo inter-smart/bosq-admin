@@ -218,7 +218,7 @@ export default function AboutClientsForm() {
                         }}
                         accept="image/*"
                         preview={true}
-                        recommendedDimensions="400px x 400px"
+                        recommendedDimensions="155px × 35px"
                       />
                     </FormControl>
                     <FormDescription>

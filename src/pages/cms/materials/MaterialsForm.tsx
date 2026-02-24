@@ -354,6 +354,7 @@ export default function MaterialsForm() {
                           value={field.value}
                           onChange={field.onChange}
                           accept="image/*"
+                          recommendedDimensions="760px × 635px"
                           placeholder="Upload material image"
                           preview={true}
                         />
@@ -414,6 +415,7 @@ export default function MaterialsForm() {
                           value={field.value}
                           onChange={field.onChange}
                           accept="image/svg+xml,image/png,image/*"
+                          recommendedDimensions="128px × 128px"
                           placeholder="Upload material icon (SVG or PNG)"
                           preview={true}
                         />

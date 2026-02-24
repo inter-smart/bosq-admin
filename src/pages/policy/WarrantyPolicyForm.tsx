@@ -273,7 +273,7 @@ export default function WarrantyPolicyForm() {
                         }}
                         accept="image/*"
                         preview={true}
-                        recommendedDimensions="1200px x 600px"
+                        recommendedDimensions="762px × 348px"
                       />
                     </FormControl>
                     <FormDescription>

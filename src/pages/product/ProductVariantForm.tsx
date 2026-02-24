@@ -343,6 +343,7 @@ export default function ProductVariantForm() {
                         value={field.value}
                         onChange={field.onChange}
                         accept="image/*"
+                        recommendedDimensions="430px × 412px"
                         placeholder="Drop cover image here or click to browse"
                       />
                     )}
@@ -360,6 +361,7 @@ export default function ProductVariantForm() {
                         value={field.value}
                         onChange={field.onChange}
                         accept="image/*"
+                        recommendedDimensions="430px × 412px"
                         placeholder="Drop hover image here or click to browse"
                       />
                     )}

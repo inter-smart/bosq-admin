@@ -316,7 +316,7 @@ export default function DeliveryCmsForm() {
                             value={field.value}
                             onChange={field.onChange}
                             accept="image/*"
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="1920px × 732px"
                             placeholder="Upload desktop banner image"
                             preview={true}
                           />
@@ -337,7 +337,7 @@ export default function DeliveryCmsForm() {
                             value={field.value}
                             onChange={field.onChange}
                             accept="image/*"
-                            recommendedDimensions="768px x 1024px"
+                            recommendedDimensions="640px × 1138px"
                             placeholder="Upload mobile banner image"
                             preview={true}
                           />
@@ -483,7 +483,7 @@ export default function DeliveryCmsForm() {
                             value={field.value}
                             onChange={field.onChange}
                             accept="image/*"
-                            recommendedDimensions="800px x 600px"
+                            recommendedDimensions="502px × 840px"
                             placeholder="Upload delivery image"
                             preview={true}
                           />

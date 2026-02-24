@@ -296,7 +296,7 @@ export default function CustomizationOptionsForm() {
                           accept="image/*"
                           placeholder="Upload image"
                           preview={true}
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="826px × 402px"
                         />
                       </div>
                     </FormControl>

@@ -310,7 +310,7 @@ export default function SustainabilityCmsForm() {
                               ? "video/*"
                               : "image/*"
                           }
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1920px × 730px"
                           placeholder="Upload desktop banner media"
                           preview={true}
                         />
@@ -335,7 +335,7 @@ export default function SustainabilityCmsForm() {
                               ? "video/*"
                               : "image/*"
                           }
-                          recommendedDimensions="768px x 1024px"
+                          recommendedDimensions="640px × 1138px"
                           placeholder="Upload mobile banner media"
                           preview={true}
                         />
@@ -478,6 +478,7 @@ export default function SustainabilityCmsForm() {
                         value={field.value}
                         onChange={field.onChange}
                         accept="image/*"
+                        recommendedDimensions="1789px × 798px"
                         placeholder="Upload section media"
                         preview={true}
                       />

@@ -151,7 +151,9 @@ export default function ExtraMaterialsForm() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading extra material data...</div>
+        <div className="text-muted-foreground">
+          Loading extra material data...
+        </div>
       </div>
     );
   }
@@ -286,6 +288,7 @@ export default function ExtraMaterialsForm() {
                           value={field.value}
                           onChange={field.onChange}
                           accept="image/*"
+                          recommendedDimensions="765px × 221px"
                           placeholder="Upload extra material image"
                           preview={true}
                         />
@@ -346,6 +349,7 @@ export default function ExtraMaterialsForm() {
                           value={field.value}
                           onChange={field.onChange}
                           accept="image/svg+xml,image/png,image/*"
+                          recommendedDimensions="128px × 128px"
                           placeholder="Upload extra material icon (SVG or PNG)"
                           preview={true}
                         />

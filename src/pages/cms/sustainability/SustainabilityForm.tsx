@@ -347,7 +347,7 @@ export default function SustainabilityForm() {
                         onChange={field.onChange}
                         accept="image/*"
                         preview={true}
-                        recommendedDimensions="800px x 600px"
+                        recommendedDimensions="768px × 439px"
                       />
                     </FormControl>
                     <FormDescription>

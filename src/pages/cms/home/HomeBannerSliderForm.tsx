@@ -352,7 +352,7 @@ export default function HomeBannerSliderForm() {
                             field.onChange(file);
                             setImageFile(file);
                           }}
-                          recommendedDimensions="1400x600"
+                          recommendedDimensions="1200px × 625px"
                           accept="image/*"
                           preview={true}
                         />

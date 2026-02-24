@@ -548,7 +548,7 @@ export default function BlogsForm() {
                           }}
                           accept="image/*"
                           placeholder="Upload thumbnail image"
-                          recommendedDimensions="600px x 400px"
+                          recommendedDimensions="583px × 290px"
                           preview={true}
                         />
                       </FormControl>
@@ -612,7 +612,7 @@ export default function BlogsForm() {
                           accept="image/*"
                           placeholder="Upload desktop blog image"
                           preview={true}
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1920px x 732px"
                         />
                       </FormControl>
 
@@ -636,7 +636,7 @@ export default function BlogsForm() {
                           }}
                           accept="image/*"
                           placeholder="Upload mobile blog image"
-                          recommendedDimensions="600px x 400px"
+                          recommendedDimensions="640px × 1138px"
                           preview={true}
                         />
                       </FormControl>

@@ -290,7 +290,7 @@ export default function SpecialisedAreasForm() {
                         accept="image/*"
                         placeholder="Upload image"
                         preview={true}
-                        recommendedDimensions="800x600"
+                        recommendedDimensions="584px × 594px"
                       />
                     </FormControl>
                     <FormMessage />

@@ -244,7 +244,7 @@ export default function ErgonomicChairForm() {
                         onChange={field.onChange}
                         accept="image/*"
                         preview
-                        recommendedDimensions="600 x 400"
+                        recommendedDimensions="318px × 318px"
                       />
                     </FormControl>
                     <FormMessage />

@@ -559,7 +559,7 @@ export default function AboutCmsForm() {
                                 ? "image/*"
                                 : "video/*"
                             }
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="1920px x 732px"
                             placeholder={`Upload desktop banner ${watchBannerMediaType}`}
                           />
                         </FormControl>
@@ -586,7 +586,7 @@ export default function AboutCmsForm() {
                                 ? "image/*"
                                 : "video/*"
                             }
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="640px × 1138px"
                             placeholder={`Upload mobile banner ${watchBannerMediaType}`}
                           />
                         </FormControl>
@@ -736,7 +736,7 @@ export default function AboutCmsForm() {
                               field.onChange(file);
                               setJourneyOneMediaFile(file);
                             }}
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="415px × 270px"
                             accept="image/*"
                             placeholder="Upload journey image 1"
                             preview={true}
@@ -762,7 +762,7 @@ export default function AboutCmsForm() {
                             }}
                             accept="image/*"
                             placeholder="Upload journey image 2"
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="415px × 270px"
                             preview={true}
                           />
                         </FormControl>
@@ -786,7 +786,7 @@ export default function AboutCmsForm() {
                             }}
                             accept="image/*"
                             placeholder="Upload journey image 3"
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="435px × 585px"
                             preview={true}
                           />
                         </FormControl>

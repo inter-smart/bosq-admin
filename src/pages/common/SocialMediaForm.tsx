@@ -198,7 +198,7 @@ export default function SocialMediaForm() {
                         onChange={(file) => field.onChange(file)}
                         accept="image/*"
                         preview={true}
-                        recommendedDimensions="300px x 300px"
+                        recommendedDimensions="13px x 13px"
                       />
                     </FormControl>
                     <FormDescription>
@@ -224,7 +224,7 @@ export default function SocialMediaForm() {
                         onChange={(file) => field.onChange(file)}
                         accept="image/*"
                         preview={true}
-                        recommendedDimensions="300px x 300px"
+                        recommendedDimensions="13px x 13px"
                       />
                     </FormControl>
                     <FormDescription>

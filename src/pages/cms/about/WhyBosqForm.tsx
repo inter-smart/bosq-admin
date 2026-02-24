@@ -319,7 +319,7 @@ export default function WhyBosqForm() {
                         accept="image/*"
                         preview={true}
                         maxImageSize={2 * 1024 * 1024}
-                        recommendedDimensions="1200px x 800px"
+                        recommendedDimensions="805px × 415px"
                         dimensionNote="Hero image for Why BOSQ section"
                       />
                     </FormControl>
@@ -386,7 +386,7 @@ export default function WhyBosqForm() {
                         accept="image/*"
                         preview={true}
                         maxImageSize={500 * 1024}
-                        recommendedDimensions="64px x 64px"
+                        recommendedDimensions="60px x 60px"
                         dimensionNote="Small icon for feature representation"
                       />
                     </FormControl>

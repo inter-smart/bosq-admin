@@ -220,7 +220,7 @@ export default function ProductModelForm() {
                           }}
                           accept="image/*"
                           preview={true}
-                          recommendedDimensions="16px x 16px"
+                          recommendedDimensions="73px × 86px"
                         />
                       </FormControl>
                       <FormDescription>Upload a icon</FormDescription>

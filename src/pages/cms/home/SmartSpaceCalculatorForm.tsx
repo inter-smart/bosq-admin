@@ -328,7 +328,7 @@ export default function SmartSpaceCalculatorForm() {
                           field.onChange(file);
                           setImageFile(file);
                         }}
-                        recommendedDimensions="300px x 300px"
+                        recommendedDimensions="355px × 500px"
                         accept="image/*"
                         preview={true}
                       />

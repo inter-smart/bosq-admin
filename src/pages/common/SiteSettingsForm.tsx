@@ -303,7 +303,7 @@ export default function HeaderFooterForm() {
                               field.onChange(file);
                               setHeaderLogo(file);
                             }}
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="144px × 42px"
                             accept="image/*"
                             placeholder="Upload journey image 1"
                             preview={true}
@@ -357,7 +357,7 @@ export default function HeaderFooterForm() {
                               field.onChange(file);
                               setFooterLogo(file);
                             }}
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="144px × 42px"
                             accept="image/*"
                             placeholder="Upload journey image 1"
                             preview={true}

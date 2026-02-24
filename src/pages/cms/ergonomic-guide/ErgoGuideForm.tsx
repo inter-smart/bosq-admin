@@ -290,7 +290,7 @@ export default function ErgoGuideForm() {
                             setMediaDesktopFile(file);
                           }}
                           accept={"image"}
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1920px × 734px"
                           placeholder={`Upload desktop
                             image
                           `}
@@ -318,7 +318,7 @@ export default function ErgoGuideForm() {
                             setMediaMobileFile(file);
                           }}
                           accept={"image"}
-                          recommendedDimensions="768px x 1024px"
+                          recommendedDimensions="640px × 1138px"
                           placeholder={`Upload mobile media`}
                         />
                       </FormControl>

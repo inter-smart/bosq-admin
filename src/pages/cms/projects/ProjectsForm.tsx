@@ -386,7 +386,7 @@ export default function ProjectsForm() {
 
      
 
-      // Section 3
+      // section 2
       if (data.section3_title)
         formData.append("section3_title", data.section3_title);
       if (data.section3_title_ar)
@@ -403,7 +403,7 @@ export default function ProjectsForm() {
       if (data.section3_media_alt_ar)
         formData.append("section3_media_alt_ar", data.section3_media_alt_ar);
 
-      // Section 4
+      // section 3
       if (data.section4_title)
         formData.append("section4_title", data.section4_title);
       if (data.section4_title_ar)
@@ -790,7 +790,7 @@ export default function ProjectsForm() {
                           setThumbnailFile(file);
                         }}
                         accept="image/*"
-                        recommendedDimensions="800x600"
+                        recommendedDimensions="584px × 594px"
                         placeholder="Upload thumbnail image"
                         preview={true}
                       />
@@ -823,7 +823,7 @@ export default function ProjectsForm() {
                             setSection1DesktopFile(file);
                           }}
                           accept="image/*,video/*"
-                          recommendedDimensions="1920x1080"
+                          recommendedDimensions="1792px × 730px"
                           placeholder="Upload desktop media"
                         />
                       </FormControl>
@@ -846,7 +846,7 @@ export default function ProjectsForm() {
                             setSection1MobileFile(file);
                           }}
                           accept="image/*,video/*"
-                          recommendedDimensions="768x1024"
+                          recommendedDimensions="768px × 1024px"
                           placeholder="Upload mobile media"
                         />
                       </FormControl>
@@ -893,10 +893,10 @@ export default function ProjectsForm() {
           </Card>
 
       
-          {/* 5. Section 3 Content */}
+          {/* 5. section 2 Content */}
           <Card>
             <CardHeader>
-              <CardTitle>Section 3 Content</CardTitle>
+              <CardTitle>section 2 Content</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -905,7 +905,7 @@ export default function ProjectsForm() {
                   name="section3_title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 3 Title</FormLabel>
+                      <FormLabel>Section 2 Title</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter section title" {...field} />
                       </FormControl>
@@ -919,7 +919,7 @@ export default function ProjectsForm() {
                   name="section3_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 3 Title (AR)</FormLabel>
+                      <FormLabel>Section 2 Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان القسم"
@@ -937,7 +937,7 @@ export default function ProjectsForm() {
                   name="section3_description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 3 Description</FormLabel>
+                      <FormLabel>section 2 Description</FormLabel>
                       <FormControl>
                         <RichTextEditor
                           placeholder="Enter section description"
@@ -954,7 +954,7 @@ export default function ProjectsForm() {
                   name="section3_description_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 3 Description (AR)</FormLabel>
+                      <FormLabel>section 2 Description (AR)</FormLabel>
                       <FormControl>
                         <RichTextEditor
                           placeholder="أدخل وصف القسم"
@@ -973,7 +973,7 @@ export default function ProjectsForm() {
                 name="section3_media_path"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Section 3 Media</FormLabel>
+                    <FormLabel>section 2 Media</FormLabel>
                     <FormControl>
                       <FileUpload
                         value={section3MediaFile}
@@ -982,7 +982,7 @@ export default function ProjectsForm() {
                           setSection3MediaFile(file);
                         }}
                         accept="image/*"
-                        recommendedDimensions="800x600"
+                        recommendedDimensions="754px × 494px"
                         placeholder="Upload section media"
                       />
                     </FormControl>
@@ -1027,10 +1027,10 @@ export default function ProjectsForm() {
             </CardContent>
           </Card>
 
-          {/* 6. Section 4 */}
+          {/* 6. section 3 */}
           <Card>
             <CardHeader>
-              <CardTitle>Section 4</CardTitle>
+              <CardTitle>section 3</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1039,7 +1039,7 @@ export default function ProjectsForm() {
                   name="section4_title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 4 Title</FormLabel>
+                      <FormLabel>Section 3 Title</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter section title" {...field} />
                       </FormControl>
@@ -1053,7 +1053,7 @@ export default function ProjectsForm() {
                   name="section4_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Section 4 Title (AR)</FormLabel>
+                      <FormLabel>Section 3 Title (AR)</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان القسم"

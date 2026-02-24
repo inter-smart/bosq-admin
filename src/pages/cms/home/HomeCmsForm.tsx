@@ -366,7 +366,7 @@ export default function HomeCmsForm() {
                           onChange={field.onChange}
                           accept="image/*"
                           placeholder="Upload about section media"
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="308px × 517px"
                           preview
                         />
                       </FormControl>
@@ -596,7 +596,7 @@ export default function HomeCmsForm() {
                           }
                           placeholder={`Upload journey ${watchJourneyMediaType}`}
                           preview
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1080px × 563px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -624,7 +624,7 @@ export default function HomeCmsForm() {
                           }
                           placeholder={`Upload journey ${watchJourneyMediaType}`}
                           preview
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="800px × 600px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -948,7 +948,7 @@ export default function HomeCmsForm() {
                             accept="image/*"
                             placeholder="Upload form media"
                             preview={true}
-                            recommendedDimensions="1920px x 1080px"
+                            recommendedDimensions="541px × 348px"
                           />
                         </FormControl>
                         <FormMessage />

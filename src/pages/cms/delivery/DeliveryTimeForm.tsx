@@ -269,7 +269,7 @@ export default function DeliveryTimeForm() {
                         accept="image/*"
                         placeholder="Upload delivery time icon"
                         preview={true}
-                        recommendedDimensions="100px x 100px"
+                        recommendedDimensions="46px × 46px"
                       />
                     </FormControl>
                     <FormMessage />

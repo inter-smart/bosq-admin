@@ -409,7 +409,7 @@ export default function ContactCmsForm() {
                             field.onChange(file);
                             setMediaFile(file);
                           }}
-                          recommendedDimensions="1920x1080"
+                          recommendedDimensions="864px × 522px"
                           accept="image/*"
                           placeholder="Upload contact media"
                           preview={true}

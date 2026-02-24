@@ -197,7 +197,7 @@ export default function ProjectImagesForm() {
                         accept="image/*"
                         placeholder="Upload image"
                         preview={true}
-                        recommendedDimensions="800x600"
+                        recommendedDimensions="972px × 633px"
                       />
                     </FormControl>
                     <FormMessage />

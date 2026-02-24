@@ -406,7 +406,7 @@ export default function CustomizationCmsForm() {
                           onChange={field.onChange}
                           accept={watchBannerMediaType === "video" ? "video/*" : "image/*"}
                           placeholder="Upload desktop media"
-                          recommendedDimensions="1920px x 1080px"
+                          recommendedDimensions="1920px × 730px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -426,7 +426,7 @@ export default function CustomizationCmsForm() {
                           onChange={field.onChange}
                           accept={watchBannerMediaType === "video" ? "video/*" : "image/*"}
                           placeholder="Upload mobile media"
-                          recommendedDimensions="600px x 600px"
+                          recommendedDimensions="640px × 1138px"
                         />
                       </FormControl>
                       <FormMessage />
@@ -562,7 +562,7 @@ export default function CustomizationCmsForm() {
                         onChange={field.onChange}
                         accept="image/*"
                         placeholder="Upload process media"
-                        recommendedDimensions="1920px x 1080px"
+                        recommendedDimensions="826px × 698px"
                       />
                     </FormControl>
                     <FormMessage />
@@ -782,7 +782,7 @@ export default function CustomizationCmsForm() {
                         onChange={field.onChange}
                         accept="image/*"
                         placeholder="Upload form media"
-                        recommendedDimensions="1920px x 1080px"
+                        recommendedDimensions="828px × 500px"
                       />
                     </FormControl>
                     <FormMessage />
