@@ -354,6 +354,7 @@ const ReturnPolicyForm = lazy(() => import("./pages/policy/ReturnPolicyForm"));
 const ReturnPolicyList = lazy(() => import("./pages/policy/ReturnPolicyList"));
 
 import { Suspense } from "react";
+import PageLoader from "@/components/common/PageLoader";
 import SustainabilityCmsForm from "./pages/cms/sustainability/SustainabilityCmsForm";
 import SustainabilityList from "./pages/cms/sustainability/SustainabilityList";
 import SustainabilityForm from "./pages/cms/sustainability/SustainabilityForm";
@@ -391,7 +392,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
