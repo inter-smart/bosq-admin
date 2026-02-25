@@ -3,21 +3,10 @@ import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, KeyRound } from "lucide-react";
-import {
-  requestPasswordReset,
-  resendOtp,
-  verifyResetOtp,
-  resetPassword,
-} from "@/services/auth/authApi";
+import { requestPasswordReset, resendOtp, verifyResetOtp, resetPassword } from "@/services/auth/authApi";
 
 const bosqLogo = "/bosq-logo-light.png";
 
@@ -44,15 +33,10 @@ export default function ForgotPassword() {
 
     try {
       const response = await requestPasswordReset(email);
-      setMessage(
-        response.message ||
-          "If your email is registered, you will receive a password reset code",
-      );
+      setMessage(response.message || "If your email is registered, you will receive a password reset code");
       setStep("otp");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to send reset code",
-      );
+      setError(err instanceof Error ? err.message : "Failed to send reset code");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +52,7 @@ export default function ForgotPassword() {
       // Verify OTP by attempting to reset with a dummy password
       // We'll use the actual API call but only to verify the OTP
       // In a real scenario, you might want a separate endpoint for just OTP verification
-      
+
       const response = await verifyResetOtp(email, otp);
       setMessage(response.message || "OTP verified successfully");
       setStep("password");
@@ -78,41 +62,37 @@ export default function ForgotPassword() {
       setIsLoading(false);
     }
   };
-const handleResetPassword = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError("");
-  setMessage("");
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setMessage("");
 
-  if (newPassword !== confirmPassword) {
-    setError("Passwords do not match");
-    setIsLoading(false);
-    return;
-  }
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
 
-  if (newPassword.length < 8) {
-    setError("Password must be at least 8 characters");
-    setIsLoading(false);
-    return;
-  }
+    if (newPassword.length < 8) {
+      setError("Password must be at least 8 characters");
+      setIsLoading(false);
+      return;
+    }
 
-  try {
-    const response = await resetPassword(
-      email,
-      newPassword,
-      confirmPassword
-    );
+    try {
+      const response = await resetPassword(email, newPassword, confirmPassword);
 
-    setMessage(response.message || "Password reset successful");
-    setStep("success");
+      setMessage(response.message || "Password reset successful");
+      setStep("success");
 
-    setTimeout(() => setRedirectToLogin(true), 2000);
-  } catch (err) {
-    setError(err instanceof Error ? err.message : "Failed to reset password");
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setTimeout(() => setRedirectToLogin(true), 2000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to reset password");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleResendOtp = async () => {
     setIsLoading(true);
@@ -170,23 +150,15 @@ const handleResetPassword = async (e: React.FormEvent) => {
         {/* Logo and Header */}
         <div className="text-center">
           <img src={bosqLogo} alt="BOSQ" className="mx-auto h-12 w-auto mb-6" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Admin Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Password Recovery
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Admin Dashboard</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Password Recovery</p>
         </div>
 
         {/* Form Card */}
         <Card className="shadow-healthcare-lg border-0">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-xl text-center">
-              {getStepTitle()}
-            </CardTitle>
-            <CardDescription className="text-center">
-              {getStepDescription()}
-            </CardDescription>
+            <CardTitle className="text-xl text-center">{getStepTitle()}</CardTitle>
+            <CardDescription className="text-center">{getStepDescription()}</CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
@@ -220,21 +192,12 @@ const handleResetPassword = async (e: React.FormEvent) => {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  variant="gradient"
-                  size="lg"
-                  className="w-full"
-                  disabled={isLoading}
-                >
+                <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={isLoading}>
                   {isLoading ? "Sending..." : "Send Reset Code"}
                 </Button>
 
                 <div className="text-center">
-                  <Link
-                    to="/login"
-                    className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-                  >
+                  <Link to="/login" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
                     <ArrowLeft className="mr-1 h-4 w-4" />
                     Back to Login
                   </Link>
@@ -254,26 +217,16 @@ const handleResetPassword = async (e: React.FormEvent) => {
                       type="text"
                       placeholder="Enter 6-digit code"
                       value={otp}
-                      onChange={(e) =>
-                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                      }
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                       className="pl-10 text-center text-2xl tracking-widest"
                       maxLength={6}
                       required
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Code sent to {email}
-                  </p>
+                  <p className="text-xs text-muted-foreground text-center">Code sent to {email}</p>
                 </div>
 
-                <Button
-                  type="submit"
-                  variant="gradient"
-                  size="lg"
-                  className="w-full"
-                  disabled={isLoading || otp.length !== 6}
-                >
+                <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={isLoading || otp.length !== 6}>
                   {isLoading ? "Verifying..." : "Verify Code"}
                 </Button>
 
@@ -286,12 +239,7 @@ const handleResetPassword = async (e: React.FormEvent) => {
                     <ArrowLeft className="mr-1 h-4 w-4" />
                     Change Email
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleResendOtp}
-                    disabled={isLoading}
-                    className="text-primary hover:underline disabled:opacity-50"
-                  >
+                  <button type="button" onClick={handleResendOtp} disabled={isLoading} className="text-primary hover:underline disabled:opacity-50">
                     Resend Code
                   </button>
                 </div>
@@ -321,16 +269,10 @@ const handleResetPassword = async (e: React.FormEvent) => {
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
+                      {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Must be at least 8 characters
-                  </p>
+                  <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
                 </div>
 
                 <div className="space-y-2">
@@ -351,26 +293,14 @@ const handleResetPassword = async (e: React.FormEvent) => {
                       variant="ghost"
                       size="icon"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="h-4 w-4 text-muted-foreground" />
-                      )}
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                     </Button>
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  variant="gradient"
-                  size="lg"
-                  className="w-full"
-                  disabled={isLoading}
-                >
+                <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={isLoading}>
                   {isLoading ? "Resetting..." : "Reset Password"}
                 </Button>
 
@@ -391,18 +321,8 @@ const handleResetPassword = async (e: React.FormEvent) => {
             {step === "success" && (
               <div className="text-center space-y-4">
                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <p className="text-muted-foreground">Redirecting to login...</p>
@@ -413,8 +333,7 @@ const handleResetPassword = async (e: React.FormEvent) => {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground">
-          <p>&copy; 2024 BOSQ. All rights reserved.</p>
-          <p className="mt-1">Content Management System</p>
+          <p>&copy; {new Date().getFullYear()} Bosq. All rights reserved.</p>
         </div>
       </div>
     </div>

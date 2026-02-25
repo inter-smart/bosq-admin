@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
@@ -120,7 +119,7 @@ export default function ProductModelForm() {
         });
       }
 
-      navigate(`/product-models/${productId}/list`);
+      navigate(`/product-models/all`);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -143,7 +142,7 @@ export default function ProductModelForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate(`/product-models/${productId}/list`)}>
+        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -273,7 +272,7 @@ export default function ProductModelForm() {
 
           {/* Submit Buttons */}
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate(`/product-models/${productId}/list`)}>
+            <Button type="button" variant="outline" onClick={() => navigate(-1)}>
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>

@@ -12,8 +12,7 @@ import { FileUpload } from "@/components/common/FileUpload";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchBaseProductById, createBaseProduct, updateBaseProduct, fetchChildCategories, ChildCategory } from "@/services/product/baseProductApi";
-import { fetchParentCategoryList, ParentCategories } from "@/services/product/productCategoriesApi";
+import { fetchBaseProductById, createBaseProduct, updateBaseProduct } from "@/services/product/baseProductApi";
 import { fetchProductSectorList, ProductSector } from "@/services/product/productSectorsApi";
 import { fetchDataList as fetchSellingPointsList, ProductSellingPoint } from "@/services/product/productSellingPointsApi";
 import { BaseProductFormData, baseProductSchema } from "@/schemas/baseProductSchema";
@@ -28,9 +27,6 @@ export default function BaseProductForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [categories, setCategories] = useState<ParentCategories[]>([]);
-  const [subCategories, setSubCategories] = useState<ChildCategory[]>([]);
-  const [loadingSubCategories, setLoadingSubCategories] = useState(false);
   const [sectors, setSectors] = useState<ProductSector[]>([]);
   const [sellingPoints, setSellingPoints] = useState<ProductSellingPoint[]>([]);
   const [initialBasePrice, setInitialBasePrice] = useState<string | null>(null);
@@ -50,8 +46,6 @@ export default function BaseProductForm() {
       details_points_ar: "",
       additional_details: "",
       additional_details_ar: "",
-      category_id: undefined,
-      sub_category_id: null,
       base_price: "",
       media_path: null,
       sort_order: 1,
@@ -61,8 +55,6 @@ export default function BaseProductForm() {
     },
   });
 
-  const selectedCategoryId = form.watch("category_id");
-
   useEffect(() => {
     loadDropdownData();
     if (isEditing && id) {
@@ -70,40 +62,13 @@ export default function BaseProductForm() {
     }
   }, [id, isEditing]);
 
-  // Fetch sub-categories when parent category changes
-  useEffect(() => {
-    if (selectedCategoryId) {
-      loadSubCategories(selectedCategoryId);
-    } else {
-      setSubCategories([]);
-      form.setValue("sub_category_id", null);
-    }
-  }, [selectedCategoryId]);
-
-  // Validate sub-category when subCategories are loaded
-  useEffect(() => {
-    if (!loadingSubCategories && subCategories.length > 0) {
-      const currentSubCategoryId = form.getValues("sub_category_id");
-      if (!currentSubCategoryId) {
-        form.setError("sub_category_id", {
-          type: "manual",
-          message: "Sub-category is required",
-        });
-      }
-    }
-  }, [subCategories, loadingSubCategories]);
-
   const loadDropdownData = async () => {
     try {
-      const [categoriesRes, sectorsRes, sellingPointsRes] = await Promise.all([
-        fetchParentCategoryList(),
+      const [sectorsRes, sellingPointsRes] = await Promise.all([
         fetchProductSectorList(1, 100),
         fetchSellingPointsList(1, 100),
       ]);
 
-      if (categoriesRes.data) {
-        setCategories(categoriesRes.data);
-      }
       if (sectorsRes.success) {
         setSectors(sectorsRes.data.list);
       }
@@ -119,22 +84,6 @@ export default function BaseProductForm() {
     }
   };
 
-  const loadSubCategories = async (parentId: number) => {
-    try {
-      setLoadingSubCategories(true);
-      const response = await fetchChildCategories(parentId);
-      if (response.success) {
-        setSubCategories(response.data || []);
-      } else {
-        setSubCategories([]);
-      }
-    } catch (error) {
-      setSubCategories([]);
-    } finally {
-      setLoadingSubCategories(false);
-    }
-  };
-
   const loadBaseProductData = async (itemId: number) => {
     try {
       setInitialLoading(true);
@@ -142,26 +91,6 @@ export default function BaseProductForm() {
       const data = response.data;
 
       if (data) {
-        // Determine if the category is a parent or child
-        const category = data.category;
-        let parentCategoryId: number | null = null;
-        let subCategoryId: number | null = null;
-
-        if (category) {
-          if (category.parent_id) {
-            // It's a sub-category
-            parentCategoryId = category.parent_id;
-            subCategoryId = category.id;
-            // Load sub-categories for this parent
-            await loadSubCategories(category.parent_id);
-          } else {
-            // It's a parent category
-            parentCategoryId = category.id;
-            // Load sub-categories for this parent
-            await loadSubCategories(category.id);
-          }
-        }
-
         // Store the initial base price for change detection
         setInitialBasePrice(data.base_price || "");
 
@@ -178,8 +107,6 @@ export default function BaseProductForm() {
           details_points_ar: data.details_points_ar || "",
           additional_details: data.additional_details || "",
           additional_details_ar: data.additional_details_ar || "",
-          category_id: parentCategoryId,
-          sub_category_id: subCategoryId,
           base_price: data.base_price || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -235,12 +162,6 @@ export default function BaseProductForm() {
         formData.append("additional_details_ar", data.additional_details_ar);
       }
 
-      // Send sub_category_id if selected, otherwise send category_id (parent)
-      const categoryToSend = data.sub_category_id || data.category_id;
-      if (categoryToSend) {
-        formData.append("category_id", categoryToSend.toString());
-      }
-
       // Base price (required, DECIMAL(10,2) format)
       formData.append("base_price", data.base_price);
 
@@ -289,14 +210,6 @@ export default function BaseProductForm() {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Handle parent category change - reset sub category
-  const handleCategoryChange = (value: string) => {
-    const newValue = parseInt(value);
-    form.setValue("category_id", newValue);
-    form.setValue("sub_category_id", null);
-    form.clearErrors("sub_category_id");
   };
 
   if (initialLoading) {
@@ -416,84 +329,6 @@ export default function BaseProductForm() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <FormField
-                  control={form.control}
-                  name="category_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select onValueChange={handleCategoryChange} value={field.value ? String(field.value) : ""}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={String(category.id)}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>Select a parent category for this product</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Sub Category Dropdown - Only show when parent category is selected */}
-                {selectedCategoryId && (
-                  <FormField
-                    control={form.control}
-                    name="sub_category_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Sub Category{subCategories.length > 0 && <span className="text-destructive"> *</span>}
-                        </FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            const newValue = value === "none" ? null : parseInt(value);
-                            field.onChange(newValue);
-                            if (newValue) {
-                              form.clearErrors("sub_category_id");
-                            } else if (subCategories.length > 0) {
-                              form.setError("sub_category_id", {
-                                type: "manual",
-                                message: "Sub-category is required",
-                              });
-                            }
-                          }}
-                          value={field.value ? String(field.value) : "none"}
-                          disabled={loadingSubCategories || subCategories.length === 0}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={loadingSubCategories ? "Loading..." : subCategories.length === 0 ? "No sub-categories available" : "Select a sub-category"} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">No Sub Category</SelectItem>
-                            {subCategories.map((subCategory) => (
-                              <SelectItem key={subCategory.id} value={String(subCategory.id)}>
-                                {subCategory.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          {subCategories.length === 0 && !loadingSubCategories
-                            ? "No sub-categories available for this category"
-                            : "Select a sub-category for this product"}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-              </div>
 
               {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                 <FormField

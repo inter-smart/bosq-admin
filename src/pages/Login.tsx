@@ -50,26 +50,16 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8">
         {/* Logo and Header */}
         <div className="text-center">
-          <img 
-            src={bosqLogo} 
-            alt="BOSQ" 
-            className="mx-auto h-12 w-auto mb-6"
-          />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Admin Dashboard
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to manage your BOSQ content
-          </p>
+          <img src={bosqLogo} alt="BOSQ" className="mx-auto h-12 w-auto mb-6" />
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Admin Dashboard</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Sign in to manage your BOSQ content</p>
         </div>
 
         {/* Login Form */}
         <Card className="shadow-healthcare-lg border-0">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl text-center">Sign in</CardTitle>
-            <CardDescription className="text-center">
-              Enter your credentials to access the dashboard
-            </CardDescription>
+            <CardDescription className="text-center">Enter your credentials to access the dashboard</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,11 +105,7 @@ export default function Login() {
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
               </div>
@@ -130,29 +116,20 @@ export default function Login() {
                 </Link>
               </div>
 
-              <Button
-                type="submit"
-                variant="gradient"
-                size="lg"
-                className="w-full"
-                disabled={isLoading}
-              >
+              <Button type="submit" variant="gradient" size="lg" className="w-full" disabled={isLoading}>
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-xs text-muted-foreground">
-                Sign in with your credentials
-              </p>
+              <p className="text-xs text-muted-foreground">Sign in with your credentials</p>
             </div>
           </CardContent>
         </Card>
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground">
-          <p>© 2024 BOSQ. All rights reserved.</p>
-          <p className="mt-1">Content Management System</p>
+          <p>© {new Date().getFullYear()} BOSQ. All rights reserved.</p>
         </div>
       </div>
     </div>

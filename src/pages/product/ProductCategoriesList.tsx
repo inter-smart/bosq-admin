@@ -131,12 +131,17 @@ export default function ProductCategoriesList() {
       cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
     },
     {
-      accessorKey: "parent_id",
+      id: "type",
       header: "Type",
       cell: ({ row }) => {
-        const parentId = row.getValue("parent_id") as number | null;
-        const isParent = !parentId;
-        return <Badge variant={isParent ? "default" : "outline"}>{isParent ? "Parent" : "Sub"}</Badge>;
+        const parent = row.original.parent;
+        if (!parent) return <Badge variant="default">Parent</Badge>;
+        return (
+          <div className="flex items-center gap-1.5">
+            <Badge variant="outline">Sub</Badge>
+            <span className="text-xs text-muted-foreground truncate max-w-[120px]">of {parent.name}</span>
+          </div>
+        );
       },
     },
     {

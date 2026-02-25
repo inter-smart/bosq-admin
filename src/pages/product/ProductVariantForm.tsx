@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, ArrowLeft, Plus, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Save, ArrowLeft, Plus, X, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { FileUpload } from "@/components/common/FileUpload";
@@ -20,6 +22,7 @@ import {
   AttributeWithValues,
 } from "@/services/product/productVariantApi";
 import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
+import { fetchProductCategoryList, ProductCategory } from "@/services/product/productCategoriesApi";
 
 interface AttributeValueSelection {
   id: string;
@@ -58,6 +61,8 @@ export default function ProductVariantForm() {
   const [model, setModel] = useState<ProductModel | null>(null);
   const [attributes, setAttributes] = useState<AttributeWithValues[]>([]);
   const [attributeSelections, setAttributeSelections] = useState<AttributeSelectionState>({});
+  const [allCategories, setAllCategories] = useState<ProductCategory[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
 
   const schema = useMemo(
     () =>
@@ -110,7 +115,11 @@ export default function ProductVariantForm() {
         setModel(modelResponse.data);
       }
 
-      const attributesResponse = await fetchAttributesWithValues();
+      const [attributesResponse, categoriesResponse] = await Promise.all([
+        fetchAttributesWithValues(),
+        fetchProductCategoryList(1, 200),
+      ]);
+
       if (attributesResponse.success) {
         setAttributes(attributesResponse.data);
 
@@ -119,6 +128,10 @@ export default function ProductVariantForm() {
           initialSelections[attr.id] = [];
         });
         setAttributeSelections(initialSelections);
+      }
+
+      if (categoriesResponse.success) {
+        setAllCategories(categoriesResponse.data.list);
       }
 
       if (isEditing && id) {
@@ -139,6 +152,11 @@ export default function ProductVariantForm() {
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
         });
+
+        // Pre-select existing categories
+        if ((data as any).categories && Array.isArray((data as any).categories)) {
+          setSelectedCategoryIds((data as any).categories.map((c: any) => c.id));
+        }
 
         if (data.variant_attributes && data.variant_attributes.length > 0) {
           const loadedSelections: AttributeSelectionState = {};
@@ -255,6 +273,7 @@ export default function ProductVariantForm() {
         formData.append("design_title", data.design_title);
         formData.append("design_title_ar", data.design_title_ar);
         formData.append("attributes", JSON.stringify(allSelections));
+        formData.append("category_ids", JSON.stringify(selectedCategoryIds));
 
         if (data.cover_image instanceof File) {
           formData.append("media_path", data.cover_image);
@@ -275,11 +294,12 @@ export default function ProductVariantForm() {
           sort_order: data.sort_order,
           status: data.status,
           variant_attributes: allSelections,
-        });
+          category_ids: selectedCategoryIds,
+        } as any);
         toast({ title: "Success", description: "Product variant created successfully" });
       }
 
-      navigate(`/product-variants/${productId}/list`);
+      navigate(`/product-variants/all`);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -300,7 +320,7 @@ export default function ProductVariantForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate(`/product-variants/${productId}/list`)}>
+        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
@@ -503,9 +523,163 @@ export default function ProductVariantForm() {
           </div>
         )}
 
+        {/* Category Selection */}
+        {isEditing && allCategories.length > 0 && (() => {
+          const parentCategories = allCategories.filter((c) => !c.parent_id);
+          const childrenOf = (parentId: number) =>
+            allCategories.filter((c) => c.parent_id === parentId);
+
+          const toggleParent = (parentId: number, childIds: number[], checked: boolean) => {
+            setSelectedCategoryIds((prev) => {
+              const without = prev.filter((id) => id !== parentId && !childIds.includes(id));
+              return checked ? [...without, parentId, ...childIds] : without;
+            });
+          };
+
+          const toggleChild = (childId: number, parentId: number, childIds: number[], checked: boolean) => {
+            setSelectedCategoryIds((prev) => {
+              const next = checked ? [...prev, childId] : prev.filter((id) => id !== childId);
+              const anyChildSelected = childIds.some((id) => next.includes(id));
+              const withoutParent = next.filter((id) => id !== parentId);
+              return anyChildSelected ? [...withoutParent, parentId] : withoutParent;
+            });
+          };
+
+          const selectedCats = selectedCategoryIds
+            .map((id) => allCategories.find((c) => c.id === id))
+            .filter(Boolean) as typeof allCategories;
+
+          return (
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-base">Categories</CardTitle>
+                  </div>
+                  {selectedCategoryIds.length > 0 && (
+                    <Badge variant="secondary" className="text-xs font-medium">
+                      {selectedCategoryIds.length} selected
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Selected chips */}
+                {selectedCats.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-2">
+                    {selectedCats.map((cat) => (
+                      <Badge
+                        key={cat.id}
+                        variant="outline"
+                        className="gap-1 pr-1 text-xs font-normal h-6"
+                      >
+                        {cat.name}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedCategoryIds((prev) =>
+                              prev.filter((i) => i !== cat.id)
+                            )
+                          }
+                          className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 transition-opacity"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </CardHeader>
+
+              <CardContent>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                  {parentCategories.map((parent) => {
+                    const children = childrenOf(parent.id!);
+                    const childIds = children.map((c) => c.id!);
+                    const selectedChildren = childIds.filter((id) => selectedCategoryIds.includes(id));
+                    const allSelected = childIds.length > 0 && selectedChildren.length === childIds.length;
+                    const someSelected = selectedChildren.length > 0 && !allSelected;
+                    const parentChecked = childIds.length === 0
+                      ? selectedCategoryIds.includes(parent.id!)
+                      : allSelected;
+                    const isGroupActive = parentChecked || someSelected;
+
+                    return (
+                      <div
+                        key={parent.id}
+                        className={`rounded-lg border p-3 space-y-2.5 transition-colors ${
+                          isGroupActive
+                            ? "border-primary/40 bg-primary/5"
+                            : "border-border bg-muted/20 hover:bg-muted/40"
+                        }`}
+                      >
+                        {/* Parent row */}
+                        <div className={`flex items-center gap-2 ${children.length > 0 ? "pb-2 border-b border-border/60" : ""}`}>
+                          <Checkbox
+                            id={`category-${parent.id}`}
+                            checked={someSelected ? "indeterminate" : parentChecked}
+                            onCheckedChange={(checked) => {
+                              if (childIds.length === 0) {
+                                setSelectedCategoryIds((prev) =>
+                                  checked
+                                    ? [...prev, parent.id!]
+                                    : prev.filter((id) => id !== parent.id)
+                                );
+                              } else {
+                                toggleParent(parent.id!, childIds, !!checked);
+                              }
+                            }}
+                          />
+                          <label
+                            htmlFor={`category-${parent.id}`}
+                            className="text-sm font-semibold leading-none cursor-pointer flex-1"
+                          >
+                            {parent.name}
+                          </label>
+                          {someSelected && (
+                            <span className="text-xs text-muted-foreground tabular-nums">
+                              {selectedChildren.length}/{childIds.length}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Children rows */}
+                        {children.length > 0 && (
+                          <div className="space-y-2">
+                            {children.map((child) => (
+                              <div
+                                key={child.id}
+                                className="flex items-center gap-2 group"
+                              >
+                                <Checkbox
+                                  id={`category-${child.id}`}
+                                  checked={selectedCategoryIds.includes(child.id!)}
+                                  onCheckedChange={(checked) =>
+                                    toggleChild(child.id!, parent.id!, childIds, !!checked)
+                                  }
+                                />
+                                <label
+                                  htmlFor={`category-${child.id}`}
+                                  className="text-xs leading-none cursor-pointer text-muted-foreground group-hover:text-foreground transition-colors"
+                                >
+                                  {child.name}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
         {/* Submit Buttons */}
         <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate(`/product-variants/${productId}/list`)}>
+          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>

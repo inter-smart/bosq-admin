@@ -123,14 +123,6 @@ export default function BaseProductList() {
       cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground max-w-[200px] truncate">{row.getValue("slug")}</div>,
     },
     {
-      accessorKey: "category",
-      header: "Category",
-      cell: ({ row }) => {
-        const category = row.original.category;
-        return <div className="text-sm">{category?.name || "N/A"}</div>;
-      },
-    },
-    {
       accessorKey: "sort_order",
       header: "Sort Order",
       cell: ({ row }) => <div className="text-sm">{row.getValue("sort_order") || 0}</div>,

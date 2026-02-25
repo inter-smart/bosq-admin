@@ -23,6 +23,8 @@ export interface ProductVariant {
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;
+  category_ids?: number[];
+  categories?: { id: number; name: string; name_ar: string; slug: string; parent_id?: number | null }[];
   productModel?: {
     id: number;
     title: string;
@@ -101,6 +103,7 @@ export const fetchProductVariantList = async (
   search?: string,
   productModelId?: number,
   baseProductId?: number,
+  categoryId?: number,
 ): Promise<ProductVariantResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -117,6 +120,10 @@ export const fetchProductVariantList = async (
 
   if (baseProductId) {
     params.product_id = baseProductId;
+  }
+
+  if (categoryId) {
+    params.category_id = categoryId;
   }
 
   return apiCall("/resources/product-variants", { params });
@@ -153,4 +160,25 @@ export const deleteProductVariant = async (id: number): Promise<void> => {
 // Fetch attributes with values
 export const fetchAttributesWithValues = async (): Promise<AttributesWithValuesResponse> => {
   return apiCall("/common-actions/attributes/with-values");
+};
+
+/* =======================
+   Bought Together
+======================= */
+
+export interface BoughtTogetherResponse {
+  success: boolean;
+  message: string;
+  data: ProductVariant & { boughtTogetherVariants: ProductVariant[] };
+}
+
+export const fetchBoughtTogether = async (variantId: number): Promise<BoughtTogetherResponse> => {
+  return apiCall(`/resources/product-variant-bought-together/${variantId}`);
+};
+
+export const syncBoughtTogether = async (variantId: number, relatedVariantIds: number[]): Promise<{ success: boolean; message: string }> => {
+  return apiCall(`/resources/product-variant-bought-together/${variantId}/sync`, {
+    method: "POST",
+    data: { related_variant_ids: relatedVariantIds },
+  });
 };

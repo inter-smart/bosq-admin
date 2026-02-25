@@ -14,8 +14,6 @@ export const baseProductSchema = z.object({
   details_points_ar: z.string().optional(),
   additional_details: z.string().optional(),
   additional_details_ar: z.string().optional(),
-  category_id: z.number({ required_error: "Category is required" }).min(1, "Category is required"),
-  sub_category_id: z.number().nullable().optional(),
   base_price: z.string().optional(),
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),

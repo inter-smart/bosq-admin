@@ -15,10 +15,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, Image, XCircle } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Image, XCircle, Plus, ShoppingCart } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchProductModelList, ProductModel } from "@/services/product/productModelApi";
 import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
+import { fetchProductCategoryList, ProductCategory } from "@/services/product/productCategoriesApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
@@ -30,8 +31,10 @@ export default function AllProductVariantsList() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
   const [models, setModels] = useState<ProductModel[]>([]);
+  const [allCategories, setAllCategories] = useState<ProductCategory[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<string>("all");
   const [selectedModelId, setSelectedModelId] = useState<string>("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
@@ -42,9 +45,10 @@ export default function AllProductVariantsList() {
   const [pageSize, setPageSize] = useState(10);
   const requestIdRef = useRef(0);
 
-  // Load base products
+  // Load base products and categories on mount
   useEffect(() => {
     loadBaseProducts();
+    loadCategories();
   }, []);
 
   // Load models when base product changes
@@ -69,6 +73,17 @@ export default function AllProductVariantsList() {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const response = await fetchProductCategoryList(1, 200);
+      if (response.success) {
+        setAllCategories(response.data.list);
+      }
+    } catch (error) {
+      console.error("Failed to load categories", error);
+    }
+  };
+
   const loadModels = async (productId: number) => {
     try {
       const response = await fetchProductModelList(1, 100, undefined, productId);
@@ -90,14 +105,14 @@ export default function AllProductVariantsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Reset to page 1 when model filter changes
+  // Reset to page 1 when model or category filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedModelId]);
+  }, [selectedModelId, selectedCategoryId]);
 
   useEffect(() => {
     loadVariants();
-  }, [currentPage, pageSize, debouncedSearchQuery, selectedProductId, selectedModelId]);
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedProductId, selectedModelId, selectedCategoryId]);
 
   const loadVariants = async () => {
     const requestId = ++requestIdRef.current;
@@ -115,6 +130,7 @@ export default function AllProductVariantsList() {
         debouncedSearchQuery,
         selectedModelId === "all" ? undefined : parseInt(selectedModelId),
         selectedProductId === "all" ? undefined : parseInt(selectedProductId),
+        selectedCategoryId === "all" ? undefined : parseInt(selectedCategoryId),
       );
 
       if (requestId !== requestIdRef.current) return;
@@ -200,6 +216,34 @@ export default function AllProductVariantsList() {
         return <Badge variant={stock > 0 ? "default" : "destructive"}>{stock}</Badge>;
       },
     },
+    {
+      id: "categories",
+      header: "Categories",
+      cell: ({ row }) => {
+        const cats = (row.original.categories ?? []) as { id: number; name: string; parent_id?: number | null }[];
+        if (cats.length === 0) return <span className="text-muted-foreground text-sm">—</span>;
+        const visible = cats.slice(0, 2);
+        const overflow = cats.length - visible.length;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {visible.map((cat) => (
+              <Badge
+                key={cat.id}
+                variant={cat.parent_id ? "outline" : "secondary"}
+                className="text-xs font-normal"
+              >
+                {cat.name}
+              </Badge>
+            ))}
+            {overflow > 0 && (
+              <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
+                +{overflow}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    },
     // {
     //   accessorKey: "is_primary",
     //   header: "Primary",
@@ -237,6 +281,10 @@ export default function AllProductVariantsList() {
               <DropdownMenuItem onClick={() => navigate(`/product-variant-images/${item.id}`)}>
                 <Image className="mr-2 h-4 w-4" />
                 Manage Images
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.id}/bought-together`)}>
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Manage Bought Together
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -312,6 +360,47 @@ export default function AllProductVariantsList() {
                 </Button>
               )}
             </div>
+            <div className="flex items-center gap-2">
+              <div className="w-48">
+                <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {allCategories
+                      .filter((c) => !c.parent_id)
+                      .map((parent) => {
+                        const children = allCategories.filter((c) => c.parent_id === parent.id);
+                        return [
+                          <SelectItem key={parent.id} value={parent.id!.toString()}>
+                            {parent.name}
+                          </SelectItem>,
+                          ...children.map((child) => (
+                            <SelectItem key={child.id} value={child.id!.toString()}>
+                              &nbsp;&nbsp;↳ {child.name}
+                            </SelectItem>
+                          )),
+                        ];
+                      })}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedCategoryId !== "all" && (
+                <Button variant="ghost" size="icon" onClick={() => setSelectedCategoryId("all")} title="Clear Category Filter">
+                  <XCircle className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              )}
+            </div>
+
+            <Button
+              onClick={() => navigate(`/product-variants/${selectedModelId}/create`)}
+              disabled={selectedModelId === "all"}
+              title={selectedModelId === "all" ? "Select a model to add a variant" : "Add Variant"}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Variant
+            </Button>
           </div>
         </div>
 
