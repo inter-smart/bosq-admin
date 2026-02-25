@@ -161,3 +161,24 @@ export const deleteProductVariant = async (id: number): Promise<void> => {
 export const fetchAttributesWithValues = async (): Promise<AttributesWithValuesResponse> => {
   return apiCall("/common-actions/attributes/with-values");
 };
+
+/* =======================
+   Bought Together
+======================= */
+
+export interface BoughtTogetherResponse {
+  success: boolean;
+  message: string;
+  data: ProductVariant & { boughtTogetherVariants: ProductVariant[] };
+}
+
+export const fetchBoughtTogether = async (variantId: number): Promise<BoughtTogetherResponse> => {
+  return apiCall(`/resources/product-variant-bought-together/${variantId}`);
+};
+
+export const syncBoughtTogether = async (variantId: number, relatedVariantIds: number[]): Promise<{ success: boolean; message: string }> => {
+  return apiCall(`/resources/product-variant-bought-together/${variantId}/sync`, {
+    method: "POST",
+    data: { related_variant_ids: relatedVariantIds },
+  });
+};

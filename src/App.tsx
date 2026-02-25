@@ -84,6 +84,9 @@ const AllProductModelsList = lazy(
 const AllProductVariantsList = lazy(
   () => import("./pages/product/AllProductVariantsList"),
 );
+const ManageBoughtTogether = lazy(
+  () => import("./pages/product/ManageBoughtTogether"),
+);
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -710,6 +713,16 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AllProductVariantsList />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Bought Together */}
+            <Route
+              path="/product-variants/:variantId/bought-together"
+              element={
+                <ProtectedRoute>
+                  <ManageBoughtTogether />
                 </ProtectedRoute>
               }
             />

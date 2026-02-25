@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, Image, XCircle, Plus } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Image, XCircle, Plus, ShoppingCart } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchProductModelList, ProductModel } from "@/services/product/productModelApi";
 import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
@@ -281,6 +281,10 @@ export default function AllProductVariantsList() {
               <DropdownMenuItem onClick={() => navigate(`/product-variant-images/${item.id}`)}>
                 <Image className="mr-2 h-4 w-4" />
                 Manage Images
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.id}/bought-together`)}>
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Manage Bought Together
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
