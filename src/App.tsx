@@ -154,7 +154,7 @@ const ProductEnquiryDetails = lazy(
   () => import("./pages/enquiries/ProductEnquiryDetails"),
 );
 
-// Customization Enquiries pages
+// General Enquiries pages
 const CustomizationEnquiriesList = lazy(
   () => import("./pages/enquiries/CustomizationEnquiriesList"),
 );
@@ -1076,7 +1076,7 @@ const App = () => (
               }
             />
 
-            {/* Customization Enquiries Routes */}
+            {/* General Enquiries Routes */}
             <Route
               path="/customization-enquiries"
               element={

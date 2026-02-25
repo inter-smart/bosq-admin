@@ -270,7 +270,7 @@ export default function LeadGenerationList() {
         }}
         onExport={handleExport}
         title="Lead Generation"
-        searchPlaceholder="Search leads..."
+        searchPlaceholder="Search leads by Name, Email..."
       />
 
       {/* Delete Confirmation Dialog */}

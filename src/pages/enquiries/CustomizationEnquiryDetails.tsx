@@ -47,7 +47,7 @@ export default function CustomizationEnquiryDetails() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load customization enquiry details",
+        description: "Failed to load General Enquiry details",
         variant: "destructive",
       });
       navigate("/customization-enquiries");
@@ -63,13 +63,13 @@ export default function CustomizationEnquiryDetails() {
       await deleteCustomizationEnquiry(enquiry.id);
       toast({
         title: "Success",
-        description: "Customization enquiry deleted successfully",
+        description: "General Enquiry deleted successfully",
       });
       navigate("/customization-enquiries");
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete customization enquiry",
+        description: "Failed to delete General Enquiry",
         variant: "destructive",
       });
     } finally {
@@ -101,7 +101,7 @@ export default function CustomizationEnquiryDetails() {
   if (!enquiry) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
-        <p className="text-muted-foreground">Customization enquiry not found</p>
+        <p className="text-muted-foreground">General Enquiry not found</p>
         <Button onClick={() => navigate("/customization-enquiries")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to List
@@ -119,7 +119,7 @@ export default function CustomizationEnquiryDetails() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Customization Enquiry Details</h1>
+            <h1 className="text-2xl font-bold">General Enquiry Details</h1>
             <p className="text-sm text-muted-foreground">
               Enquiry #{enquiry.id}
             </p>
@@ -322,7 +322,7 @@ export default function CustomizationEnquiryDetails() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              customization enquiry from {enquiry.first_name} {enquiry.last_name} and remove all associated data.
+              General Enquiry from {enquiry.first_name} {enquiry.last_name} and remove all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

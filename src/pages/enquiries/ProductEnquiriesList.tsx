@@ -283,7 +283,7 @@ export default function ProductEnquiriesList() {
         }}
         onExport={handleExport}
         title="Product Enquiries"
-        searchPlaceholder="Search enquiries..."
+        searchPlaceholder="Search enquiries by Name, Email..."
       />
 
       {/* Delete Confirmation Dialog */}

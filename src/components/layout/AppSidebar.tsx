@@ -66,7 +66,7 @@ const ordersSection = [
 const enquiriesSection = [
   { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
   { title: "Product Enquiries", url: "/product-enquiries", icon: Package },
-  { title: "Request Enquiries", url: "/customization-enquiries", icon: Palette },
+  { title: "General Enquiries", url: "/customization-enquiries", icon: Palette },
   { title: "Lead Generation", url: "/lead-generation", icon: Users },
   {
     title: "Newsletter Subscriptions",
@@ -408,6 +408,7 @@ export function AppSidebar() {
         "/customization-enquiries",
         "/lead-generation",
         "/newsletter-subscriptions",
+        "/project-enquiries",
       ].some((r) => path.includes(r))
     ) {
       setEnquiriesOpen(true);

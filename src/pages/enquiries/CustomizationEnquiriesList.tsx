@@ -76,7 +76,7 @@ export default function CustomizationEnquiriesList() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load customization enquiries",
+        description: "Failed to load General Enquiries",
         variant: "destructive",
       });
     } finally {
@@ -92,13 +92,13 @@ export default function CustomizationEnquiriesList() {
       await deleteCustomizationEnquiry(deleteItemId);
       toast({
         title: "Success",
-        description: "Customization enquiry deleted successfully",
+        description: "General Enquiry deleted successfully",
       });
       loadEnquiries();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete customization enquiry",
+        description: "Failed to delete General Enquiry",
         variant: "destructive",
       });
     } finally {
@@ -145,7 +145,7 @@ export default function CustomizationEnquiriesList() {
         { wch: 25 }, // Submitted At
       ];
 
-      exportToExcel(formattedData, `customization_enquiries_${dateStr}`, 'Customization Enquiries', columnWidths);
+      exportToExcel(formattedData, `general_enquiries_${dateStr}`, 'General Enquiries', columnWidths);
 
       toast({
         title: "Success",
@@ -293,8 +293,8 @@ export default function CustomizationEnquiriesList() {
           onPageSizeChange: setPageSize,
         }}
         onExport={handleExport}
-        title="Customization Enquiries"
-        searchPlaceholder="Search enquiries..."
+        title="General Enquiries"
+        searchPlaceholder="Search enquiries by Name, Email..."
       />
 
       {/* Delete Confirmation Dialog */}
@@ -307,7 +307,7 @@ export default function CustomizationEnquiriesList() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              customization enquiry and remove its data from the servers.
+              General Enquiry and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

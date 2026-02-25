@@ -274,7 +274,7 @@ export default function ContactEnquiriesList() {
         }}
         onExport={handleExport}
         title="Contact Enquiries"
-        searchPlaceholder="Search enquiries..."
+        searchPlaceholder="Search enquiries by Name, Email..."
       />
 
       {/* Delete Confirmation Dialog */}

@@ -51,7 +51,7 @@ export interface CustomizationEnquiryResponse {
   data: CustomizationEnquiry;
 }
 
-// Fetch all customization enquiries
+// Fetch all General Enquiries
 export const fetchCustomizationEnquiries = async (
   page: number = 1,
   limit: number = 10,
@@ -70,12 +70,12 @@ export const fetchCustomizationEnquiries = async (
   return apiCall('/enquiries/customization', { params });
 };
 
-// Fetch single customization enquiry
+// Fetch single General Enquiry
 export const fetchCustomizationEnquiryById = async (id: number): Promise<CustomizationEnquiryResponse> => {
   return apiCall(`/enquiries/customization/${id}`);
 };
 
-// Delete customization enquiry
+// Delete General Enquiry
 export const deleteCustomizationEnquiry = async (id: number): Promise<void> => {
   return apiCall(`/enquiries/customization/${id}`, {
     method: 'DELETE',
