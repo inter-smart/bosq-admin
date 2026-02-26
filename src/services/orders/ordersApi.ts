@@ -11,6 +11,7 @@ export interface Order {
     discount_total: string;
     tax_total: string;
     grand_total: string;
+    est_delivery_details?: string | null;
     createdAt: string;
     updatedAt: string;
     user?: {
