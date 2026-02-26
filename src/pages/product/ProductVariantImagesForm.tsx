@@ -79,25 +79,13 @@ function SortableImageCard({ image, onRemove, onUpdate, onSetPrimary, onThumbnai
               {image.thumbnailPreview ? (
                 <div className="relative w-24 h-16 mt-1 rounded border overflow-hidden">
                   <img src={image.thumbnailPreview} alt="Thumbnail" className="w-full h-full object-cover" />
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="icon"
-                    className="absolute top-0 right-0 h-5 w-5"
-                    onClick={handleRemoveThumbnail}
-                  >
+                  <Button type="button" variant="destructive" size="icon" className="absolute top-0 right-0 h-5 w-5" onClick={handleRemoveThumbnail}>
                     <X className="h-3 w-3" />
                   </Button>
                 </div>
               ) : (
                 <div className="mt-1">
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleThumbnailSelect}
-                    className="hidden"
-                    id={`thumbnail-${image.id}`}
-                  />
+                  <Input type="file" accept="image/*" onChange={handleThumbnailSelect} className="hidden" id={`thumbnail-${image.id}`} />
                   <Label htmlFor={`thumbnail-${image.id}`} className="cursor-pointer">
                     <div className="w-24 h-16 border-2 border-dashed rounded flex items-center justify-center text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors">
                       <Upload className="h-4 w-4" />
@@ -190,10 +178,7 @@ export default function ProductVariantImagesForm() {
 
   const loadVariant = async (id: number) => {
     try {
-      const [variantResponse, imagesResponse] = await Promise.all([
-        fetchProductVariantById(id),
-        fetchProductVariantImages(id),
-      ]);
+      const [variantResponse, imagesResponse] = await Promise.all([fetchProductVariantById(id), fetchProductVariantImages(id)]);
       setVariant(variantResponse.data);
       const hasPrimary = imagesResponse.data.list.some((img) => img.is_primary);
       setExistingPrimaryImage(hasPrimary);
@@ -462,7 +447,7 @@ export default function ProductVariantImagesForm() {
               />
               <Label htmlFor="image-upload" className="cursor-pointer">
                 <Button type="button" variant="secondary" asChild>
-                  <span>Select Images</span>
+                  <span>Select Media</span>
                 </Button>
               </Label>
             </div>
@@ -479,7 +464,15 @@ export default function ProductVariantImagesForm() {
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={images.map((img) => img.id)} strategy={verticalListSortingStrategy}>
                   {images.map((image) => (
-                    <SortableImageCard key={image.id} image={image} onRemove={removeImage} onUpdate={updateImage} onSetPrimary={setPrimaryImage} onThumbnailChange={handleThumbnailChange} hasPrimaryImage={existingPrimaryImage} />
+                    <SortableImageCard
+                      key={image.id}
+                      image={image}
+                      onRemove={removeImage}
+                      onUpdate={updateImage}
+                      onSetPrimary={setPrimaryImage}
+                      onThumbnailChange={handleThumbnailChange}
+                      hasPrimaryImage={existingPrimaryImage}
+                    />
                   ))}
                 </SortableContext>
               </DndContext>
