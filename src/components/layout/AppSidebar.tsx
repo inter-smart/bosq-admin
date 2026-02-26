@@ -36,6 +36,7 @@ import {
   Star,
   Box,
   Inbox,
+  Upload,
 } from "lucide-react";
 
 import {
@@ -222,6 +223,7 @@ const productsSection = [
   { title: "Base Product", url: "/base-products", icon: Box },
   { title: "All Models", url: "/product-models/all", icon: Layers },
   { title: "All Variants", url: "/product-variants/all", icon: Package },
+  { title: "Bulk Upload", url: "/product-bulk-upload", icon: Upload },
 ];
 
 const projectsSection = [
@@ -507,6 +509,7 @@ export function AppSidebar() {
         "/base-products",
         "/product-models/all",
         "/product-variants/all",
+        "/product-bulk-upload",
       ].some((r) => path.includes(r))
     ) {
       setProductsOpen(true);
