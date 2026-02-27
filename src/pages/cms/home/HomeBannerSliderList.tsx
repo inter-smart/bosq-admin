@@ -244,9 +244,6 @@ export default function HomeBannerSliderList() {
     },
   ];
 
-  if (loading) {
-    return <div>Loading home banner items...</div>;
-  }
 
   return (
     <>

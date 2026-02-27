@@ -133,7 +133,7 @@ export const commonValidations = {
       .trim()
       .regex(
         /^(\/.*|https?:\/\/[^\s/$.?#].[^\s]*)$/,
-        `${fieldName} must be a valid internal path (starting with /) or an external URL`,
+        `${fieldName} must be a valid internal path (starting with /) or an external URL (starting with http:// or https://)`,
       ),
 
   externalUrl: (fieldName: string) =>
