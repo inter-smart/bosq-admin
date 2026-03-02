@@ -15,8 +15,6 @@ import {
   Clock,
   Zap,
   Download,
-  Images,
-  Info,
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -143,8 +141,9 @@ function downloadTemplate() {
   // ── Sheet 2: product_models ────────────────────────────────────────────
   // base_title must match a title from product_base sheet
   // No "slug" column — slug is auto-generated from title on insert
+  // media_path: single filename from uploads/bulk/ (upload via Bulk Image Upload first)
   const modelHeaders = [
-    "base_title", "title", "title_ar", "code", "base_price", "sort_order", "status",
+    "base_title", "title", "title_ar", "code", "base_price", "sort_order", "status", "media_path",
   ];
   const modelSample = [
     "Executive Chair",
@@ -154,6 +153,7 @@ function downloadTemplate() {
     299.99,
     1,
     true,
+    "ec-blk-model.jpg",
   ];
   const modelSample2 = [
     "Executive Chair",
@@ -163,6 +163,7 @@ function downloadTemplate() {
     319.99,
     2,
     true,
+    "ec-wht-model.jpg",
   ];
 
   const modelWs = XLSX.utils.aoa_to_sheet([modelHeaders, modelSample, modelSample2]);
@@ -259,45 +260,345 @@ function downloadTemplate() {
   XLSX.writeFile(wb, "bosq_bulk_upload_template.xlsx");
 }
 
-/* ─── Helper: Image Workflow Note ────────────────────────────────────────── */
+/* ─── Helper: Upload Guide (tabbed) ─────────────────────────────────────── */
 
-function ImageWorkflowNote() {
+type GuideTab = "checklist" | "images" | "data" | "upsert";
+
+function UploadGuide() {
+  const [tab, setTab] = useState<GuideTab>("checklist");
+
+  const tabs: { key: GuideTab; label: string }[] = [
+    { key: "checklist", label: "Pre-Upload Checklist" },
+    { key: "images",    label: "Image & Media Rules"  },
+    { key: "data",      label: "Sheet & Data Rules"   },
+    { key: "upsert",    label: "Re-upload Behavior"   },
+  ];
+
   return (
-    <div className="rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/30 p-4 mb-6">
-      <div className="flex items-start gap-3">
-        <Images className="h-5 w-5 text-blue-500 mt-0.5 shrink-0" />
-        <div className="flex-1 space-y-2">
-          <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
-            Step 0 — Upload Images Before Creating the Excel File
-          </p>
-          <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-            Product images and videos must be uploaded to the server <strong>before</strong> you run
-            the bulk data upload. Use the <strong>Bulk Image Upload</strong> page to upload your files
-            — they are saved to <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">uploads/bulk/</code> using their
-            original filenames. Then reference those filenames in the Excel sheet as shown below.
-          </p>
-          <div className="rounded-md bg-blue-100 dark:bg-blue-900/40 p-3 font-mono text-[11px] text-blue-900 dark:text-blue-200 space-y-1">
-            <p><span className="text-blue-500">cover_image</span>      → <span className="opacity-70">single filename, e.g.</span> <strong>ec-blk-m-cover.jpg</strong></p>
-            <p><span className="text-blue-500">hover_image</span>       → <span className="opacity-70">single filename, e.g.</span> <strong>ec-blk-m-hover.jpg</strong></p>
-            <p><span className="text-blue-500">images</span>            → <span className="opacity-70">comma-separated, images + videos in order, e.g.</span> <strong>img1.jpg,img2.jpg,tour.mp4</strong></p>
-            <p><span className="text-blue-500">video_thumbnails</span>  → <span className="opacity-70">one thumbnail per video (in same order), e.g.</span> <strong>tour-thumb.jpg</strong></p>
-          </div>
-          <p className="text-[11px] text-blue-600 dark:text-blue-400">
-            <Info className="inline h-3 w-3 mr-1" />
-            Video files (<code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">.mp4 .webm .mov .avi .mkv</code>) in
-            the <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">images</code> column are automatically detected.
-            Each video must have a matching thumbnail in <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">video_thumbnails</code> (in the same order as they appear).
-            Validation will report an error for any file not found in <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">uploads/bulk/</code>.
-          </p>
-          <Link
-            to="/product-bulk-image-upload"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            Go to Bulk Image Upload
-            <ArrowRight className="h-3 w-3" />
-          </Link>
+    <Card className="mb-6 border-amber-200 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/10">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-300">
+          <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+          Upload Guide — Read Before Proceeding
+        </CardTitle>
+        <CardDescription className="text-xs text-amber-700/80 dark:text-amber-400/80">
+          Follow all rules below to avoid validation errors and ensure correct data import.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pt-0 space-y-4">
+        {/* Tab bar */}
+        <div className="flex gap-1 rounded-lg bg-muted p-1 text-xs flex-wrap">
+          {tabs.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`flex-1 min-w-fit rounded-md px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
+                tab === t.key
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
         </div>
+
+        {/* ── Tab: Pre-Upload Checklist ────────────────────────────────── */}
+        {tab === "checklist" && (
+          <div className="space-y-3">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+              Complete all steps in order before uploading
+            </p>
+            {([
+              {
+                title: "Upload all images and videos first",
+                desc: "Every image or video you plan to reference in the Excel sheet must be uploaded to the server before you run validation. Use the Bulk Image Upload page — files are stored under uploads/bulk/ using their original filenames.",
+                link: true,
+              },
+              {
+                title: "Prepare your Excel workbook with exactly 3 sheets",
+                desc: 'The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). Use the Download Template button above to get a correctly named file.',
+              },
+              {
+                title: "Fill all required fields — leave no required cell empty",
+                desc: "Fields marked as required (red dot in the Column Reference) must be present and non-empty in every row. A single missing required field will cause that row — and the entire upload — to fail validation.",
+              },
+              {
+                title: "Ensure all cross-sheet references match exactly",
+                desc: "base_title in product_models must exactly match a title in product_base. base_title + model_title in product_variants must exactly match a row in product_models. Any mismatch is a validation error.",
+              },
+              {
+                title: "Verify every image filename before saving the file",
+                desc: "Filenames in media_path (product_models), cover_image, hover_image, images, and video_thumbnails (product_variants) must already exist in uploads/bulk/. Filenames are case-sensitive. Do not include the folder path — filenames only.",
+              },
+              {
+                title: "Validate first, approve only after zero errors",
+                desc: "Click Validate File and fix every reported error before clicking Approve. Do not bypass the validation step. The approval button only becomes available after a clean validation pass.",
+              },
+            ] as { title: string; desc: string; link?: boolean }[]).map((item, i) => (
+              <div key={i} className="flex gap-3">
+                <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  {i + 1}
+                </div>
+                <div className="space-y-0.5">
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                  {item.link && (
+                    <Link
+                      to="/product-bulk-image-upload"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline mt-0.5"
+                    >
+                      Go to Bulk Image Upload <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Tab: Image & Media Rules ─────────────────────────────────── */}
+        {tab === "images" && (
+          <div className="space-y-4">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+              All filenames must be pre-uploaded to uploads/bulk/ before validation
+            </p>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold font-mono text-primary">product_models</p>
+              <FieldRule
+                field="media_path"
+                required
+                desc="Single filename. The main display image for the model."
+                example="ec-blk-model.jpg"
+              />
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold font-mono text-primary">product_variants</p>
+              <div className="space-y-2">
+                <FieldRule
+                  field="cover_image"
+                  desc="Single filename. The primary card/cover image shown in listings."
+                  example="ec-blk-m-cover.jpg"
+                />
+                <FieldRule
+                  field="hover_image"
+                  desc="Single filename. The alternate image shown on hover."
+                  example="ec-blk-m-hover.jpg"
+                />
+                <FieldRule
+                  field="images"
+                  desc="Comma-separated filenames. Can mix images and videos in any display order. Videos are auto-detected by extension — no extra column needed."
+                  example="img1.jpg, img2.jpg, tour.mp4"
+                />
+                <FieldRule
+                  field="video_thumbnails"
+                  desc="Comma-separated thumbnail filenames — one per video in the images column, in the exact same order the videos appear. Must not contain more entries than there are videos."
+                  example="tour-thumb.jpg"
+                />
+              </div>
+            </div>
+
+            <div className="rounded-md bg-muted/50 border p-3 space-y-1.5 text-xs text-muted-foreground">
+              <p className="font-semibold text-foreground">Video Detection & Thumbnail Rules</p>
+              <p>
+                Supported video extensions:{" "}
+                <code className="bg-muted px-1 rounded">.mp4</code>{" "}
+                <code className="bg-muted px-1 rounded">.webm</code>{" "}
+                <code className="bg-muted px-1 rounded">.mov</code>{" "}
+                <code className="bg-muted px-1 rounded">.avi</code>{" "}
+                <code className="bg-muted px-1 rounded">.mkv</code>
+              </p>
+              <p>
+                Thumbnails are mapped to videos positionally — the 1st thumbnail goes with the 1st video found in{" "}
+                <code className="bg-muted px-1 rounded">images</code>, the 2nd thumbnail with the 2nd video, and so on.
+              </p>
+              <p>Having more thumbnails than videos is a validation error.</p>
+            </div>
+
+            <div className="rounded-md bg-destructive/5 border border-destructive/20 p-3 space-y-1 text-xs text-destructive">
+              <p className="font-semibold flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" /> Strict Rules — Violations Fail Validation
+              </p>
+              <p>• Filenames are <strong>case-sensitive</strong> — <code>Cover.jpg</code> and <code>cover.jpg</code> are different files</p>
+              <p>• Enter filenames <strong>only</strong> — do not include the <code>uploads/bulk/</code> prefix</p>
+              <p>• No spaces around commas in comma-separated lists</p>
+              <p>• Files must be uploaded to the server <strong>before</strong> you validate the Excel file</p>
+              <p>• Any filename not found in <code>uploads/bulk/</code> will be reported as a validation error</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Tab: Sheet & Data Rules ──────────────────────────────────── */}
+        {tab === "data" && (
+          <div className="space-y-4">
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">Sheet Linking (cross-sheet references)</p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <p>
+                  <code className="bg-muted px-1 rounded text-foreground">product_models → base_title</code>{" "}
+                  must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> value in the product_base sheet.
+                </p>
+                <p>
+                  <code className="bg-muted px-1 rounded text-foreground">product_variants → base_title</code>{" "}
+                  must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> value in the product_base sheet.
+                </p>
+                <p>
+                  <code className="bg-muted px-1 rounded text-foreground">product_variants → model_title</code>{" "}
+                  must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> from product_models, under the same{" "}
+                  <code className="bg-muted px-1 rounded text-foreground">base_title</code>.
+                </p>
+                <p className="pt-1 text-[11px]">
+                  <strong className="text-foreground">Tip:</strong> Copy the title values directly from the product_base and product_models sheets — do not retype them, as even a single extra space will cause a mismatch error.
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">Data Types</p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <p>
+                  <span className="font-medium text-foreground">Boolean fields</span>{" "}
+                  (<code className="bg-muted px-1 rounded">status</code>, <code className="bg-muted px-1 rounded">is_primary</code>)
+                  — accepted values: <code className="bg-muted px-1 rounded">true</code> / <code className="bg-muted px-1 rounded">false</code>,{" "}
+                  <code className="bg-muted px-1 rounded">1</code> / <code className="bg-muted px-1 rounded">0</code>,{" "}
+                  <code className="bg-muted px-1 rounded">yes</code> / <code className="bg-muted px-1 rounded">no</code>
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Decimal fields</span>{" "}
+                  (<code className="bg-muted px-1 rounded">base_price</code>, <code className="bg-muted px-1 rounded">price</code>)
+                  — must be valid numbers, e.g. <code className="bg-muted px-1 rounded">299.99</code>
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Integer fields</span>{" "}
+                  (<code className="bg-muted px-1 rounded">stock</code>, <code className="bg-muted px-1 rounded">sort_order</code>)
+                  — must be whole numbers, e.g. <code className="bg-muted px-1 rounded">50</code>
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">Categories — product_variants</p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <p>
+                  Enter comma-separated category <strong>slugs</strong> (not display names).{" "}
+                  Example: <code className="bg-muted px-1 rounded">office-chairs,ergonomic</code>
+                </p>
+                <p>All slugs must already exist in the database — unknown slugs are a validation error.</p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">Attributes — product_variants</p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <p>
+                  Enter pipe-separated <code className="bg-muted px-1 rounded">attribute_slug:value_slug</code> pairs.{" "}
+                  Example: <code className="bg-muted px-1 rounded">color:black|size:medium</code>
+                </p>
+                <p>Both the attribute slug and the value slug must exist in the database — unknown slugs are a validation error.</p>
+                <p>A variant can have multiple attribute pairs separated by <code className="bg-muted px-1 rounded">|</code>.</p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">Slugs (product_base & product_models)</p>
+              <p className="text-xs text-muted-foreground">
+                Slugs are <strong>auto-generated</strong> from the <code className="bg-muted px-1 rounded">title</code> field — do{" "}
+                <strong>not</strong> include a slug column in either sheet. If the generated slug already exists, a numeric suffix is appended automatically (e.g. <code className="bg-muted px-1 rounded">my-chair-1</code>). Slugs are <strong>never changed</strong> on re-upload to preserve existing URLs.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Tab: Re-upload Behavior ──────────────────────────────────── */}
+        {tab === "upsert" && (
+          <div className="space-y-4">
+            <div className="rounded-md bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30 p-3 text-xs text-green-800 dark:text-green-300 space-y-1">
+              <p className="font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5" /> Re-uploading the same file is safe
+              </p>
+              <p>
+                If a record already exists in the database it will be <strong>updated</strong> with the new values from the sheet.
+                Existing records are never deleted. New rows create new records; existing rows update existing records.
+              </p>
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">How existing records are matched</p>
+              <div className="space-y-2 text-xs text-muted-foreground">
+                <div className="flex gap-2">
+                  <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductBase</code>
+                  <span>Matched by <code className="bg-muted px-1 rounded">title</code> (case-sensitive)</span>
+                </div>
+                <div className="flex gap-2">
+                  <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductModels</code>
+                  <span>Matched by <code className="bg-muted px-1 rounded">base_title + title</code> combination</span>
+                </div>
+                <div className="flex gap-2">
+                  <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductVariants</code>
+                  <span>Matched by <code className="bg-muted px-1 rounded">sku</code> first; falls back to <code className="bg-muted px-1 rounded">product_code</code> if no sku match. A variant without both fields is always created as new.</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg border p-3 space-y-2">
+              <p className="text-xs font-semibold">What changes on update</p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <p>
+                  <span className="font-medium text-foreground">All data fields</span> — overwritten with the new values from the sheet
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Slug</span> — <strong>never changed</strong> on update to avoid breaking existing product URLs
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Categories & Attributes</span> — fully replaced: all existing links for updated variants are removed, then the new set from the sheet is inserted
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Gallery Images</span> — add-only: new filenames are inserted; images that already exist for a variant are never removed or duplicated
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-md bg-muted/50 border p-3 text-xs text-muted-foreground space-y-1.5">
+              <p className="font-medium text-foreground">Common re-upload scenarios</p>
+              <p>• <strong>Price/stock change</strong> — update the value in the sheet and re-upload; variants will be updated, no errors</p>
+              <p>• <strong>New variant added</strong> — add the row to the sheet; existing rows update, new row creates a new variant</p>
+              <p>• <strong>Image replaced</strong> — the new cover_image path overwrites the old one; old gallery images remain (use the product editor to remove them)</p>
+              <p>• <strong>Category changed</strong> — update the categories cell; the old category links are removed and the new ones are applied</p>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─── Field Rule Row ─────────────────────────────────────────────────────── */
+
+function FieldRule({
+  field,
+  required = false,
+  desc,
+  example,
+}: {
+  field: string;
+  required?: boolean;
+  desc: string;
+  example: string;
+}) {
+  return (
+    <div className="rounded-md bg-muted/40 p-2 space-y-0.5">
+      <div className="flex items-center gap-1.5">
+        <code className="text-[11px] font-semibold text-primary">{field}</code>
+        {required && (
+          <Badge variant="destructive" className="text-[9px] px-1 py-0">required</Badge>
+        )}
       </div>
+      <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
+      <p className="text-[11px] font-mono text-muted-foreground/70">
+        e.g. <strong className="text-muted-foreground">{example}</strong>
+      </p>
     </div>
   );
 }
@@ -321,8 +622,9 @@ function ColumnReference() {
     {
       name: "product_models",
       // base_title links to a title in product_base; slug is auto-generated
-      required: ["base_title", "title", "title_ar"],
-      optional: ["code", "base_price", "sort_order", "status"],
+      // media_path: filename in uploads/bulk/ (same convention as variant cover_image)
+      required: ["base_title", "title", "title_ar", "media_path", "base_price"],
+      optional: ["code", "sort_order", "status"],
     },
     {
       name: "product_variants",
@@ -388,7 +690,10 @@ function ColumnReference() {
               <strong>Slugs:</strong> Auto-generated from <code className="bg-muted px-1 rounded">title</code> — do not include a slug column.
             </p>
             <p>
-              <strong>Images:</strong> Files must exist in <code className="bg-muted px-1 rounded">uploads/bulk/</code> before running this upload.
+              <strong>Images:</strong> All image filenames (<code className="bg-muted px-1 rounded">media_path</code> in product_models,{" "}
+              <code className="bg-muted px-1 rounded">cover_image</code>, <code className="bg-muted px-1 rounded">hover_image</code>,
+              and <code className="bg-muted px-1 rounded">images</code> in product_variants) must exist in{" "}
+              <code className="bg-muted px-1 rounded">uploads/bulk/</code> before running this upload.
               See the image workflow note above.
             </p>
           </div>
@@ -517,20 +822,34 @@ function JobStatusCard({
             </div>
 
             {status.state === "completed" && status.result && (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {[
-                  { label: "Bases", value: status.result.bases_inserted },
-                  { label: "Models", value: status.result.models_inserted },
-                  { label: "Variants", value: status.result.variants_inserted },
-                  { label: "Category Links", value: status.result.category_links },
-                  { label: "Attribute Links", value: status.result.attribute_links },
-                  { label: "Images", value: status.result.images_inserted ?? 0 },
-                ].map((stat) => (
-                  <div key={stat.label} className="rounded-lg border p-3 text-center">
-                    <p className="text-2xl font-bold text-primary">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-                  </div>
-                ))}
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {[
+                    { label: "Bases Created", value: status.result.bases_created },
+                    { label: "Bases Updated", value: status.result.bases_updated },
+                    { label: "Models Created", value: status.result.models_created },
+                    { label: "Models Updated", value: status.result.models_updated },
+                    { label: "Variants Created", value: status.result.variants_created },
+                    { label: "Variants Updated", value: status.result.variants_updated },
+                  ].map((stat) => (
+                    <div key={stat.label} className="rounded-lg border p-3 text-center">
+                      <p className="text-2xl font-bold text-primary">{stat.value}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: "Category Links", value: status.result.category_links },
+                    { label: "Attribute Links", value: status.result.attribute_links },
+                    { label: "Images", value: status.result.images_inserted ?? 0 },
+                  ].map((stat) => (
+                    <div key={stat.label} className="rounded-lg border p-3 text-center">
+                      <p className="text-2xl font-bold text-primary">{stat.value}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -645,8 +964,8 @@ export default function ProductBulkUpload() {
       {/* Step Indicator */}
       <StepIndicator phase={phase} />
 
-      {/* Image Workflow Note */}
-      <ImageWorkflowNote />
+      {/* Upload Guide */}
+      <UploadGuide />
 
       {/* Column Reference */}
       <ColumnReference />

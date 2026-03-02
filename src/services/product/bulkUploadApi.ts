@@ -46,9 +46,12 @@ export interface UploadJobStatus {
   progress: number;
   created_at: string;
   result?: {
-    bases_inserted: number;
-    models_inserted: number;
-    variants_inserted: number;
+    bases_created: number;
+    bases_updated: number;
+    models_created: number;
+    models_updated: number;
+    variants_created: number;
+    variants_updated: number;
     category_links: number;
     attribute_links: number;
     images_inserted: number;
