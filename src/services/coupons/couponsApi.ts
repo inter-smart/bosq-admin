@@ -50,23 +50,21 @@ export interface CouponItemResponse {
   data: Coupon;
 }
 
-// Extended coupon type with nested relations for edit mode
+// Extended coupon type with nested relations for edit mode.
+// Category is now M2M on variants — each scope type carries the category
+// through its variant(s) rather than through a product.category FK.
 export interface CouponWithRelations extends Coupon {
   variant?: {
     id: number;
     sku: string;
+    // Categories on the variant (M2M) — first one used to pre-populate cascade
+    categories: { id: number; name: string; name_ar: string; slug: string; parent_id: number | null }[];
     productModel: {
       id: number;
       title: string;
       product: {
         id: number;
         title: string;
-        category: {
-          id: number;
-          name: string;
-          parent_id: number | null;
-          parent?: { id: number; name: string };
-        };
       };
     };
   };
@@ -76,23 +74,24 @@ export interface CouponWithRelations extends Coupon {
     product: {
       id: number;
       title: string;
-      category: {
-        id: number;
-        name: string;
-        parent_id: number | null;
-        parent?: { id: number; name: string };
-      };
     };
+    // Variants with categories — first variant's first category pre-populates cascade
+    variants?: {
+      id: number;
+      categories: { id: number; name: string; name_ar: string; slug: string; parent_id: number | null }[];
+    }[];
   };
   product?: {
     id: number;
     title: string;
-    category: {
+    // Models → variants → categories for cascade pre-population in edit mode
+    models?: {
       id: number;
-      name: string;
-      parent_id: number | null;
-      parent?: { id: number; name: string };
-    };
+      variants?: {
+        id: number;
+        categories: { id: number; name: string; name_ar: string; slug: string; parent_id: number | null }[];
+      }[];
+    }[];
   };
   category?: {
     id: number;
@@ -206,9 +205,14 @@ export const fetchCategoriesForScope = async (): Promise<ProductCategoryResponse
   return apiCall("/coupons/product-category");
 };
 
-// Fetch products for scope selection (by category ID)
+// Fetch products for scope selection (by category ID) — used for category scope drill-down
 export const fetchProductsForScope = async (categoryId: number): Promise<ProductResponse> => {
   return apiCall(`/coupons/product/${categoryId}`);
+};
+
+// Fetch ALL active base products (no category filter) — for product/model/variant scope
+export const fetchAllProductsForScope = async (): Promise<ProductResponse> => {
+  return apiCall("/coupons/products");
 };
 
 // Fetch product models for scope selection (by product ID)
@@ -216,7 +220,14 @@ export const fetchModelsForScope = async (productId: number): Promise<ProductMod
   return apiCall(`/coupons/product-model/${productId}`);
 };
 
-// Fetch product variants for scope selection (by model ID)
-export const fetchVariantsForScope = async (modelId: number): Promise<ProductVariantResponse> => {
-  return apiCall(`/coupons/product-variant/${modelId}`);
+// Fetch categories of variants in a model — for variant scope category step
+export const fetchModelCategoriesForScope = async (modelId: number): Promise<ProductCategoryResponse> => {
+  return apiCall(`/coupons/model-categories/${modelId}`);
+};
+
+// Fetch product variants (by model ID, optionally filtered by category)
+export const fetchVariantsForScope = async (modelId: number, categoryId?: number): Promise<ProductVariantResponse> => {
+  const params: Record<string, string | number> = {};
+  if (categoryId) params.categoryId = categoryId;
+  return apiCall(`/coupons/product-variant/${modelId}`, { params });
 };

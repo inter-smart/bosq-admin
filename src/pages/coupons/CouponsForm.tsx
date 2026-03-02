@@ -17,8 +17,10 @@ import {
   updateCoupon,
   fetchCategoriesForScope,
   fetchProductsForScope,
+  fetchAllProductsForScope,
   fetchModelsForScope,
   fetchVariantsForScope,
+  fetchModelCategoriesForScope,
   ProductCategory,
   Product,
   ProductModel,
@@ -53,6 +55,9 @@ export default function CouponsForm() {
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
+  // For variant scope: category chosen after model (filters which variants to show)
+  const [selectedVariantCategoryId, setSelectedVariantCategoryId] = useState<number | null>(null);
+  const [variantCategories, setVariantCategories] = useState<ProductCategory[]>([]);
 
   // Ref to prevent scope reset when loading coupon data
   const isLoadingCouponRef = useRef(false);
@@ -88,27 +93,13 @@ export default function CouponsForm() {
     }
   }, [id, isEditing]);
 
-  // Load products when category/subcategory is selected
+  // For product/model/variant scope: pre-load all products when scope type changes
   useEffect(() => {
-    const categoryId = selectedSubCategoryId || selectedParentCategoryId;
-    if (categoryId && (watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant")) {
-      loadProducts(categoryId);
+    if (isLoadingCouponRef.current) return;
+    if (watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") {
+      loadAllProducts();
     }
-  }, [selectedSubCategoryId, selectedParentCategoryId, watchScopeType]);
-
-  // Load models when product is selected
-  useEffect(() => {
-    if (selectedProductId && (watchScopeType === "model" || watchScopeType === "variant")) {
-      loadModels(selectedProductId);
-    }
-  }, [selectedProductId, watchScopeType]);
-
-  // Load variants when model is selected
-  useEffect(() => {
-    if (selectedModelId && watchScopeType === "variant") {
-      loadVariants(selectedModelId);
-    }
-  }, [selectedModelId, watchScopeType]);
+  }, [watchScopeType]);
 
   // Reset scope selections when scope_type changes (but not during initial load)
   useEffect(() => {
@@ -118,8 +109,10 @@ export default function CouponsForm() {
     setSelectedSubCategoryId(null);
     setSelectedProductId(null);
     setSelectedModelId(null);
+    setSelectedVariantCategoryId(null);
     setProducts([]);
     setModels([]);
+    setVariantCategories([]);
     setVariants([]);
   }, [watchScopeType]);
 
@@ -168,9 +161,31 @@ export default function CouponsForm() {
     }
   };
 
-  const loadVariants = async (modelId: number) => {
+  const loadAllProducts = async () => {
     try {
-      const response = await fetchVariantsForScope(modelId);
+      const response = await fetchAllProductsForScope();
+      if (response.success) {
+        setProducts(response.data);
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to load products", variant: "destructive" });
+    }
+  };
+
+  const loadModelCategories = async (modelId: number) => {
+    try {
+      const response = await fetchModelCategoriesForScope(modelId);
+      if (response.success) {
+        setVariantCategories(response.data);
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to load categories", variant: "destructive" });
+    }
+  };
+
+  const loadVariants = async (modelId: number, categoryId?: number) => {
+    try {
+      const response = await fetchVariantsForScope(modelId, categoryId);
       if (response.success) {
         setVariants(response.data);
       }
@@ -234,50 +249,44 @@ export default function CouponsForm() {
   const populateCascadeSelections = async (data: CouponWithRelations) => {
     if (data.scope_type === "common") return;
 
-    let category: { id: number; parent_id: number | null } | null = null;
+    if (data.scope_type === "category" && data.category) {
+      // Category scope: pre-populate parent/subcategory cascade only
+      const category = data.category;
+      const parentCatId = category.parent_id || category.id;
+      const subCatId = category.parent_id ? category.id : null;
+      setSelectedParentCategoryId(parentCatId);
+      if (subCatId) setSelectedSubCategoryId(subCatId);
+      return;
+    }
+
+    // Product / Model / Variant scope: load all products, then cascade down
     let productId: number | null = null;
     let modelId: number | null = null;
+    let variantCategoryId: number | null = null;
 
-    // Extract category and IDs based on scope_type
     if (data.scope_type === "variant" && data.variant) {
-      category = data.variant.productModel.product.category;
       productId = data.variant.productModel.product.id;
       modelId = data.variant.productModel.id;
+      variantCategoryId = data.variant.categories?.[0]?.id ?? null;
     } else if (data.scope_type === "model" && data.model) {
-      category = data.model.product.category;
       productId = data.model.product.id;
       modelId = data.model.id;
     } else if (data.scope_type === "product" && data.product) {
-      category = data.product.category;
       productId = data.product.id;
-    } else if (data.scope_type === "category" && data.category) {
-      category = data.category;
     }
 
-    if (!category) return;
+    await loadAllProducts();
+    if (productId) setSelectedProductId(productId);
 
-    // Determine parent and subcategory
-    const parentCatId = category.parent_id || category.id;
-    const subCatId = category.parent_id ? category.id : null;
-
-    setSelectedParentCategoryId(parentCatId);
-    if (subCatId) setSelectedSubCategoryId(subCatId);
-
-    // Load products if needed (for product/model/variant scope)
-    if ((data.scope_type === "product" || data.scope_type === "model" || data.scope_type === "variant") && (subCatId || parentCatId)) {
-      await loadProducts(subCatId || parentCatId);
-      if (productId) setSelectedProductId(productId);
-    }
-
-    // Load models if needed (for model/variant scope)
     if ((data.scope_type === "model" || data.scope_type === "variant") && productId) {
       await loadModels(productId);
       if (modelId) setSelectedModelId(modelId);
     }
 
-    // Load variants if needed (for variant scope)
     if (data.scope_type === "variant" && modelId) {
-      await loadVariants(modelId);
+      await loadModelCategories(modelId);
+      if (variantCategoryId) setSelectedVariantCategoryId(variantCategoryId);
+      await loadVariants(modelId, variantCategoryId ?? undefined);
     }
   };
 
@@ -544,171 +553,93 @@ export default function CouponsForm() {
                 )}
               />
 
-              {/* Unified Cascade: Parent Category → Subcategory → Product → Model → Variant */}
+              {/* Cascade UI — layout differs per scope_type */}
               {watchScopeType !== "common" && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    {/* 1. Parent Category - always shown for non-common scope */}
-                    <div className="space-y-2">
-                      <FormLabel>Parent Category *</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          const catId = parseInt(value);
-                          setSelectedParentCategoryId(catId);
-                          setSelectedSubCategoryId(null);
-                          setSelectedProductId(null);
-                          setSelectedModelId(null);
-                          setProducts([]);
-                          setModels([]);
-                          setVariants([]);
-                          if (watchScopeType === "category") {
+
+                  {/* CATEGORY scope: Parent Category → Subcategory */}
+                  {watchScopeType === "category" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <FormLabel>Parent Category *</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            const catId = parseInt(value);
+                            setSelectedParentCategoryId(catId);
+                            setSelectedSubCategoryId(null);
                             form.setValue("scope_id", catId);
-                          } else {
-                            form.setValue("scope_id", null);
-                          }
-                        }}
-                        value={selectedParentCategoryId?.toString() || ""}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select parent category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((cat) => (
-                            <SelectItem key={cat.id} value={cat.id.toString()}>
-                              {cat.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {!selectedParentCategoryId && <p className="text-sm text-destructive">Parent category is required</p>}
-                    </div>
-
-                    {/* 2. Subcategory - shown after parent category is selected */}
-                    {selectedParentCategoryId && (
-                      <div className="space-y-2">
-                        <FormLabel>Subcategory {watchScopeType === "category" ? "(Optional)" : "*"}</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            const subCatId = parseInt(value);
-                            setSelectedSubCategoryId(subCatId);
-                            setSelectedProductId(null);
-                            setSelectedModelId(null);
-                            setProducts([]);
-                            setModels([]);
-                            setVariants([]);
-                            if (watchScopeType === "category") {
-                              form.setValue("scope_id", subCatId);
-                            } else {
-                              form.setValue("scope_id", null);
-                            }
                           }}
-                          value={selectedSubCategoryId?.toString() || ""}
+                          value={selectedParentCategoryId?.toString() || ""}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select subcategory" />
+                            <SelectValue placeholder="Select parent category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {categories
-                              .find((c) => c.id === selectedParentCategoryId)
-                              ?.children?.map((sub) => (
-                                <SelectItem key={sub.id} value={sub.id.toString()}>
-                                  {sub.name}
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-
-                    {/* 3. Product - shown for product/model/variant scope after category is selected */}
-                    {(watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") &&
-                      (selectedSubCategoryId || selectedParentCategoryId) && (
-                        <div className="space-y-2">
-                          <FormLabel>Base Product *</FormLabel>
-                          <Select
-                            onValueChange={(value) => {
-                              const prodId = parseInt(value);
-                              setSelectedProductId(prodId);
-                              setSelectedModelId(null);
-                              setModels([]);
-                              setVariants([]);
-                              if (watchScopeType === "product") {
-                                form.setValue("scope_id", prodId);
-                              } else {
-                                form.setValue("scope_id", null);
-                              }
-                            }}
-                            value={selectedProductId?.toString() || ""}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select product" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {products.map((prod) => (
-                                <SelectItem key={prod.id} value={prod.id.toString()}>
-                                  {prod.title}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          {!selectedProductId && (watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") && (
-                            <p className="text-sm text-destructive">Product is required</p>
-                          )}
-                        </div>
-                      )}
-
-                    {/* 4. Model - shown for model/variant scope after product is selected */}
-                    {(watchScopeType === "model" || watchScopeType === "variant") && selectedProductId && (
-                      <div className="space-y-2">
-                        <FormLabel>Model *</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            const modelId = parseInt(value);
-                            setSelectedModelId(modelId);
-                            setVariants([]);
-                            if (watchScopeType === "model") {
-                              form.setValue("scope_id", modelId);
-                            } else {
-                              form.setValue("scope_id", null);
-                            }
-                          }}
-                          value={selectedModelId?.toString() || ""}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select model" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {models.map((model) => (
-                              <SelectItem key={model.id} value={model.id.toString()}>
-                                {model.title}
+                            {categories.map((cat) => (
+                              <SelectItem key={cat.id} value={cat.id.toString()}>
+                                {cat.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        {!selectedModelId && (watchScopeType === "model" || watchScopeType === "variant") && (
-                          <p className="text-sm text-destructive">Model is required</p>
-                        )}
+                        {!selectedParentCategoryId && <p className="text-sm text-destructive">Parent category is required</p>}
                       </div>
-                    )}
 
-                    {/* 5. Variant - shown for variant scope after model is selected */}
-                    {watchScopeType === "variant" && selectedModelId && (
+                      {selectedParentCategoryId && (
+                        <div className="space-y-2">
+                          <FormLabel>Subcategory (Optional)</FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              const subCatId = parseInt(value);
+                              setSelectedSubCategoryId(subCatId);
+                              form.setValue("scope_id", subCatId);
+                            }}
+                            value={selectedSubCategoryId?.toString() || ""}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select subcategory" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {categories
+                                .find((c) => c.id === selectedParentCategoryId)
+                                ?.children?.map((sub) => (
+                                  <SelectItem key={sub.id} value={sub.id.toString()}>
+                                    {sub.name}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* PRODUCT scope: Base Product (all products) */}
+                  {watchScopeType === "product" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="scope_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Variant *</FormLabel>
-                            <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString() || ""}>
+                            <FormLabel>Base Product *</FormLabel>
+                            <Select
+                              onValueChange={(value) => {
+                                const prodId = parseInt(value);
+                                setSelectedProductId(prodId);
+                                field.onChange(prodId);
+                              }}
+                              value={field.value?.toString() || ""}
+                            >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select variant" />
+                                  <SelectValue placeholder="Select product" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {variants.map((variant) => (
-                                  <SelectItem key={variant.id} value={variant.id.toString()}>
-                                    {variant.sku}
+                                {products.map((prod) => (
+                                  <SelectItem key={prod.id} value={prod.id.toString()}>
+                                    {prod.title}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -717,10 +648,200 @@ export default function CouponsForm() {
                           </FormItem>
                         )}
                       />
-                    )}
-                  </div>
+                    </div>
+                  )}
 
-                  {/* Overall scope validation message */}
+                  {/* MODEL scope: Base Product → Model */}
+                  {watchScopeType === "model" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <FormLabel>Base Product *</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            const prodId = parseInt(value);
+                            setSelectedProductId(prodId);
+                            setSelectedModelId(null);
+                            setModels([]);
+                            form.setValue("scope_id", null);
+                            loadModels(prodId);
+                          }}
+                          value={selectedProductId?.toString() || ""}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select product" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {products.map((prod) => (
+                              <SelectItem key={prod.id} value={prod.id.toString()}>
+                                {prod.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {!selectedProductId && <p className="text-sm text-destructive">Product is required</p>}
+                      </div>
+
+                      {selectedProductId && (
+                        <FormField
+                          control={form.control}
+                          name="scope_id"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Model *</FormLabel>
+                              <Select
+                                onValueChange={(value) => {
+                                  const modelId = parseInt(value);
+                                  setSelectedModelId(modelId);
+                                  field.onChange(modelId);
+                                }}
+                                value={field.value?.toString() || ""}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select model" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {models.map((model) => (
+                                    <SelectItem key={model.id} value={model.id.toString()}>
+                                      {model.title}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* VARIANT scope: Base Product → Model → Category → Variant */}
+                  {watchScopeType === "variant" && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {/* 1. Base Product */}
+                      <div className="space-y-2">
+                        <FormLabel>Base Product *</FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            const prodId = parseInt(value);
+                            setSelectedProductId(prodId);
+                            setSelectedModelId(null);
+                            setSelectedVariantCategoryId(null);
+                            setModels([]);
+                            setVariantCategories([]);
+                            setVariants([]);
+                            form.setValue("scope_id", null);
+                            loadModels(prodId);
+                          }}
+                          value={selectedProductId?.toString() || ""}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select product" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {products.map((prod) => (
+                              <SelectItem key={prod.id} value={prod.id.toString()}>
+                                {prod.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {!selectedProductId && <p className="text-sm text-destructive">Product is required</p>}
+                      </div>
+
+                      {/* 2. Model */}
+                      {selectedProductId && (
+                        <div className="space-y-2">
+                          <FormLabel>Model *</FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              const modelId = parseInt(value);
+                              setSelectedModelId(modelId);
+                              setSelectedVariantCategoryId(null);
+                              setVariantCategories([]);
+                              setVariants([]);
+                              form.setValue("scope_id", null);
+                              loadModelCategories(modelId);
+                            }}
+                            value={selectedModelId?.toString() || ""}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select model" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {models.map((model) => (
+                                <SelectItem key={model.id} value={model.id.toString()}>
+                                  {model.title}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {!selectedModelId && <p className="text-sm text-destructive">Model is required</p>}
+                        </div>
+                      )}
+
+                      {/* 3. Category (of model's variants) */}
+                      {selectedModelId && (
+                        <div className="space-y-2">
+                          <FormLabel>Category *</FormLabel>
+                          <Select
+                            onValueChange={(value) => {
+                              const catId = parseInt(value);
+                              setSelectedVariantCategoryId(catId);
+                              setVariants([]);
+                              form.setValue("scope_id", null);
+                              loadVariants(selectedModelId!, catId);
+                            }}
+                            value={selectedVariantCategoryId?.toString() || ""}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {variantCategories.map((cat) => (
+                                <SelectItem key={cat.id} value={cat.id.toString()}>
+                                  {cat.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          {!selectedVariantCategoryId && <p className="text-sm text-destructive">Category is required</p>}
+                        </div>
+                      )}
+
+                      {/* 4. Variant */}
+                      {selectedVariantCategoryId && (
+                        <FormField
+                          control={form.control}
+                          name="scope_id"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Variant *</FormLabel>
+                              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString() || ""}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select variant" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {variants.map((variant) => (
+                                    <SelectItem key={variant.id} value={variant.id.toString()}>
+                                      {variant.sku}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* scope_id validation message */}
                   <FormField
                     control={form.control}
                     name="scope_id"
