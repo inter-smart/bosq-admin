@@ -212,18 +212,18 @@ const cmsSection = [
 ];
 
 const productsSection = [
-  { title: "Product Categories", url: "/product-categories", icon: Grid },
-  { title: "Product Attributes", url: "/product-attributes", icon: Sliders },
-  { title: "Product Sectors", url: "/product-sectors", icon: PieChart },
+  { title: "Categories", url: "/product-categories", icon: Grid },
+  { title: "Attributes", url: "/product-attributes", icon: Sliders },
+  { title: "Sectors", url: "/product-sectors", icon: PieChart },
   {
-    title: "Product Selling Points",
+    title: "Selling Points",
     url: "/product-selling-points",
     icon: Star,
   },
   { title: "Base Product", url: "/base-products", icon: Box },
   { title: "All Models", url: "/product-models/all", icon: Layers },
   { title: "All Variants", url: "/product-variants/all", icon: Package },
-  { title: "Bulk Upload", url: "/product-bulk-upload", icon: Upload },
+  { title: "Bulk Product Upload", url: "/product-bulk-upload", icon: Upload },
   { title: "Bulk Image Upload", url: "/product-bulk-image-upload", icon: Image },
 ];
 

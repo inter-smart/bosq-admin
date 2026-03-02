@@ -5,6 +5,7 @@ export interface AttributeValue {
   value: string;
   value_ar: string;
   attribute_id: number;
+  slug?: string;
   sort_order?: number;
   status?: boolean;
   deletedAt?: string | null;
