@@ -224,6 +224,7 @@ const productsSection = [
   { title: "All Models", url: "/product-models/all", icon: Layers },
   { title: "All Variants", url: "/product-variants/all", icon: Package },
   { title: "Bulk Upload", url: "/product-bulk-upload", icon: Upload },
+  { title: "Bulk Image Upload", url: "/product-bulk-image-upload", icon: Image },
 ];
 
 const projectsSection = [
@@ -510,6 +511,7 @@ export function AppSidebar() {
         "/product-models/all",
         "/product-variants/all",
         "/product-bulk-upload",
+        "/product-bulk-image-upload",
       ].some((r) => path.includes(r))
     ) {
       setProductsOpen(true);

@@ -51,6 +51,7 @@ export interface UploadJobStatus {
     variants_inserted: number;
     category_links: number;
     attribute_links: number;
+    images_inserted: number;
   };
   error?: string;
   attempts_made?: number;

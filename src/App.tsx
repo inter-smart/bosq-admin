@@ -90,6 +90,9 @@ const ManageBoughtTogether = lazy(
 const ProductBulkUpload = lazy(
   () => import("./pages/product/ProductBulkUpload"),
 );
+const ProductBulkImageUpload = lazy(
+  () => import("./pages/product/ProductBulkImageUpload"),
+);
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -737,6 +740,16 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductBulkUpload />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Bulk Image & Video Upload */}
+            <Route
+              path="/product-bulk-image-upload"
+              element={
+                <ProtectedRoute>
+                  <ProductBulkImageUpload />
                 </ProtectedRoute>
               }
             />
