@@ -140,7 +140,11 @@ export default function AttributeValuesList() {
       header: "Value",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("value")}</div>,
     },
-
+    {
+      accessorKey: "slug",
+      header: "Slug",
+      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
+    },
     {
       accessorKey: "media_path",
       header: "Media",
