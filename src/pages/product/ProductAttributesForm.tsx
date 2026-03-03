@@ -42,10 +42,19 @@ export default function ProductAttributesForm() {
       name: "",
       name_ar: "",
       code: "",
+      slug: "",
       sort_order: 1,
       status: true,
     },
   });
+
+    const slugify = (text: string) =>
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "") // remove special chars
+      .replace(/\s+/g, "-") // spaces to hyphen
+      .replace(/--+/g, "-"); // remove double hyphens
 
   useEffect(() => {
     if (isEditing && id) {
@@ -64,6 +73,7 @@ export default function ProductAttributesForm() {
           name: data.name || "",
           name_ar: data.name_ar || "",
           code: data.code || "",
+          slug: data.slug || "",
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
         });
@@ -87,6 +97,7 @@ export default function ProductAttributesForm() {
         name: data.name,
         name_ar: data.name_ar,
         code: data.code,
+        slug: data.slug,
         sort_order: data.sort_order,
         status: data.status,
       };
@@ -175,6 +186,9 @@ export default function ProductAttributesForm() {
                                 .replace(/[^a-z0-9_]/g, "");
                               form.setValue("code", generatedCode);
                             }
+
+                            const generatedSlug = slugify(e.target.value);
+                            form.setValue("slug", generatedSlug);
                           }}
                         />
                       </FormControl>
@@ -199,22 +213,16 @@ export default function ProductAttributesForm() {
                     </FormItem>
                   )}
                 />
+             
                 <FormField
                   control={form.control}
-                  name="code"
+                  name="slug"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Code</FormLabel>
+                      <FormLabel>Slug</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter attribute code (e.g., color, size)"
-                          {...field}
-                        />
+                        <Input placeholder="auto-generated-slug" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Unique identifier for this attribute (lowercase, no
-                        spaces)
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

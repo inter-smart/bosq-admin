@@ -45,6 +45,7 @@ export default function AttributeValuesForm() {
       value: "",
       value_ar: "",
       attribute_id: attributeId ? parseInt(attributeId) : 0,
+      slug: "",
       sort_order: 1,
       status: true,
     },
@@ -62,6 +63,31 @@ export default function AttributeValuesForm() {
     }
   }, [id, isEditing]);
 
+
+    const slugify = (text: string) =>
+      text
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "") // remove special chars
+        .replace(/\s+/g, "-") // spaces to hyphen
+        .replace(/--+/g, "-"); // remove double hyphens
+  
+    useEffect(() => {
+      const subscription = form.watch((value, { name }) => {
+        if (name === "value") {
+          const currentSlug = form.getValues("slug");
+  
+          if (isEditing || !currentSlug || !isEditing) {
+            form.setValue("slug", slugify(value.value || ""), {
+              shouldValidate: true,
+            });
+          }
+        }
+      });
+  
+      return () => subscription.unsubscribe();
+    }, [form, isEditing]);
+  
   const loadAttribute = async (attrId: number) => {
     try {
       const response = await fetchProductAttributeById(attrId);
@@ -85,6 +111,7 @@ export default function AttributeValuesForm() {
         form.reset({
           value: data.value || "",
           value_ar: data.value_ar || "",
+          slug: data.slug || "",
           attribute_id: data.attribute_id,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -110,6 +137,7 @@ export default function AttributeValuesForm() {
       formData.append("value", data.value);
       formData.append("value_ar", data.value_ar);
       formData.append("attribute_id", data.attribute_id.toString());
+      formData.append("slug", data.slug);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -213,7 +241,23 @@ export default function AttributeValuesForm() {
                     </FormItem>
                   )}
                 />
+
+                                  <FormField
+                    control={form.control}
+                    name="slug"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slug</FormLabel>
+                        <FormControl>
+                          <Input placeholder="auto-generated-slug" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
               </div>
+
 
             </CardContent>
           </Card>
