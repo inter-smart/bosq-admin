@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable, FilterOption } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,12 +10,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit } from "lucide-react";
-import { fetchCouponList, Coupon } from "@/services/coupons/couponsApi";
+import { MoreHorizontal, Edit, Ticket, CheckCircle, XCircle } from "lucide-react";
+import { fetchCouponList, fetchCouponStats, Coupon, CouponStats } from "@/services/coupons/couponsApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { format } from "date-fns";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { MetricsCard } from "@/components/dashboard/MetricsCard";
+
 
 export default function CouponsList() {
   const navigate = useNavigate();
@@ -28,6 +30,11 @@ export default function CouponsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [stats, setStats] = useState<CouponStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [status, setStatus] = useState<string>("all");
 
   // Debounce search query
   useEffect(() => {
@@ -38,9 +45,30 @@ export default function CouponsList() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery, startDate, endDate, status]);
+
   useEffect(() => {
     loadCoupons();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery, startDate, endDate, status]);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const response = await fetchCouponStats();
+        if (response.success) {
+          setStats(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to load coupon stats:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
 
   const loadCoupons = async () => {
     try {
@@ -54,6 +82,9 @@ export default function CouponsList() {
         currentPage,
         pageSize,
         debouncedSearchQuery,
+        startDate,
+        endDate,
+        status === "all" ? "" : status
       );
 
       if (response.success) {
@@ -206,26 +237,76 @@ export default function CouponsList() {
     },
   ];
 
+  const filters: FilterOption[] = [
+    {
+      id: "dateRange",
+      label: "Date Range",
+      type: "dateRange",
+      startDate: startDate,
+      endDate: endDate,
+      onStartDateChange: setStartDate,
+      onEndDateChange: setEndDate,
+    },
+    {
+      id: "status",
+      label: "Status",
+      type: "select",
+      value: status || "all",
+      onChange: setStatus,
+      options: [
+        { label: "All", value: "all" },
+        { label: "Active", value: "true" },
+        { label: "Inactive", value: "false" },
+      ],
+    },
+  ];
+
   return (
-    <DataTable
-      columns={columns}
-      data={coupons}
-      loading={loading}
-      searchQuery={searchQuery}
-      onSearchChange={setSearchQuery}
-      searching={searching}
-      pagination={{
-        currentPage,
-        pageSize,
-        totalCount,
-        totalPages: Math.ceil(totalCount / pageSize),
-        onPageChange: setCurrentPage,
-        onPageSizeChange: setPageSize,
-      }}
-      title="Coupons"
-      searchPlaceholder="Search coupons..."
-      onAdd={() => navigate("/coupons/create")}
-      addButtonText="Add Coupon"
-    />
+    <div className="space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <MetricsCard
+          title="Total Coupons"
+          value={statsLoading ? "—" : (stats?.totalCoupons ?? 0)}
+          icon={Ticket}
+          description="All coupons created"
+        />
+        <MetricsCard
+          title="Active Coupons"
+          value={statsLoading ? "—" : (stats?.activeCoupons ?? 0)}
+          icon={CheckCircle}
+          description="Currently valid coupons"
+        />
+        <MetricsCard
+          title="Expired Coupons"
+          value={statsLoading ? "—" : (stats?.expiredCoupons ?? 0)}
+          icon={XCircle}
+          description="Past end date"
+        />
+      </div>
+
+      {/* Coupons Table */}
+      <DataTable
+        columns={columns}
+        data={coupons}
+        loading={loading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searching={searching}
+        filters={filters}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalCount,
+          totalPages: Math.ceil(totalCount / pageSize),
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize,
+        }}
+        title="Coupons"
+        searchPlaceholder="Search coupons..."
+        onAdd={() => navigate("/coupons/create")}
+        addButtonText="Add Coupon"
+      />
+    </div>
   );
 }

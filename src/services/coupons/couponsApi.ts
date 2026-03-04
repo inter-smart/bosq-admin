@@ -161,11 +161,31 @@ export interface ProductVariantResponse {
    API Calls
 ======================= */
 
+export interface CouponStats {
+  totalCoupons: number;
+  activeCoupons: number;
+  expiredCoupons: number;
+}
+
+export interface CouponStatsResponse {
+  success: boolean;
+  message: string;
+  data: CouponStats;
+}
+
+// Fetch coupon stats (total, active, expired)
+export const fetchCouponStats = async (): Promise<CouponStatsResponse> => {
+  return apiCall("/coupons/stats");
+};
+
 // Fetch all coupons with pagination
 export const fetchCouponList = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  startDate?: string,
+  endDate?: string,
+  status?: string
 ): Promise<CouponResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -175,6 +195,10 @@ export const fetchCouponList = async (
   if (search) {
     params.search = search;
   }
+
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
+  if (status) params.status = status;
 
   return apiCall("/coupons", { params });
 };
