@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Eye } from "lucide-react";
 import { fetchUsers, User } from "@/services/users/usersApi";
 import { useToast } from "@/hooks/use-toast";
+import { exportToExcel, formatDateForExcel } from "@/utils/exportUtils";
 
 export default function UsersList() {
   const navigate = useNavigate();
@@ -67,6 +68,54 @@ export default function UsersList() {
     } finally {
       setLoading(false);
       setSearching(false);
+    }
+  };
+
+  const handleExport = async (type: "csv" | "excel" | "pdf", selectedRows?: User[]) => {
+    if (type !== "excel") return;
+
+    try {
+      let dataToExport = selectedRows;
+
+      // If no rows selected, export all data (from the current view/search)
+      if (!dataToExport || dataToExport.length === 0) {
+        // Fetch all data for export (using a large limit)
+        const response = await fetchUsers(1, 100000, debouncedSearchQuery);
+        if (response.success) {
+          dataToExport = response.data.list;
+        } else {
+          throw new Error("Failed to fetch data for export");
+        }
+      }
+
+      const formattedData = dataToExport.map((item, index) => ({
+        "S.No": index + 1,
+        "Name": item.name,
+        "Email": item.email,
+        "Phone": item.mobile ? `${item.country_code} ${item.mobile}` : "-",
+      }));
+
+      const dateStr = new Date().toISOString().split('T')[0];
+
+      const columnWidths = [
+        { wch: 10 }, // S.No
+        { wch: 25 }, // Name
+        { wch: 35 }, // Email
+        { wch: 20 }, // Phone
+      ];
+
+      exportToExcel(formattedData, `users_list_${dateStr}`, 'Users', columnWidths);
+
+      toast({
+        title: "Success",
+        description: "Excel file exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to export data",
+        variant: "destructive",
+      });
     }
   };
 
@@ -182,6 +231,7 @@ export default function UsersList() {
         onPageChange: setCurrentPage,
         onPageSizeChange: setPageSize,
       }}
+      onExport={handleExport}
       title="Users"
       searchPlaceholder="Search users..."
     />

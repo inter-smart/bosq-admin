@@ -80,7 +80,6 @@ export const fetchUsers = async (
 
   if (search) {
     params.search = search;
-    params.limit = 100000;
   }
 
   return apiCall('/users/users', { params });
