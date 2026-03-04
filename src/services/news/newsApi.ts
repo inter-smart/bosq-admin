@@ -9,14 +9,14 @@ export interface News {
   description_ar?: string;
   name?: string;
   name_ar?: string;
-  
+
   meta_title: string;
   meta_title_ar?: string;
   meta_description: string;
   meta_description_ar?: string;
   meta_keywords: string;
   meta_keywords_ar?: string;
-  
+
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt: string;
@@ -61,7 +61,10 @@ export interface NewsItemResponse {
 export const fetchNewsList = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  status?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<NewsResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -70,10 +73,22 @@ export const fetchNewsList = async (
 
   if (search) {
     params.search = search;
-    params.limit = 100000
+    params.limit = 100000;
   }
 
-  return apiCall('/news/news', { params });
+  if (status !== undefined && status !== "") {
+    params.status = status;
+  }
+
+  if (startDate) {
+    params.startDate = startDate;
+  }
+
+  if (endDate) {
+    params.endDate = endDate;
+  }
+
+  return apiCall("/news/news", { params });
 };
 
 // Fetch single news item

@@ -38,7 +38,10 @@ export default function BlogsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
+  const [pageSize, setPageSize] = useState(10);
+  const [status, setStatus] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<Blog>({
@@ -59,11 +62,8 @@ export default function BlogsList() {
   // Fetch blog items
   useEffect(() => {
     loadBlogItems();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery, status, startDate, endDate]);
 
-
-    
-    
   const loadBlogItems = async () => {
     try {
       if (debouncedSearchQuery) {
@@ -75,7 +75,10 @@ export default function BlogsList() {
       const response = await fetchBlogList(
         currentPage,
         pageSize,
-        debouncedSearchQuery
+        debouncedSearchQuery,
+        status,
+        startDate,
+        endDate
       );
 
       if (response.success) {
@@ -242,6 +245,30 @@ export default function BlogsList() {
     },
   ];
 
+  const filters: any[] = [
+    {
+      id: "dateRange",
+      label: "Published Date Range",
+      type: "dateRange",
+      startDate: startDate,
+      endDate: endDate,
+      onStartDateChange: (value: string) => setStartDate(value),
+      onEndDateChange: (value: string) => setEndDate(value),
+    },
+    {
+      id: "status",
+      label: "Status",
+      type: "select",
+      value: status || "all",
+      onChange: setStatus,
+      options: [
+        { label: "All", value: "all" },
+        { label: "Active", value: "true" },
+        { label: "Inactive", value: "false" },
+      ],
+    },
+  ];
+
   return (
     <>
       <DataTable
@@ -251,6 +278,7 @@ export default function BlogsList() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searching={searching}
+        filters={filters}
         pagination={{
           currentPage,
           pageSize,

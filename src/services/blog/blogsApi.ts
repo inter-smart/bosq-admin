@@ -16,7 +16,7 @@ export interface Blog {
   meta_keywords_ar?: string;
   other_meta?: string;
   other_meta_ar?: string;
-  
+
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt: string;
@@ -61,7 +61,10 @@ export interface BlogItemResponse {
 export const fetchBlogList = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  status?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<BlogResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -70,10 +73,22 @@ export const fetchBlogList = async (
 
   if (search) {
     params.search = search;
-    params.limit = 100000
+    params.limit = 100000;
   }
 
-  return apiCall('/blog/blogs', { params });
+  if (status !== undefined && status !== "") {
+    params.status = status;
+  }
+
+  if (startDate) {
+    params.startDate = startDate;
+  }
+
+  if (endDate) {
+    params.endDate = endDate;
+  }
+
+  return apiCall("/blog/blogs", { params });
 };
 
 // Fetch single blog item

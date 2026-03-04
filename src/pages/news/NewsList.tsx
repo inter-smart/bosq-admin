@@ -27,7 +27,7 @@ import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 
-export default function newsList() {
+export default function NewsList() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [newsItems, setNewsItems] = useState<News[]>([]);
@@ -38,7 +38,10 @@ export default function newsList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [pageSize, setPageSize] = useState(10); // ✅ Changed from const to state
+  const [pageSize, setPageSize] = useState(10);
+  const [status, setStatus] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<News>({
@@ -59,9 +62,8 @@ export default function newsList() {
   // Fetch news items
   useEffect(() => {
     loadNewsItems();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery, status, startDate, endDate]);
 
-    
   const loadNewsItems = async () => {
     try {
       if (debouncedSearchQuery) {
@@ -73,7 +75,10 @@ export default function newsList() {
       const response = await fetchNewsList(
         currentPage,
         pageSize,
-        debouncedSearchQuery
+        debouncedSearchQuery,
+        status,
+        startDate,
+        endDate
       );
 
       if (response.success) {
@@ -240,6 +245,30 @@ export default function newsList() {
     },
   ];
 
+  const filters: any[] = [
+    {
+      id: "dateRange",
+      label: "Published Date Range",
+      type: "dateRange",
+      startDate: startDate,
+      endDate: endDate,
+      onStartDateChange: (value: string) => setStartDate(value),
+      onEndDateChange: (value: string) => setEndDate(value),
+    },
+    {
+      id: "status",
+      label: "Status",
+      type: "select",
+      value: status || "all",
+      onChange: setStatus,
+      options: [
+        { label: "All", value: "all" },
+        { label: "Active", value: "true" },
+        { label: "Inactive", value: "false" },
+      ],
+    },
+  ];
+
   return (
     <>
       <DataTable
@@ -249,6 +278,7 @@ export default function newsList() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searching={searching}
+        filters={filters}
         pagination={{
           currentPage,
           pageSize,
