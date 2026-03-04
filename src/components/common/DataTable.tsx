@@ -410,7 +410,7 @@ export function DataTable<TData, TValue>({
                   ))}
                   {filters.some(f =>
                     (f.type === "dateRange" && (f.startDate || f.endDate)) ||
-                    (f.type === "select" && f.value) ||
+                    (f.type === "select" && f.value && f.value !== "all") ||
                     (f.type === "toggle" && f.checked)
                   ) && (
                       <div className="flex items-end pb-0.5">
@@ -423,7 +423,7 @@ export function DataTable<TData, TValue>({
                                 f.onStartDateChange?.("");
                                 f.onEndDateChange?.("");
                               } else if (f.type === "select") {
-                                f.onChange?.("");
+                                f.onChange?.("all");
                               } else if (f.type === "toggle") {
                                 f.onChange?.(false);
                               }

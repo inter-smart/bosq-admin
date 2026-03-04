@@ -18,12 +18,17 @@ import {
 import { MoreHorizontal, Edit, Trash2, ListPlus, ImagePlus } from "lucide-react";
 import { fetchBaseProductList, deleteBaseProduct, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
+import { MetricsCard } from "@/components/dashboard/MetricsCard";
+import { fetchDashboardCounts, DashboardCounts } from "@/services/dashboard/dashboardApi";
+import { ShoppingBag, Layers, Box, Loader2 } from "lucide-react";
 
 export default function BaseProductList() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [counts, setCounts] = useState<DashboardCounts | null>(null);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
@@ -44,6 +49,23 @@ export default function BaseProductList() {
   useEffect(() => {
     loadBaseProducts();
   }, [currentPage, pageSize, debouncedSearchQuery]);
+
+  useEffect(() => {
+    const loadCounts = async () => {
+      try {
+        const response = await fetchDashboardCounts();
+        if (response.success) {
+          setCounts(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard counts:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    loadCounts();
+  }, []);
 
   const loadBaseProducts = async () => {
     try {
@@ -178,7 +200,35 @@ export default function BaseProductList() {
   ];
 
   return (
-    <>
+    <div className="space-y-6">
+      {/* Metrics Grid */}
+      {statsLoading ? (
+        <div className="flex items-center justify-center py-6">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <MetricsCard
+            title="Total Base Product"
+            value={counts?.totalBaseProducts ?? 0}
+            icon={ShoppingBag}
+            description="Total base products"
+          />
+          <MetricsCard
+            title="Total Model"
+            value={counts?.totalModels ?? 0}
+            icon={Layers}
+            description="Total product models"
+          />
+          <MetricsCard
+            title="Total Varient"
+            value={counts?.totalVariants ?? 0}
+            icon={Box}
+            description="Total product variants"
+          />
+        </div>
+      )}
+
       <DataTable
         columns={columns}
         data={baseProducts}
@@ -217,6 +267,6 @@ export default function BaseProductList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
