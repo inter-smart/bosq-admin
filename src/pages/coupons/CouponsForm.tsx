@@ -442,7 +442,17 @@ export default function CouponsForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Discount Type *</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          // Reset numeric fields when discount type changes
+                          form.setValue("discount_value", 0);
+                          form.setValue("min_product_amount", 0);
+                          form.setValue("min_order_amount", 0);
+                          form.setValue("max_discount_amount", 0);
+                        }}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
@@ -465,7 +475,20 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Discount Value * {watchDiscountType === "percentage" && "(max 100)"}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="0.00"
+                          {...field}
+                          onChange={(e) => {
+                            let value = parseFloat(e.target.value) || 0;
+                            value = Math.max(0, value);
+                            if (watchDiscountType === "percentage") {
+                              value = Math.min(100, value);
+                            }
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -480,7 +503,17 @@ export default function CouponsForm() {
                       <FormItem>
                         <FormLabel>Minimum Product Amount * </FormLabel>
                         <FormControl>
-                          <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} value={field.value ?? ""} />
+                          <Input
+                            type="number"
+                            min="0"
+                            placeholder="0.00"
+                            {...field}
+                            value={field.value ?? ""}
+                            onChange={(e) => {
+                              const value = Math.max(0, parseFloat(e.target.value) || 0);
+                              field.onChange(value);
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -495,7 +528,16 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Min Order Amount *</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="0.00"
+                          {...field}
+                          onChange={(e) => {
+                            const value = Math.max(0, parseFloat(e.target.value) || 0);
+                            field.onChange(value);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -510,7 +552,16 @@ export default function CouponsForm() {
                       <FormItem>
                         <FormLabel>Max Discount Amount * {watchDiscountType === "flat" && "(≥ discount value)"}</FormLabel>
                         <FormControl>
-                          <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
+                          <Input
+                            type="number"
+                            min="0"
+                            placeholder="0.00"
+                            {...field}
+                            onChange={(e) => {
+                              const value = Math.max(0, parseFloat(e.target.value) || 0);
+                              field.onChange(value);
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
