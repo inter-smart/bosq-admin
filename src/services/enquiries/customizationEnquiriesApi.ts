@@ -55,7 +55,9 @@ export interface CustomizationEnquiryResponse {
 export const fetchCustomizationEnquiries = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<CustomizationEnquiriesResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -66,6 +68,9 @@ export const fetchCustomizationEnquiries = async (
     params.search = search;
     params.limit = 100000;
   }
+
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
 
   return apiCall('/enquiries/customization', { params });
 };

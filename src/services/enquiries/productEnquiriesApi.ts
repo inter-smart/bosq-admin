@@ -46,7 +46,9 @@ export interface ProductEnquiryResponse {
 export const fetchProductEnquiries = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<ProductEnquiriesResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -57,6 +59,9 @@ export const fetchProductEnquiries = async (
     params.search = search;
     params.limit = 100000;
   }
+
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
 
   return apiCall('/enquiries/product', { params });
 };

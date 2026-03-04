@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable, FilterOption } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,6 +40,13 @@ export default function LeadGenerationList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery, startDate, endDate]);
 
   // Debounce search query
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function LeadGenerationList() {
   // Fetch leads
   useEffect(() => {
     loadLeads();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery, startDate, endDate]);
 
   const loadLeads = async () => {
     try {
@@ -67,6 +74,8 @@ export default function LeadGenerationList() {
         currentPage,
         pageSize,
         debouncedSearchQuery,
+        startDate,
+        endDate
       );
 
       if (response.success) {
@@ -113,7 +122,7 @@ export default function LeadGenerationList() {
       let dataToExport = selectedRows;
 
       if (!dataToExport || dataToExport.length === 0) {
-        const response = await fetchLeadGenerations(1, 100000, debouncedSearchQuery);
+        const response = await fetchLeadGenerations(1, 100000, debouncedSearchQuery, startDate, endDate);
         if (response.success) {
           dataToExport = response.data.list;
         } else {
@@ -251,6 +260,18 @@ export default function LeadGenerationList() {
     },
   ];
 
+  const filters: FilterOption[] = [
+    {
+      id: "dateRange",
+      label: "Date Range",
+      type: "dateRange",
+      startDate: startDate,
+      endDate: endDate,
+      onStartDateChange: setStartDate,
+      onEndDateChange: setEndDate,
+    },
+  ];
+
   return (
     <>
       <DataTable
@@ -260,6 +281,7 @@ export default function LeadGenerationList() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searching={searching}
+        filters={filters}
         pagination={{
           currentPage,
           pageSize,

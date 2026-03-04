@@ -39,7 +39,9 @@ export interface ContactEnquiryResponse {
 export const fetchContactEnquiries = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<ContactEnquiriesResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -50,6 +52,9 @@ export const fetchContactEnquiries = async (
     params.search = search;
     params.limit = 100000;
   }
+
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
 
   return apiCall('/enquiries/contact', { params });
 };

@@ -44,13 +44,17 @@ export interface ProjectEnquiryResponse {
 export const fetchProjectEnquiries = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<ProjectEnquiriesResponse> => {
   const params: Record<string, string | number> = { page, limit };
   if (search) {
     params.search = search;
     params.limit = 100000;
   }
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
   return apiCall('/enquiries/project', { params });
 };
 

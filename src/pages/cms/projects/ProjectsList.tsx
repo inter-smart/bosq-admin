@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable, FilterOption } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -57,6 +57,9 @@ export default function ProjectsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
     useCommonTableActions<Project>({
@@ -81,12 +84,12 @@ export default function ProjectsList() {
   // Reset to page 1 when search or category changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchQuery, selectedCategory]);
+  }, [debouncedSearchQuery, selectedCategory, startDate, endDate]);
 
   // Load projects when dependencies change
   useEffect(() => {
     loadProjects();
-  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory]);
+  }, [currentPage, pageSize, debouncedSearchQuery, selectedCategory, startDate, endDate]);
 
   const loadProjects = async () => {
     try {
@@ -104,7 +107,9 @@ export default function ProjectsList() {
         currentPage,
         pageSize,
         debouncedSearchQuery || undefined,
-        categoryParam
+        categoryParam,
+        startDate,
+        endDate
       );
 
       setProjects(response.data.list);
@@ -351,6 +356,21 @@ export default function ProjectsList() {
     },
   ];
 
+
+  const filters: FilterOption[] = [
+    {
+      id: "dateRange",
+      label: "Date Range",
+      type: "dateRange",
+      startDate: startDate,
+      endDate: endDate,
+      onStartDateChange: setStartDate,
+      onEndDateChange: setEndDate,
+    },
+  ];
+
+
+
   return (
     <>
       <div className="space-y-4">
@@ -360,34 +380,34 @@ export default function ProjectsList() {
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">Filter by Category:</span>
 
-        <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4">
 
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id!.toString()}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-[250px]">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id!.toString()}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-          {selectedCategory !== "all" && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSelectedCategory("all")}
-            >
-              Clear Filter
-            </Button>
-          )}
-        </div>
-        </div>
+              {selectedCategory !== "all" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedCategory("all")}
+                >
+                  Clear Filter
+                </Button>
+              )}
+            </div>
           </div>
+        </div>
 
         <DataTable
           columns={columns}
@@ -395,6 +415,7 @@ export default function ProjectsList() {
           loading={loading}
           searching={searching}
           searchQuery={searchQuery}
+          filters={filters}
           onSearchChange={setSearchQuery}
           pagination={{
             currentPage,

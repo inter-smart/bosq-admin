@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/common/DataTable";
+import { DataTable, FilterOption } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,6 +40,13 @@ export default function ContactEnquiriesList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearchQuery, startDate, endDate]);
 
   // Debounce search query
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function ContactEnquiriesList() {
   // Fetch enquiries
   useEffect(() => {
     loadEnquiries();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery, startDate, endDate]);
 
   const loadEnquiries = async () => {
     try {
@@ -66,7 +73,9 @@ export default function ContactEnquiriesList() {
       const response = await fetchContactEnquiries(
         currentPage,
         pageSize,
-        debouncedSearchQuery
+        debouncedSearchQuery,
+        startDate,
+        endDate
       );
 
       if (response.success) {
@@ -115,7 +124,7 @@ export default function ContactEnquiriesList() {
       // If no rows selected, export all data (from the current view/search)
       if (!dataToExport || dataToExport.length === 0) {
         // Fetch all data for export (using a large limit)
-        const response = await fetchContactEnquiries(1, 100000, debouncedSearchQuery);
+        const response = await fetchContactEnquiries(1, 100000, debouncedSearchQuery, startDate, endDate);
         if (response.success) {
           dataToExport = response.data.list;
         } else {
@@ -255,6 +264,18 @@ export default function ContactEnquiriesList() {
     },
   ];
 
+  const filters: FilterOption[] = [
+    {
+      id: "dateRange",
+      label: "Date Range",
+      type: "dateRange",
+      startDate: startDate,
+      endDate: endDate,
+      onStartDateChange: setStartDate,
+      onEndDateChange: setEndDate,
+    },
+  ];
+
   return (
     <>
       <DataTable
@@ -264,6 +285,7 @@ export default function ContactEnquiriesList() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searching={searching}
+        filters={filters}
         pagination={{
           currentPage,
           pageSize,

@@ -90,7 +90,9 @@ export const fetchProjectsList = async (
   page: number = 1,
   limit: number = 10,
   search?: string,
-  category_id?: number
+  category_id?: number,
+  startDate?: string,
+  endDate?: string
 ): Promise<ProjectResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -104,6 +106,10 @@ export const fetchProjectsList = async (
   if (category_id) {
     params.category_id = category_id;
   }
+
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
+
 
   return apiCall('/projects/projects', { params });
 };

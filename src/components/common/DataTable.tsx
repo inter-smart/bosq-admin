@@ -67,6 +67,13 @@ export interface FilterOption {
   label: string;
   type: "select" | "dateRange" | "toggle";
   options?: { label: string; value: string }[];
+  value?: string;
+  checked?: boolean;
+  startDate?: string;
+  endDate?: string;
+  onChange?: (value: any) => void;
+  onStartDateChange?: (value: string) => void;
+  onEndDateChange?: (value: string) => void;
 }
 
 interface PaginationProps {
@@ -343,14 +350,17 @@ export function DataTable<TData, TValue>({
           <Collapsible open={showFilters} onOpenChange={setShowFilters}>
             <CollapsibleContent className="space-y-4">
               {filters.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div className="flex flex-wrap gap-4 p-4 bg-muted/50 rounded-lg">
                   {filters.map((filter) => (
                     <div key={filter.id} className="space-y-2">
                       <label className="text-sm font-medium">
                         {filter.label}
                       </label>
                       {filter.type === "select" && filter.options && (
-                        <Select>
+                        <Select
+                          value={filter.value}
+                          onValueChange={(value) => filter.onChange?.(value)}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select..." />
                           </SelectTrigger>
@@ -366,21 +376,65 @@ export function DataTable<TData, TValue>({
                           </SelectContent>
                         </Select>
                       )}
+                      {filter.type === "dateRange" && (
+                        <div className="flex gap-2">
+                          <Input
+                            type="date"
+                            value={filter.startDate || ""}
+                            max={filter.endDate || undefined}
+                            onChange={(e) => filter.onStartDateChange?.(e.target.value)}
+                            className="h-9"
+                          />
+                          <Input
+                            type="date"
+                            value={filter.endDate || ""}
+                            min={filter.startDate || undefined}
+                            onChange={(e) => filter.onEndDateChange?.(e.target.value)}
+                            className="h-9"
+                          />
+                        </div>
+                      )}
                       {filter.type === "toggle" && (
                         <div className="flex items-center space-x-2">
-                          <Checkbox id={filter.id} />
+                          <Checkbox
+                            id={filter.id}
+                            checked={filter.checked}
+                            onCheckedChange={(checked) => filter.onChange?.(checked)}
+                          />
                           <label htmlFor={filter.id} className="text-sm">
-                            Active only
+                            {filter.label}
                           </label>
                         </div>
                       )}
                     </div>
                   ))}
-                  <div className="flex items-end">
-                    <Button variant="ghost" size="sm">
-                      Clear Filters
-                    </Button>
-                  </div>
+                  {filters.some(f =>
+                    (f.type === "dateRange" && (f.startDate || f.endDate)) ||
+                    (f.type === "select" && f.value) ||
+                    (f.type === "toggle" && f.checked)
+                  ) && (
+                      <div className="flex items-end pb-0.5">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            filters.forEach((f) => {
+                              if (f.type === "dateRange") {
+                                f.onStartDateChange?.("");
+                                f.onEndDateChange?.("");
+                              } else if (f.type === "select") {
+                                f.onChange?.("");
+                              } else if (f.type === "toggle") {
+                                f.onChange?.(false);
+                              }
+                            })
+                          }}
+                          className="text-muted-foreground hover:text-foreground h-9"
+                        >
+                          Clear Filters
+                        </Button>
+                      </div>
+                    )}
                 </div>
               )}
             </CollapsibleContent>
