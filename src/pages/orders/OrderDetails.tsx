@@ -640,8 +640,11 @@ export default function OrderDetails() {
                     <td className="px-6 py-4 text-right font-medium">
                       AED {parseFloat(item.price).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right text-red-500">
-                      -AED {parseFloat(item.discount_amount).toLocaleString()}
+                    <td className={`px-6 py-4 ${parseFloat(item.discount_amount) > 0  ? "font-bold text-red-500 text-right" : "text-center"}`}>
+                    {
+                      parseFloat(item.discount_amount) > 0 ?
+                     `-AED ${parseFloat(item.discount_amount).toLocaleString()}`
+                    : "-"}
                     </td>
                     <td className="px-6 py-4 text-right font-bold">
                       AED{" "}

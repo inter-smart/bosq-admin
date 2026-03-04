@@ -68,7 +68,10 @@ export interface UserResponse {
 export const fetchUsers = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  status?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<UsersResponse> => {
   const params: Record<string, string | number> = {
     page,

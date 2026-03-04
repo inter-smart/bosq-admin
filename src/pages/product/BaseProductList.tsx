@@ -16,11 +16,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2, ListPlus, ImagePlus } from "lucide-react";
-import { fetchBaseProductList, deleteBaseProduct, BaseProduct } from "@/services/product/baseProductApi";
+import { fetchBaseProductList, deleteBaseProduct, BaseProduct, exportBaseProductList } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 import { MetricsCard } from "@/components/dashboard/MetricsCard";
 import { fetchDashboardCounts, DashboardCounts } from "@/services/dashboard/dashboardApi";
 import { ShoppingBag, Layers, Box, Loader2 } from "lucide-react";
+import { FilterOption } from "@/components/common/DataTable";
+import { Switch } from "@/components/ui/switch";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { Badge } from "@/components/ui/badge";
 
 export default function BaseProductList() {
   const navigate = useNavigate();
@@ -36,6 +40,21 @@ export default function BaseProductList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [status, setStatus] = useState("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [exporting, setExporting] = useState(false);
+
+
+
+
+    const { handleStatusChange, handleSortOrderChange, editingSortOrder } =
+      useCommonTableActions<BaseProduct>({
+        modelName: "ProductBase",
+        data: baseProducts,
+        setData: setBaseProducts,
+      });
+  
 
   // Debounce search query
   useEffect(() => {
@@ -48,7 +67,7 @@ export default function BaseProductList() {
 
   useEffect(() => {
     loadBaseProducts();
-  }, [currentPage, pageSize, debouncedSearchQuery]);
+  }, [currentPage, pageSize, debouncedSearchQuery, status, startDate, endDate]);
 
   useEffect(() => {
     const loadCounts = async () => {
@@ -75,7 +94,7 @@ export default function BaseProductList() {
         setLoading(true);
       }
 
-      const response = await fetchBaseProductList(currentPage, pageSize, debouncedSearchQuery);
+      const response = await fetchBaseProductList(currentPage, pageSize, debouncedSearchQuery, status, startDate, endDate);
 
       if (response.success) {
         setBaseProducts(response.data.list);
@@ -147,8 +166,41 @@ export default function BaseProductList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div className="text-sm">{row.getValue("sort_order") || 0}</div>,
-    },
+    cell: ({ row }) => {
+        const item = row.original;
+        return (
+          <Input
+            type="number"
+            value={
+              editingSortOrder[item.id!] !== undefined
+                ? editingSortOrder[item.id!]
+                : row.getValue("sort_order") || 0
+            }
+            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
+            className="w-20"
+          />
+        );
+      },    },
+
+        {
+          accessorKey: "status",
+          header: "Status",
+          cell: ({ row }) => {
+            const item = row.original;
+            const status = row.getValue("status") as boolean;
+            return (
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={status}
+                  onCheckedChange={() => handleStatusChange(item.id!, status)}
+                />
+                <Badge variant={status ? "default" : "secondary"}>
+                  {status ? "active" : "inactive"}
+                </Badge>
+              </div>
+            );
+          },
+        },
     {
       accessorKey: "createdAt",
       header: "Created At",
@@ -199,6 +251,60 @@ export default function BaseProductList() {
     },
   ];
 
+  // const handleExport = async (type: string) => {
+  //   if (type !== "excel") return;
+
+  //   try {
+  //     setExporting(true);
+  //     await exportBaseProductList(debouncedSearchQuery, status, startDate, endDate);
+  //     toast({
+  //       title: "Success",
+  //       description: "Export started successfully",
+  //     });
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to export base products",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setExporting(false);
+  //   }
+  // };
+
+  const filters: FilterOption[] = [
+    {
+      id: "dateRange",
+      label: "Date Range",
+      type: "dateRange",
+      startDate,
+      endDate,
+      onStartDateChange: (value) => {
+        setStartDate(value);
+        setCurrentPage(1);
+      },
+      onEndDateChange: (value) => {
+        setEndDate(value);
+        setCurrentPage(1);
+      },
+    },
+    {
+      id: "status",
+      label: "Status",
+      type: "select",
+      value: status,
+      options: [
+        { label: "All Status", value: "all" },
+        { label: "Active", value: "active" },
+        { label: "Inactive", value: "inactive" },
+      ],
+      onChange: (value) => {
+        setStatus(value);
+        setCurrentPage(1);
+      },
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Metrics Grid */}
@@ -236,6 +342,7 @@ export default function BaseProductList() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searching={searching}
+        filters={filters}
         pagination={{
           currentPage,
           pageSize,

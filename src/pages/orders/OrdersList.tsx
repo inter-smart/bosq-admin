@@ -240,7 +240,7 @@ export default function OrdersList() {
                     onPageChange: setCurrentPage,
                     onPageSizeChange: setPageSize,
                 }}
-                onExport={handleExport}
+                // onExport={handleExport}
                 title="Orders"
                 searchPlaceholder="Search order ID, name..."
             />
