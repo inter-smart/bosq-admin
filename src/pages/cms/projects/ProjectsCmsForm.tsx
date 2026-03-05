@@ -38,9 +38,15 @@ export default function ProjectsCmsForm() {
   const [mediaDesktopFile, setMediaDesktopFile] = useState<
     File | string | null
   >(null);
+  const [mediaDesktopFileAr, setMediaDesktopFileAr] = useState<
+    File | string | null
+  >(null);
   const [mediaMobileFile, setMediaMobileFile] = useState<File | string | null>(
     null
   );
+  const [mediaMobileFileAr, setMediaMobileFileAr] = useState<
+    File | string | null
+  >(null);
   const [formMediaFile, setFormMediaFile] = useState<File | string | null>(
     null
   );
@@ -59,7 +65,9 @@ export default function ProjectsCmsForm() {
       description: "",
       description_ar: "",
       media_desktop_path: null,
+      media_desktop_path_ar: null,
       media_mobile_path: null,
+      media_mobile_path_ar: null,
       media_alt: "",
       media_alt_ar: "",
       media_type: "image",
@@ -73,11 +81,11 @@ export default function ProjectsCmsForm() {
     },
   });
 
-  
+
   const watchBannerMediaType = form.watch("media_type");
 
 
-    // Effect to reset media fields when media type changes
+  // Effect to reset media fields when media type changes
   useEffect(() => {
     if (
       !initialLoading &&
@@ -85,7 +93,9 @@ export default function ProjectsCmsForm() {
       prevMediaType !== watchBannerMediaType
     ) {
       form.setValue("media_desktop_path", null);
+      form.setValue("media_desktop_path_ar", null);
       form.setValue("media_mobile_path", null);
+      form.setValue("media_mobile_path_ar", null);
     }
 
     // Update prevMediaType after initial loading is complete
@@ -115,7 +125,9 @@ export default function ProjectsCmsForm() {
           description: data.description || "",
           description_ar: data.description_ar || "",
           media_desktop_path: data.media_desktop_path || null,
+          media_desktop_path_ar: data.media_desktop_path_ar || null,
           media_mobile_path: data.media_mobile_path || null,
+          media_mobile_path_ar: data.media_mobile_path_ar || null,
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           media_type: (data.media_type as "image" | "video") || "image",
@@ -134,9 +146,19 @@ export default function ProjectsCmsForm() {
             `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path}`
           );
         }
+        if (data.media_desktop_path_ar) {
+          setMediaDesktopFileAr(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path_ar}`
+          );
+        }
         if (data.media_mobile_path) {
           setMediaMobileFile(
             `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`
+          );
+        }
+        if (data.media_mobile_path_ar) {
+          setMediaMobileFileAr(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path_ar}`
           );
         }
         if (data.form_media_path) {
@@ -215,8 +237,14 @@ export default function ProjectsCmsForm() {
       if (mediaDesktopFile instanceof File) {
         formData.append("media_desktop_path", mediaDesktopFile);
       }
+      if (mediaDesktopFileAr instanceof File) {
+        formData.append("media_desktop_path_ar", mediaDesktopFileAr);
+      }
       if (mediaMobileFile instanceof File) {
         formData.append("media_mobile_path", mediaMobileFile);
+      }
+      if (mediaMobileFileAr instanceof File) {
+        formData.append("media_mobile_path_ar", mediaMobileFileAr);
       }
       if (formMediaFile instanceof File) {
         formData.append("form_media_path", formMediaFile);
@@ -448,6 +476,36 @@ export default function ProjectsCmsForm() {
 
                 <FormField
                   control={form.control}
+                  name="media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
+                        (Desktop - AR)
+                      </FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMediaDesktopFileAr(file);
+                          }}
+                          accept={
+                            watchBannerMediaType === "image"
+                              ? "image/*"
+                              : "video/*"
+                          }
+                          recommendedDimensions="1920px x 730px"
+                          placeholder={`Upload desktop banner ${watchBannerMediaType} (AR)`}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="media_mobile_path"
                   render={({ field }) => (
                     <FormItem>
@@ -469,6 +527,36 @@ export default function ProjectsCmsForm() {
                           }
                           recommendedDimensions="640px x 1138px"
                           placeholder={`Upload mobile banner ${watchBannerMediaType}`}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
+                        (Mobile - AR)
+                      </FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMediaMobileFileAr(file);
+                          }}
+                          accept={
+                            watchBannerMediaType === "image"
+                              ? "image/*"
+                              : "video/*"
+                          }
+                          recommendedDimensions="640px x 1138px"
+                          placeholder={`Upload mobile banner ${watchBannerMediaType} (AR)`}
                         />
                       </FormControl>
                       <FormMessage />
@@ -597,7 +685,7 @@ export default function ProjectsCmsForm() {
                 </div>
               </div>
 
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="form_media_path"

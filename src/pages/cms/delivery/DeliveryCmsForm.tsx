@@ -38,7 +38,9 @@ export default function DeliveryCmsForm() {
       banner_title: "",
       banner_title_ar: "",
       banner_media_desktop_path: null,
+      banner_media_desktop_path_ar: null,
       banner_media_mobile_path: null,
+      banner_media_mobile_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       delivery_time_title: "",
@@ -68,14 +70,20 @@ export default function DeliveryCmsForm() {
           banner_title: data.banner_title || "",
           banner_title_ar: data.banner_title_ar || "",
           banner_media_desktop_path: data.banner_media_desktop_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${
-                data.banner_media_desktop_path
-              }`
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_desktop_path
+            }`
+            : null,
+          banner_media_desktop_path_ar: data.banner_media_desktop_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_desktop_path_ar
+            }`
             : null,
           banner_media_mobile_path: data.banner_media_mobile_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${
-                data.banner_media_mobile_path
-              }`
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path
+            }`
+            : null,
+          banner_media_mobile_path_ar: data.banner_media_mobile_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path_ar
+            }`
             : null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
@@ -162,10 +170,22 @@ export default function DeliveryCmsForm() {
           data.banner_media_desktop_path
         );
       }
+      if (data.banner_media_desktop_path_ar instanceof File) {
+        formData.append(
+          "banner_media_desktop_path_ar",
+          data.banner_media_desktop_path_ar
+        );
+      }
       if (data.banner_media_mobile_path instanceof File) {
         formData.append(
           "banner_media_mobile_path",
           data.banner_media_mobile_path
+        );
+      }
+      if (data.banner_media_mobile_path_ar instanceof File) {
+        formData.append(
+          "banner_media_mobile_path_ar",
+          data.banner_media_mobile_path_ar
         );
       }
       if (data.delivery_media_path instanceof File) {
@@ -328,6 +348,27 @@ export default function DeliveryCmsForm() {
 
                   <FormField
                     control={form.control}
+                    name="banner_media_desktop_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Desktop - AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="1920px × 732px"
+                            placeholder="Upload desktop banner image (AR)"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="banner_media_mobile_path"
                     render={({ field }) => (
                       <FormItem>
@@ -339,6 +380,27 @@ export default function DeliveryCmsForm() {
                             accept="image/*"
                             recommendedDimensions="640px × 1138px"
                             placeholder="Upload mobile banner image"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Mobile - AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="640px × 1138px"
+                            placeholder="Upload mobile banner image (AR)"
                             preview={true}
                           />
                         </FormControl>
@@ -472,63 +534,63 @@ export default function DeliveryCmsForm() {
               </div>
 
               <div className="space-y-4 grid">
+                <FormField
+                  control={form.control}
+                  name="delivery_media_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Delivery Image</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          recommendedDimensions="502px × 840px"
+                          placeholder="Upload delivery image"
+                          preview={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="delivery_media_path"
+                    name="delivery_media_alt"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Delivery Image</FormLabel>
+                        <FormLabel>Media Alt Text (English)</FormLabel>
                         <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept="image/*"
-                            recommendedDimensions="502px × 840px"
-                            placeholder="Upload delivery image"
-                            preview={true}
+                          <Input
+                            placeholder="Enter media alt text"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="delivery_media_alt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Media Alt Text (English)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter media alt text"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="delivery_media_alt_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Media Alt Text (AR)</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="أدخل النص البديل"
-                              {...field}
-                              dir="rtl"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="delivery_media_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Media Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
+              </div>
             </CardContent>
           </Card>
 
