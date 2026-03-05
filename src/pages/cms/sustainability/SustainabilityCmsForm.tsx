@@ -40,6 +40,8 @@ export default function SustainabilityCmsForm() {
       title_ar: "",
       banner_media_desktop_path: null,
       banner_media_mobile_path: null,
+      banner_media_desktop_path_ar: null,
+      banner_media_mobile_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       banner_media_type: null,
@@ -84,6 +86,12 @@ export default function SustainabilityCmsForm() {
             : null,
           banner_media_mobile_path: data.banner_media_mobile_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path}`
+            : null,
+          banner_media_desktop_path_ar: data.banner_media_desktop_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_desktop_path_ar}`
+            : null,
+          banner_media_mobile_path_ar: data.banner_media_mobile_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path_ar}`
             : null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
@@ -155,6 +163,18 @@ export default function SustainabilityCmsForm() {
         formData.append(
           "banner_media_mobile_path",
           data.banner_media_mobile_path
+        );
+      }
+      if (data.banner_media_desktop_path_ar instanceof File) {
+        formData.append(
+          "banner_media_desktop_path_ar",
+          data.banner_media_desktop_path_ar
+        );
+      }
+      if (data.banner_media_mobile_path_ar instanceof File) {
+        formData.append(
+          "banner_media_mobile_path_ar",
+          data.banner_media_mobile_path_ar
         );
       }
 
@@ -337,6 +357,59 @@ export default function SustainabilityCmsForm() {
                           }
                           recommendedDimensions="640px × 1138px"
                           placeholder="Upload mobile banner media"
+                          preview={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Banner Media Uploads (Arabic) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="banner_media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Banner Media (Desktop - AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept={
+                            form.watch("banner_media_type") === "video"
+                              ? "video/*"
+                              : "image/*"
+                          }
+                          recommendedDimensions="1920px × 730px"
+                          placeholder="Upload desktop banner media (Arabic)"
+                          preview={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="banner_media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Banner Media (Mobile - AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept={
+                            form.watch("banner_media_type") === "video"
+                              ? "video/*"
+                              : "image/*"
+                          }
+                          recommendedDimensions="640px × 1138px"
+                          placeholder="Upload mobile banner media (Arabic)"
                           preview={true}
                         />
                       </FormControl>

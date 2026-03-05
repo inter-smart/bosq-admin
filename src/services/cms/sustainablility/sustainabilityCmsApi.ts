@@ -8,6 +8,8 @@ export interface SustainabilityCms {
   // BANNER SECTION
   banner_media_desktop_path?: string | null;
   banner_media_mobile_path?: string | null;
+  banner_media_desktop_path_ar?: string | null;
+  banner_media_mobile_path_ar?: string | null;
   banner_media_alt?: string | null;
   banner_media_alt_ar?: string | null;
   banner_media_type?: 'image' | 'video' | null;
