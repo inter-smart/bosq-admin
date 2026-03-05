@@ -35,6 +35,7 @@ export const homeSchema = z.object({
   journey_media_alt_ar: commonValidations.requiredString(
     "Journey Media Alt Text (Arabic)"
   ),
+  journey_link: commonValidations.optionalUrl,
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),
@@ -128,17 +129,17 @@ export const smartSpaceCalculatorSchema = z.object({
 
 export const findYourFitSchema = z.object({
   // English fields (required)
-  title:commonValidations.requiredString("Title is required"),
-  description:commonValidations.requiredString("Description is required"),
+  title: commonValidations.requiredString("Title is required"),
+  description: commonValidations.requiredString("Description is required"),
 
   // Arabic fields (required)
-  title_ar:commonValidations.requiredString("Arabic Title is required"),
-  description_ar:commonValidations.requiredString("Arabic Description is required"),
+  title_ar: commonValidations.requiredString("Arabic Title is required"),
+  description_ar: commonValidations.requiredString("Arabic Description is required"),
 
   // Media fields
-  media_path:commonValidations.validateFileUpload("Image is required"),
-  media_alt:commonValidations.requiredString("Image Alt Text is required"),
-  media_alt_ar:commonValidations.requiredString("Arabic Image Alt Text is required"),
+  media_path: commonValidations.validateFileUpload("Image is required"),
+  media_alt: commonValidations.requiredString("Image Alt Text is required"),
+  media_alt_ar: commonValidations.requiredString("Arabic Image Alt Text is required"),
 
   // Link (optional)
   link: commonValidations.requiredUrl("Link"),

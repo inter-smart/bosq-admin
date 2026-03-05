@@ -68,7 +68,10 @@ export interface UserResponse {
 export const fetchUsers = async (
   page: number = 1,
   limit: number = 10,
-  search?: string
+  search?: string,
+  status?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<UsersResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -77,7 +80,6 @@ export const fetchUsers = async (
 
   if (search) {
     params.search = search;
-    params.limit = 100000;
   }
 
   return apiCall('/users/users', { params });

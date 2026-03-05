@@ -55,6 +55,7 @@ export default function HomeCmsForm() {
       journey_media_mobile_path: null,
       journey_media_alt: "",
       journey_media_alt_ar: "",
+      journey_link: "",
       project_title: "",
       project_title_ar: "",
       fits_title: "",
@@ -83,7 +84,7 @@ export default function HomeCmsForm() {
     ) {
       form.setValue("journey_media_desktop_path", null);
       form.setValue("journey_media_mobile_path", null);
-      
+
     }
 
     // Update prevMediaType after initial loading is complete
@@ -123,11 +124,12 @@ export default function HomeCmsForm() {
           journey_media_desktop_path: data.journey_media_desktop_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_desktop_path}`
             : null,
-            journey_media_mobile_path: data.journey_media_mobile_path
+          journey_media_mobile_path: data.journey_media_mobile_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_media_mobile_path}`
             : null,
           journey_media_alt: data.journey_media_alt || "",
           journey_media_alt_ar: data.journey_media_alt_ar || "",
+          journey_link: data.journey_link || "",
           project_title: data.project_title || "",
           project_title_ar: data.project_title_ar || "",
           fits_title: data.fits_title || "",
@@ -198,8 +200,10 @@ export default function HomeCmsForm() {
       if (data.journey_media_desktop_path instanceof File)
         formData.append("journey_media_desktop_path", data.journey_media_desktop_path);
 
-       if (data.journey_media_mobile_path instanceof File)
+      if (data.journey_media_mobile_path instanceof File)
         formData.append("journey_media_mobile_path", data.journey_media_mobile_path);
+      if (data.journey_link)
+        formData.append("journey_link", data.journey_link);
 
 
       // Project Section
@@ -604,7 +608,7 @@ export default function HomeCmsForm() {
                   )}
                 />
 
- <FormField
+                <FormField
                   control={form.control}
                   name="journey_media_mobile_path"
                   render={({ field }) => (
@@ -663,6 +667,21 @@ export default function HomeCmsForm() {
                             {...field}
                             dir="rtl"
                           />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* journey_link */}
+                  <FormField
+                    control={form.control}
+                    name="journey_link"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Link</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter link" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

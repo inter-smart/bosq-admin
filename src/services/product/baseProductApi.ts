@@ -88,17 +88,66 @@ export interface BaseProductItemResponse {
 ======================= */
 
 // Fetch all base products
-export const fetchBaseProductList = async (page: number = 1, limit: number = 10, search?: string): Promise<BaseProductResponse> => {
+export const fetchBaseProductList = async (
+  page: number = 1,
+  limit: number = 10,
+  search?: string,
+  status?: string,
+  startDate?: string,
+  endDate?: string
+): Promise<BaseProductResponse> => {
   const params: Record<string, string | number> = {
     page,
     limit,
   };
 
-  if (search) {
-    params.search = search;
-  }
+  if (search) params.search = search;
+  if (status && status !== "all") params.status = status;
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
 
   return apiCall("/resources/product-base", { params });
+};
+
+// Export base products to Excel
+export const exportBaseProductList = async (search?: string, status?: string, startDate?: string, endDate?: string): Promise<void> => {
+  const params: Record<string, string> = {};
+
+  if (search) params.search = search;
+  if (status && status !== "all") params.status = status;
+  if (startDate) params.startDate = startDate;
+  if (endDate) params.endDate = endDate;
+
+  const queryString = new URLSearchParams(params).toString();
+  const url = `${import.meta.env.VITE_API_BASE_URL}/admin/resources/product-base/export${queryString ? `?${queryString}` : ""}`;
+
+  // Use window.location.href or a link element to trigger the download,
+  // ensuring the auth token is managed (usually via a cookie or by the server).
+  // If the API requires a header, we'd need a different approach (blob).
+  // Given previous implementations, we'll try the blob approach for better token handling.
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming token is stored here
+      },
+    });
+
+    if (!response.ok) throw new Error("Export failed");
+
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.setAttribute("download", `base-products-${new Date().toISOString().split("T")[0]}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error("Export error:", error);
+    throw error;
+  }
 };
 
 // Fetch single base product

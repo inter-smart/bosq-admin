@@ -16,6 +16,10 @@ import {
   Receipt,
   ExternalLink,
   Download,
+  Truck,
+  Globe,
+  Tag,
+  Clock,
 } from "lucide-react";
 import { fetchOrderById, Order } from "@/services/orders/ordersApi";
 import { useToast } from "@/hooks/use-toast";
@@ -130,9 +134,12 @@ export default function OrderDetails() {
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
 
-      const customerName = order.user
-        ? `${order.user.first_name} ${order.user.last_name}`
-        : "Guest Customer";
+      const firstName = order?.user?.first_name?.trim();
+      const lastName = order?.user?.last_name?.trim();
+      const fullName = [firstName, lastName].filter(Boolean).join(" ");
+
+      const customerName = fullName || order?.user?.name || "Guest Customer";
+
       doc.text(customerName, margin, y);
       y += 5;
       if (order.user?.email) {
@@ -206,8 +213,8 @@ export default function OrderDetails() {
       doc.setTextColor(80, 80, 80);
       doc.text("PRODUCT", cols.product, y);
       doc.text("QTY", cols.qty, y, { align: "center" });
-      doc.text("PRICE", cols.price, y, { align: "right" });
-      doc.text("DISCOUNT", cols.discount, y, { align: "right" });
+      doc.text("PRICE", cols.price, y, { align: "center" });
+      doc.text("DISCOUNT", cols.discount, y, { align: "center" });
       doc.text("SUBTOTAL", cols.subtotal, y, { align: "right" });
       y += 5;
       doc.setDrawColor(200, 200, 200);
@@ -245,8 +252,14 @@ export default function OrderDetails() {
         }
         doc.setFont("helvetica", "normal");
         doc.text(String(item.quantity), cols.qty, y, { align: "center" });
-        doc.text(aed(unitPrice), cols.price, y, { align: "right" });
-        doc.text(aed(discountAmt), cols.discount, y, { align: "right" });
+        doc.text(aed(unitPrice), cols.price, y, { align: "center" });
+        const discountValue =
+          typeof discountAmt === "number" && !isNaN(discountAmt) && discountAmt > 0
+            ? aed(discountAmt)
+            : "-";
+
+
+        doc.text(discountValue, cols.discount, y, { align: "center" });
         doc.setFont("helvetica", "bold");
         doc.text(aed(lineSubtotal), cols.subtotal, y, { align: "right" });
         y += 11;
@@ -322,6 +335,7 @@ export default function OrderDetails() {
       });
     }
   };
+
 
   if (loading) {
     return (
@@ -440,19 +454,16 @@ export default function OrderDetails() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-5 space-y-4">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                 {order.user?.first_name?.[0]}
                 {order.user?.last_name?.[0]}
               </div>
               <div>
                 <p className="font-semibold text-lg leading-none">
-                  {order.user
-                    ? `${order.user.first_name} ${order.user.last_name}`
-                    : "Guest Customer"}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  ID: #{order.user?.id || "N/A"}
+                  {order?.user?.name
+                    ? (order?.user?.name ?? null)
+                    : `${order?.user?.first_name} ${order?.user?.last_name}`}
                 </p>
               </div>
             </div>
@@ -465,13 +476,13 @@ export default function OrderDetails() {
                   href={`mailto:${order.user?.email}`}
                   className="text-primary hover:underline"
                 >
-                  {order.user?.email || "N/A"}
+                  {order.user?.email}
                 </a>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Phone:</span>
-                <span>{order.user?.mobile || "N/A"}</span>
+                <span>{order.user?.mobile}</span>
               </div>
             </div>
           </CardContent>
@@ -571,6 +582,69 @@ export default function OrderDetails() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Section 4: Shipping & Tracking */}
+        <Card className="border-primary/10 shadow-sm">
+          <CardHeader className="pb-3 border-b bg-muted/30 flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Truck className="h-4 w-4 text-primary" />
+              Shipping & Tracking
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-5 space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-start gap-2 text-sm">
+                <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
+                    Est. Delivery Details
+                  </p>
+                  <p className="mt-0.5">
+                    {order.est_delivery_details || "Not specified"}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 text-sm">
+                <Tag className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
+                    Courier Partner
+                  </p>
+                  <p className="mt-0.5">{order.partner_name || "Not assigned"}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 text-sm">
+                <Package className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
+                    AWB Number
+                  </p>
+                  <p className="mt-0.5 font-mono">
+                    {order.awb_number || "Not available"}
+                  </p>
+                </div>
+              </div>
+              {order.order_url && (
+                <div className="flex items-start gap-2 text-sm">
+                  <Globe className="h-4 w-4 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
+                      Tracking Link
+                    </p>
+                    <a
+                      href={order.order_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline flex items-center gap-1 mt-0.5"
+                    >
+                      Track Shipment <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Section 3: Product Order Details */}
@@ -604,7 +678,7 @@ export default function OrderDetails() {
                       <div className="flex items-center gap-4">
                         <div className="h-16 w-16 rounded border bg-white flex-shrink-0 flex items-center justify-center overflow-hidden">
                           {item.variant?.media_path ||
-                          item.product?.media_path ? (
+                            item.product?.media_path ? (
                             <img
                               src={
                                 `${import.meta.env.VITE_IMAGE_URL}/${item.variant?.media_path || item.product?.media_path}` ||
@@ -622,7 +696,7 @@ export default function OrderDetails() {
                             {item.product?.title}
                           </p>
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            SKU: {item.variant?.sku || "N/A"}
+                            SKU: {item.variant?.sku}
                           </p>
                         </div>
                       </div>
@@ -640,8 +714,12 @@ export default function OrderDetails() {
                     <td className="px-6 py-4 text-right font-medium">
                       AED {parseFloat(item.price).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-right text-red-500">
-                      -AED {parseFloat(item.discount_amount).toLocaleString()}
+                    <td
+                      className={`px-6 py-4 ${parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}
+                    >
+                      {parseFloat(item.discount_amount) > 0
+                        ? `-AED ${parseFloat(item.discount_amount).toLocaleString()}`
+                        : "-"}
                     </td>
                     <td className="px-6 py-4 text-right font-bold">
                       AED{" "}
