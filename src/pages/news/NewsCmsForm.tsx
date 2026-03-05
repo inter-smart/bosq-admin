@@ -36,6 +36,8 @@ export default function NewsCmsForm() {
       banner_description_ar: "",
       media_desktop_path: null,
       media_mobile_path: null,
+      media_desktop_path_ar: null,
+      media_mobile_path_ar: null,
       media_alt: "",
       media_alt_ar: "",
       popular_news_title: "",
@@ -65,6 +67,8 @@ export default function NewsCmsForm() {
           banner_description_ar: data.banner_description_ar || "",
           media_desktop_path: data.media_desktop_path || null,
           media_mobile_path: data.media_mobile_path || null,
+          media_desktop_path_ar: data.media_desktop_path_ar || null,
+          media_mobile_path_ar: data.media_mobile_path_ar || null,
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           popular_news_title: data.popular_news_title || "",
@@ -125,6 +129,12 @@ export default function NewsCmsForm() {
       }
       if (data.media_mobile_path instanceof File) {
         formData.append("media_mobile_path", data.media_mobile_path);
+      }
+      if (data.media_desktop_path_ar instanceof File) {
+        formData.append("media_desktop_path_ar", data.media_desktop_path_ar);
+      }
+      if (data.media_mobile_path_ar instanceof File) {
+        formData.append("media_mobile_path_ar", data.media_mobile_path_ar);
       }
 
       await saveNewsCms(formData);
@@ -289,7 +299,7 @@ export default function NewsCmsForm() {
                 </div>
               </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="media_desktop_path"
@@ -329,8 +339,53 @@ export default function NewsCmsForm() {
                     </FormItem>
                   )}
                 />
+              </div>
 
-                   <FormField
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Media (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload desktop media (Arabic)"
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Media (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload mobile media (Arabic)"
+                          recommendedDimensions="600px x 600px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <FormField
                   control={form.control}
                   name="media_alt"
                   render={({ field }) => (
@@ -361,12 +416,12 @@ export default function NewsCmsForm() {
                     </FormItem>
                   )}
                 />
-                
+
               </div>
             </CardContent>
           </Card>
 
-     
+
           {/* Section Titles */}
           <Card>
             <CardHeader>
@@ -447,7 +502,7 @@ export default function NewsCmsForm() {
             </CardContent>
           </Card>
 
-     
+
 
           <div className="flex justify-end">
             <Button type="submit" disabled={loading}>

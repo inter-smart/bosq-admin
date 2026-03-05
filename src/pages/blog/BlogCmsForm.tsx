@@ -36,6 +36,8 @@ export default function BlogCmsForm() {
       banner_description_ar: "",
       media_desktop_path: null,
       media_mobile_path: null,
+      media_desktop_path_ar: null,
+      media_mobile_path_ar: null,
       media_alt: "",
       media_alt_ar: "",
       popular_blogs_title: "",
@@ -65,6 +67,8 @@ export default function BlogCmsForm() {
           banner_description_ar: data.banner_description_ar || "",
           media_desktop_path: data.media_desktop_path || null,
           media_mobile_path: data.media_mobile_path || null,
+          media_desktop_path_ar: data.media_desktop_path_ar || null,
+          media_mobile_path_ar: data.media_mobile_path_ar || null,
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           popular_blogs_title: data.popular_blogs_title || "",
@@ -125,6 +129,12 @@ export default function BlogCmsForm() {
       }
       if (data.media_mobile_path instanceof File) {
         formData.append("media_mobile_path", data.media_mobile_path);
+      }
+      if (data.media_desktop_path_ar instanceof File) {
+        formData.append("media_desktop_path_ar", data.media_desktop_path_ar);
+      }
+      if (data.media_mobile_path_ar instanceof File) {
+        formData.append("media_mobile_path_ar", data.media_mobile_path_ar);
       }
 
       await saveBlogCms(formData);
@@ -289,7 +299,7 @@ export default function BlogCmsForm() {
                 </div>
               </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="media_desktop_path"
@@ -329,8 +339,53 @@ export default function BlogCmsForm() {
                     </FormItem>
                   )}
                 />
+              </div>
 
-                   <FormField
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Media (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload desktop media (Arabic)"
+                          recommendedDimensions="1920px × 732px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Media (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload mobile media (Arabic)"
+                          recommendedDimensions="640px × 1138px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <FormField
                   control={form.control}
                   name="media_alt"
                   render={({ field }) => (
@@ -361,12 +416,12 @@ export default function BlogCmsForm() {
                     </FormItem>
                   )}
                 />
-                
+
               </div>
             </CardContent>
           </Card>
 
-     
+
           {/* Section Titles */}
           <Card>
             <CardHeader>

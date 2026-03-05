@@ -24,9 +24,11 @@ export const blogCmsSchema = z.object({
     "Arabic Related Blogs Title"
   ),
 
-  // File uploads (no Arabic versions needed)
+  // File uploads
   media_desktop_path: commonValidations.validateFileUpload("Desktop media"),
   media_mobile_path: commonValidations.validateFileUpload("Mobile media"),
+  media_desktop_path_ar: commonValidations.validateFileUpload("Desktop media (Arabic)"),
+  media_mobile_path_ar: commonValidations.validateFileUpload("Mobile media (Arabic)"),
 });
 
 export const blogSchema = z.object({

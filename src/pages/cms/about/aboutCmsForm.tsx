@@ -55,6 +55,8 @@ export default function AboutCmsForm() {
       banner_description_ar: "",
       banner_media_desktop_path: null,
       banner_media_mobile_path: null,
+      banner_media_desktop_path_ar: null,
+      banner_media_mobile_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       banner_button_text: "",
@@ -96,6 +98,8 @@ export default function AboutCmsForm() {
     ) {
       form.setValue("banner_media_desktop_path", null);
       form.setValue("banner_media_mobile_path", null);
+      form.setValue("banner_media_desktop_path_ar", null);
+      form.setValue("banner_media_mobile_path_ar", null);
     }
 
     // Update prevMediaType after initial loading is complete
@@ -125,6 +129,8 @@ export default function AboutCmsForm() {
           banner_description_ar: data.banner_description_ar || "",
           banner_media_desktop_path: data.banner_media_desktop_path || null,
           banner_media_mobile_path: data.banner_media_mobile_path || null,
+          banner_media_desktop_path_ar: data.banner_media_desktop_path_ar || null,
+          banner_media_mobile_path_ar: data.banner_media_mobile_path_ar || null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
           banner_button_text: data.banner_button_text || "",
@@ -141,9 +147,8 @@ export default function AboutCmsForm() {
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_two_media_path}`
             : null,
           journey_three_media_path: data.journey_three_media_path
-            ? `${import.meta.env.VITE_IMAGE_URL}/${
-                data.journey_three_media_path
-              }`
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_three_media_path
+            }`
             : null,
           journey_one_media_alt: data.journey_one_media_alt || "",
           journey_one_media_alt_ar: data.journey_one_media_alt_ar || "",
@@ -294,6 +299,18 @@ export default function AboutCmsForm() {
           data.banner_media_mobile_path
         );
       }
+      if (data.banner_media_desktop_path_ar instanceof File) {
+        formData.append(
+          "banner_media_desktop_path_ar",
+          data.banner_media_desktop_path_ar
+        );
+      }
+      if (data.banner_media_mobile_path_ar instanceof File) {
+        formData.append(
+          "banner_media_mobile_path_ar",
+          data.banner_media_mobile_path_ar
+        );
+      }
 
       // Add journey image uploads
       if (data.journey_one_media_path instanceof File) {
@@ -328,7 +345,7 @@ export default function AboutCmsForm() {
     }
   };
 
- 
+
 
   return (
     <div className="space-y-6">
@@ -599,6 +616,62 @@ export default function AboutCmsForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
+                    name="banner_media_desktop_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
+                          (Desktop - AR)
+                        </FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept={
+                              watchBannerMediaType === "image"
+                                ? "image/*"
+                                : "video/*"
+                            }
+                            recommendedDimensions="1920px x 732px"
+                            placeholder={`Upload desktop banner ${watchBannerMediaType} (AR)`}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
+                          (Mobile - AR)
+                        </FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept={
+                              watchBannerMediaType === "image"
+                                ? "image/*"
+                                : "video/*"
+                            }
+                            recommendedDimensions="640px × 1138px"
+                            placeholder={`Upload mobile banner ${watchBannerMediaType} (AR)`}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
                     name="banner_media_alt"
                     render={({ field }) => (
                       <FormItem>
@@ -719,7 +792,7 @@ export default function AboutCmsForm() {
               </div>
 
 
-                         {/* Journey Media */}
+              {/* Journey Media */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Journey Section Media</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -895,7 +968,7 @@ export default function AboutCmsForm() {
                   />
                 </div>
               </div>
-              
+
             </CardContent>
           </Card>
 

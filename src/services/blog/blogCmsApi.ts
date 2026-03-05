@@ -10,6 +10,8 @@ export interface BlogCms {
   banner_description_ar?: string | null;
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
+  media_desktop_path_ar?: string | null;
+  media_mobile_path_ar?: string | null;
   media_alt?: string | null;
   media_alt_ar?: string | null;
   popular_blogs_title?: string | null;
