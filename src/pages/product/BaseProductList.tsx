@@ -24,7 +24,6 @@ import { fetchDashboardCounts, DashboardCounts } from "@/services/dashboard/dash
 import { ShoppingBag, Layers, Box, Loader2 } from "lucide-react";
 import { FilterOption } from "@/components/common/DataTable";
 import { Switch } from "@/components/ui/switch";
-import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Badge } from "@/components/ui/badge";
 
 export default function BaseProductList() {
@@ -45,12 +44,6 @@ export default function BaseProductList() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [exporting, setExporting] = useState(false);
-
-  const { handleStatusChange, handleSortOrderChange, editingSortOrder } = useCommonTableActions<BaseProduct>({
-    modelName: "ProductBase",
-    data: baseProducts,
-    setData: setBaseProducts,
-  });
 
   // Debounce search query
   useEffect(() => {
