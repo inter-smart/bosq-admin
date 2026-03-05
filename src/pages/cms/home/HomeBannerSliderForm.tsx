@@ -40,6 +40,10 @@ export default function HomeBannerSliderForm() {
   const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
     null
   );
+  const [imageFileAr, setImageFileAr] = useState<File | string | null>(null);
+  const [mobileImageFileAr, setMobileImageFileAr] = useState<File | string | null>(
+    null
+  );
 
   const form = useForm<HomeBannerFormData>({
     resolver: zodResolver(homeBannerSchema),
@@ -90,6 +94,12 @@ export default function HomeBannerSliderForm() {
           media_mobile_path: data.media_mobile_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`
             : null,
+          media_desktop_path_ar: data.media_desktop_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path_ar}`
+            : null,
+          media_mobile_path_ar: data.media_mobile_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path_ar}`
+            : null,
         });
 
         if (data.media_desktop_path) {
@@ -100,6 +110,16 @@ export default function HomeBannerSliderForm() {
         if (data.media_mobile_path) {
           setMobileImageFile(
             `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path}`
+          );
+        }
+        if (data.media_desktop_path_ar) {
+          setImageFileAr(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.media_desktop_path_ar}`
+          );
+        }
+        if (data.media_mobile_path_ar) {
+          setMobileImageFileAr(
+            `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path_ar}`
           );
         }
       }
@@ -146,6 +166,12 @@ export default function HomeBannerSliderForm() {
       }
       if (data.media_mobile_path instanceof File) {
         formData.append("media_mobile_path", data.media_mobile_path);
+      }
+      if (data.media_desktop_path_ar instanceof File) {
+        formData.append("media_desktop_path_ar", data.media_desktop_path_ar);
+      }
+      if (data.media_mobile_path_ar instanceof File) {
+        formData.append("media_mobile_path_ar", data.media_mobile_path_ar);
       }
 
       if (isEditing && id) {
@@ -378,6 +404,56 @@ export default function HomeBannerSliderForm() {
                             setMobileImageFile(file);
                           }}
                           // size
+                          recommendedDimensions="800x600"
+                          accept="image/*"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Image (AR)</FormLabel>
+
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setImageFileAr(file);
+                          }}
+                          recommendedDimensions="1200px × 625px"
+                          accept="image/*"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Image (AR)</FormLabel>
+
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMobileImageFileAr(file);
+                          }}
                           recommendedDimensions="800x600"
                           accept="image/*"
                           preview={true}
