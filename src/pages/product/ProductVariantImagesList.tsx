@@ -228,7 +228,7 @@ export default function ProductVariantImagesList() {
             {image.media_type === "video" ? (
               <video
                 src={`${import.meta.env.VITE_IMAGE_URL}/${image.media_path}`}
-                className="w-20 h-20 object-cover rounded border"
+                className="w-10 h-10 object-cover rounded border"
                 preload="metadata"
                 playsInline
               />
@@ -236,7 +236,7 @@ export default function ProductVariantImagesList() {
               <img
                 src={`${import.meta.env.VITE_IMAGE_URL}/${image.media_path}`}
                 alt={`Image ${image.id}`}
-                className="w-20 h-20 object-cover rounded border"
+                className="w-10 h-10 object-cover rounded border"
               />
             )}
           </div>

@@ -125,6 +125,11 @@ export default function ProductCategoriesList() {
       header: "Name",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
     },
+      {
+      accessorKey: "parent_name",
+      header: "Parent Category",
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("parent_name")}</div>,
+    },
     {
       accessorKey: "slug",
       header: "Slug",
