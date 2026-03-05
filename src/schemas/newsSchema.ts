@@ -62,6 +62,8 @@ export const newsSchema = z.object({
   // File uploads
   media_desktop_path: commonValidations.validateImageUpload("Desktop image"),
   media_mobile_path: commonValidations.validateImageUpload("Mobile image"),
+  media_desktop_path_ar: commonValidations.validateImageUpload("Desktop image (Arabic)"),
+  media_mobile_path_ar: commonValidations.validateImageUpload("Mobile image (Arabic)"),
   thumbnail: commonValidations.validateImageUpload("Thumbnail image"),
 
   // Other fields

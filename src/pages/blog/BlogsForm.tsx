@@ -36,14 +36,21 @@ export default function BlogsForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
   const [thumbnailFile, setThumbnailFile] = useState<File | string | null>(
-    null
+    null,
   );
   const [desktopImageFile, setDesktopImageFile] = useState<
     File | string | null
   >(null);
   const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
-    null
+    null,
   );
+
+  const [desktopImageFileAr, setDesktopImageFileAr] = useState<
+    File | string | null
+  >(null);
+  const [mobileImageFileAr, setMobileImageFileAr] = useState<
+    File | string | null
+  >(null);
 
   const form = useForm<BlogFormData>({
     resolver: zodResolver(blogSchema),
@@ -147,6 +154,17 @@ export default function BlogsForm() {
           setMobileImageFile(mobileUrl);
           form.setValue("media_mobile_path", mobileUrl);
         }
+
+        if (data.media_desktop_path_ar) {
+          const desktopUrlAr = `${MEDIA_URL}/${data.media_desktop_path_ar}`;
+          setDesktopImageFileAr(desktopUrlAr);
+          form.setValue("media_desktop_path_ar", desktopUrlAr);
+        }
+        if (data.media_mobile_path_ar) {
+          const mobileUrlAr = `${MEDIA_URL}/${data.media_mobile_path_ar}`;
+          setMobileImageFileAr(mobileUrlAr);
+          form.setValue("media_mobile_path_ar", mobileUrlAr);
+        }
       }
     } catch (error) {
       toast({
@@ -185,7 +203,7 @@ export default function BlogsForm() {
       formData.append("meta_title_ar", data.meta_title_ar);
       formData.append("meta_description_ar", data.meta_description_ar);
       formData.append("meta_keywords_ar", data.meta_keywords_ar);
-      
+
       formData.append("media_alt_ar", data.media_alt_ar);
       if (data.thumbnail_alt_ar)
         formData.append("thumbnail_alt_ar", data.thumbnail_alt_ar);
@@ -202,6 +220,13 @@ export default function BlogsForm() {
       }
       if (mobileImageFile instanceof File) {
         formData.append("media_mobile_path", mobileImageFile);
+      }
+
+      if (desktopImageFileAr instanceof File) {
+        formData.append("media_desktop_path_ar", desktopImageFileAr);
+      }
+      if (mobileImageFileAr instanceof File) {
+        formData.append("media_mobile_path_ar", mobileImageFileAr);
       }
 
       if (isEditing && id) {
@@ -319,7 +344,7 @@ export default function BlogsForm() {
                     )}
                   />
 
-                    <FormField
+                  <FormField
                     control={form.control}
                     name="other_meta"
                     render={({ field }) => (
@@ -395,7 +420,7 @@ export default function BlogsForm() {
                     )}
                   />
 
-                    <FormField
+                  <FormField
                     control={form.control}
                     name="other_meta_ar"
                     render={({ field }) => (
@@ -636,6 +661,56 @@ export default function BlogsForm() {
                           }}
                           accept="image/*"
                           placeholder="Upload mobile blog image"
+                          recommendedDimensions="640px × 1138px"
+                          preview={true}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Image (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setDesktopImageFileAr(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload desktop blog image (AR)"
+                          preview={true}
+                          recommendedDimensions="1920px x 732px"
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Image (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMobileImageFileAr(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload mobile blog image (AR)"
                           recommendedDimensions="640px × 1138px"
                           preview={true}
                         />
