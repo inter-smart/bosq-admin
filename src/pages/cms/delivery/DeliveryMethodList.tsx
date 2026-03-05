@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ChevronDown, ChevronUp} from "lucide-react";
 import {
   fetchDeliveryMethodList,
   deleteDeliveryMethod,
@@ -171,17 +171,42 @@ export default function DeliveryMethodList() {
       enableSorting: true,
       cell: ({ row }) => {
         const item = row.original;
+        const currentVal =
+          editingSortOrder[item.id!] !== undefined
+            ? editingSortOrder[item.id!]
+            : String(row.getValue("sort_order") || 1);
+        const numVal = Math.max(1, parseInt(currentVal, 10) || 1);
         return (
-          <Input
-            type="number"
-            value={
-              editingSortOrder[item.id!] !== undefined
-                ? editingSortOrder[item.id!]
-                : row.getValue("sort_order") || 0
-            }
-            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
-            className="w-20"
-          />
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(Math.max(1, numVal - 1)))}
+            >
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            <Input
+              type="number"
+              min={1}
+              value={currentVal}
+              onChange={(e) => {
+                const num = parseInt(e.target.value, 10);
+                if (!isNaN(num) && num >= 1) {
+                  handleSortOrderChange(item.id!, String(num));
+                }
+              }}
+              className="w-14 h-7 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}
+            >
+              <ChevronUp className="h-3 w-3" />
+            </Button>
+          </div>
         );
       },
     },

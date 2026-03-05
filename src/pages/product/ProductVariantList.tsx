@@ -15,12 +15,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image, ChevronUp, ChevronDown } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
 import { useToast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { Input } from "@/components/ui/input";
 
 export default function ProductVariantList() {
   const navigate = useNavigate();
@@ -122,7 +122,7 @@ export default function ProductVariantList() {
     }
   };
 
-  const { handleIsPrimaryChange } = useCommonTableActions<ProductVariant>({
+  const { editingSortOrder, handleSortOrderChange } = useCommonTableActions<ProductVariant>({
     modelName: "ProductVariants",
     data: variants,
     setData: setVariants,
@@ -212,6 +212,50 @@ export default function ProductVariantList() {
     //     );
     //   },
     // },
+    {
+      accessorKey: "sort_order",
+      header: "Sort Order",
+      cell: ({ row }) => {
+        const item = row.original;
+        const currentVal =
+          editingSortOrder[item.id!] !== undefined
+            ? editingSortOrder[item.id!]
+            : String(row.getValue("sort_order") || 1);
+        const numVal = Math.max(1, parseInt(currentVal, 10) || 1);
+        return (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(Math.max(1, numVal - 1)))}
+            >
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            <Input
+              type="number"
+              min={1}
+              value={currentVal}
+              onChange={(e) => {
+                const num = parseInt(e.target.value, 10);
+                if (!isNaN(num) && num >= 1) {
+                  handleSortOrderChange(item.id!, String(num));
+                }
+              }}
+              className="w-14 h-7 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}
+            >
+              <ChevronUp className="h-3 w-3" />
+            </Button>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: "createdAt",
       header: "Created At",

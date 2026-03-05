@@ -15,9 +15,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ListPlus, ImagePlus } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ListPlus, ImagePlus, ChevronDown, ChevronUp} from "lucide-react";
 import { fetchBaseProductList, deleteBaseProduct, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
+import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 
 export default function BaseProductList() {
   const navigate = useNavigate();
@@ -93,6 +94,12 @@ export default function BaseProductList() {
     }
   };
 
+  const { editingSortOrder, handleSortOrderChange } = useCommonTableActions<BaseProduct>({
+    modelName: "ProductBase",
+    data: baseProducts,
+    setData: setBaseProducts,
+  });
+
   const columns: ColumnDef<BaseProduct>[] = [
     {
       accessorKey: "id",
@@ -125,7 +132,46 @@ export default function BaseProductList() {
     {
       accessorKey: "sort_order",
       header: "Sort Order",
-      cell: ({ row }) => <div className="text-sm">{row.getValue("sort_order") || 0}</div>,
+      cell: ({ row }) => {
+        const item = row.original;
+        const currentVal =
+          editingSortOrder[item.id!] !== undefined
+            ? editingSortOrder[item.id!]
+            : String(row.getValue("sort_order") || 1);
+        const numVal = Math.max(1, parseInt(currentVal, 10) || 1);
+        return (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(Math.max(1, numVal - 1)))}
+            >
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            <Input
+              type="number"
+              min={1}
+              value={currentVal}
+              onChange={(e) => {
+                const num = parseInt(e.target.value, 10);
+                if (!isNaN(num) && num >= 1) {
+                  handleSortOrderChange(item.id!, String(num));
+                }
+              }}
+              className="w-14 h-7 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}
+            >
+              <ChevronUp className="h-3 w-3" />
+            </Button>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "createdAt",
