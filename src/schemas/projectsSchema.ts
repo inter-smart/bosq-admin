@@ -14,8 +14,10 @@ export const projectsCmsSchema = z.object({
 
   // Banner Media Section
   media_desktop_path: commonValidations.validateFileUpload("Desktop Banner"),
+  media_desktop_path_ar: commonValidations.validateFileUpload("Desktop Banner (Arabic)"),
   media_mobile_path: commonValidations.validateFileUpload("Mobile Banner"),
-  media_alt: commonValidations.requiredText("Media Alt Text"),
+  media_mobile_path_ar: commonValidations.validateFileUpload("Mobile Banner (Arabic)"),
+  media_alt: commonValidations.requiredString("Media Alt Text"),
   media_alt_ar: commonValidations.requiredText("Media Alt Text (Arabic)"),
   media_type: z.enum(["image", "video"]).default("image"),
 

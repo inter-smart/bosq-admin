@@ -32,7 +32,9 @@ export default function MaterialsCmsForm() {
       banner_title: "",
       banner_title_ar: "",
       banner_media_desktop_path: null,
+      banner_media_desktop_path_ar: null,
       banner_media_mobile_path: null,
+      banner_media_mobile_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
     },
@@ -57,8 +59,14 @@ export default function MaterialsCmsForm() {
           banner_media_desktop_path: data.banner_media_desktop_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_desktop_path}`
             : null,
+          banner_media_desktop_path_ar: data.banner_media_desktop_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_desktop_path_ar}`
+            : null,
           banner_media_mobile_path: data.banner_media_mobile_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path}`
+            : null,
+          banner_media_mobile_path_ar: data.banner_media_mobile_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_mobile_path_ar}`
             : null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
@@ -117,10 +125,22 @@ export default function MaterialsCmsForm() {
           data.banner_media_desktop_path
         );
       }
+      if (data.banner_media_desktop_path_ar instanceof File) {
+        formData.append(
+          "banner_media_desktop_path_ar",
+          data.banner_media_desktop_path_ar
+        );
+      }
       if (data.banner_media_mobile_path instanceof File) {
         formData.append(
           "banner_media_mobile_path",
           data.banner_media_mobile_path
+        );
+      }
+      if (data.banner_media_mobile_path_ar instanceof File) {
+        formData.append(
+          "banner_media_mobile_path_ar",
+          data.banner_media_mobile_path_ar
         );
       }
 
@@ -252,7 +272,7 @@ export default function MaterialsCmsForm() {
                 </div>
               </div>
 
-                     {/* Banner Media */}
+              {/* Banner Media */}
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
@@ -278,6 +298,27 @@ export default function MaterialsCmsForm() {
 
                   <FormField
                     control={form.control}
+                    name="banner_media_desktop_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Desktop - AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="1920px × 732px"
+                            placeholder="Upload desktop banner image (AR)"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="banner_media_mobile_path"
                     render={({ field }) => (
                       <FormItem>
@@ -289,6 +330,27 @@ export default function MaterialsCmsForm() {
                             accept="image/*"
                             recommendedDimensions="640px × 1138px"
                             placeholder="Upload mobile banner image"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Mobile - AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="640px × 1138px"
+                            placeholder="Upload mobile banner image (AR)"
                             preview={true}
                           />
                         </FormControl>

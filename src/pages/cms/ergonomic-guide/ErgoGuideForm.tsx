@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
- 
+
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +37,13 @@ export default function ErgoGuideForm() {
     null,
   );
 
+  const [mediaDesktopFileAr, setMediaDesktopFileAr] = useState<
+    File | string | null
+  >(null);
+  const [mediaMobileFileAr, setMediaMobileFileAr] = useState<
+    File | string | null
+  >(null);
+
   const form = useForm<ErgonomicGuideFormData>({
     resolver: zodResolver(ergonomicGuideSchema),
     defaultValues: {
@@ -46,7 +53,8 @@ export default function ErgoGuideForm() {
       description_ar: "",
       media_desktop_path: null,
       media_mobile_path: null,
-      media_alt: "",
+      media_desktop_path_ar: null,
+      media_mobile_path_ar: null,
       media_alt_ar: "",
     },
   });
@@ -56,17 +64,20 @@ export default function ErgoGuideForm() {
     if (initialLoading) {
       form.setValue("media_desktop_path", null);
       form.setValue("media_mobile_path", null);
+
+      form.setValue("media_desktop_path_ar", null);
+      form.setValue("media_mobile_path_ar", null);
       setMediaDesktopFile(null);
       setMediaMobileFile(null);
+
+      setMediaDesktopFileAr(null);
+      setMediaMobileFileAr(null);
     }
   }, [initialLoading, form]);
 
   useEffect(() => {
     loadErgonomicGuideData();
   }, []);
-
-
-  
 
   const loadErgonomicGuideData = async () => {
     try {
@@ -82,6 +93,8 @@ export default function ErgoGuideForm() {
           description_ar: data.description_ar || "",
           media_desktop_path: data.media_desktop_path || null,
           media_mobile_path: data.media_mobile_path || null,
+          media_desktop_path_ar: data.media_desktop_path_ar || null,
+          media_mobile_path_ar: data.media_mobile_path_ar || null,
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
         });
@@ -98,6 +111,20 @@ export default function ErgoGuideForm() {
 
           form.setValue("media_mobile_path", mobileUrl);
           setMediaMobileFile(mobileUrl);
+        }
+
+        if (data?.media_desktop_path_ar) {
+          const desktopUrl = `${import.meta.env.VITE_IMAGE_URL}/${data?.media_desktop_path_ar}`;
+
+          form.setValue("media_desktop_path_ar", desktopUrl);
+          setMediaDesktopFileAr(desktopUrl);
+        }
+
+        if (data.media_mobile_path_ar) {
+          const mobileUrl = `${import.meta.env.VITE_IMAGE_URL}/${data.media_mobile_path_ar}`;
+
+          form.setValue("media_mobile_path_ar", mobileUrl);
+          setMediaMobileFileAr(mobileUrl);
         }
       }
     } catch (error) {
@@ -148,6 +175,13 @@ export default function ErgoGuideForm() {
       }
       if (mediaMobileFile instanceof File) {
         formData.append("media_mobile_path", mediaMobileFile);
+      }
+
+      if (mediaDesktopFileAr instanceof File) {
+        formData.append("media_desktop_path_ar", mediaDesktopFileAr);
+      }
+      if (mediaMobileFileAr instanceof File) {
+        formData.append("media_mobile_path_ar", mediaMobileFileAr);
       }
 
       await saveErgonomicGuideCms(formData);
@@ -326,6 +360,60 @@ export default function ErgoGuideForm() {
                     </FormItem>
                   )}
                 />
+
+
+                {/* form for ar images */}
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Desktop (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMediaDesktopFileAr(file);
+                          }}
+                          accept={"image"}
+                          recommendedDimensions="1920px × 734px"
+                          placeholder={`Upload desktop
+                            image
+                          `}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {"image"}
+                        (Mobile)
+                      </FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMediaMobileFileAr(file);
+                          }}
+                          accept={"image"}
+                          recommendedDimensions="640px × 1138px"
+                          placeholder={`Upload mobile media`}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                  />
               </div>
 
               {/* Alt Text (Bilingual) */}

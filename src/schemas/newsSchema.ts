@@ -24,20 +24,22 @@ export const newsCmsSchema = z.object({
     "Arabic Related News Title"
   ),
 
-  // File uploads (no Arabic versions needed)
+  // File uploads
   media_desktop_path: commonValidations.validateFileUpload("Desktop media"),
   media_mobile_path: commonValidations.validateFileUpload("Mobile media"),
+  media_desktop_path_ar: commonValidations.validateFileUpload("Desktop media (Arabic)"),
+  media_mobile_path_ar: commonValidations.validateFileUpload("Mobile media (Arabic)"),
 });
 
 export const newsSchema = z.object({
   // English fields
   title: commonValidations.requiredString("Title"),
   name: commonValidations.requiredString("Name"),
- 
+
   meta_title: commonValidations.requiredString("Meta Title"),
   meta_description: commonValidations.optionalString("Meta Description"),
   meta_keywords: commonValidations.optionalString("Meta Keywords"),
- 
+
   description: commonValidations.requiredText("Description"),
   media_alt: commonValidations.optionalString("Media Alt Text"),
   thumbnail_alt: commonValidations.optionalString("Thumbnail Alt Text"),

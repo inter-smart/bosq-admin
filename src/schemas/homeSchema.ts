@@ -84,6 +84,8 @@ export const homeBannerSchema = z.object({
   // File uploads
   media_desktop_path: commonValidations.validateFileUpload("Desktop Media"),
   media_mobile_path: commonValidations.validateFileUpload("Mobile Media"),
+  media_desktop_path_ar: commonValidations.validateFileUpload("Desktop Media (AR)"),
+  media_mobile_path_ar: commonValidations.validateFileUpload("Mobile Media (AR)"),
 
   // Sort order + status
   sort_order: commonValidations.sortOrder(),

@@ -11,6 +11,8 @@ export const ergonomicGuideSchema = z.object({
   // Media Section
   media_desktop_path: commonValidations.validateFileUpload("Desktop Media"),
   media_mobile_path: commonValidations.validateFileUpload("Mobile Media"),
+  media_desktop_path_ar: commonValidations.validateFileUpload("Desktop Media"),
+  media_mobile_path_ar: commonValidations.validateFileUpload("Mobile Media"),
   media_alt: commonValidations.requiredText("Media Alt Text"),
   media_alt_ar: commonValidations.requiredText("Media Alt Text (Arabic)"),
   media_type: z.enum(["image", "video"]).default("image").nullable(),
@@ -41,6 +43,6 @@ export const ergonomicFeatureSchema = z.object({
 export type ErgonomicGuideFormData = z.infer<typeof ergonomicGuideSchema>;
 
 export type ErgonomicFeatureFormData = z.infer<
-typeof ergonomicFeatureSchema
+  typeof ergonomicFeatureSchema
 >;
 

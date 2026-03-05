@@ -32,6 +32,8 @@ export default function FaqCmsForm() {
       banner_title_ar: "",
       banner_media_desktop_path: null,
       banner_media_mobile_path: null,
+      banner_media_desktop_path_ar: null,
+      banner_media_mobile_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       title: "",
@@ -59,6 +61,8 @@ export default function FaqCmsForm() {
           banner_title_ar: data.banner_title_ar || "",
           banner_media_desktop_path: data.banner_media_desktop_path || null,
           banner_media_mobile_path: data.banner_media_mobile_path || null,
+          banner_media_desktop_path_ar: data.banner_media_desktop_path_ar || null,
+          banner_media_mobile_path_ar: data.banner_media_mobile_path_ar || null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
           title: data.title || "",
@@ -117,6 +121,18 @@ export default function FaqCmsForm() {
         formData.append(
           "banner_media_mobile_path",
           data.banner_media_mobile_path
+        );
+      }
+      if (data.banner_media_desktop_path_ar instanceof File) {
+        formData.append(
+          "banner_media_desktop_path_ar",
+          data.banner_media_desktop_path_ar
+        );
+      }
+      if (data.banner_media_mobile_path_ar instanceof File) {
+        formData.append(
+          "banner_media_mobile_path_ar",
+          data.banner_media_mobile_path_ar
         );
       }
 
@@ -232,6 +248,48 @@ export default function FaqCmsForm() {
                             onChange={field.onChange}
                             accept="image/*"
                             placeholder="Upload mobile banner image"
+                            recommendedDimensions="640px × 1138px"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_media_desktop_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Desktop) (AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="1920px x 732px"
+                            placeholder="Upload desktop banner image (AR)"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Image (Mobile) (AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload mobile banner image (AR)"
                             recommendedDimensions="640px × 1138px"
                           />
                         </FormControl>
