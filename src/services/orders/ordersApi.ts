@@ -12,6 +12,9 @@ export interface Order {
     tax_total: string;
     grand_total: string;
     est_delivery_details?: string | null;
+    awb_number?: string | null;
+    order_url?: string | null;
+    partner_name?: string | null;
     createdAt: string;
     updatedAt: string;
     user?: {
@@ -112,4 +115,12 @@ export const fetchOrders = async (
 // Fetch single order
 export const fetchOrderById = async (id: number): Promise<OrderResponse> => {
     return apiCall(`/orders/${id}`);
+};
+
+// Update order
+export const updateOrder = async (id: number, data: Partial<Order>): Promise<OrderResponse> => {
+    return apiCall(`/orders/${id}`, {
+        method: 'PUT',
+        data
+    });
 };

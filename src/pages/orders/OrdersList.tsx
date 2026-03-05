@@ -9,10 +9,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Eye } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { MoreHorizontal, Eye, Edit } from "lucide-react";
 import {
     fetchOrders,
     Order,
+    updateOrder,
 } from "@/services/orders/ordersApi";
 import { useToast } from "@/hooks/use-toast";
 import { exportToExcel, formatDateForExcel } from "@/utils/exportUtils";
@@ -28,6 +38,17 @@ export default function OrdersList() {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
     const [pageSize, setPageSize] = useState(10);
+
+    // Edit states
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [editForm, setEditForm] = useState({
+        est_delivery_details: "",
+        awb_number: "",
+        order_url: "",
+        partner_name: "",
+    });
+    const [updating, setUpdating] = useState(false);
 
     // Debounce search query
     useEffect(() => {
@@ -70,6 +91,41 @@ export default function OrdersList() {
         } finally {
             setLoading(false);
             setSearching(false);
+        }
+    };
+
+    const handleEditClick = (order: Order) => {
+        setSelectedOrder(order);
+        setEditForm({
+            est_delivery_details: order.est_delivery_details || "",
+            awb_number: order.awb_number || "",
+            order_url: order.order_url || "",
+            partner_name: order.partner_name || "",
+        });
+        setIsEditDialogOpen(true);
+    };
+
+    const handleUpdateOrder = async () => {
+        if (!selectedOrder) return;
+        try {
+            setUpdating(true);
+            const response = await updateOrder(selectedOrder.id, editForm);
+            if (response.success) {
+                toast({
+                    title: "Success",
+                    description: "Order details updated successfully",
+                });
+                setIsEditDialogOpen(false);
+                loadOrders(); // Refresh the list
+            }
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to update order details",
+                variant: "destructive",
+            });
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -216,6 +272,12 @@ export default function OrdersList() {
                                 <Eye className="mr-2 h-4 w-4" />
                                 View Details
                             </DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => handleEditClick(item)}
+                            >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Manage Order Settings
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 );
@@ -244,6 +306,83 @@ export default function OrdersList() {
                 title="Orders"
                 searchPlaceholder="Search order ID, name..."
             />
+
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent className="sm:max-w-[825px]">
+                    <DialogHeader>
+                        <DialogTitle>Edit Shipping Details - #{selectedOrder?.order_id}</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="est_delivery_details">Delivery Details</Label>
+                            <Input
+                                id="est_delivery_details"
+                                value={editForm.est_delivery_details}
+                                onChange={(e) =>
+                                    setEditForm({
+                                        ...editForm,
+                                        est_delivery_details: e.target.value,
+                                    })
+                                }
+                                placeholder="e.g. 3-5 business days"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="partner_name">Courier Partner</Label>
+                            <Input
+                                id="partner_name"
+                                value={editForm.partner_name}
+                                onChange={(e) =>
+                                    setEditForm({
+                                        ...editForm,
+                                        partner_name: e.target.value,
+                                    })
+                                }
+                                placeholder="e.g. Aramex, DHL"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="awb_number">AWB Number</Label>
+                            <Input
+                                id="awb_number"
+                                value={editForm.awb_number}
+                                onChange={(e) =>
+                                    setEditForm({
+                                        ...editForm,
+                                        awb_number: e.target.value,
+                                    })
+                                }
+                                placeholder="Tracking number"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="order_url">Tracking URL</Label>
+                            <Input
+                                id="order_url"
+                                value={editForm.order_url}
+                                onChange={(e) =>
+                                    setEditForm({
+                                        ...editForm,
+                                        order_url: e.target.value,
+                                    })
+                                }
+                                placeholder="https://tracking-link.com/..."
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsEditDialogOpen(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button onClick={handleUpdateOrder} disabled={updating}>
+                            {updating ? "Saving..." : "Save Changes"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
