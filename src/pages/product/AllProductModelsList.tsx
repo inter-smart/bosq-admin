@@ -4,12 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,34 +15,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  ListPlus,
-  XCircle,
-  Plus,
-} from "lucide-react";
-import {
-  fetchProductModelList,
-  deleteProductModel,
-  ProductModel,
-} from "@/services/product/productModelApi";
-import {
-  fetchBaseProductList,
-  BaseProduct,
-} from "@/services/product/baseProductApi";
+import { MoreHorizontal, Edit, Trash2, ListPlus, XCircle, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { fetchProductModelList, deleteProductModel, ProductModel } from "@/services/product/productModelApi";
+import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AllProductModelsList() {
   const navigate = useNavigate();
@@ -146,66 +121,66 @@ export default function AllProductModelsList() {
     }
   };
 
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-    useCommonTableActions<ProductModel>({
-      modelName: "ProductModels",
-      data: models,
-      setData: setModels,
-    });
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductModel>({
+    modelName: "ProductModels",
+    data: models,
+    setData: setModels,
+  });
 
   const columns: ColumnDef<ProductModel>[] = [
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm">
-          {(currentPage - 1) * pageSize + row.index + 1}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
     {
       accessorKey: "product.title",
       header: "Base Product",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate">
-          {row.original.product?.title || "N/A"}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.original.product?.title || "N/A"}</div>,
     },
     {
       accessorKey: "title",
       header: "Model Title",
-      cell: ({ row }) => (
-        <div className="font-medium max-w-[200px] truncate">
-          {row.getValue("title")}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
     },
     {
       accessorKey: "code",
       header: "Code",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm max-w-[150px] truncate">
-          {row.getValue("code")}
-        </div>
-      ),
+      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("code")}</div>,
     },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
       cell: ({ row }) => {
         const item = row.original;
+        const currentVal = editingSortOrder[item.id!] !== undefined ? editingSortOrder[item.id!] : String(row.getValue("sort_order") || 1);
+        const numVal = Math.max(1, parseInt(currentVal, 10) || 1);
         return (
-          <Input
-            type="number"
-            value={
-              editingSortOrder[item.id!] !== undefined
-                ? editingSortOrder[item.id!]
-                : row.getValue("sort_order") || 0
-            }
-            onChange={(e) => handleSortOrderChange(item.id!, e.target.value)}
-            className="w-20"
-          />
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => handleSortOrderChange(item.id!, String(Math.max(1, numVal - 1)))}
+            >
+              <ChevronDown className="h-3 w-3" />
+            </Button>
+            <Input
+              type="number"
+              min={1}
+              value={currentVal}
+              onChange={(e) => {
+                const num = parseInt(e.target.value, 10);
+                if (!isNaN(num) && num >= 1) {
+                  handleSortOrderChange(item.id!, String(num));
+                }
+              }}
+              className="w-14 h-7 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}>
+              <ChevronUp className="h-3 w-3" />
+            </Button>
+          </div>
         );
       },
     },
@@ -217,13 +192,8 @@ export default function AllProductModelsList() {
         const status = row.getValue("status") as boolean;
         return (
           <div className="flex items-center gap-2">
-            <Switch
-              checked={status}
-              onCheckedChange={() => handleStatusChange(item.id!, status)}
-            />
-            <Badge variant={status ? "default" : "secondary"}>
-              {status ? "Active" : "Inactive"}
-            </Badge>
+            <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
+            <Badge variant={status ? "default" : "secondary"}>{status ? "Active" : "Inactive"}</Badge>
           </div>
         );
       },
@@ -242,24 +212,15 @@ export default function AllProductModelsList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate(`/product-models/${item.product_id}/edit/${item.id}`)
-                }
-              >
+              <DropdownMenuItem onClick={() => navigate(`/product-models/${item.product_id}/edit/${item.id}`)}>
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => navigate(`/product-variants/${item.id}/list`)}
-              >
+              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.id}/list`)}>
                 <ListPlus className="mr-2 h-4 w-4" />
                 Manage Variants
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setDeleteItemId(item.id!)}
-              >
+              <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -276,18 +237,13 @@ export default function AllProductModelsList() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">All Product Models</h1>
-            <p className="text-muted-foreground">
-              Manage all models across all products
-            </p>
+            <p className="text-muted-foreground">Manage all models across all products</p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-64">
-                <Select
-                  value={selectedProductId}
-                  onValueChange={setSelectedProductId}
-                >
+                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by Product" />
                   </SelectTrigger>
@@ -302,12 +258,7 @@ export default function AllProductModelsList() {
                 </Select>
               </div>
               {selectedProductId !== "all" && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSelectedProductId("all")}
-                  title="Clear Filter"
-                >
+                <Button variant="ghost" size="icon" onClick={() => setSelectedProductId("all")} title="Clear Filter">
                   <XCircle className="h-4 w-4 text-muted-foreground" />
                 </Button>
               )}
@@ -343,24 +294,17 @@ export default function AllProductModelsList() {
         />
       </div>
 
-      <AlertDialog
-        open={!!deleteItemId}
-        onOpenChange={() => setDeleteItemId(null)}
-      >
+      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              product model and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the product model and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
