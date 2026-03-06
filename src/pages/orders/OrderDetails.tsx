@@ -31,6 +31,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import jsPDF from "jspdf";
 
 export default function OrderDetails() {
@@ -39,6 +48,11 @@ export default function OrderDetails() {
   const { toast } = useToast();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Cancellation Dialog State
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
+  const [pendingStatus, setPendingStatus] = useState<Order['status'] | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -65,11 +79,37 @@ export default function OrderDetails() {
     }
   };
 
-  const handleStatusChange = async (newStatus: Order['status']) => {
+  const handleStatusSelect = (newStatus: Order['status']) => {
+    if (newStatus === "cancelled") {
+      setPendingStatus(newStatus);
+      setCancelReason("");
+      setCancelDialogOpen(true);
+    } else {
+      handleStatusChange(newStatus);
+    }
+  };
+
+  const confirmCancellation = () => {
+    if (!cancelReason.trim()) {
+      toast({
+        title: "Error",
+        description: "Please provide a reason for cancellation.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCancelDialogOpen(false);
+    handleStatusChange("cancelled", cancelReason);
+  };
+
+  const handleStatusChange = async (newStatus: Order['status'], reason?: string) => {
     if (!order) return;
     try {
       setLoading(true);
-      const res = await updateOrder(order.id, { status: newStatus });
+      const payload: any = { status: newStatus };
+      if (reason) payload.cancel_reason = reason;
+
+      const res = await updateOrder(order.id, payload);
       if (res.success) {
         toast({
           title: "Status Updated",
@@ -486,7 +526,7 @@ export default function OrderDetails() {
               ) : (
                 <Select
                   value={order.status}
-                  onValueChange={(val: any) => handleStatusChange(val)}
+                  onValueChange={(val: any) => handleStatusSelect(val)}
                 >
                   <SelectTrigger className={`w-[140px] h-8 capitalize ${statusColors[order.status]} font-semibold`}>
                     <SelectValue placeholder="Status" />
@@ -496,6 +536,7 @@ export default function OrderDetails() {
                       let disabled = false;
                       if (s === 'delivered' && order.status !== 'shipped') disabled = true;
                       if (s === 'shipped' && order.status !== 'packed') disabled = true;
+                      if (s === 'packed' && order.status !== 'confirmed') disabled = true;
 
                       return (
                         <SelectItem key={s} value={s} disabled={disabled} className="capitalize">
@@ -520,6 +561,35 @@ export default function OrderDetails() {
             </p>
           </div>
         </div>
+
+        {/* Cancellation Dialog */}
+        <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Cancel Order</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="cancel-reason">Reason for Cancellation</Label>
+                <Textarea
+                  id="cancel-reason"
+                  placeholder="Please provide a reason for cancelling this order..."
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setCancelDialogOpen(false)}>
+                Back
+              </Button>
+              <Button variant="destructive" onClick={confirmCancellation}>
+                Confirm Cancellation
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
