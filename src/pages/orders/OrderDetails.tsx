@@ -21,9 +21,16 @@ import {
   Tag,
   Clock,
 } from "lucide-react";
-import { fetchOrderById, Order } from "@/services/orders/ordersApi";
+import { fetchOrderById, updateOrder, Order } from "@/services/orders/ordersApi";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import jsPDF from "jspdf";
 
 export default function OrderDetails() {
@@ -54,6 +61,35 @@ export default function OrderDetails() {
       });
       navigate("/orders");
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (newStatus: Order['status']) => {
+    if (!order) return;
+    try {
+      setLoading(true);
+      const res = await updateOrder(order.id, { status: newStatus });
+      if (res.success) {
+        toast({
+          title: "Status Updated",
+          description: "Order status has been updated successfully.",
+        });
+        await loadOrder(order.id);
+      } else {
+        toast({
+          title: "Error",
+          description: res.message || "Failed to update status",
+          variant: "destructive",
+        });
+        setLoading(false);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error?.response?.data?.message || "Something went wrong",
+        variant: "destructive",
+      });
       setLoading(false);
     }
   };
@@ -441,11 +477,35 @@ export default function OrderDetails() {
               <h1 className="text-2xl font-bold tracking-tight">
                 Order #{order.order_id}
               </h1>
-              <Badge
-                className={`${statusColors[order.status]} capitalize px-3 py-1 font-semibold border`}
-              >
-                {order.status}
-              </Badge>
+              {['delivered', 'cancelled', 'returned'].includes(order.status) ? (
+                <Badge
+                  className={`${statusColors[order.status]} capitalize px-3 py-1 font-semibold border`}
+                >
+                  {order.status}
+                </Badge>
+              ) : (
+                <Select
+                  value={order.status}
+                  onValueChange={(val: any) => handleStatusChange(val)}
+                >
+                  <SelectTrigger className={`w-[140px] h-8 capitalize ${statusColors[order.status]} font-semibold`}>
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {['pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'returned'].map(s => {
+                      let disabled = false;
+                      if (s === 'delivered' && order.status !== 'shipped') disabled = true;
+                      if (s === 'shipped' && order.status !== 'packed') disabled = true;
+
+                      return (
+                        <SelectItem key={s} value={s} disabled={disabled} className="capitalize">
+                          {s}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              )}
             </div>
             <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
               <Calendar className="h-3.5 w-3.5" />
