@@ -119,6 +119,9 @@ export default function OrderDetails() {
       const billingAddr = order.addresses?.find(
         (a) => a.address_type === "billing",
       );
+      const shippingAddr = order.addresses?.find(
+        (a) => a.address_type === "shipping",
+      );
 
       // Same anchor as header right-side text
       const rx = pageWidth - margin;
@@ -129,7 +132,10 @@ export default function OrderDetails() {
       doc.text("CUSTOMER DETAILS", margin, y);
       if (billingAddr) doc.text("BILLING ADDRESS", rx, y, { align: "right" });
 
-      y += 6;
+      let headingY = y;
+      let leftY = headingY + 6;
+      let rightY = headingY + 6;
+
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
@@ -140,45 +146,81 @@ export default function OrderDetails() {
 
       const customerName = fullName || order?.user?.name || "Guest Customer";
 
-      doc.text(customerName, margin, y);
-      y += 5;
+      doc.text(customerName, margin, leftY);
+      leftY += 5;
       if (order.user?.email) {
-        doc.text(order.user.email, margin, y);
-        y += 5;
+        doc.text(order.user.email, margin, leftY);
+        leftY += 5;
       }
       if (order.user?.mobile) {
-        doc.text(order.user.mobile, margin, y);
-        y += 5;
+        doc.text(order.user.mobile, margin, leftY);
+        leftY += 5;
+      }
+
+      if (shippingAddr) {
+        leftY += 4;
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
+        doc.setTextColor(80, 80, 80);
+        doc.text("SHIPPING ADDRESS", margin, leftY);
+        leftY += 6;
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(30, 30, 30);
+        doc.text(shippingAddr.name, margin, leftY);
+        leftY += 5;
+        if (shippingAddr.company_name) {
+          doc.text(shippingAddr.company_name, margin, leftY);
+          leftY += 5;
+        }
+        doc.text(shippingAddr.street_address, margin, leftY);
+        leftY += 5;
+        if (shippingAddr.apartment) {
+          doc.text(shippingAddr.apartment, margin, leftY);
+          leftY += 5;
+        }
+        if (shippingAddr.state?.name) {
+          doc.text(shippingAddr.state.name, margin, leftY);
+          leftY += 5;
+        }
+        leftY += 3;
+        doc.text(
+          `Ph: ${shippingAddr.country_code} ${shippingAddr.phone}`,
+          margin,
+          leftY
+        );
+        leftY += 5;
       }
 
       if (billingAddr) {
-        let addrY = y - (order.user?.mobile ? 10 : 5);
-
-        doc.text(billingAddr.name, rx, addrY, { align: "right" });
-        addrY += 5;
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(30, 30, 30);
+        doc.text(billingAddr.name, rx, rightY, { align: "right" });
+        rightY += 5;
         if (billingAddr.company_name) {
-          doc.text(billingAddr.company_name, rx, addrY, { align: "right" });
-          addrY += 5;
+          doc.text(billingAddr.company_name, rx, rightY, { align: "right" });
+          rightY += 5;
         }
-        doc.text(billingAddr.street_address, rx, addrY, { align: "right" });
-        addrY += 5;
+        doc.text(billingAddr.street_address, rx, rightY, { align: "right" });
+        rightY += 5;
         if (billingAddr.apartment) {
-          doc.text(billingAddr.apartment, rx, addrY, { align: "right" });
-          addrY += 5;
+          doc.text(billingAddr.apartment, rx, rightY, { align: "right" });
+          rightY += 5;
         }
         if (billingAddr.state?.name) {
-          doc.text(billingAddr.state.name, rx, addrY, { align: "right" });
-          addrY += 5;
+          doc.text(billingAddr.state.name, rx, rightY, { align: "right" });
+          rightY += 5;
         }
-        addrY += 3; // breathing gap before phone
+        rightY += 3; // breathing gap before phone
         doc.text(
           `Ph: ${billingAddr.country_code} ${billingAddr.phone}`,
           rx,
-          addrY,
+          rightY,
           { align: "right" },
         );
+        rightY += 5;
       }
-      y += 20;
+
+      y = Math.max(leftY, rightY) + 6;
 
       // ── PAYMENT STRIP ────────────────────────────────────────────────
       doc.setDrawColor(220, 220, 220);
@@ -254,10 +296,11 @@ export default function OrderDetails() {
         doc.text(String(item.quantity), cols.qty, y, { align: "center" });
         doc.text(aed(unitPrice), cols.price, y, { align: "center" });
         const discountValue =
-          typeof discountAmt === "number" && !isNaN(discountAmt) && discountAmt > 0
+          typeof discountAmt === "number" &&
+            !isNaN(discountAmt) &&
+            discountAmt > 0
             ? aed(discountAmt)
             : "-";
-
 
         doc.text(discountValue, cols.discount, y, { align: "center" });
         doc.setFont("helvetica", "bold");
@@ -335,7 +378,6 @@ export default function OrderDetails() {
       });
     }
   };
-
 
   if (loading) {
     return (
@@ -507,34 +549,9 @@ export default function OrderDetails() {
                 </Badge>
               </div>
               {shippingAddress ? (
-                <div className="space-y-1.5 text-sm">
-                  <p className="font-bold text-base">{shippingAddress.name}</p>
-                  <p className="text-muted-foreground">
-                    {shippingAddress.company_name}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {shippingAddress.street_address}
-                  </p>
-                  {shippingAddress.apartment && (
-                    <p className="text-muted-foreground">
-                      {shippingAddress.apartment}
-                    </p>
-                  )}
-                  <p className="font-medium">{shippingAddress.state?.name}</p>
-                  <div className="pt-2">
-                    <p className="text-xs text-muted-foreground">
-                      Phone: {shippingAddress.country_code}{" "}
-                      {shippingAddress.phone}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Email: {shippingAddress.email}
-                    </p>
-                  </div>
-                </div>
+                <AddressData address={shippingAddress} />
               ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  No shipping address provided
-                </p>
+                <AddressData address={billingAddress} />
               )}
             </div>
 
@@ -550,34 +567,9 @@ export default function OrderDetails() {
                 </Badge>
               </div>
               {billingAddress ? (
-                <div className="space-y-1.5 text-sm">
-                  <p className="font-bold text-base">{billingAddress.name}</p>
-                  <p className="text-muted-foreground">
-                    {billingAddress.company_name}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {billingAddress.street_address}
-                  </p>
-                  {billingAddress.apartment && (
-                    <p className="text-muted-foreground">
-                      {billingAddress.apartment}
-                    </p>
-                  )}
-                  <p className="font-medium">{billingAddress.state?.name}</p>
-                  <div className="pt-2">
-                    <p className="text-xs text-muted-foreground">
-                      Phone: {billingAddress.country_code}{" "}
-                      {billingAddress.phone}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Email: {billingAddress.email}
-                    </p>
-                  </div>
-                </div>
+                <AddressData address={billingAddress} />
               ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  No billing address provided
-                </p>
+                <AddressData address={shippingAddress} />
               )}
             </div>
           </CardContent>
@@ -610,7 +602,9 @@ export default function OrderDetails() {
                   <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
                     Courier Partner
                   </p>
-                  <p className="mt-0.5">{order.partner_name || "Not assigned"}</p>
+                  <p className="mt-0.5">
+                    {order.partner_name || "Not assigned"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-sm">
@@ -782,3 +776,25 @@ export default function OrderDetails() {
     </div>
   );
 }
+
+
+
+function AddressData({ address }) {
+  return (
+    <div className="space-y-1.5 text-sm">
+      <p className="font-bold text-base">{address.name}</p>
+      <p className="text-muted-foreground">{address.company_name}</p>
+      <p className="text-muted-foreground">{address.street_address}</p>
+      {address.apartment && (
+        <p className="text-muted-foreground">{address.apartment}</p>
+      )}
+      <p className="font-medium">{address.state?.name}</p>
+      <div className="pt-2">
+        <p className="text-xs text-muted-foreground">
+          Phone: {address.country_code} {address.phone}
+        </p>
+        <p className="text-xs text-muted-foreground">Email: {address.email}</p>
+      </div>
+    </div>
+  );
+};
