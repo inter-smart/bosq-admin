@@ -275,7 +275,7 @@ export default function BaseProductForm() {
                   name="enhance_title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Enhance Title</FormLabel>
+                      <FormLabel>Enhance Title (Optional)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter enhance title" {...field} />
                       </FormControl>
@@ -289,7 +289,7 @@ export default function BaseProductForm() {
                   name="enhance_title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Enhance Title (Arabic)</FormLabel>
+                      <FormLabel>Enhance Title (Arabic)  (Optional)</FormLabel>
                       <FormControl>
                         <Input placeholder="أدخل العنوان المحسّن" {...field} dir="rtl" />
                       </FormControl>
