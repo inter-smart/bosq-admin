@@ -36,6 +36,7 @@ export interface BaseProduct {
   enhance_title?: string;
   enhance_title_ar?: string;
   base_price: string;
+  brochure?: string;
   slug?: string;
   description?: string;
   description_ar?: string;

@@ -48,6 +48,7 @@ export default function BaseProductForm() {
       additional_details_ar: "",
       base_price: "",
       media_path: null,
+      brochure: null,
       sort_order: 1,
       status: true,
       selling_points: [],
@@ -111,6 +112,7 @@ export default function BaseProductForm() {
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
+          brochure: data.brochure ? `${import.meta.env.VITE_IMAGE_URL}/${data.brochure}` : null,
           selling_points: data.sellingPoints?.map((sp) => sp.id) || [],
           sectors: data.sectors?.map((s) => s.id) || [],
         });
@@ -174,6 +176,13 @@ export default function BaseProductForm() {
       // Only append media_path if it's a new file
       if (data.media_path instanceof File) {
         formData.append("media_path", data.media_path);
+      }
+
+      // Append brochure if it's a new file or an existing URL
+      if (data.brochure instanceof File) {
+        formData.append("brochure", data.brochure);
+      } else if (typeof data.brochure === "string") {
+        formData.append("brochure", data.brochure);
       }
 
       // Append selling_points as JSON string array
@@ -365,6 +374,29 @@ export default function BaseProductForm() {
                         />
                       </FormControl>
                       <FormDescription>Upload a product image (optional)</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="mt-6">
+                <FormField
+                  control={form.control}
+                  name="brochure"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Brochure (Optional)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => field.onChange(file)}
+                          accept="application/pdf"
+                          preview={false}
+                          maxSize={10 * 1024 * 1024}
+                        />
+                      </FormControl>
+                      <FormDescription>Upload a product brochure (PDF only, max 10MB)</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
