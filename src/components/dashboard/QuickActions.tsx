@@ -20,14 +20,14 @@ const quickActions = [
     title: "New Blog Post",
     description: "Create a new blog article",
     icon: PlusCircle,
-    href: "/blogs/new",
+    href: "/blogs/create",
     variant: "gradient" as const,
   },
   {
-    title: "Manage Professionals",
-    description: "Post a new job opening",
+    title: "Manage Products",
+    description: "Add or edit products",
     icon: Edit,
-    href: "/professionals/new",
+    href: "/product-variants/all",
     variant: "default" as const,
   },
   // {

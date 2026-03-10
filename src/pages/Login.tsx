@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { login } from "@/services/auth/authApi";
+import { login, isAuthenticated } from "@/services/auth/authApi";
 const bosqLogo = "/bosq-logo-light.png";
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +16,6 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +29,6 @@ export default function Login() {
         if (rememberMe) {
           localStorage.setItem("bosq_remember", "true");
         }
-        setIsAuthenticated(true);
       } else {
         setError(response.message || "Login failed");
       }
@@ -41,7 +39,7 @@ export default function Login() {
     }
   };
 
-  if (isAuthenticated) {
+  if (isAuthenticated()) {
     return <Navigate to="/" replace />;
   }
 
