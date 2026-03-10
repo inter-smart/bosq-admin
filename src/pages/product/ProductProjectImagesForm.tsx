@@ -23,7 +23,7 @@ import {
   createProductProjectImage,
   updateProductProjectImage,
 } from "@/services/product/productProjectImagesApi";
-import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
+import { fetchProductVariantById } from "@/services/product/productVariantApi";
 import { Switch } from "@/components/ui/switch";
 
 const projectImageSchema = z.object({
@@ -44,7 +44,7 @@ export default function ProductProjectImagesForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [product, setProduct] = useState<{ title: string } | null>(null);
 
   const form = useForm<ProjectImageFormData>({
     resolver: zodResolver(projectImageSchema),
@@ -68,7 +68,7 @@ export default function ProductProjectImagesForm() {
 
   const loadProduct = async (itemId: number) => {
     try {
-      const response = await fetchBaseProductById(itemId);
+      const response = await fetchProductVariantById(itemId);
       setProduct(response.data);
     } catch (error) {
       toast({
@@ -111,7 +111,7 @@ export default function ProductProjectImagesForm() {
 
       const formData = new FormData();
 
-      formData.append("product_id", productId!);
+      formData.append("product_variant_id", productId!);
       if (data.media_alt) formData.append("media_alt", data.media_alt);
       if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());

@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -31,6 +29,9 @@ import {
   updateFaqList,
   FaqList,
   getDropdown,
+  getFaqModelsDropdown,
+  getFaqCategoriesDropdown,
+  getFaqVariantsDropdown,
 } from "@/services/cms/faq/faqListApi";
 import { Switch } from "@/components/ui/switch";
 import { FaqListFormData, faqListSchema } from "@/schemas/faqSchema";
@@ -44,13 +45,26 @@ export default function FaqListForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [categories, setCategories] = useState<
-    Array<{ id: number; title: string }>
-  >([]);
-  const [products, setProducts] = useState<Array<{ id: number; title: string }>>(
-    [],
-  );
 
+  // General FAQ category dropdown
+  const [categories, setCategories] = useState<Array<{ id: number; title: string }>>([]);
+
+  // Cascade: base products
+  const [baseProducts, setBaseProducts] = useState<Array<{ id: number; title: string }>>([]);
+  // Cascade: models (loaded when base product selected)
+  const [models, setModels] = useState<Array<{ id: number; title: string; title_ar: string; slug: string }>>([]);
+  // Cascade: categories for variants of model
+  const [variantCategories, setVariantCategories] = useState<Array<{ id: number; name: string; name_ar: string; slug: string }>>([]);
+  // Cascade: variants (filtered by model + optional category)
+  const [variants, setVariants] = useState<Array<{ id: number; title: string; title_ar: string; sku: string; design_title: string; design_title_ar: string }>>([]);
+
+  // Cascade selection state
+  const [selectedBaseId, setSelectedBaseId] = useState<number | null>(null);
+  const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+
+  // Display name for current variant in edit mode
+  const [currentVariantTitle, setCurrentVariantTitle] = useState<string>("");
 
   const form = useForm<FaqListFormData>({
     resolver: zodResolver(faqListSchema),
@@ -61,7 +75,7 @@ export default function FaqListForm() {
       answer_ar: "",
       type: "general",
       faq_category_id: undefined,
-      product_id: undefined,
+      product_variant_id: undefined,
       sort_order: 1,
       status: true,
     },
@@ -70,30 +84,71 @@ export default function FaqListForm() {
   const selectedType = form.watch("type");
 
   useEffect(() => {
-    loadDrpDownData();
+    loadDropdownData();
     if (isEditing && id) {
       loadFaqData(parseInt(id));
     }
   }, [id, isEditing]);
 
-  const loadDrpDownData = async () => {
+  // Load models when base product changes
+  useEffect(() => {
+    if (selectedBaseId) {
+      setModels([]);
+      setVariantCategories([]);
+      setVariants([]);
+      setSelectedModelId(null);
+      setSelectedCategoryId(null);
+      form.setValue("product_variant_id", undefined);
+
+      getFaqModelsDropdown(selectedBaseId).then((res) => {
+        if (res.success) setModels(res.data.models);
+      }).catch(() => {});
+    }
+  }, [selectedBaseId]);
+
+  // Load variant categories when model changes
+  useEffect(() => {
+    if (selectedModelId) {
+      setVariantCategories([]);
+      setVariants([]);
+      setSelectedCategoryId(null);
+      form.setValue("product_variant_id", undefined);
+
+      Promise.all([
+        getFaqCategoriesDropdown(selectedModelId),
+        getFaqVariantsDropdown(selectedModelId),
+      ]).then(([catRes, varRes]) => {
+        if (catRes.success) setVariantCategories(catRes.data.categories);
+        if (varRes.success) setVariants(varRes.data.variants);
+      }).catch(() => {});
+    }
+  }, [selectedModelId]);
+
+  // Reload variants when category filter changes
+  useEffect(() => {
+    if (selectedModelId) {
+      setVariants([]);
+      form.setValue("product_variant_id", undefined);
+
+      getFaqVariantsDropdown(selectedModelId, selectedCategoryId ?? undefined).then((res) => {
+        if (res.success) setVariants(res.data.variants);
+      }).catch(() => {});
+    }
+  }, [selectedCategoryId]);
+
+  const loadDropdownData = async () => {
     try {
       const response = await getDropdown();
-      const categoryData = response.data.categories;
-      const productData = response?.data?.products;
-
-      console.log("Dropdown Data:", response?.data?.products);
-      setCategories(categoryData);
-      setProducts(productData)
+      setCategories(response.data.categories);
+      setBaseProducts(response.data.products);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to load categories",
+        description: "Failed to load dropdown data",
         variant: "destructive",
       });
     }
   };
-
 
   const loadFaqData = async (itemId: number) => {
     try {
@@ -109,10 +164,14 @@ export default function FaqListForm() {
           answer_ar: data.answer_ar || "",
           type: data.type || "general",
           faq_category_id: data.faq_category_id || undefined,
-          product_id: data.product_id || undefined,
+          product_variant_id: data.product_variant_id || undefined,
           sort_order: data.sort_order || 0,
           status: data.status ?? true,
         });
+
+        if (data.product_variant) {
+          setCurrentVariantTitle(data.product_variant.title);
+        }
       }
     } catch (error) {
       toast({
@@ -135,33 +194,25 @@ export default function FaqListForm() {
         answer: data.answer.toString(),
         answer_ar: data.answer_ar?.toString(),
         type: data.type,
-        faq_category_id:
-          data.type === "general" ? data.faq_category_id : undefined,
-        product_id: data.type === "product" ? data.product_id : undefined,
+        faq_category_id: data.type === "general" ? data.faq_category_id : undefined,
+        product_variant_id: data.type === "product" ? data.product_variant_id : undefined,
         sort_order: data.sort_order,
         status: data.status,
       };
 
       if (isEditing && id) {
         await updateFaqList(parseInt(id), payload);
-        toast({
-          title: "Success",
-          description: "FAQ updated successfully",
-        });
+        toast({ title: "Success", description: "FAQ updated successfully" });
       } else {
         await createFaqList(payload);
-        toast({
-          title: "Success",
-          description: "FAQ created successfully",
-        });
+        toast({ title: "Success", description: "FAQ created successfully" });
       }
 
       navigate("/faq-list");
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description:
-          error.message || `Failed to ${isEditing ? "update" : "create"} FAQ`,
+        description: error.message || `Failed to ${isEditing ? "update" : "create"} FAQ`,
         variant: "destructive",
       });
     } finally {
@@ -180,20 +231,12 @@ export default function FaqListForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => navigate("/faq-list")}
-        >
+        <Button variant="outline" size="icon" onClick={() => navigate("/faq-list")}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">
-            {isEditing ? "Edit" : "Add"} FAQ
-          </h1>
-          <p className="text-muted-foreground">
-            {isEditing ? "Update" : "Create a new"} FAQ item
-          </p>
+          <h1 className="text-2xl font-bold">{isEditing ? "Edit" : "Add"} FAQ</h1>
+          <p className="text-muted-foreground">{isEditing ? "Update" : "Create a new"} FAQ item</p>
         </div>
       </div>
 
@@ -228,10 +271,7 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>Answer</FormLabel>
                         <FormControl>
-                          <RichTextEditor
-                            placeholder="Enter FAQ answer"
-                            {...field}
-                          />
+                          <RichTextEditor placeholder="Enter FAQ answer" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -248,11 +288,7 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>Question (AR)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="أدخل سؤال الأسئلة الشائعة"
-                            {...field}
-                            dir="rtl"
-                          />
+                          <Input placeholder="أدخل سؤال الأسئلة الشائعة" {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -266,11 +302,7 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>Answer (AR)</FormLabel>
                         <FormControl>
-                          <RichTextEditor
-                            placeholder="أدخل إجابة الأسئلة الشائعة"
-                            {...field}
-                            dir="rtl"
-                          />
+                          <RichTextEditor placeholder="أدخل إجابة الأسئلة الشائعة" {...field} dir="rtl" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -280,7 +312,7 @@ export default function FaqListForm() {
               </div>
 
               {/* Type and Category/Product Fields */}
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mt-4 space-y-4">
                 <FormField
                   control={form.control}
                   name="type"
@@ -290,10 +322,12 @@ export default function FaqListForm() {
                       <Select
                         onValueChange={(value) => {
                           field.onChange(value);
-                          // Clear the other field and its validation error when type changes
                           if (value === "general") {
-                            form.setValue("product_id", undefined);
-                            form.clearErrors("product_id");
+                            form.setValue("product_variant_id", undefined);
+                            form.clearErrors("product_variant_id");
+                            setSelectedBaseId(null);
+                            setSelectedModelId(null);
+                            setSelectedCategoryId(null);
                           } else {
                             form.setValue("faq_category_id", undefined);
                             form.clearErrors("faq_category_id");
@@ -324,9 +358,7 @@ export default function FaqListForm() {
                       <FormItem>
                         <FormLabel>Category</FormLabel>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(parseInt(value));
-                          }}
+                          onValueChange={(value) => field.onChange(parseInt(value))}
                           value={field.value ? String(field.value) : ""}
                         >
                           <FormControl>
@@ -336,10 +368,7 @@ export default function FaqListForm() {
                           </FormControl>
                           <SelectContent>
                             {categories.map((category) => (
-                              <SelectItem
-                                key={category.id}
-                                value={String(category.id)}
-                              >
+                              <SelectItem key={category.id} value={String(category.id)}>
                                 {category.title}
                               </SelectItem>
                             ))}
@@ -352,38 +381,117 @@ export default function FaqListForm() {
                 )}
 
                 {selectedType === "product" && (
-                  <FormField
-                    control={form.control}
-                    name="product_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Product</FormLabel>
+                  <div className="space-y-4 border rounded-lg p-4">
+                    <p className="text-sm font-medium text-muted-foreground">Select Product Variant</p>
+
+                    {/* Step 1: Base Product */}
+                    <div className="space-y-1">
+                      <label className="text-sm font-medium">Base Product</label>
+                      <Select
+                        onValueChange={(value) => setSelectedBaseId(parseInt(value))}
+                        value={selectedBaseId ? String(selectedBaseId) : ""}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select base product" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {baseProducts.map((p) => (
+                            <SelectItem key={p.id} value={String(p.id)}>
+                              {p.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Step 2: Model */}
+                    {selectedBaseId && (
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium">Model</label>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(parseInt(value));
-                          }}
-                          value={field.value ? String(field.value) : ""}
+                          onValueChange={(value) => setSelectedModelId(parseInt(value))}
+                          value={selectedModelId ? String(selectedModelId) : ""}
+                          disabled={models.length === 0}
                         >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a product" />
-                            </SelectTrigger>
-                          </FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={models.length === 0 ? "Loading..." : "Select model"} />
+                          </SelectTrigger>
                           <SelectContent>
-                            {products.map((product) => (
-                              <SelectItem
-                                key={product?.id}
-                                value={String(product?.id)}
-                              >
-                                {product?.title}
+                            {models.map((m) => (
+                              <SelectItem key={m.id} value={String(m.id)}>
+                                {m.title}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
+                      </div>
                     )}
-                  />
+
+                    {/* Step 3: Category (optional filter) */}
+                    {selectedModelId && variantCategories.length > 0 && (
+                      <div className="space-y-1">
+                        <label className="text-sm font-medium">Category (Optional)</label>
+                        <Select
+                          onValueChange={(value) =>
+                            setSelectedCategoryId(value === "all" ? null : parseInt(value))
+                          }
+                          value={selectedCategoryId ? String(selectedCategoryId) : "all"}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="All categories" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All categories</SelectItem>
+                            {variantCategories.map((c) => (
+                              <SelectItem key={c.id} value={String(c.id)}>
+                                {c.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    {/* Step 4: Variant */}
+                    {selectedModelId && (
+                      <FormField
+                        control={form.control}
+                        name="product_variant_id"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Variant</FormLabel>
+                            <Select
+                              onValueChange={(value) => field.onChange(parseInt(value))}
+                              value={field.value ? String(field.value) : ""}
+                              disabled={variants.length === 0}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={variants.length === 0 ? "Loading..." : "Select variant"} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {variants.map((v) => (
+                                  <SelectItem key={v.id} value={String(v.id)}>
+                                    {v.title} — {v.sku}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {/* Edit mode: show current variant if cascade not yet used */}
+                    {isEditing && currentVariantTitle && !selectedModelId && (
+                      <div className="text-sm text-muted-foreground">
+                        Current variant: <span className="font-medium text-foreground">{currentVariantTitle}</span>
+                        <span className="ml-2">(use cascade above to change)</span>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -406,9 +514,7 @@ export default function FaqListForm() {
                           type="number"
                           placeholder="0"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 0)
-                          }
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -423,15 +529,10 @@ export default function FaqListForm() {
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Status</FormLabel>
-                        <FormDescription>
-                          Enable or disable this FAQ
-                        </FormDescription>
+                        <FormDescription>Enable or disable this FAQ</FormDescription>
                       </div>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -441,11 +542,7 @@ export default function FaqListForm() {
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate("/faq-list")}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate("/faq-list")}>
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>

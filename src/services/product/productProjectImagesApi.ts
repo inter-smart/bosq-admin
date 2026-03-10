@@ -6,7 +6,7 @@ import { apiCall } from "@/utils/apiUtils";
 
 export interface ProductProjectImage {
   id?: number;
-  product_id: number;
+  product_variant_id: number;
   media_path: string;
   thumbnail_path?: string;
   media_alt?: string;
@@ -45,12 +45,12 @@ export interface ProductProjectImageItemResponse {
    API Calls
 ======================= */
 
-// Fetch all project images for a product
-export const fetchProductProjectImages = async (productId: number, page: number = 1, limit: number = 50): Promise<ProductProjectImagesResponse> => {
+// Fetch all project images for a product variant
+export const fetchProductProjectImages = async (variantId: number, page: number = 1, limit: number = 50): Promise<ProductProjectImagesResponse> => {
   const params: Record<string, string | number> = {
     page,
     limit,
-    product_id: productId,
+    product_variant_id: variantId,
   };
 
   return apiCall("/resources/product-project-image", { params });

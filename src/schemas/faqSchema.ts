@@ -54,25 +54,25 @@ export const faqListSchema = z
       required_error: "Type is required",
     }),
     faq_category_id: z.number().optional(),
-    product_id: z.number().optional(),
+    product_variant_id: z.number().optional(),
     sort_order: commonValidations.sortOrder(),
     status: commonValidations.booleanStatus(),
   })
   .superRefine((data, ctx) => {
-    // Product is required only when type === 'product'
-    if (data.type === "product" && !data.product_id) {
+    // Product variant is required only when type === 'product'
+    if (data.type === "product" && !data.product_variant_id) {
       ctx.addIssue({
-        path: ["product_id"],
-        message: "Product is required for product FAQs",
+        path: ["product_variant_id"],
+        message: "Product variant is required for product FAQs",
         code: z.ZodIssueCode.custom,
       });
     }
 
-    // FAQ is required only when type === 'product'
+    // FAQ category is required only when type === 'general'
     if (data.type === "general" && !data.faq_category_id) {
       ctx.addIssue({
         path: ["faq_category_id"],
-        message: "General caategory is required for product FAQs",
+        message: "General category is required for general FAQs",
         code: z.ZodIssueCode.custom,
       });
     }

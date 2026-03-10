@@ -4,12 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
-import { RichTextEditor } from "@/components/common/RichTextEditor";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchBaseProductById, createBaseProduct, updateBaseProduct } from "@/services/product/baseProductApi";
@@ -38,17 +36,8 @@ export default function BaseProductForm() {
       title_ar: "",
       enhance_title: "",
       enhance_title_ar: "",
-      description: "",
-      description_ar: "",
-      details: "",
-      details_ar: "",
-      details_points: "",
-      details_points_ar: "",
-      additional_details: "",
-      additional_details_ar: "",
       base_price: "",
       media_path: null,
-      brochure: null,
       sort_order: 1,
       status: true,
       selling_points: [],
@@ -100,19 +89,10 @@ export default function BaseProductForm() {
           title_ar: data.title_ar || "",
           enhance_title: data.enhance_title || "",
           enhance_title_ar: data.enhance_title_ar || "",
-          description: data.description || "",
-          description_ar: data.description_ar || "",
-          details: data.details || "",
-          details_ar: data.details_ar || "",
-          details_points: data.details_points || "",
-          details_points_ar: data.details_points_ar || "",
-          additional_details: data.additional_details || "",
-          additional_details_ar: data.additional_details_ar || "",
           base_price: data.base_price || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
-          brochure: data.brochure ? `${import.meta.env.VITE_IMAGE_URL}/${data.brochure}` : null,
           selling_points: data.sellingPoints?.map((sp) => sp.id) || [],
           sectors: data.sectors?.map((s) => s.id) || [],
         });
@@ -139,30 +119,8 @@ export default function BaseProductForm() {
       formData.append("title_ar", data.title_ar);
       formData.append("enhance_title", data.enhance_title);
       formData.append("enhance_title_ar", data.enhance_title_ar);
-      formData.append("description", data.description);
-      formData.append("description_ar", data.description_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", data.status ? "1" : "0");
-
-      // Optional TEXT fields
-      if (data.details) {
-        formData.append("details", data.details);
-      }
-      if (data.details_ar) {
-        formData.append("details_ar", data.details_ar);
-      }
-      if (data.details_points) {
-        formData.append("details_points", data.details_points);
-      }
-      if (data.details_points_ar) {
-        formData.append("details_points_ar", data.details_points_ar);
-      }
-      if (data.additional_details) {
-        formData.append("additional_details", data.additional_details);
-      }
-      if (data.additional_details_ar) {
-        formData.append("additional_details_ar", data.additional_details_ar);
-      }
 
       // Base price (required, DECIMAL(10,2) format)
       formData.append("base_price", data.base_price);
@@ -176,13 +134,6 @@ export default function BaseProductForm() {
       // Only append media_path if it's a new file
       if (data.media_path instanceof File) {
         formData.append("media_path", data.media_path);
-      }
-
-      // Append brochure if it's a new file or an existing URL
-      if (data.brochure instanceof File) {
-        formData.append("brochure", data.brochure);
-      } else if (typeof data.brochure === "string") {
-        formData.append("brochure", data.brochure);
       }
 
       // Append selling_points as JSON string array
@@ -308,37 +259,6 @@ export default function BaseProductForm() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Enter product description" className="min-h-[100px]" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Arabic)</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="أدخل وصف المنتج" className="min-h-[100px]" {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-
               {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
                 <FormField
                   control={form.control}
@@ -380,124 +300,6 @@ export default function BaseProductForm() {
                 />
               </div>
 
-              <div className="mt-6">
-                <FormField
-                  control={form.control}
-                  name="brochure"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Product Brochure (Optional)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={(file) => field.onChange(file)}
-                          accept="application/pdf"
-                          preview={false}
-                          maxSize={10 * 1024 * 1024}
-                        />
-                      </FormControl>
-                      <FormDescription>Upload a product brochure (PDF only, max 10MB)</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Product Details Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="details"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Details (Optional)</FormLabel>
-                    <FormControl>
-                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter detailed product information..." />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="details_ar"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Details (Arabic) (Optional)</FormLabel>
-                    <FormControl>
-                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل المنتج..." dir="rtl" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="details_points"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Details Points (Optional)</FormLabel>
-                    <FormControl>
-                      <RichTextEditor
-                        value={field.value || ""}
-                        onChange={field.onChange}
-                        placeholder="Enter product detail points (bullet points, features, etc.)..."
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="details_points_ar"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Details Points (Arabic) (Optional)</FormLabel>
-                    <FormControl>
-                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل نقاط تفاصيل المنتج..." dir="rtl" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="additional_details"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Additional Details (Optional)</FormLabel>
-                    <FormControl>
-                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter any additional product details..." />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="additional_details_ar"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Additional Details (Arabic) (Optional)</FormLabel>
-                    <FormControl>
-                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إضافية للمنتج..." dir="rtl" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
 

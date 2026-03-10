@@ -14,6 +14,8 @@ import { Save, ArrowLeft, Plus, X, Tag } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { FileUpload } from "@/components/common/FileUpload";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
+import { Textarea } from "@/components/ui/textarea";
 import {
   fetchProductVariantById,
   createProductVariant,
@@ -39,6 +41,7 @@ const baseSchema = z.object({
   title_ar: z.string(),
   cover_image: z.union([z.instanceof(File), z.string()]).nullable(),
   hover_image: z.union([z.instanceof(File), z.string()]).nullable(),
+  brochure: z.union([z.instanceof(File), z.string()]).nullable(),
   design_title: z.string(),
   design_title_ar: z.string(),
   sku: z.string(),
@@ -47,6 +50,15 @@ const baseSchema = z.object({
   stock: z.coerce.number(),
   sort_order: z.coerce.number(),
   status: z.boolean(),
+  is_featured: z.boolean(),
+  description: z.string(),
+  description_ar: z.string(),
+  details: z.string(),
+  details_ar: z.string(),
+  details_points: z.string(),
+  details_points_ar: z.string(),
+  additional_details: z.string(),
+  additional_details_ar: z.string(),
 });
 
 type FormValues = z.infer<typeof baseSchema>;
@@ -91,6 +103,7 @@ export default function ProductVariantForm() {
       title_ar: "",
       cover_image: null,
       hover_image: null,
+      brochure: null,
       design_title: "",
       design_title_ar: "",
       sku: "",
@@ -99,6 +112,15 @@ export default function ProductVariantForm() {
       stock: 0,
       sort_order: 1,
       status: true,
+      is_featured: false,
+      description: "",
+      description_ar: "",
+      details: "",
+      details_ar: "",
+      details_points: "",
+      details_points_ar: "",
+      additional_details: "",
+      additional_details_ar: "",
     },
   });
 
@@ -141,8 +163,9 @@ export default function ProductVariantForm() {
         reset({
           title: data.title || "",
           title_ar: data.title_ar || "",
-          cover_image: data.media_path || null,
-          hover_image: data.hover_media_path || null,
+          cover_image: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
+          hover_image: data.hover_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.hover_media_path}` : null,
+          brochure: (data as any).brochure ? `${import.meta.env.VITE_IMAGE_URL}/${(data as any).brochure}` : null,
           design_title: data.design_title || "",
           design_title_ar: data.design_title_ar || "",
           sku: data.sku || "",
@@ -151,6 +174,15 @@ export default function ProductVariantForm() {
           stock: data.stock || 0,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
+          is_featured: (data as any).is_featured ?? false,
+          description: (data as any).description || "",
+          description_ar: (data as any).description_ar || "",
+          details: (data as any).details || "",
+          details_ar: (data as any).details_ar || "",
+          details_points: (data as any).details_points || "",
+          details_points_ar: (data as any).details_points_ar || "",
+          additional_details: (data as any).additional_details || "",
+          additional_details_ar: (data as any).additional_details_ar || "",
         });
 
         // Pre-select existing categories
@@ -274,12 +306,26 @@ export default function ProductVariantForm() {
         formData.append("design_title_ar", data.design_title_ar);
         formData.append("attributes", JSON.stringify(allSelections));
         formData.append("category_ids", JSON.stringify(selectedCategoryIds));
+        formData.append("is_featured", data.is_featured.toString());
+        if (data.description) formData.append("description", data.description);
+        if (data.description_ar) formData.append("description_ar", data.description_ar);
+        if (data.details) formData.append("details", data.details);
+        if (data.details_ar) formData.append("details_ar", data.details_ar);
+        if (data.details_points) formData.append("details_points", data.details_points);
+        if (data.details_points_ar) formData.append("details_points_ar", data.details_points_ar);
+        if (data.additional_details) formData.append("additional_details", data.additional_details);
+        if (data.additional_details_ar) formData.append("additional_details_ar", data.additional_details_ar);
 
         if (data.cover_image instanceof File) {
           formData.append("media_path", data.cover_image);
         }
         if (data.hover_image instanceof File) {
           formData.append("hover_media_path", data.hover_image);
+        }
+        if (data.brochure instanceof File) {
+          formData.append("brochure", data.brochure);
+        } else if (typeof data.brochure === "string") {
+          formData.append("brochure", data.brochure);
         }
 
         await updateProductVariant(parseInt(id), formData);
@@ -335,6 +381,7 @@ export default function ProductVariantForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information - only show when editing */}
         {isEditing && (
+          <>
           <Card>
             <CardHeader>
               <CardTitle>Variant Information</CardTitle>
@@ -438,9 +485,119 @@ export default function ProductVariantForm() {
                     render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
                   />
                 </div>
+
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <Label>Featured</Label>
+                    <p className="text-sm text-muted-foreground">Mark this variant as featured</p>
+                  </div>
+                  <Controller
+                    name="is_featured"
+                    control={control}
+                    render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+                  />
+                </div>
+
+                <div className="space-y-2 col-span-2">
+                  <Label>Product Brochure (Optional)</Label>
+                  <Controller
+                    name="brochure"
+                    control={control}
+                    render={({ field }) => (
+                      <FileUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        accept="application/pdf"
+                        preview={false}
+                        maxSize={10 * 1024 * 1024}
+                      />
+                    )}
+                  />
+                  <p className="text-sm text-muted-foreground">Upload a product brochure (PDF only, max 10MB)</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" placeholder="Enter product description" className="min-h-[100px]" {...register("description")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description_ar">Description (Arabic)</Label>
+                  <Textarea id="description_ar" placeholder="أدخل وصف المنتج" className="min-h-[100px]" dir="rtl" {...register("description_ar")} />
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label>Details (Optional)</Label>
+                <Controller
+                  name="details"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter detailed product information..." />
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Details (Arabic) (Optional)</Label>
+                <Controller
+                  name="details_ar"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل المنتج..." dir="rtl" />
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Details Points (Optional)</Label>
+                <Controller
+                  name="details_points"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter product detail points..." />
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Details Points (Arabic) (Optional)</Label>
+                <Controller
+                  name="details_points_ar"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل نقاط تفاصيل المنتج..." dir="rtl" />
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Additional Details (Optional)</Label>
+                <Controller
+                  name="additional_details"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter any additional product details..." />
+                  )}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Additional Details (Arabic) (Optional)</Label>
+                <Controller
+                  name="additional_details_ar"
+                  control={control}
+                  render={({ field }) => (
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إضافية للمنتج..." dir="rtl" />
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          </>
         )}
 
         {/* Attribute Cards */}

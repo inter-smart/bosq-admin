@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ListPlus, ImagePlus, ChevronDown, ChevronUp } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ListPlus, ChevronDown, ChevronUp } from "lucide-react";
 import { fetchBaseProductList, deleteBaseProduct, BaseProduct, exportBaseProductList } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
@@ -228,10 +228,6 @@ export default function BaseProductList() {
               <DropdownMenuItem onClick={() => navigate(`/product-models/${item.id}/list`)}>
                 <ListPlus className="mr-2 h-4 w-4" />
                 Manage Models
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`/product-project-images/${item.id}/list`)}>
-                <ImagePlus className="mr-2 h-4 w-4" />
-                Manage Project Images
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
                 <Trash2 className="mr-2 h-4 w-4" />

@@ -21,7 +21,7 @@ import {
   deleteProductProjectImage,
   ProductProjectImage,
 } from "@/services/product/productProjectImagesApi";
-import { fetchBaseProductById, BaseProduct } from "@/services/product/baseProductApi";
+import { fetchProductVariantById } from "@/services/product/productVariantApi";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -32,7 +32,7 @@ export default function ProductProjectImagesList() {
   const { toast } = useToast();
   const { productId } = useParams();
   const [images, setImages] = useState<ProductProjectImage[]>([]);
-  const [product, setProduct] = useState<BaseProduct | null>(null);
+  const [product, setProduct] = useState<{ title: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
 
@@ -45,7 +45,7 @@ export default function ProductProjectImagesList() {
 
   const loadProduct = async (id: number) => {
     try {
-      const response = await fetchBaseProductById(id);
+      const response = await fetchProductVariantById(id);
       setProduct(response.data);
     } catch (error) {
       toast({
@@ -250,7 +250,7 @@ export default function ProductProjectImagesList() {
     <>
       <div className="space-y-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={() => navigate("/base-products")}>
+          <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
