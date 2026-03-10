@@ -59,6 +59,8 @@ const baseSchema = z.object({
   details_points_ar: z.string(),
   additional_details: z.string(),
   additional_details_ar: z.string(),
+  enhance_title: z.string(),
+  enhance_title_ar: z.string(),
 });
 
 type FormValues = z.infer<typeof baseSchema>;
@@ -121,6 +123,8 @@ export default function ProductVariantForm() {
       details_points_ar: "",
       additional_details: "",
       additional_details_ar: "",
+      enhance_title: "",
+      enhance_title_ar: "",
     },
   });
 
@@ -165,7 +169,7 @@ export default function ProductVariantForm() {
           title_ar: data.title_ar || "",
           cover_image: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
           hover_image: data.hover_media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.hover_media_path}` : null,
-          brochure: (data as any).brochure ? `${import.meta.env.VITE_IMAGE_URL}/${(data as any).brochure}` : null,
+          brochure: data.brochure ? `${import.meta.env.VITE_IMAGE_URL}/${data.brochure}` : null,
           design_title: data.design_title || "",
           design_title_ar: data.design_title_ar || "",
           sku: data.sku || "",
@@ -175,14 +179,16 @@ export default function ProductVariantForm() {
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           is_featured: (data as any).is_featured ?? false,
-          description: (data as any).description || "",
-          description_ar: (data as any).description_ar || "",
-          details: (data as any).details || "",
-          details_ar: (data as any).details_ar || "",
-          details_points: (data as any).details_points || "",
-          details_points_ar: (data as any).details_points_ar || "",
-          additional_details: (data as any).additional_details || "",
-          additional_details_ar: (data as any).additional_details_ar || "",
+          description: data.description || "",
+          description_ar: data.description_ar || "",
+          details: data.details || "",
+          details_ar: data.details_ar || "",
+          details_points: data.details_points || "",
+          details_points_ar: data.details_points_ar || "",
+          additional_details: data.additional_details || "",
+          additional_details_ar: data.additional_details_ar || "",
+          enhance_title: data.enhance_title || "",
+          enhance_title_ar: data.enhance_title_ar || "",
         });
 
         // Pre-select existing categories
@@ -315,6 +321,8 @@ export default function ProductVariantForm() {
         if (data.details_points_ar) formData.append("details_points_ar", data.details_points_ar);
         if (data.additional_details) formData.append("additional_details", data.additional_details);
         if (data.additional_details_ar) formData.append("additional_details_ar", data.additional_details_ar);
+        if (data.enhance_title) formData.append("enhance_title", data.enhance_title);
+        if (data.enhance_title_ar) formData.append("enhance_title_ar", data.enhance_title_ar);
 
         if (data.cover_image instanceof File) {
           formData.append("media_path", data.cover_image);
@@ -525,6 +533,16 @@ export default function ProductVariantForm() {
                 <div className="space-y-2">
                   <Label htmlFor="description_ar">Description (Arabic)</Label>
                   <Textarea id="description_ar" placeholder="أدخل وصف المنتج" className="min-h-[100px]" dir="rtl" {...register("description_ar")} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="enhance_title">Enhance Title</Label>
+                  <Input id="enhance_title" placeholder="Enter enhance title" {...register("enhance_title")} />
+                  {errors.enhance_title && <p className="text-sm text-destructive">{errors.enhance_title.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="enhance_title_ar">Enhance Title (Arabic)</Label>
+                  <Input id="enhance_title_ar" placeholder="أدخل عنوان التحسين" dir="rtl" {...register("enhance_title_ar")} />
+                  {errors.enhance_title_ar && <p className="text-sm text-destructive">{errors.enhance_title_ar.message}</p>}
                 </div>
               </div>
             </CardContent>

@@ -4,7 +4,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,14 +20,44 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, Image, XCircle, Plus, ShoppingCart, ChevronUp, ChevronDown } from "lucide-react";
-import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
-import { fetchProductModelList, ProductModel } from "@/services/product/productModelApi";
-import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
-import { fetchProductCategoryList, ProductCategory } from "@/services/product/productCategoriesApi";
+import {
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Image,
+  XCircle,
+  Plus,
+  ShoppingCart,
+  ChevronUp,
+  ChevronDown,
+  ImagePlus,
+} from "lucide-react";
+import {
+  fetchProductVariantList,
+  deleteProductVariant,
+  ProductVariant,
+} from "@/services/product/productVariantApi";
+import {
+  fetchProductModelList,
+  ProductModel,
+} from "@/services/product/productModelApi";
+import {
+  fetchBaseProductList,
+  BaseProduct,
+} from "@/services/product/baseProductApi";
+import {
+  fetchProductCategoryList,
+  ProductCategory,
+} from "@/services/product/productCategoriesApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 export default function AllProductVariantsList() {
@@ -86,7 +121,12 @@ export default function AllProductVariantsList() {
 
   const loadModels = async (productId: number) => {
     try {
-      const response = await fetchProductModelList(1, 100, undefined, productId);
+      const response = await fetchProductModelList(
+        1,
+        100,
+        undefined,
+        productId,
+      );
       if (response.success) {
         setModels(response.data.list);
       }
@@ -112,7 +152,14 @@ export default function AllProductVariantsList() {
 
   useEffect(() => {
     loadVariants();
-  }, [currentPage, pageSize, debouncedSearchQuery, selectedProductId, selectedModelId, selectedCategoryId]);
+  }, [
+    currentPage,
+    pageSize,
+    debouncedSearchQuery,
+    selectedProductId,
+    selectedModelId,
+    selectedCategoryId,
+  ]);
 
   const loadVariants = async () => {
     const requestId = ++requestIdRef.current;
@@ -176,52 +223,78 @@ export default function AllProductVariantsList() {
     }
   };
 
-  const { editingSortOrder, handleSortOrderChange } = useCommonTableActions<ProductVariant>({
-    modelName: "ProductVariants",
-    data: variants,
-    setData: setVariants,
-  });
+  const { editingSortOrder, handleSortOrderChange } =
+    useCommonTableActions<ProductVariant>({
+      modelName: "ProductVariants",
+      data: variants,
+      setData: setVariants,
+    });
 
   const columns: ColumnDef<ProductVariant>[] = [
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
+      cell: ({ row }) => (
+        <div className="font-mono text-sm">
+          {(currentPage - 1) * pageSize + row.index + 1}
+        </div>
+      ),
     },
     {
       accessorKey: "productModel.product.title",
       header: "Base Product",
-      cell: ({ row }) => <div className="font-medium max-w-[150px] truncate">{row.original.productModel?.product?.title || "N/A"}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[150px] truncate">
+          {row.original.productModel?.product?.title || "N/A"}
+        </div>
+      ),
     },
     {
       accessorKey: "productModel.title",
       header: "Model",
-      cell: ({ row }) => <div className="font-medium max-w-[150px] truncate">{row.original.productModel?.title || "N/A"}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[150px] truncate">
+          {row.original.productModel?.title || "N/A"}
+        </div>
+      ),
     },
     {
       accessorKey: "sku",
       header: "SKU",
-      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("sku")}</div>,
+      cell: ({ row }) => (
+        <div className="font-mono text-sm max-w-[150px] truncate">
+          {row.getValue("sku")}
+        </div>
+      ),
     },
     {
       accessorKey: "price",
       header: "Price",
-      cell: ({ row }) => <div className="font-medium">{row.getValue("price")}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue("price")}</div>
+      ),
     },
     {
       accessorKey: "stock",
       header: "Stock",
       cell: ({ row }) => {
         const stock = row.getValue("stock") as number;
-        return <Badge variant={stock > 0 ? "default" : "destructive"}>{stock}</Badge>;
+        return (
+          <Badge variant={stock > 0 ? "default" : "destructive"}>{stock}</Badge>
+        );
       },
     },
     {
       id: "categories",
       header: "Categories",
       cell: ({ row }) => {
-        const cats = (row.original.categories ?? []) as { id: number; name: string; parent_id?: number | null }[];
-        if (cats.length === 0) return <span className="text-muted-foreground text-sm">—</span>;
+        const cats = (row.original.categories ?? []) as {
+          id: number;
+          name: string;
+          parent_id?: number | null;
+        }[];
+        if (cats.length === 0)
+          return <span className="text-muted-foreground text-sm">—</span>;
         const visible = cats.slice(0, 2);
         const overflow = cats.length - visible.length;
         return (
@@ -236,7 +309,10 @@ export default function AllProductVariantsList() {
               </Badge>
             ))}
             {overflow > 0 && (
-              <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
+              <Badge
+                variant="outline"
+                className="text-xs font-normal text-muted-foreground"
+              >
                 +{overflow}
               </Badge>
             )}
@@ -276,7 +352,9 @@ export default function AllProductVariantsList() {
               variant="outline"
               size="icon"
               className="h-7 w-7"
-              onClick={() => handleSortOrderChange(item.id!, String(Math.max(1, numVal - 1)))}
+              onClick={() =>
+                handleSortOrderChange(item.id!, String(Math.max(1, numVal - 1)))
+              }
             >
               <ChevronDown className="h-3 w-3" />
             </Button>
@@ -296,7 +374,9 @@ export default function AllProductVariantsList() {
               variant="outline"
               size="icon"
               className="h-7 w-7"
-              onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}
+              onClick={() =>
+                handleSortOrderChange(item.id!, String(numVal + 1))
+              }
             >
               <ChevronUp className="h-3 w-3" />
             </Button>
@@ -318,19 +398,42 @@ export default function AllProductVariantsList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.product_model_id}/edit/${item.id}`)}>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigate(
+                    `/product-variants/${item.product_model_id}/edit/${item.id}`,
+                  )
+                }
+              >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`/product-variant-images/${item.id}`)}>
+              <DropdownMenuItem
+                onClick={() => navigate(`/product-variant-images/${item.id}`)}
+              >
                 <Image className="mr-2 h-4 w-4" />
                 Manage Images
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate(`/product-variants/${item.id}/bought-together`)}>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigate(`/product-project-images/${item.id}/list`)
+                }
+              >
+                <ImagePlus className="mr-2 h-4 w-4" />
+                Manage Project Images
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigate(`/product-variants/${item.id}/bought-together`)
+                }
+              >
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Manage Bought Together
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => setDeleteItemId(item.id!)}
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -347,13 +450,18 @@ export default function AllProductVariantsList() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">All Product Variants</h1>
-            <p className="text-muted-foreground">Manage all variants across all models</p>
+            <p className="text-muted-foreground">
+              Manage all variants across all models
+            </p>
           </div>
 
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <div className="w-56">
-                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                <Select
+                  value={selectedProductId}
+                  onValueChange={setSelectedProductId}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Base Product" />
                   </SelectTrigger>
@@ -384,7 +492,11 @@ export default function AllProductVariantsList() {
 
             <div className="flex items-center gap-2">
               <div className="w-56">
-                <Select value={selectedModelId} onValueChange={setSelectedModelId} disabled={selectedProductId === "all"}>
+                <Select
+                  value={selectedModelId}
+                  onValueChange={setSelectedModelId}
+                  disabled={selectedProductId === "all"}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Model" />
                   </SelectTrigger>
@@ -399,14 +511,22 @@ export default function AllProductVariantsList() {
                 </Select>
               </div>
               {selectedModelId !== "all" && (
-                <Button variant="ghost" size="icon" onClick={() => setSelectedModelId("all")} title="Clear Model Filter">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSelectedModelId("all")}
+                  title="Clear Model Filter"
+                >
                   <XCircle className="h-4 w-4 text-muted-foreground" />
                 </Button>
               )}
             </div>
             <div className="flex items-center gap-2">
               <div className="w-48">
-                <Select value={selectedCategoryId} onValueChange={setSelectedCategoryId}>
+                <Select
+                  value={selectedCategoryId}
+                  onValueChange={setSelectedCategoryId}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
@@ -415,13 +535,21 @@ export default function AllProductVariantsList() {
                     {allCategories
                       .filter((c) => !c.parent_id)
                       .map((parent) => {
-                        const children = allCategories.filter((c) => c.parent_id === parent.id);
+                        const children = allCategories.filter(
+                          (c) => c.parent_id === parent.id,
+                        );
                         return [
-                          <SelectItem key={parent.id} value={parent.id!.toString()}>
+                          <SelectItem
+                            key={parent.id}
+                            value={parent.id!.toString()}
+                          >
                             {parent.name}
                           </SelectItem>,
                           ...children.map((child) => (
-                            <SelectItem key={child.id} value={child.id!.toString()}>
+                            <SelectItem
+                              key={child.id}
+                              value={child.id!.toString()}
+                            >
                               &nbsp;&nbsp;↳ {child.name}
                             </SelectItem>
                           )),
@@ -431,16 +559,27 @@ export default function AllProductVariantsList() {
                 </Select>
               </div>
               {selectedCategoryId !== "all" && (
-                <Button variant="ghost" size="icon" onClick={() => setSelectedCategoryId("all")} title="Clear Category Filter">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSelectedCategoryId("all")}
+                  title="Clear Category Filter"
+                >
                   <XCircle className="h-4 w-4 text-muted-foreground" />
                 </Button>
               )}
             </div>
 
             <Button
-              onClick={() => navigate(`/product-variants/${selectedModelId}/create`)}
+              onClick={() =>
+                navigate(`/product-variants/${selectedModelId}/create`)
+              }
               disabled={selectedModelId === "all"}
-              title={selectedModelId === "all" ? "Select a model to add a variant" : "Add Variant"}
+              title={
+                selectedModelId === "all"
+                  ? "Select a model to add a variant"
+                  : "Add Variant"
+              }
             >
               <Plus className="mr-2 h-4 w-4" />
               Add Variant
@@ -468,17 +607,24 @@ export default function AllProductVariantsList() {
         />
       </div>
 
-      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
+      <AlertDialog
+        open={!!deleteItemId}
+        onOpenChange={() => setDeleteItemId(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the product variant and remove its data from the servers.
+              This action cannot be undone. This will permanently delete the
+              product variant and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

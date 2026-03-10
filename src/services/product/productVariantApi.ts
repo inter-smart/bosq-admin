@@ -20,6 +20,17 @@ export interface ProductVariant {
   design_title?: string;
   design_title_ar?: string;
   hover_media_path?: string;
+  brochure?: string;
+  description?: string;
+  description_ar?: string;
+  details?: string;
+  details_ar?: string;
+  details_points?: string;
+  details_points_ar?: string;
+  additional_details?: string;
+  additional_details_ar?: string;
+  enhance_title?: string;
+  enhance_title_ar?: string;
   createdAt?: string;
   updatedAt?: string;
   deletedAt?: string | null;

@@ -302,7 +302,7 @@ export default function ProjectImagesList() {
           }}
           title="Project Images"
           searchPlaceholder="Search project images..."
-          onAdd={() => navigate(`/project-images/create?projectId=${projectId}`)}
+          onAdd={() => navigate(`/product-variants/all`)}
           addButtonText="Add Project Image"
           navigateBack={() => navigate(`/projects`)}
           isBackNavigation={true}

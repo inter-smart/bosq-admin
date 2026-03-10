@@ -34,8 +34,6 @@ export default function BaseProductForm() {
     defaultValues: {
       title: "",
       title_ar: "",
-      enhance_title: "",
-      enhance_title_ar: "",
       base_price: "",
       media_path: null,
       sort_order: 1,
@@ -87,8 +85,6 @@ export default function BaseProductForm() {
         form.reset({
           title: data.title || "",
           title_ar: data.title_ar || "",
-          enhance_title: data.enhance_title || "",
-          enhance_title_ar: data.enhance_title_ar || "",
           base_price: data.base_price || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -117,8 +113,6 @@ export default function BaseProductForm() {
       // Required fields
       formData.append("title", data.title);
       formData.append("title_ar", data.title_ar);
-      formData.append("enhance_title", data.enhance_title);
-      formData.append("enhance_title_ar", data.enhance_title_ar);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", data.status ? "1" : "0");
 
@@ -222,36 +216,6 @@ export default function BaseProductForm() {
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="أدخل عنوان المنتج" {...field} dir="rtl" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <FormField
-                  control={form.control}
-                  name="enhance_title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Enhance Title (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter enhance title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="enhance_title_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Enhance Title (Arabic)  (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="أدخل العنوان المحسّن" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

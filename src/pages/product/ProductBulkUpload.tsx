@@ -112,7 +112,7 @@ function downloadTemplate() {
   // Note: no "slug" column — slug is auto-generated from title on insert
   const baseHeaders = [
     "title", "title_ar", "description", "description_ar",
-    "enhance_title", "enhance_title_ar", "details", "details_ar",
+  "enhance_title", "enhance_title_ar", "details", "details_ar",
     "details_points", "details_points_ar", "additional_details",
     "additional_details_ar", "sort_order", "status",
   ];
