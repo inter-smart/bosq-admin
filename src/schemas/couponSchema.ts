@@ -17,7 +17,7 @@ export const couponSchema = z
 
     discount_value: z.coerce.number({ required_error: "Discount value is required" }).min(1, "Discount value must be greater than 0"),
 
-    min_order_amount: z.coerce.number({ required_error: "Min order amount is required" }).min(1, "Min order amount must be greater than 0"),
+    min_order_amount: z.coerce.number({ required_error: "Min order amount is required" }),
 
     min_product_amount: z.coerce.number({ required_error: "Min product amount is required" }).min(1, "Min product amount must be greater than 0"),
 
@@ -56,19 +56,7 @@ export const couponSchema = z
       path: ["discount_value"],
     },
   )
-  .refine(
-    (data) => {
-      // For flat discounts: the discount cannot be >= the minimum order amount
-      if (data.discount_type === "flat" && data.discount_value >= data.min_order_amount) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "Discount value must be less than the minimum order amount",
-      path: ["discount_value"],
-    },
-  )
+
   .refine(
     (data) => {
       if (data.usage_limit_per_user > data.usage_limit_total) {
@@ -111,11 +99,7 @@ export const couponSchema = z
     (data) => {
       // For flat discounts on non-common scope: min_product_amount (when provided > 0)
       // must be strictly greater than the discount value
-      if (
-        data.discount_type === "flat" &&
-        data.scope_type !== "common" &&
-        data.min_product_amount <= data.discount_value
-      ) {
+      if (data.discount_type === "flat" && data.scope_type !== "common" && data.min_product_amount <= data.discount_value) {
         return false;
       }
       return true;
