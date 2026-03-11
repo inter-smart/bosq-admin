@@ -15,15 +15,15 @@ export const couponSchema = z
       required_error: "Discount type is required",
     }),
 
-    discount_value: z.coerce.number({ required_error: "Discount value is required" }).min(0, "Discount value must be 0 or greater"),
+    discount_value: z.coerce.number({ required_error: "Discount value is required" }).min(1, "Discount value must be greater than 0"),
 
-    min_order_amount: z.coerce.number({ required_error: "Min order amount is required" }).min(0, "Min order amount must be 0 or greater"),
+    min_order_amount: z.coerce.number({ required_error: "Min order amount is required" }).min(1, "Min order amount must be greater than 0"),
 
-    min_product_amount: z.coerce.number({ required_error: "Min product amount is required" }).min(0, "Min product amount must be 0 or greater"),
+    min_product_amount: z.coerce.number({ required_error: "Min product amount is required" }).min(1, "Min product amount must be greater than 0"),
 
     max_discount_amount: z.coerce
       .number({ required_error: "Maximum discount amount is required" })
-      .min(0, "Maximum discount amount must be 0 or greater"),
+      .min(1, "Maximum discount amount must be greater than 0"),
 
     scope_type: z.enum(["common", "category", "product", "variant", "model"], {
       required_error: "Scope type is required",
@@ -59,8 +59,7 @@ export const couponSchema = z
   .refine(
     (data) => {
       // For flat discounts: the discount cannot be >= the minimum order amount
-      // (only meaningful when min_order_amount is set > 0)
-      if (data.discount_type === "flat" && data.min_order_amount > 0 && data.discount_value >= data.min_order_amount) {
+      if (data.discount_type === "flat" && data.discount_value >= data.min_order_amount) {
         return false;
       }
       return true;
@@ -115,7 +114,6 @@ export const couponSchema = z
       if (
         data.discount_type === "flat" &&
         data.scope_type !== "common" &&
-        data.min_product_amount > 0 &&
         data.min_product_amount <= data.discount_value
       ) {
         return false;
