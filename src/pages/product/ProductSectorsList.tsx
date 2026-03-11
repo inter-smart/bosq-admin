@@ -114,27 +114,11 @@ export default function ProductSectorsList() {
       header: "ID",
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
-    {
-      accessorKey: "media_path",
-      header: "Image",
-      cell: ({ row }) => {
-        const mediaPath = row.getValue("media_path") as string | null;
-        return mediaPath ? (
-          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("name")} className="h-10 w-10 object-cover rounded" />
-        ) : (
-          <div className="h-10 w-10 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">N/A</div>
-        );
-      },
-    },
+    
     {
       accessorKey: "name",
       header: "Name",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
-    },
-    {
-      accessorKey: "code",
-      header: "Code",
-      cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("code")}</div>,
     },
     {
       accessorKey: "sort_order",
