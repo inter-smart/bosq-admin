@@ -146,18 +146,6 @@ export default function AttributeValuesList() {
       cell: ({ row }) => <div className="font-mono text-sm text-muted-foreground">{row.getValue("slug")}</div>,
     },
     {
-      accessorKey: "media_path",
-      header: "Media",
-      cell: ({ row }) => {
-        const mediaPath = row.getValue("media_path") as string;
-        return mediaPath ? (
-          <img src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`} alt={row.getValue("value")} className="w-10 h-10 object-cover rounded" />
-        ) : (
-          <span className="text-muted-foreground">No image</span>
-        );
-      },
-    },
-    {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,
