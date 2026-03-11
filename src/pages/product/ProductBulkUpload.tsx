@@ -110,32 +110,12 @@ function downloadTemplate() {
 
   // ── Sheet 1: product_base ──────────────────────────────────────────────
   // Note: no "slug" column — slug is auto-generated from title on insert
-  const baseHeaders = [
-    "title", "title_ar", "description", "description_ar",
-  "enhance_title", "enhance_title_ar", "details", "details_ar",
-    "details_points", "details_points_ar", "additional_details",
-    "additional_details_ar", "sort_order", "status",
-  ];
-  const baseSample = [
-    "Executive Chair",
-    "كرسي تنفيذي",
-    "Premium ergonomic office chair with lumbar support",
-    "كرسي مكتبي مريح وعالي الجودة مع دعم قطني",
-    "Best-in-class Executive Chair",
-    "أفضل كرسي تنفيذي في فئته",
-    "Crafted from premium materials for all-day comfort.",
-    "مصنوع من مواد فاخرة لراحة طوال اليوم.",
-    "• Adjustable lumbar support\n• 4D armrests\n• Breathable mesh back",
-    "• دعم قطني قابل للتعديل\n• مسند ذراع رباعي الأبعاد\n• ظهر شبكي",
-    "",
-    "",
-    1,
-    true,
-  ];
+  // Content fields (description, details, etc.) have moved to product_variants
+  const baseHeaders = ["title", "title_ar", "sort_order", "status"];
+  const baseSample = ["Executive Chair", "كرسي تنفيذي", 1, true];
 
   const baseWs = XLSX.utils.aoa_to_sheet([baseHeaders, baseSample]);
-  // Style the header row width hints
-  baseWs["!cols"] = baseHeaders.map(() => ({ wch: 28 }));
+  baseWs["!cols"] = [{ wch: 36 }, { wch: 36 }, { wch: 14 }, { wch: 10 }];
   XLSX.utils.book_append_sheet(wb, baseWs, "product_base");
 
   // ── Sheet 2: product_models ────────────────────────────────────────────
@@ -145,117 +125,107 @@ function downloadTemplate() {
   const modelHeaders = [
     "base_title", "title", "title_ar", "code", "base_price", "sort_order", "status", "media_path",
   ];
-  const modelSample = [
-    "Executive Chair",
-    "Black Edition",
-    "الإصدار الأسود",
-    "EC-BLK",
-    299.99,
-    1,
-    true,
-    "ec-blk-model.jpg",
-  ];
-  const modelSample2 = [
-    "Executive Chair",
-    "White Edition",
-    "الإصدار الأبيض",
-    "EC-WHT",
-    319.99,
-    2,
-    true,
-    "ec-wht-model.jpg",
-  ];
+  const modelSample = ["Executive Chair", "Black Edition", "الإصدار الأسود", "EC-BLK", 299.99, 1, true, "ec-blk-model.jpg"];
+  const modelSample2 = ["Executive Chair", "White Edition", "الإصدار الأبيض", "EC-WHT", 319.99, 2, true, "ec-wht-model.jpg"];
 
   const modelWs = XLSX.utils.aoa_to_sheet([modelHeaders, modelSample, modelSample2]);
   modelWs["!cols"] = modelHeaders.map(() => ({ wch: 22 }));
   XLSX.utils.book_append_sheet(wb, modelWs, "product_models");
 
   // ── Sheet 3: product_variants ──────────────────────────────────────────
-  // base_title must match a title from product_base sheet
-  // model_title must match a title from product_models sheet (under the same base_title)
-  // cover_image / hover_image: single filename from uploads/bulk/ (upload via Bulk Image Upload first)
+  // Content fields (description, details, enhance_title, etc.) now live here (moved from product_base)
+  // cover_image / hover_image / brochure: single filename from uploads/bulk/
   // images: comma-separated filenames (images + videos in display order)
   // video_thumbnails: comma-separated thumbnail filenames, one per video in "images" order
+  // project_images: comma-separated filenames for the project/inspiration gallery
   const variantHeaders = [
     "base_title", "model_title", "sku", "product_code", "title", "title_ar",
-    "design_title", "design_title_ar", "price", "stock", "is_primary",
+    "design_title", "design_title_ar", "price", "stock", "is_primary", "is_featured",
     "sort_order", "status", "categories", "attributes",
-    "cover_image", "hover_image", "images", "video_thumbnails",
+    "description", "description_ar",
+    "enhance_title", "enhance_title_ar",
+    "details", "details_ar",
+    "details_points", "details_points_ar",
+    "additional_details", "additional_details_ar",
+    "cover_image", "hover_image", "brochure", "images", "video_thumbnails", "project_images",
   ];
   const variantSample1 = [
-    "Executive Chair",
-    "Black Edition",
-    "EC-BLK-M",
-    "EC-BLK-M-001",
-    "Medium",
-    "متوسط",
-    "Classic Black",
-    "أسود كلاسيك",
-    349.99,
-    50,
-    true,
-    1,
-    true,
-    "office-chairs,ergonomic",
-    "color:black|size:medium",
-    "ec-blk-m-cover.jpg",
-    "ec-blk-m-hover.jpg",
-    "ec-blk-m-1.jpg,ec-blk-m-2.jpg,ec-blk-m-tour.mp4",
-    "ec-blk-m-tour-thumb.jpg",
+    "Executive Chair", "Black Edition", "EC-BLK-M", "EC-BLK-M-001",
+    "Medium", "متوسط", "Classic Black", "أسود كلاسيك",
+    349.99, 50, true, false,
+    1, true, "office-chairs,ergonomic", "color:black|size:medium",
+    "Premium ergonomic office chair with lumbar support", "كرسي مكتبي مريح وعالي الجودة",
+    "Best-in-class Executive Chair", "أفضل كرسي تنفيذي في فئته",
+    "Crafted from premium materials for all-day comfort.", "مصنوع من مواد فاخرة لراحة طوال اليوم.",
+    "• Adjustable lumbar support\n• 4D armrests\n• Breathable mesh back",
+    "• دعم قطني قابل للتعديل\n• مسند ذراع رباعي الأبعاد",
+    "", "",
+    "ec-blk-m-cover.jpg", "ec-blk-m-hover.jpg", "ec-blk-m-brochure.pdf",
+    "ec-blk-m-1.jpg,ec-blk-m-2.jpg,ec-blk-m-tour.mp4", "ec-blk-m-tour-thumb.jpg",
+    "ec-blk-m-proj1.jpg,ec-blk-m-proj2.jpg",
   ];
   const variantSample2 = [
-    "Executive Chair",
-    "Black Edition",
-    "EC-BLK-L",
-    "EC-BLK-L-002",
-    "Large",
-    "كبير",
-    "Classic Black",
-    "أسود كلاسيك",
-    369.99,
-    30,
-    false,
-    2,
-    true,
-    "office-chairs,ergonomic",
-    "color:black|size:large",
-    "ec-blk-l-cover.jpg",
-    "ec-blk-l-hover.jpg",
-    "ec-blk-l-1.jpg,ec-blk-l-2.jpg",
-    "",
+    "Executive Chair", "Black Edition", "EC-BLK-L", "EC-BLK-L-002",
+    "Large", "كبير", "Classic Black", "أسود كلاسيك",
+    369.99, 30, false, false,
+    2, true, "office-chairs,ergonomic", "color:black|size:large",
+    "Premium ergonomic office chair with lumbar support", "كرسي مكتبي مريح وعالي الجودة",
+    "Best-in-class Executive Chair", "أفضل كرسي تنفيذي في فئته",
+    "Crafted from premium materials for all-day comfort.", "مصنوع من مواد فاخرة لراحة طوال اليوم.",
+    "", "", "", "",
+    "ec-blk-l-cover.jpg", "ec-blk-l-hover.jpg", "",
+    "ec-blk-l-1.jpg,ec-blk-l-2.jpg", "", "",
   ];
   const variantSample3 = [
-    "Executive Chair",
-    "White Edition",
-    "EC-WHT-M",
-    "EC-WHT-M-003",
-    "Medium",
-    "متوسط",
-    "Pearl White",
-    "أبيض لؤلؤي",
-    379.99,
-    20,
-    true,
-    1,
-    true,
-    "office-chairs",
-    "color:white|size:medium",
-    "ec-wht-m-cover.jpg",
-    "ec-wht-m-hover.jpg",
-    "ec-wht-m-1.jpg,ec-wht-m-tour.mp4",
-    "ec-wht-m-tour-thumb.jpg",
+    "Executive Chair", "White Edition", "EC-WHT-M", "EC-WHT-M-003",
+    "Medium", "متوسط", "Pearl White", "أبيض لؤلؤي",
+    379.99, 20, true, false,
+    1, true, "office-chairs", "color:white|size:medium",
+    "Premium ergonomic office chair", "كرسي مكتبي مريح",
+    "Pearl White Executive Chair", "كرسي تنفيذي أبيض لؤلؤي",
+    "Premium materials for all-day comfort.", "مواد فاخرة لراحة طوال اليوم.",
+    "", "", "", "",
+    "ec-wht-m-cover.jpg", "ec-wht-m-hover.jpg", "",
+    "ec-wht-m-1.jpg,ec-wht-m-tour.mp4", "ec-wht-m-tour-thumb.jpg",
+    "ec-wht-m-proj1.jpg",
   ];
 
-  const variantWs = XLSX.utils.aoa_to_sheet([
-    variantHeaders,
-    variantSample1,
-    variantSample2,
-    variantSample3,
-  ]);
-  variantWs["!cols"] = variantHeaders.map((h) =>
-    ["attributes", "categories", "images", "video_thumbnails"].includes(h) ? { wch: 40 } : { wch: 22 }
-  );
+  const variantWs = XLSX.utils.aoa_to_sheet([variantHeaders, variantSample1, variantSample2, variantSample3]);
+  const wideVariantCols = new Set(["attributes", "categories", "images", "video_thumbnails", "project_images",
+    "description", "description_ar", "details", "details_ar", "details_points", "details_points_ar",
+    "additional_details", "additional_details_ar", "enhance_title", "enhance_title_ar"]);
+  variantWs["!cols"] = variantHeaders.map((h) => wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 });
   XLSX.utils.book_append_sheet(wb, variantWs, "product_variants");
+
+  // ── Sheet 4: product_faqs ──────────────────────────────────────────────
+  // Optional sheet — leave it out entirely if you have no FAQs to upload
+  // sku: must match a sku in the product_variants sheet of this workbook
+  // Multiple rows with the same sku = multiple FAQs for that variant
+  const faqHeaders = ["sku", "question", "question_ar", "answer", "answer_ar", "sort_order", "status"];
+  const faqSample1 = [
+    "EC-BLK-M",
+    "What materials is this chair made from?",
+    "ما المواد المستخدمة في صنع هذا الكرسي؟",
+    "The chair is crafted from premium mesh fabric and high-grade aluminium for the frame.",
+    "الكرسي مصنوع من قماش الشبك الفاخر وإطار من الألومنيوم عالي الجودة.",
+    1,
+    true,
+  ];
+  const faqSample2 = [
+    "EC-BLK-M",
+    "Does it come with a warranty?",
+    "هل يأتي مع ضمان؟",
+    "Yes, this chair comes with a 2-year manufacturer warranty.",
+    "نعم، يأتي هذا الكرسي مع ضمان المصنع لمدة سنتين.",
+    2,
+    true,
+  ];
+
+  const faqWs = XLSX.utils.aoa_to_sheet([faqHeaders, faqSample1, faqSample2]);
+  faqWs["!cols"] = faqHeaders.map((h) =>
+    ["question", "question_ar", "answer", "answer_ar"].includes(h) ? { wch: 50 } : { wch: 16 }
+  );
+  XLSX.utils.book_append_sheet(wb, faqWs, "product_faqs");
 
   XLSX.writeFile(wb, "bosq_bulk_upload_template.xlsx");
 }
@@ -316,8 +286,8 @@ function UploadGuide() {
                 link: true,
               },
               {
-                title: "Prepare your Excel workbook with exactly 3 sheets",
-                desc: 'The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). Use the Download Template button above to get a correctly named file.',
+                title: "Prepare your Excel workbook with 3 required sheets (+ 1 optional)",
+                desc: 'The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). A 4th sheet named product_faqs is optional — include it only if you have FAQs to upload. Use the Download Template button above to get a correctly named file.',
               },
               {
                 title: "Fill all required fields — leave no required cell empty",
@@ -388,6 +358,11 @@ function UploadGuide() {
                   example="ec-blk-m-hover.jpg"
                 />
                 <FieldRule
+                  field="brochure"
+                  desc="Single filename for a downloadable brochure/PDF attached to this variant."
+                  example="ec-blk-m-brochure.pdf"
+                />
+                <FieldRule
                   field="images"
                   desc="Comma-separated filenames. Can mix images and videos in any display order. Videos are auto-detected by extension — no extra column needed."
                   example="img1.jpg, img2.jpg, tour.mp4"
@@ -396,6 +371,11 @@ function UploadGuide() {
                   field="video_thumbnails"
                   desc="Comma-separated thumbnail filenames — one per video in the images column, in the exact same order the videos appear. Must not contain more entries than there are videos."
                   example="tour-thumb.jpg"
+                />
+                <FieldRule
+                  field="project_images"
+                  desc="Comma-separated filenames for the project/inspiration gallery shown on the variant page. Separate from the main product gallery."
+                  example="proj1.jpg, proj2.jpg"
                 />
               </div>
             </div>
@@ -433,6 +413,20 @@ function UploadGuide() {
         {/* ── Tab: Sheet & Data Rules ──────────────────────────────────── */}
         {tab === "data" && (
           <div className="space-y-4">
+            <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30 p-3 text-xs text-blue-800 dark:text-blue-300 space-y-1">
+              <p className="font-semibold">Content fields are now on product_variants</p>
+              <p>
+                <code className="bg-muted px-1 rounded">description</code>,{" "}
+                <code className="bg-muted px-1 rounded">details</code>,{" "}
+                <code className="bg-muted px-1 rounded">enhance_title</code>,{" "}
+                <code className="bg-muted px-1 rounded">details_points</code>,{" "}
+                and <code className="bg-muted px-1 rounded">additional_details</code>{" "}
+                (plus their <code className="bg-muted px-1 rounded">_ar</code> equivalents) are columns on{" "}
+                <strong>product_variants</strong>, not product_base.
+                The product_base sheet now only needs <code className="bg-muted px-1 rounded">title</code> and <code className="bg-muted px-1 rounded">title_ar</code>.
+              </p>
+            </div>
+
             <div className="rounded-lg border p-3 space-y-2">
               <p className="text-xs font-semibold">Sheet Linking (cross-sheet references)</p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
@@ -441,16 +435,15 @@ function UploadGuide() {
                   must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> value in the product_base sheet.
                 </p>
                 <p>
-                  <code className="bg-muted px-1 rounded text-foreground">product_variants → base_title</code>{" "}
-                  must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> value in the product_base sheet.
+                  <code className="bg-muted px-1 rounded text-foreground">product_variants → base_title + model_title</code>{" "}
+                  must exactly match a row in product_models under the same <code className="bg-muted px-1 rounded text-foreground">base_title</code>.
                 </p>
                 <p>
-                  <code className="bg-muted px-1 rounded text-foreground">product_variants → model_title</code>{" "}
-                  must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> from product_models, under the same{" "}
-                  <code className="bg-muted px-1 rounded text-foreground">base_title</code>.
+                  <code className="bg-muted px-1 rounded text-foreground">product_faqs → sku</code>{" "}
+                  must match a <code className="bg-muted px-1 rounded text-foreground">sku</code> value in the product_variants sheet.
                 </p>
                 <p className="pt-1 text-[11px]">
-                  <strong className="text-foreground">Tip:</strong> Copy the title values directly from the product_base and product_models sheets — do not retype them, as even a single extra space will cause a mismatch error.
+                  <strong className="text-foreground">Tip:</strong> Copy values directly — even a single extra space causes a mismatch error.
                 </p>
               </div>
             </div>
@@ -460,7 +453,7 @@ function UploadGuide() {
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
                   <span className="font-medium text-foreground">Boolean fields</span>{" "}
-                  (<code className="bg-muted px-1 rounded">status</code>, <code className="bg-muted px-1 rounded">is_primary</code>)
+                  (<code className="bg-muted px-1 rounded">status</code>, <code className="bg-muted px-1 rounded">is_primary</code>, <code className="bg-muted px-1 rounded">is_featured</code>)
                   — accepted values: <code className="bg-muted px-1 rounded">true</code> / <code className="bg-muted px-1 rounded">false</code>,{" "}
                   <code className="bg-muted px-1 rounded">1</code> / <code className="bg-muted px-1 rounded">0</code>,{" "}
                   <code className="bg-muted px-1 rounded">yes</code> / <code className="bg-muted px-1 rounded">no</code>
@@ -555,7 +548,10 @@ function UploadGuide() {
                   <span className="font-medium text-foreground">Categories & Attributes</span> — fully replaced: all existing links for updated variants are removed, then the new set from the sheet is inserted
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Gallery Images</span> — add-only: new filenames are inserted; images that already exist for a variant are never removed or duplicated
+                  <span className="font-medium text-foreground">FAQs</span> — fully replaced: all existing product FAQs for updated variants are removed, then the new set from the product_faqs sheet is inserted
+                </p>
+                <p>
+                  <span className="font-medium text-foreground">Gallery Images & Project Images</span> — add-only: new filenames are inserted; images that already exist for a variant are never removed or duplicated
                 </p>
               </div>
             </div>
@@ -566,6 +562,8 @@ function UploadGuide() {
               <p>• <strong>New variant added</strong> — add the row to the sheet; existing rows update, new row creates a new variant</p>
               <p>• <strong>Image replaced</strong> — the new cover_image path overwrites the old one; old gallery images remain (use the product editor to remove them)</p>
               <p>• <strong>Category changed</strong> — update the categories cell; the old category links are removed and the new ones are applied</p>
+              <p>• <strong>FAQ updated</strong> — update product_faqs rows for the variant's sku; all old FAQs for that variant are replaced with the new set</p>
+              <p>• <strong>Project images added</strong> — add filenames to the project_images cell; existing project images are kept (add-only)</p>
             </div>
           </div>
         )}
@@ -612,34 +610,40 @@ function ColumnReference() {
     {
       name: "product_base",
       // slug is auto-generated from title — not a sheet column
-      required: ["title", "title_ar", "description", "description_ar"],
-      optional: [
-        "enhance_title", "enhance_title_ar", "details", "details_ar",
-        "details_points", "details_points_ar", "additional_details",
-        "additional_details_ar", "sort_order", "status",
-      ],
+      // content fields (description, details, etc.) have moved to product_variants
+      required: ["title", "title_ar"],
+      optional: ["sort_order", "status"],
     },
     {
       name: "product_models",
       // base_title links to a title in product_base; slug is auto-generated
-      // media_path: filename in uploads/bulk/ (same convention as variant cover_image)
-      required: ["base_title", "title", "title_ar", "media_path", "base_price"],
-      optional: ["code", "sort_order", "status"],
+      required: ["base_title", "title", "title_ar", "base_price"],
+      optional: ["code", "sort_order", "status", "media_path (filename in uploads/bulk/)"],
     },
     {
       name: "product_variants",
       // base_title + model_title identify the parent model
       required: ["base_title", "model_title"],
       optional: [
-        "sku", "product_code", "title", "title_ar", "design_title",
-        "design_title_ar", "price", "stock", "is_primary", "sort_order",
-        "status", "categories (comma-separated slugs)",
+        "sku", "product_code", "title", "title_ar", "design_title", "design_title_ar",
+        "price", "stock", "is_primary", "is_featured", "sort_order", "status",
+        "categories (comma-separated slugs)",
         "attributes (attr_slug:value_slug | separated)",
-        "cover_image (filename in uploads/bulk/)",
-        "hover_image (filename in uploads/bulk/)",
+        "description", "description_ar",
+        "enhance_title", "enhance_title_ar",
+        "details", "details_ar",
+        "details_points", "details_points_ar",
+        "additional_details", "additional_details_ar",
+        "cover_image (filename)", "hover_image (filename)", "brochure (filename)",
         "images (comma-separated filenames)",
-        "video_thumbnails (comma-separated, one per video)",
+        "video_thumbnails (one per video, in order)",
+        "project_images (comma-separated filenames)",
       ],
+    },
+    {
+      name: "product_faqs (optional sheet)",
+      required: ["sku", "question", "answer"],
+      optional: ["question_ar", "answer_ar", "sort_order", "status"],
     },
   ];
 
@@ -649,14 +653,14 @@ function ColumnReference() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <FileSpreadsheet className="h-4 w-4" />
-            Excel Column Reference (3 required sheets)
+            Excel Column Reference (3 required + 1 optional sheet)
           </CardTitle>
           {open ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
         </div>
       </CardHeader>
       {open && (
         <CardContent className="pt-0">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {sheets.map((sheet) => (
               <div key={sheet.name} className="rounded-lg border p-3 bg-muted/30">
                 <p className="font-mono text-xs font-semibold text-primary mb-2">{sheet.name}</p>
