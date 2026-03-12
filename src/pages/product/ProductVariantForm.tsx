@@ -615,7 +615,7 @@ export default function ProductVariantForm() {
                   name="additional_details_ar"
                   control={control}
                   render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إضافية للمنتج..." dir="rtl" />
+                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إإضافية للمنتج..." dir="rtl" />
                   )}
                 />
               </div>
