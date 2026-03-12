@@ -128,6 +128,12 @@ export default function ProductVariantForm() {
     },
   });
 
+  const hasValidAttributeSelections = useMemo(() => {
+    const allSelections = Object.values(attributeSelections).flat();
+    if (allSelections.length === 0) return false;
+    return allSelections.every((s) => s.valueId !== null);
+  }, [attributeSelections]);
+
   useEffect(() => {
     loadInitialData();
   }, [productId, id]);
@@ -857,7 +863,7 @@ export default function ProductVariantForm() {
           <Button type="button" variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting || (!isEditing && !hasValidAttributeSelections)}>
             <Save className="h-4 w-4 mr-2" />
             {isSubmitting ? "Saving..." : isEditing ? "Update" : "Create"}
           </Button>

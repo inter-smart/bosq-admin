@@ -134,14 +134,14 @@ export default function AllProductModelsList() {
       cell: ({ row }) => <div className="font-mono text-sm">{(currentPage - 1) * pageSize + row.index + 1}</div>,
     },
     {
-      accessorKey: "product.title",
-      header: "Base Product",
-      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.original.product?.title || "N/A"}</div>,
-    },
-    {
       accessorKey: "title",
       header: "Model Title",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("title")}</div>,
+    },
+    {
+      accessorKey: "product.title",
+      header: "Base Product",
+      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.original.product?.title || "N/A"}</div>,
     },
     {
       accessorKey: "code",

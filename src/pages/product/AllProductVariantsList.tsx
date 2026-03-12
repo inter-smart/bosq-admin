@@ -240,6 +240,24 @@ export default function AllProductVariantsList() {
         </div>
       ),
     },
+     {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => (
+        <div className="font-medium max-w-[150px] truncate">
+          {row.getValue("title") || "N/A"}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "sku",
+      header: "SKU",
+      cell: ({ row }) => (
+        <div className="font-mono text-sm max-w-[150px] truncate">
+          {row.getValue("sku")}
+        </div>
+      ),
+    },
     {
       accessorKey: "productModel.product.title",
       header: "Base Product",
@@ -258,15 +276,7 @@ export default function AllProductVariantsList() {
         </div>
       ),
     },
-    {
-      accessorKey: "sku",
-      header: "SKU",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm max-w-[150px] truncate">
-          {row.getValue("sku")}
-        </div>
-      ),
-    },
+   
     {
       accessorKey: "price",
       header: "Price",
@@ -603,7 +613,7 @@ export default function AllProductVariantsList() {
             onPageSizeChange: setPageSize,
           }}
           title=""
-          searchPlaceholder="Search variants..."
+          searchPlaceholder="Search variants by title or SKU"
         />
       </div>
 
