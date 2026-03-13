@@ -144,9 +144,9 @@ export default function AllProductModelsList() {
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.original.product?.title || "N/A"}</div>,
     },
     {
-      accessorKey: "code",
-      header: "Code",
-      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("code")}</div>,
+      accessorKey: "slug",
+      header: "Slug",
+      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("slug")}</div>,
     },
     {
       accessorKey: "sort_order",

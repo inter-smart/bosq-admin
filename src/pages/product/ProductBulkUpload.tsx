@@ -39,9 +39,14 @@ import {
   validateBulkUpload,
   approveBulkUpload,
   getBulkUploadStatus,
+  validateFaqUpload,
+  approveFaqUpload,
+  getFaqUploadStatus,
   type ValidationError,
   type ValidationResult,
   type UploadJobStatus,
+  type FaqValidationResult,
+  type FaqJobStatus,
 } from "@/services/product/bulkUploadApi";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
@@ -133,13 +138,15 @@ function downloadTemplate() {
   XLSX.utils.book_append_sheet(wb, modelWs, "product_models");
 
   // ── Sheet 3: product_variants ──────────────────────────────────────────
+  // SKU is auto-generated from {model.code}-{attr_value_slug1}-{attr_value_slug2}... (all uppercase)
+  // Do NOT include a "sku" column — it is computed server-side during validation.
   // Content fields (description, details, enhance_title, etc.) now live here (moved from product_base)
   // cover_image / hover_image / brochure: single filename from uploads/bulk/
   // images: comma-separated filenames (images + videos in display order)
   // video_thumbnails: comma-separated thumbnail filenames, one per video in "images" order
   // project_images: comma-separated filenames for the project/inspiration gallery
   const variantHeaders = [
-    "base_title", "model_title", "sku", "product_code", "title", "title_ar",
+    "base_title", "model_title", "product_code", "title", "title_ar",
     "design_title", "design_title_ar", "price", "stock", "is_primary", "is_featured",
     "sort_order", "status", "categories", "attributes",
     "description", "description_ar",
@@ -150,7 +157,7 @@ function downloadTemplate() {
     "cover_image", "hover_image", "brochure", "images", "video_thumbnails", "project_images",
   ];
   const variantSample1 = [
-    "Executive Chair", "Black Edition", "EC-BLK-M", "EC-BLK-M-001",
+    "Executive Chair", "Black Edition", "EC-BLK-M-001",
     "Medium", "متوسط", "Classic Black", "أسود كلاسيك",
     349.99, 50, true, false,
     1, true, "office-chairs,ergonomic", "color:black|size:medium",
@@ -165,7 +172,7 @@ function downloadTemplate() {
     "ec-blk-m-proj1.jpg,ec-blk-m-proj2.jpg",
   ];
   const variantSample2 = [
-    "Executive Chair", "Black Edition", "EC-BLK-L", "EC-BLK-L-002",
+    "Executive Chair", "Black Edition", "EC-BLK-L-002",
     "Large", "كبير", "Classic Black", "أسود كلاسيك",
     369.99, 30, false, false,
     2, true, "office-chairs,ergonomic", "color:black|size:large",
@@ -177,7 +184,7 @@ function downloadTemplate() {
     "ec-blk-l-1.jpg,ec-blk-l-2.jpg", "", "",
   ];
   const variantSample3 = [
-    "Executive Chair", "White Edition", "EC-WHT-M", "EC-WHT-M-003",
+    "Executive Chair", "White Edition", "EC-WHT-M-003",
     "Medium", "متوسط", "Pearl White", "أبيض لؤلؤي",
     379.99, 20, true, false,
     1, true, "office-chairs", "color:white|size:medium",
@@ -197,37 +204,41 @@ function downloadTemplate() {
   variantWs["!cols"] = variantHeaders.map((h) => wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 });
   XLSX.utils.book_append_sheet(wb, variantWs, "product_variants");
 
-  // ── Sheet 4: product_faqs ──────────────────────────────────────────────
-  // Optional sheet — leave it out entirely if you have no FAQs to upload
-  // sku: must match a sku in the product_variants sheet of this workbook
-  // Multiple rows with the same sku = multiple FAQs for that variant
-  const faqHeaders = ["sku", "question", "question_ar", "answer", "answer_ar", "sort_order", "status"];
-  const faqSample1 = [
-    "EC-BLK-M",
+  XLSX.writeFile(wb, "bosq_bulk_upload_template.xlsx");
+}
+
+/* ─── FAQ Template Generator ─────────────────────────────────────────────── */
+
+function downloadFaqTemplate() {
+  const wb = XLSX.utils.book_new();
+
+  // sku: the auto-generated SKU of the target variant
+  // Formula: {model_code}-{attr_value_slug1}-{attr_value_slug2}... (all uppercase, hyphen-joined)
+  // e.g. model code "EC-BLK" + attributes "color:black|size:medium" → "EC-BLK-BLACK-MEDIUM"
+  const headers = ["sku", "question", "question_ar", "answer", "answer_ar", "sort_order", "status"];
+  const sample1 = [
+    "EC-BLK-BLACK-MEDIUM",
     "What materials is this chair made from?",
     "ما المواد المستخدمة في صنع هذا الكرسي؟",
     "The chair is crafted from premium mesh fabric and high-grade aluminium for the frame.",
     "الكرسي مصنوع من قماش الشبك الفاخر وإطار من الألومنيوم عالي الجودة.",
-    1,
-    true,
+    1, true,
   ];
-  const faqSample2 = [
-    "EC-BLK-M",
+  const sample2 = [
+    "EC-BLK-BLACK-MEDIUM",
     "Does it come with a warranty?",
     "هل يأتي مع ضمان؟",
     "Yes, this chair comes with a 2-year manufacturer warranty.",
     "نعم، يأتي هذا الكرسي مع ضمان المصنع لمدة سنتين.",
-    2,
-    true,
+    2, true,
   ];
 
-  const faqWs = XLSX.utils.aoa_to_sheet([faqHeaders, faqSample1, faqSample2]);
-  faqWs["!cols"] = faqHeaders.map((h) =>
-    ["question", "question_ar", "answer", "answer_ar"].includes(h) ? { wch: 50 } : { wch: 16 }
+  const ws = XLSX.utils.aoa_to_sheet([headers, sample1, sample2]);
+  ws["!cols"] = headers.map((h) =>
+    ["question", "question_ar", "answer", "answer_ar"].includes(h) ? { wch: 50 } : { wch: 26 }
   );
-  XLSX.utils.book_append_sheet(wb, faqWs, "product_faqs");
-
-  XLSX.writeFile(wb, "bosq_bulk_upload_template.xlsx");
+  XLSX.utils.book_append_sheet(wb, ws, "product_faqs");
+  XLSX.writeFile(wb, "bosq_faq_upload_template.xlsx");
 }
 
 /* ─── Helper: Upload Guide (tabbed) ─────────────────────────────────────── */
@@ -286,8 +297,8 @@ function UploadGuide() {
                 link: true,
               },
               {
-                title: "Prepare your Excel workbook with 3 required sheets (+ 1 optional)",
-                desc: 'The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). A 4th sheet named product_faqs is optional — include it only if you have FAQs to upload. Use the Download Template button above to get a correctly named file.',
+                title: "Prepare your Excel workbook with 3 required sheets",
+                desc: 'The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). Use the Download Template button above to get a correctly named file. FAQs are uploaded separately using the FAQ Upload section below.',
               },
               {
                 title: "Fill all required fields — leave no required cell empty",
@@ -438,9 +449,8 @@ function UploadGuide() {
                   <code className="bg-muted px-1 rounded text-foreground">product_variants → base_title + model_title</code>{" "}
                   must exactly match a row in product_models under the same <code className="bg-muted px-1 rounded text-foreground">base_title</code>.
                 </p>
-                <p>
-                  <code className="bg-muted px-1 rounded text-foreground">product_faqs → sku</code>{" "}
-                  must match a <code className="bg-muted px-1 rounded text-foreground">sku</code> value in the product_variants sheet.
+                <p className="pt-1 text-[11px] text-blue-700 dark:text-blue-400">
+                  <strong>FAQs</strong> are uploaded separately in the FAQ Upload section below — they are not part of this workbook.
                 </p>
                 <p className="pt-1 text-[11px]">
                   <strong className="text-foreground">Tip:</strong> Copy values directly — even a single extra space causes a mismatch error.
@@ -530,7 +540,7 @@ function UploadGuide() {
                 </div>
                 <div className="flex gap-2">
                   <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductVariants</code>
-                  <span>Matched by <code className="bg-muted px-1 rounded">sku</code> first; falls back to <code className="bg-muted px-1 rounded">product_code</code> if no sku match. A variant without both fields is always created as new.</span>
+                  <span>Matched by auto-generated <code className="bg-muted px-1 rounded">sku</code> (always present — derived from model code + attribute slugs); falls back to <code className="bg-muted px-1 rounded">product_code</code> as a secondary key.</span>
                 </div>
               </div>
             </div>
@@ -548,9 +558,6 @@ function UploadGuide() {
                   <span className="font-medium text-foreground">Categories & Attributes</span> — fully replaced: all existing links for updated variants are removed, then the new set from the sheet is inserted
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">FAQs</span> — fully replaced: all existing product FAQs for updated variants are removed, then the new set from the product_faqs sheet is inserted
-                </p>
-                <p>
                   <span className="font-medium text-foreground">Gallery Images & Project Images</span> — add-only: new filenames are inserted; images that already exist for a variant are never removed or duplicated
                 </p>
               </div>
@@ -562,7 +569,7 @@ function UploadGuide() {
               <p>• <strong>New variant added</strong> — add the row to the sheet; existing rows update, new row creates a new variant</p>
               <p>• <strong>Image replaced</strong> — the new cover_image path overwrites the old one; old gallery images remain (use the product editor to remove them)</p>
               <p>• <strong>Category changed</strong> — update the categories cell; the old category links are removed and the new ones are applied</p>
-              <p>• <strong>FAQ updated</strong> — update product_faqs rows for the variant's sku; all old FAQs for that variant are replaced with the new set</p>
+              <p>• <strong>FAQ updated</strong> — use the FAQ Upload section below; upload a new FAQ sheet and all old FAQs for affected variants are replaced</p>
               <p>• <strong>Project images added</strong> — add filenames to the project_images cell; existing project images are kept (add-only)</p>
             </div>
           </div>
@@ -623,9 +630,10 @@ function ColumnReference() {
     {
       name: "product_variants",
       // base_title + model_title identify the parent model
+      // sku is auto-generated — do NOT include a sku column
       required: ["base_title", "model_title"],
       optional: [
-        "sku", "product_code", "title", "title_ar", "design_title", "design_title_ar",
+        "product_code", "title", "title_ar", "design_title", "design_title_ar",
         "price", "stock", "is_primary", "is_featured", "sort_order", "status",
         "categories (comma-separated slugs)",
         "attributes (attr_slug:value_slug | separated)",
@@ -640,11 +648,6 @@ function ColumnReference() {
         "project_images (comma-separated filenames)",
       ],
     },
-    {
-      name: "product_faqs (optional sheet)",
-      required: ["sku", "question", "answer"],
-      optional: ["question_ar", "answer_ar", "sort_order", "status"],
-    },
   ];
 
   return (
@@ -653,7 +656,7 @@ function ColumnReference() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
             <FileSpreadsheet className="h-4 w-4" />
-            Excel Column Reference (3 required + 1 optional sheet)
+            Excel Column Reference (3 required sheets)
           </CardTitle>
           {open ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
         </div>
@@ -692,6 +695,13 @@ function ColumnReference() {
             </p>
             <p>
               <strong>Slugs:</strong> Auto-generated from <code className="bg-muted px-1 rounded">title</code> — do not include a slug column.
+            </p>
+            <p>
+              <strong>SKU (product_variants):</strong> Auto-generated — do not include a <code className="bg-muted px-1 rounded">sku</code> column.
+              Formula: <code className="bg-muted px-1 rounded">{"{model_code}-{attr_value_slug1}-{attr_value_slug2}"}</code> (all uppercase).
+            </p>
+            <p className="text-blue-700 dark:text-blue-400">
+              <strong>FAQs</strong> are uploaded separately — use the FAQ Upload section below after your products are in the system.
             </p>
             <p>
               <strong>Images:</strong> All image filenames (<code className="bg-muted px-1 rounded">media_path</code> in product_models,{" "}
@@ -1115,6 +1125,362 @@ export default function ProductBulkUpload() {
       {/* Job Monitor */}
       {phase === "monitoring" && jobId && (
         <JobStatusCard jobId={jobId} onReset={reset} />
+      )}
+
+      {/* ── FAQ Upload Section ─────────────────────────────────────────── */}
+      <FaqUploadSection />
+    </div>
+  );
+}
+
+/* ─── FAQ Upload Section ─────────────────────────────────────────────────── */
+
+type FaqPhase = "idle" | "validating" | "validated_fail" | "validated_ok" | "approving" | "monitoring";
+
+function FaqUploadSection() {
+  const { toast } = useToast();
+
+  const [faqPhase, setFaqPhase] = useState<FaqPhase>("idle");
+  const [faqFile, setFaqFile] = useState<File | null>(null);
+  const [faqValidationResult, setFaqValidationResult] = useState<FaqValidationResult | null>(null);
+  const [faqJobId, setFaqJobId] = useState<string | null>(null);
+  const [faqJobStatus, setFaqJobStatus] = useState<FaqJobStatus | null>(null);
+  const [faqPolling, setFaqPolling] = useState(false);
+  const [faqStatusError, setFaqStatusError] = useState<string | null>(null);
+  const faqIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const resetFaq = () => {
+    setFaqPhase("idle");
+    setFaqFile(null);
+    setFaqValidationResult(null);
+    setFaqJobId(null);
+    setFaqJobStatus(null);
+    setFaqPolling(false);
+    setFaqStatusError(null);
+    if (faqIntervalRef.current) clearInterval(faqIntervalRef.current);
+  };
+
+  const onFaqDrop = useCallback((accepted: File[]) => {
+    if (accepted.length > 0) {
+      setFaqFile(accepted[0]);
+      setFaqValidationResult(null);
+      if (faqPhase !== "idle") setFaqPhase("idle");
+    }
+  }, [faqPhase]);
+
+  const { getRootProps: getFaqRootProps, getInputProps: getFaqInputProps, isDragActive: isFaqDragActive } = useDropzone({
+    onDrop: onFaqDrop,
+    accept: {
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+      "application/vnd.ms-excel": [".xls"],
+    },
+    maxFiles: 1,
+    disabled: faqPhase === "validating" || faqPhase === "approving" || faqPhase === "monitoring",
+  });
+
+  const handleFaqValidate = async () => {
+    if (!faqFile) return;
+    setFaqPhase("validating");
+    setFaqValidationResult(null);
+    try {
+      const result = await validateFaqUpload(faqFile);
+      setFaqValidationResult(result);
+      setFaqPhase(result.status === "success" ? "validated_ok" : "validated_fail");
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "FAQ validation failed", variant: "destructive" });
+      setFaqPhase("idle");
+    }
+  };
+
+  const handleFaqApprove = async () => {
+    if (!faqValidationResult?.token) return;
+    setFaqPhase("approving");
+    try {
+      const result = await approveFaqUpload(faqValidationResult.token);
+      setFaqJobId(result.job_id);
+      setFaqPhase("monitoring");
+      setFaqPolling(true);
+      toast({ title: "FAQ upload queued", description: `Job #${result.job_id} is processing in the background.` });
+    } catch (err: any) {
+      toast({ title: "Approval failed", description: err.message || "Could not queue FAQ upload", variant: "destructive" });
+      setFaqPhase("validated_ok");
+    }
+  };
+
+  const fetchFaqStatus = useCallback(async () => {
+    if (!faqJobId) return;
+    try {
+      const data = await getFaqUploadStatus(faqJobId);
+      setFaqJobStatus(data);
+      if (data.state === "completed" || data.state === "failed") {
+        setFaqPolling(false);
+        if (faqIntervalRef.current) clearInterval(faqIntervalRef.current);
+      }
+    } catch (err: any) {
+      setFaqStatusError(err.message || "Failed to fetch FAQ job status");
+      setFaqPolling(false);
+      if (faqIntervalRef.current) clearInterval(faqIntervalRef.current);
+    }
+  }, [faqJobId]);
+
+  useEffect(() => {
+    if (faqPhase === "monitoring" && faqJobId) {
+      fetchFaqStatus();
+      faqIntervalRef.current = setInterval(fetchFaqStatus, 3000);
+      return () => {
+        if (faqIntervalRef.current) clearInterval(faqIntervalRef.current);
+      };
+    }
+  }, [faqPhase, faqJobId, fetchFaqStatus]);
+
+  const isFaqDisabled = faqPhase === "validating" || faqPhase === "approving" || faqPhase === "monitoring";
+
+  const stateConfig: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
+    waiting:   { icon: <Clock className="h-5 w-5" />, color: "text-yellow-500", label: "Waiting in queue" },
+    active:    { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-blue-500", label: "Processing" },
+    completed: { icon: <CheckCircle2 className="h-5 w-5" />, color: "text-green-500", label: "Completed" },
+    failed:    { icon: <XCircle className="h-5 w-5" />, color: "text-destructive", label: "Failed" },
+    delayed:   { icon: <Clock className="h-5 w-5" />, color: "text-muted-foreground", label: "Delayed" },
+  };
+
+  return (
+    <div className="border-t pt-8 mt-4 space-y-6">
+      {/* FAQ section header */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">FAQ Bulk Upload</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            Upload FAQs for existing variants. Products must already be in the system before uploading FAQs.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={downloadFaqTemplate} className="shrink-0 gap-2">
+          <Download className="h-4 w-4" />
+          Download FAQ Template
+        </Button>
+      </div>
+
+      {/* Brief guide */}
+      <div className="rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground space-y-1.5">
+        <p className="font-semibold text-foreground text-sm">How it works</p>
+        <p>
+          1. Upload your products via the main bulk upload above first.
+        </p>
+        <p>
+          2. Fill the FAQ sheet: each row needs a <code className="bg-muted px-1 rounded text-foreground">sku</code> matching
+          the auto-generated SKU of the target variant, plus <code className="bg-muted px-1 rounded text-foreground">question</code> and{" "}
+          <code className="bg-muted px-1 rounded text-foreground">answer</code>.
+        </p>
+        <p>
+          3. SKU formula: <code className="bg-muted px-1 rounded text-foreground">{"{model_code}-{attr_value_slug1}-{attr_value_slug2}"}</code>{" "}
+          (all uppercase). Example: model code <code className="bg-muted px-1 rounded">EC-BLK</code> + attributes{" "}
+          <code className="bg-muted px-1 rounded">color:black|size:medium</code> → <code className="bg-muted px-1 rounded">EC-BLK-BLACK-MEDIUM</code>
+        </p>
+        <p>
+          4. Re-uploading replaces all existing FAQs for the affected variants (full replace per variant).
+        </p>
+      </div>
+
+      {/* Drop zone */}
+      {faqPhase !== "monitoring" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Select FAQ Excel File</CardTitle>
+            <CardDescription>Must contain a sheet named <code>product_faqs</code>.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div
+              {...getFaqRootProps()}
+              className={`relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-10 text-center cursor-pointer transition-colors ${
+                isFaqDragActive
+                  ? "border-primary bg-primary/5"
+                  : faqFile
+                  ? "border-primary/50 bg-primary/5"
+                  : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
+              } ${isFaqDisabled ? "pointer-events-none opacity-60" : ""}`}
+            >
+              <input {...getFaqInputProps()} />
+              {faqFile ? (
+                <>
+                  <FileSpreadsheet className="h-10 w-10 text-primary mb-3" />
+                  <p className="font-medium text-sm">{faqFile.name}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {(faqFile.size / 1024).toFixed(1)} KB — click or drop to replace
+                  </p>
+                </>
+              ) : (
+                <>
+                  <UploadCloud className="h-10 w-10 text-muted-foreground mb-3" />
+                  <p className="text-sm font-medium">
+                    {isFaqDragActive ? "Drop the file here" : "Drop your FAQ Excel file here"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">Supports .xlsx and .xls — max 50 MB</p>
+                </>
+              )}
+            </div>
+
+            {faqFile && (
+              <Button
+                className="w-full mt-4"
+                onClick={handleFaqValidate}
+                disabled={isFaqDisabled}
+              >
+                {faqPhase === "validating" ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Validating…
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    Validate FAQ File
+                  </>
+                )}
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* FAQ Validation Results */}
+      {faqValidationResult && faqPhase !== "monitoring" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              {faqValidationResult.status === "success" ? (
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+              ) : (
+                <XCircle className="h-5 w-5 text-destructive" />
+              )}
+              {faqValidationResult.status === "success" ? "FAQ Validation Passed" : "FAQ Validation Failed"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {faqValidationResult.summary && (
+              <div className="flex flex-wrap gap-3">
+                {faqValidationResult.status === "success" ? (
+                  <>
+                    <StatBadge label="FAQs" value={faqValidationResult.summary.total_faqs ?? 0} color="blue" />
+                    <StatBadge label="Variants" value={faqValidationResult.summary.total_variants ?? 0} color="green" />
+                  </>
+                ) : (
+                  <>
+                    <StatBadge label="Total Rows" value={faqValidationResult.summary.total_rows ?? 0} color="blue" />
+                    <StatBadge label="Valid" value={faqValidationResult.summary.valid_rows ?? 0} color="green" />
+                    <StatBadge label="Invalid" value={faqValidationResult.summary.invalid_rows ?? 0} color="red" />
+                  </>
+                )}
+              </div>
+            )}
+
+            {faqValidationResult.errors && faqValidationResult.errors.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  {faqValidationResult.errors.length} error{faqValidationResult.errors.length !== 1 ? "s" : ""} found
+                </div>
+                <ErrorTable errors={faqValidationResult.errors} />
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-1">
+              {faqValidationResult.status === "failed" && (
+                <Button variant="outline" onClick={resetFaq} className="flex-1">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Fix & Re-upload
+                </Button>
+              )}
+              {faqValidationResult.status === "success" && (
+                <Button
+                  className="flex-1"
+                  onClick={handleFaqApprove}
+                  disabled={faqPhase === "approving"}
+                >
+                  {faqPhase === "approving" ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Queuing…
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="h-4 w-4 mr-2" />
+                      Approve & Upload FAQs
+                    </>
+                  )}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* FAQ Job Monitor */}
+      {faqPhase === "monitoring" && faqJobId && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Zap className="h-5 w-5 text-primary" />
+              FAQ Upload Job
+              <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">
+                #{faqJobId}
+              </code>
+            </CardTitle>
+            {faqPolling && (
+              <CardDescription className="flex items-center gap-1.5">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Auto-refreshing every 3 seconds…
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {faqStatusError && (
+              <div className="flex items-center gap-2 text-destructive text-sm">
+                <XCircle className="h-4 w-4" />
+                {faqStatusError}
+              </div>
+            )}
+
+            {faqJobStatus && (() => {
+              const cfg = stateConfig[faqJobStatus.state] ?? { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-muted-foreground", label: faqJobStatus.state };
+              return (
+                <>
+                  <div className={`flex items-center gap-2 font-medium ${cfg.color}`}>
+                    {cfg.icon}
+                    {cfg.label}
+                  </div>
+
+                  {faqJobStatus.state === "completed" && faqJobStatus.result && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="rounded-lg border p-3 text-center">
+                        <p className="text-2xl font-bold text-primary">{faqJobStatus.result.faqs_inserted}</p>
+                        <p className="text-xs text-muted-foreground mt-1">FAQs Inserted</p>
+                      </div>
+                      <div className="rounded-lg border p-3 text-center">
+                        <p className="text-2xl font-bold text-primary">{faqJobStatus.result.variants_updated}</p>
+                        <p className="text-xs text-muted-foreground mt-1">Variants Updated</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {faqJobStatus.state === "failed" && faqJobStatus.error && (
+                    <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
+                      {faqJobStatus.error}
+                      {faqJobStatus.attempts_made !== undefined && (
+                        <p className="mt-1 text-xs opacity-70">Attempts made: {faqJobStatus.attempts_made}</p>
+                      )}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+
+            {!faqPolling && (
+              <Button variant="outline" size="sm" onClick={resetFaq} className="w-full">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Upload Another FAQ File
+              </Button>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );
