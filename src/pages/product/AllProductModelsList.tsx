@@ -58,6 +58,7 @@ export default function AllProductModelsList() {
   // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
+      setCurrentPage(1);
       setDebouncedSearchQuery(searchQuery);
     }, 600);
 
@@ -119,6 +120,11 @@ export default function AllProductModelsList() {
     } finally {
       setDeleteItemId(null);
     }
+  };
+
+  const handleProductFilterChange = (value: string) => {
+    setSelectedProductId(value);
+    setCurrentPage(1);
   };
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductModel>({
@@ -248,7 +254,7 @@ export default function AllProductModelsList() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-64">
-                <Select value={selectedProductId} onValueChange={setSelectedProductId}>
+                <Select value={selectedProductId} onValueChange={handleProductFilterChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Filter by Product" />
                   </SelectTrigger>
@@ -263,7 +269,7 @@ export default function AllProductModelsList() {
                 </Select>
               </div>
               {selectedProductId !== "all" && (
-                <Button variant="ghost" size="icon" onClick={() => setSelectedProductId("all")} title="Clear Filter">
+                <Button variant="ghost" size="icon" onClick={() => handleProductFilterChange("all")} title="Clear Filter">
                   <XCircle className="h-4 w-4 text-muted-foreground" />
                 </Button>
               )}
@@ -292,7 +298,7 @@ export default function AllProductModelsList() {
             totalCount,
             totalPages: Math.ceil(totalCount / pageSize),
             onPageChange: setCurrentPage,
-            onPageSizeChange: setPageSize,
+            onPageSizeChange: (size) => { setPageSize(size); setCurrentPage(1); },
           }}
           title=""
           searchPlaceholder="Search models..."
