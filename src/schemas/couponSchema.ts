@@ -19,11 +19,9 @@ export const couponSchema = z
 
     min_order_amount: z.coerce.number({ required_error: "Min order amount is required" }),
 
-    min_product_amount: z.coerce.number({ required_error: "Min product amount is required" }).min(1, "Min product amount must be greater than 0"),
+    min_product_amount: z.coerce.number({ required_error: "Min product amount is required" }).min(0),
 
-    max_discount_amount: z.coerce
-      .number({ required_error: "Maximum discount amount is required" })
-      .min(1, "Maximum discount amount must be greater than 0"),
+    max_discount_amount: z.coerce.number({ required_error: "Maximum discount amount is required" }).min(0),
 
     scope_type: z.enum(["common", "category", "product", "variant", "model"], {
       required_error: "Scope type is required",
@@ -93,6 +91,26 @@ export const couponSchema = z
     {
       message: "Please complete the selection for the chosen scope type",
       path: ["scope_id"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.scope_type !== "common" && data.min_product_amount <= 0) return false;
+      return true;
+    },
+    {
+      message: "Min product amount must be greater than 0",
+      path: ["min_product_amount"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.scope_type !== "common" && data.max_discount_amount <= 0) return false;
+      return true;
+    },
+    {
+      message: "Maximum discount amount must be greater than 0",
+      path: ["max_discount_amount"],
     },
   )
   .refine(
