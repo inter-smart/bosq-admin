@@ -87,6 +87,9 @@ const AllProductVariantsList = lazy(
 const ManageBoughtTogether = lazy(
   () => import("./pages/product/ManageBoughtTogether"),
 );
+const ProductFaqList = lazy(
+  () => import("./pages/product/ProductFaqList"),
+);
 const ProductBulkUpload = lazy(
   () => import("./pages/product/ProductBulkUpload"),
 );
@@ -730,6 +733,16 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ManageBoughtTogether />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product FAQs */}
+            <Route
+              path="/product-faqs"
+              element={
+                <ProtectedRoute>
+                  <ProductFaqList />
                 </ProtectedRoute>
               }
             />

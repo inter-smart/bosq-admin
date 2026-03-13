@@ -223,6 +223,7 @@ const productsSection = [
   { title: "Base Product", url: "/base-products", icon: Box },
   { title: "All Models", url: "/product-models/all", icon: Layers },
   { title: "All Variants", url: "/product-variants/all", icon: Package },
+  { title: "Product FAQs", url: "/product-faqs", icon: HelpCircle },
   { title: "Bulk Product Upload", url: "/product-bulk-upload", icon: Upload },
   { title: "Bulk Image Upload", url: "/product-bulk-image-upload", icon: Image },
 ];
@@ -510,6 +511,7 @@ export function AppSidebar() {
         "/base-products",
         "/product-models/all",
         "/product-variants/all",
+        "/product-faqs",
         "/product-bulk-upload",
         "/product-bulk-image-upload",
       ].some((r) => path.includes(r))

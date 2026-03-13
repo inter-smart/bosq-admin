@@ -94,13 +94,17 @@ export const fetchFaqListList = async (
   search?: string,
   faq_category?: number,
   type?: 'general' | 'product',
-  product_variant?: number
+  product_variant?: number,
+  base_id?: number,
+  model_id?: number
 ): Promise<FaqListResponse> => {
   const params: Record<string, string | number> = { page, limit };
   if (search) params.search = search;
   if (faq_category) params.faq_category = faq_category;
   if (type) params.type = type;
   if (product_variant) params.product_variant = product_variant;
+  if (base_id) params.base_id = base_id;
+  if (model_id) params.model_id = model_id;
   return apiCall('/cms/faq/faq-list', { params });
 };
 
