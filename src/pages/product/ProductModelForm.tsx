@@ -30,6 +30,7 @@ export default function ProductModelForm() {
     defaultValues: {
       title: "",
       title_ar: "",
+      code: "",
       base_price: "",
       media_path: null,
       sort_order: 1,
@@ -62,6 +63,7 @@ export default function ProductModelForm() {
         form.reset({
           title: data.title || "",
           title_ar: data.title_ar || "",
+          code: data.code || "",
           base_price: data.base_price || "",
           media_path: data.media_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.media_path}` : null,
           sort_order: data.sort_order || 1,
@@ -90,6 +92,7 @@ export default function ProductModelForm() {
       formData.append("product_id", productId);
       formData.append("title", data.title);
       formData.append("title_ar", data.title_ar);
+      if (data.code) formData.append("code", data.code);
       formData.append("base_price", data.base_price);
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
@@ -184,6 +187,20 @@ export default function ProductModelForm() {
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter model name in Arabic" dir="rtl" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter a unique code (SKU)" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

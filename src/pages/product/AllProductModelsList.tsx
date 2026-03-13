@@ -149,6 +149,11 @@ export default function AllProductModelsList() {
       cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("slug")}</div>,
     },
     {
+      accessorKey: "code",
+      header: "Code",
+      cell: ({ row }) => <div className="font-mono text-sm max-w-[150px] truncate">{row.getValue("code")}</div>,
+    },
+    {
       accessorKey: "sort_order",
       header: "Sort Order",
       cell: ({ row }) => {
