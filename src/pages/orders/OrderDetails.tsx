@@ -472,6 +472,10 @@ export default function OrderDetails() {
     );
   }
 
+
+
+  console.log(order.items)
+
   if (!order) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
@@ -841,8 +845,8 @@ export default function OrderDetails() {
                     <td
                       className={`px-6 py-4 ${parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}
                     >
-                      {parseFloat(item.discount_amount) > 0
-                        ? `-AED ${parseFloat(item.discount_amount).toLocaleString()}`
+                      {parseFloat(item?.discount_amount) > 0
+                        ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
                         : "-"}
                     </td>
                     <td className="px-6 py-4 text-right font-bold">
@@ -887,7 +891,7 @@ export default function OrderDetails() {
                 <span className="text-muted-foreground">Discount Total</span>
                 <span className="text-red-500 font-medium">
                   -AED{" "}
-                  {parseFloat(order.discount_total || "0").toLocaleString()}
+                  {parseFloat(order?.discount_total || "0").toLocaleString()}
                 </span>
               </div>
             )}
