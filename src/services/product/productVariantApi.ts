@@ -168,6 +168,16 @@ export const deleteProductVariant = async (id: number): Promise<void> => {
   });
 };
 
+// Bulk delete product variants
+export const bulkDeleteProductVariants = async (
+  ids: number[],
+): Promise<{ success: boolean; message: string }> => {
+  return apiCall(`/resources/product-variants/all`, {
+    method: "DELETE",
+    data: { ids },
+  });
+};
+
 // Fetch attributes with values
 export const fetchAttributesWithValues = async (): Promise<AttributesWithValuesResponse> => {
   return apiCall("/common-actions/attributes/with-values");

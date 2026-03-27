@@ -35,6 +35,7 @@ import {
 import {
   fetchProductVariantList,
   deleteProductVariant,
+  bulkDeleteProductVariants,
   ProductVariant,
 } from "@/services/product/productVariantApi";
 import {
@@ -59,6 +60,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AllProductVariantsList() {
   const navigate = useNavigate();
@@ -73,6 +75,9 @@ export default function AllProductVariantsList() {
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+  const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
+  const [tableKey, setTableKey] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -223,6 +228,35 @@ export default function AllProductVariantsList() {
     }
   };
 
+  const handleBulkAction = (action: string, selectedRows: ProductVariant[]) => {
+    if (action === "delete") {
+      setBulkDeleteIds(selectedRows.map((r) => r.id!));
+      setShowBulkDeleteDialog(true);
+    }
+  };
+
+  const confirmBulkDelete = async () => {
+    try {
+      await bulkDeleteProductVariants(bulkDeleteIds);
+      setVariants((prev) => prev.filter((v) => !bulkDeleteIds.includes(v.id!)));
+      setTotalCount((prev) => prev - bulkDeleteIds.length);
+      toast({
+        title: "Success",
+        description: `${bulkDeleteIds.length} variant(s) deleted successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete selected variants",
+        variant: "destructive",
+      });
+    } finally {
+      setBulkDeleteIds([]);
+      setShowBulkDeleteDialog(false);
+      setTableKey((k) => k + 1);
+    }
+  };
+
   const { editingSortOrder, handleSortOrderChange } =
     useCommonTableActions<ProductVariant>({
       modelName: "ProductVariants",
@@ -231,6 +265,28 @@ export default function AllProductVariantsList() {
     });
 
   const columns: ColumnDef<ProductVariant>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "id",
       header: "ID",
@@ -598,6 +654,7 @@ export default function AllProductVariantsList() {
         </div>
 
         <DataTable
+          key={tableKey}
           columns={columns}
           data={variants}
           loading={loading}
@@ -614,6 +671,7 @@ export default function AllProductVariantsList() {
           }}
           title=""
           searchPlaceholder="Search variants by title or SKU"
+          onBulkAction={handleBulkAction}
         />
       </div>
 
@@ -636,6 +694,46 @@ export default function AllProductVariantsList() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={showBulkDeleteDialog}
+        onOpenChange={() => setShowBulkDeleteDialog(false)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Delete {bulkDeleteIds.length} variant(s)?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. The following product variants will
+              be permanently deleted:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="max-h-48 overflow-y-auto rounded-md border p-2 space-y-1 text-sm">
+            {variants
+              .filter((v) => bulkDeleteIds.includes(v.id!))
+              .map((v) => (
+                <div key={v.id} className="flex items-center gap-2 py-0.5">
+                  <span className="font-medium">{v.title || v.sku}</span>
+                  {v.title && (
+                    <span className="text-muted-foreground font-mono text-xs">
+                      ({v.sku})
+                    </span>
+                  )}
+                </div>
+              ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete {bulkDeleteIds.length} Variant(s)
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
