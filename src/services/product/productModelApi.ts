@@ -104,3 +104,13 @@ export const deleteProductModel = async (id: number): Promise<void> => {
     method: "DELETE",
   });
 };
+
+// Bulk delete product models
+export const bulkDeleteProductModels = async (
+  ids: number[],
+): Promise<{ success: boolean; message: string }> => {
+  return apiCall(`/resources/product-models/all`, {
+    method: "DELETE",
+    data: { ids },
+  });
+};

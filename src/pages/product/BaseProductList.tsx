@@ -15,8 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ListPlus, ChevronDown, ChevronUp } from "lucide-react";
-import { fetchBaseProductList, deleteBaseProduct, BaseProduct, exportBaseProductList } from "@/services/product/baseProductApi";
+import { MoreHorizontal, Edit, Trash2, ListPlus, ChevronDown, ChevronUp, TriangleAlert } from "lucide-react";
+import { fetchBaseProductList, deleteBaseProduct, bulkDeleteBaseProducts, BaseProduct, exportBaseProductList } from "@/services/product/baseProductApi";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
 import { MetricsCard } from "@/components/dashboard/MetricsCard";
@@ -44,6 +45,9 @@ export default function BaseProductList() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [exporting, setExporting] = useState(false);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+  const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
+  const [tableKey, setTableKey] = useState(0);
 
   // Debounce search query
   useEffect(() => {
@@ -123,6 +127,35 @@ export default function BaseProductList() {
     }
   };
 
+  const handleBulkAction = (action: string, selectedRows: BaseProduct[]) => {
+    if (action === "delete") {
+      setBulkDeleteIds(selectedRows.map((r) => r.id!));
+      setShowBulkDeleteDialog(true);
+    }
+  };
+
+  const confirmBulkDelete = async () => {
+    try {
+      await bulkDeleteBaseProducts(bulkDeleteIds);
+      setBaseProducts((prev) => prev.filter((p) => !bulkDeleteIds.includes(p.id!)));
+      setTotalCount((prev) => prev - bulkDeleteIds.length);
+      toast({
+        title: "Success",
+        description: `${bulkDeleteIds.length} base product(s) deleted successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete selected base products",
+        variant: "destructive",
+      });
+    } finally {
+      setBulkDeleteIds([]);
+      setShowBulkDeleteDialog(false);
+      setTableKey((k) => k + 1);
+    }
+  };
+
   const { editingSortOrder, handleSortOrderChange } = useCommonTableActions<BaseProduct>({
     modelName: "ProductBase",
     data: baseProducts,
@@ -130,6 +163,25 @@ export default function BaseProductList() {
   });
 
   const columns: ColumnDef<BaseProduct>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected() ? true : table.getIsSomePageRowsSelected() ? "indeterminate" : false}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "id",
       header: "ID",
@@ -310,6 +362,7 @@ export default function BaseProductList() {
       )}
 
       <DataTable
+        key={tableKey}
         columns={columns}
         data={baseProducts}
         loading={loading}
@@ -329,7 +382,54 @@ export default function BaseProductList() {
         searchPlaceholder="Search base products..."
         onAdd={() => navigate("/base-products/create")}
         addButtonText="Add Base Product"
+        onBulkAction={handleBulkAction}
       />
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={showBulkDeleteDialog} onOpenChange={() => setShowBulkDeleteDialog(false)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <TriangleAlert className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <AlertDialogTitle className="text-base">
+                  Delete {bulkDeleteIds.length} base product{bulkDeleteIds.length !== 1 ? "s" : ""}?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-xs mt-0.5">
+                  This action is permanent and cannot be undone.
+                </AlertDialogDescription>
+              </div>
+            </div>
+          </AlertDialogHeader>
+
+          <div className="my-1 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            All related product models and variants will also be permanently deleted.
+          </div>
+
+          <div className="max-h-48 overflow-y-auto rounded-md border divide-y text-sm">
+            {baseProducts
+              .filter((p) => bulkDeleteIds.includes(p.id!))
+              .map((p) => (
+                <div key={p.id} className="flex items-center justify-between px-3 py-2 hover:bg-muted/50">
+                  <span className="font-medium">{p.title}</span>
+                </div>
+              ))}
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete {bulkDeleteIds.length} Product{bulkDeleteIds.length !== 1 ? "s" : ""}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>

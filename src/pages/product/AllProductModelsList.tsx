@@ -15,8 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ListPlus, XCircle, Plus, ChevronDown, ChevronUp } from "lucide-react";
-import { fetchProductModelList, deleteProductModel, ProductModel } from "@/services/product/productModelApi";
+import { MoreHorizontal, Edit, Trash2, ListPlus, XCircle, Plus, ChevronDown, ChevronUp, TriangleAlert } from "lucide-react";
+import { fetchProductModelList, deleteProductModel, bulkDeleteProductModels, ProductModel } from "@/services/product/productModelApi";
+import { Checkbox } from "@/components/ui/checkbox";
 import { fetchBaseProductList, BaseProduct } from "@/services/product/baseProductApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -33,6 +34,9 @@ export default function AllProductModelsList() {
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
+  const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
+  const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
+  const [tableKey, setTableKey] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -122,6 +126,35 @@ export default function AllProductModelsList() {
     }
   };
 
+  const handleBulkAction = (action: string, selectedRows: ProductModel[]) => {
+    if (action === "delete") {
+      setBulkDeleteIds(selectedRows.map((r) => r.id!));
+      setShowBulkDeleteDialog(true);
+    }
+  };
+
+  const confirmBulkDelete = async () => {
+    try {
+      await bulkDeleteProductModels(bulkDeleteIds);
+      setModels((prev) => prev.filter((m) => !bulkDeleteIds.includes(m.id!)));
+      setTotalCount((prev) => prev - bulkDeleteIds.length);
+      toast({
+        title: "Success",
+        description: `${bulkDeleteIds.length} model(s) deleted successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete selected models",
+        variant: "destructive",
+      });
+    } finally {
+      setBulkDeleteIds([]);
+      setShowBulkDeleteDialog(false);
+      setTableKey((k) => k + 1);
+    }
+  };
+
   const handleProductFilterChange = (value: string) => {
     setSelectedProductId(value);
     setCurrentPage(1);
@@ -134,6 +167,25 @@ export default function AllProductModelsList() {
   });
 
   const columns: ColumnDef<ProductModel>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "id",
       header: "ID",
@@ -286,6 +338,7 @@ export default function AllProductModelsList() {
         </div>
 
         <DataTable
+          key={tableKey}
           columns={columns}
           data={models}
           loading={loading}
@@ -302,6 +355,7 @@ export default function AllProductModelsList() {
           }}
           title=""
           searchPlaceholder="Search models..."
+          onBulkAction={handleBulkAction}
         />
       </div>
 
@@ -317,6 +371,54 @@ export default function AllProductModelsList() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showBulkDeleteDialog} onOpenChange={() => setShowBulkDeleteDialog(false)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <TriangleAlert className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <AlertDialogTitle className="text-base">
+                  Delete {bulkDeleteIds.length} model{bulkDeleteIds.length !== 1 ? "s" : ""}?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-xs mt-0.5">
+                  This action is permanent and cannot be undone.
+                </AlertDialogDescription>
+              </div>
+            </div>
+          </AlertDialogHeader>
+
+          <div className="my-1 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            All related product variants will also be permanently deleted.
+          </div>
+
+          <div className="max-h-48 overflow-y-auto rounded-md border divide-y text-sm">
+            {models
+              .filter((m) => bulkDeleteIds.includes(m.id!))
+              .map((m) => (
+                <div key={m.id} className="flex items-center justify-between px-3 py-2 hover:bg-muted/50">
+                  <span className="font-medium">{m.title}</span>
+                  {m.product?.title && (
+                    <span className="text-muted-foreground text-xs">{m.product.title}</span>
+                  )}
+                </div>
+              ))}
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete {bulkDeleteIds.length} Model{bulkDeleteIds.length !== 1 ? "s" : ""}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

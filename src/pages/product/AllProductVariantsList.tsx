@@ -31,6 +31,7 @@ import {
   ChevronUp,
   ChevronDown,
   ImagePlus,
+  TriangleAlert,
 } from "lucide-react";
 import {
   fetchProductVariantList,
@@ -699,41 +700,49 @@ export default function AllProductVariantsList() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog
-        open={showBulkDeleteDialog}
-        onOpenChange={() => setShowBulkDeleteDialog(false)}
-      >
-        <AlertDialogContent>
+      <AlertDialog open={showBulkDeleteDialog} onOpenChange={() => setShowBulkDeleteDialog(false)}>
+        <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Delete {bulkDeleteIds.length} variant(s)?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. The following product variants will
-              be permanently deleted:
-            </AlertDialogDescription>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                <TriangleAlert className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <AlertDialogTitle className="text-base">
+                  Delete {bulkDeleteIds.length} variant{bulkDeleteIds.length !== 1 ? "s" : ""}?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-xs mt-0.5">
+                  This action is permanent and cannot be undone.
+                </AlertDialogDescription>
+              </div>
+            </div>
           </AlertDialogHeader>
-          <div className="max-h-48 overflow-y-auto rounded-md border p-2 space-y-1 text-sm">
+
+          <div className="my-1 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            The selected product variants will be permanently deleted from the system.
+          </div>
+
+          <div className="max-h-48 overflow-y-auto rounded-md border divide-y text-sm">
             {variants
               .filter((v) => bulkDeleteIds.includes(v.id!))
               .map((v) => (
-                <div key={v.id} className="flex items-center gap-2 py-0.5">
+                <div key={v.id} className="flex items-center justify-between px-3 py-2 hover:bg-muted/50">
                   <span className="font-medium">{v.title || v.sku}</span>
                   {v.title && (
-                    <span className="text-muted-foreground font-mono text-xs">
-                      ({v.sku})
-                    </span>
+                    <span className="text-muted-foreground font-mono text-xs">{v.sku}</span>
                   )}
                 </div>
               ))}
           </div>
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmBulkDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
             >
-              Delete {bulkDeleteIds.length} Variant(s)
+              <Trash2 className="h-4 w-4" />
+              Delete {bulkDeleteIds.length} Variant{bulkDeleteIds.length !== 1 ? "s" : ""}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

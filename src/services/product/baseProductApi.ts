@@ -177,6 +177,14 @@ export const deleteBaseProduct = async (id: number): Promise<void> => {
   });
 };
 
+// Bulk delete base products
+export const bulkDeleteBaseProducts = async (ids: number[]): Promise<{ success: boolean; message: string }> => {
+  return apiCall(`/resources/product-base/all`, {
+    method: "DELETE",
+    data: { ids },
+  });
+};
+
 // Fetch child categories by parent id
 export const fetchChildCategories = async (parentId: number): Promise<ChildCategoryResponse> => {
   return apiCall("/common-actions/categories/child-categories", {
