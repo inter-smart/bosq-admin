@@ -171,15 +171,15 @@ export const updateBaseProduct = async (id: number, formData: FormData): Promise
 };
 
 // Delete base product
-export const deleteBaseProduct = async (id: number): Promise<void> => {
-  return apiCall(`/resources/product-base/${id}`, {
+export const deleteBaseProduct = async (id: number, deleteType: "soft" | "force" = "soft"): Promise<void> => {
+  return apiCall(`/resources/product-base/${id}?delete_type=${deleteType}`, {
     method: "DELETE",
   });
 };
 
 // Bulk delete base products
-export const bulkDeleteBaseProducts = async (ids: number[]): Promise<{ success: boolean; message: string }> => {
-  return apiCall(`/resources/product-base/all`, {
+export const bulkDeleteBaseProducts = async (ids: number[], deleteType: "soft" | "force" = "soft"): Promise<{ success: boolean; message: string }> => {
+  return apiCall(`/resources/product-base/all?delete_type=${deleteType}`, {
     method: "DELETE",
     data: { ids },
   });

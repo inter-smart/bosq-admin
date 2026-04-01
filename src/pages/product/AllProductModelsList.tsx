@@ -15,6 +15,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { MoreHorizontal, Edit, Trash2, ListPlus, XCircle, Plus, ChevronDown, ChevronUp, TriangleAlert } from "lucide-react";
 import { fetchProductModelList, deleteProductModel, bulkDeleteProductModels, ProductModel } from "@/services/product/productModelApi";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -42,6 +44,7 @@ export default function AllProductModelsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [deleteType, setDeleteType] = useState<"soft" | "force">("soft");
 
   // Load base products for filtering
   useEffect(() => {
@@ -108,7 +111,7 @@ export default function AllProductModelsList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteProductModel(deleteItemId);
+      await deleteProductModel(deleteItemId, deleteType);
       setModels((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
@@ -135,7 +138,7 @@ export default function AllProductModelsList() {
 
   const confirmBulkDelete = async () => {
     try {
-      await bulkDeleteProductModels(bulkDeleteIds);
+      await bulkDeleteProductModels(bulkDeleteIds, deleteType);
       setModels((prev) => prev.filter((m) => !bulkDeleteIds.includes(m.id!)));
       setTotalCount((prev) => prev - bulkDeleteIds.length);
       toast({
@@ -171,7 +174,7 @@ export default function AllProductModelsList() {
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={table.getIsAllPageRowsSelected() ? true : table.getIsSomePageRowsSelected() ? "indeterminate" : false}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -359,7 +362,7 @@ export default function AllProductModelsList() {
         />
       </div>
 
-      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
+      <AlertDialog open={!!deleteItemId} onOpenChange={(open) => { if (!open) { setDeleteItemId(null); setDeleteType("soft"); } }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -367,6 +370,31 @@ export default function AllProductModelsList() {
               This action cannot be undone. This will permanently delete the product model and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Delete Type</Label>
+              <RadioGroup
+                value={deleteType}
+                onValueChange={(value) => setDeleteType(value as "soft" | "force")}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="soft" id="single-soft" />
+                  <Label htmlFor="single-soft" className="text-sm cursor-pointer">
+                    Move to Trash
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="force" id="single-force" />
+                  <Label htmlFor="single-force" className="text-sm cursor-pointer">
+                    Delete Permanently
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
@@ -376,7 +404,7 @@ export default function AllProductModelsList() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={showBulkDeleteDialog} onOpenChange={() => setShowBulkDeleteDialog(false)}>
+      <AlertDialog open={showBulkDeleteDialog} onOpenChange={(open) => { setShowBulkDeleteDialog(open); if (!open) setDeleteType("soft"); }}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <div className="flex items-center gap-3">
@@ -394,8 +422,32 @@ export default function AllProductModelsList() {
             </div>
           </AlertDialogHeader>
 
-          <div className="my-1 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-            All related product variants will also be permanently deleted.
+          <div className="space-y-3">
+            <div className="rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              All related product variants will also be permanently deleted.
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Delete Type</Label>
+              <RadioGroup
+                value={deleteType}
+                onValueChange={(value) => setDeleteType(value as "soft" | "force")}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="soft" id="bulk-soft" />
+                  <Label htmlFor="bulk-soft" className="text-sm cursor-pointer">
+                    Move to Trash
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="force" id="bulk-force" />
+                  <Label htmlFor="bulk-force" className="text-sm cursor-pointer">
+                    Delete Permanently
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
           </div>
 
           <div className="max-h-48 overflow-y-auto rounded-md border divide-y text-sm">

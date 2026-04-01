@@ -162,8 +162,8 @@ export const updateProductVariant = async (id: number, data: Partial<ProductVari
 };
 
 // Delete product variant
-export const deleteProductVariant = async (id: number): Promise<void> => {
-  return apiCall(`/resources/product-variants/${id}`, {
+export const deleteProductVariant = async (id: number, deleteType: "soft" | "force" = "soft"): Promise<void> => {
+  return apiCall(`/resources/product-variants/${id}?delete_type=${deleteType}`, {
     method: "DELETE",
   });
 };
@@ -171,8 +171,9 @@ export const deleteProductVariant = async (id: number): Promise<void> => {
 // Bulk delete product variants
 export const bulkDeleteProductVariants = async (
   ids: number[],
+  deleteType: "soft" | "force" = "soft",
 ): Promise<{ success: boolean; message: string }> => {
-  return apiCall(`/resources/product-variants/all`, {
+  return apiCall(`/resources/product-variants/all?delete_type=${deleteType}`, {
     method: "DELETE",
     data: { ids },
   });

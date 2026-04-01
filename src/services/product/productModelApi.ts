@@ -99,8 +99,8 @@ export const updateProductModel = async (id: number, formData: FormData): Promis
 };
 
 // Delete product model
-export const deleteProductModel = async (id: number): Promise<void> => {
-  return apiCall(`/resources/product-models/${id}`, {
+export const deleteProductModel = async (id: number, deleteType: "soft" | "force" = "soft"): Promise<void> => {
+  return apiCall(`/resources/product-models/${id}?delete_type=${deleteType}`, {
     method: "DELETE",
   });
 };
@@ -108,8 +108,9 @@ export const deleteProductModel = async (id: number): Promise<void> => {
 // Bulk delete product models
 export const bulkDeleteProductModels = async (
   ids: number[],
+  deleteType: "soft" | "force" = "soft",
 ): Promise<{ success: boolean; message: string }> => {
-  return apiCall(`/resources/product-models/all`, {
+  return apiCall(`/resources/product-models/all?delete_type=${deleteType}`, {
     method: "DELETE",
     data: { ids },
   });

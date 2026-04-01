@@ -20,6 +20,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import {
   MoreHorizontal,
   Edit,
@@ -84,6 +86,7 @@ export default function AllProductVariantsList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
+  const [deleteType, setDeleteType] = useState<"soft" | "force">("soft");
   const requestIdRef = useRef(0);
 
   // Load base products and categories on mount
@@ -211,7 +214,7 @@ export default function AllProductVariantsList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteProductVariant(deleteItemId);
+      await deleteProductVariant(deleteItemId, deleteType);
       setVariants((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
@@ -238,7 +241,7 @@ export default function AllProductVariantsList() {
 
   const confirmBulkDelete = async () => {
     try {
-      await bulkDeleteProductVariants(bulkDeleteIds);
+      await bulkDeleteProductVariants(bulkDeleteIds, deleteType);
       setVariants((prev) => prev.filter((v) => !bulkDeleteIds.includes(v.id!)));
       setTotalCount((prev) => prev - bulkDeleteIds.length);
       toast({
@@ -270,10 +273,7 @@ export default function AllProductVariantsList() {
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
+          checked={table.getIsAllPageRowsSelected() ? true : table.getIsSomePageRowsSelected() ? "indeterminate" : false}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -678,7 +678,7 @@ export default function AllProductVariantsList() {
 
       <AlertDialog
         open={!!deleteItemId}
-        onOpenChange={() => setDeleteItemId(null)}
+        onOpenChange={(open) => { if (!open) { setDeleteItemId(null); setDeleteType("soft"); } }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -688,6 +688,31 @@ export default function AllProductVariantsList() {
               product variant and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Delete Type</Label>
+              <RadioGroup
+                value={deleteType}
+                onValueChange={(value) => setDeleteType(value as "soft" | "force")}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="soft" id="single-soft" />
+                  <Label htmlFor="single-soft" className="text-sm cursor-pointer">
+                    Move to Trash
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="force" id="single-force" />
+                  <Label htmlFor="single-force" className="text-sm cursor-pointer">
+                    Delete Permanently
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
@@ -700,7 +725,7 @@ export default function AllProductVariantsList() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={showBulkDeleteDialog} onOpenChange={() => setShowBulkDeleteDialog(false)}>
+      <AlertDialog open={showBulkDeleteDialog} onOpenChange={(open) => { setShowBulkDeleteDialog(open); if (!open) setDeleteType("soft"); }}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <div className="flex items-center gap-3">
@@ -718,8 +743,32 @@ export default function AllProductVariantsList() {
             </div>
           </AlertDialogHeader>
 
-          <div className="my-1 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-            The selected product variants will be permanently deleted from the system.
+          <div className="space-y-3">
+            <div className="rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              The selected product variants will be permanently deleted from the system.
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Delete Type</Label>
+              <RadioGroup
+                value={deleteType}
+                onValueChange={(value) => setDeleteType(value as "soft" | "force")}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="soft" id="bulk-soft" />
+                  <Label htmlFor="bulk-soft" className="text-sm cursor-pointer">
+                    Move to Trash
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="force" id="bulk-force" />
+                  <Label htmlFor="bulk-force" className="text-sm cursor-pointer">
+                    Delete Permanently
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
           </div>
 
           <div className="max-h-48 overflow-y-auto rounded-md border divide-y text-sm">

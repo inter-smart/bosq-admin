@@ -15,8 +15,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { MoreHorizontal, Edit, Trash2, ListPlus, ChevronDown, ChevronUp, TriangleAlert } from "lucide-react";
-import { fetchBaseProductList, deleteBaseProduct, bulkDeleteBaseProducts, BaseProduct, exportBaseProductList } from "@/services/product/baseProductApi";
+import {
+  fetchBaseProductList,
+  deleteBaseProduct,
+  bulkDeleteBaseProducts,
+  BaseProduct,
+  exportBaseProductList,
+} from "@/services/product/baseProductApi";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
@@ -48,6 +56,7 @@ export default function BaseProductList() {
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
   const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
   const [tableKey, setTableKey] = useState(0);
+  const [deleteType, setDeleteType] = useState<"soft" | "force">("soft");
 
   // Debounce search query
   useEffect(() => {
@@ -109,7 +118,7 @@ export default function BaseProductList() {
     if (!deleteItemId) return;
 
     try {
-      await deleteBaseProduct(deleteItemId);
+      await deleteBaseProduct(deleteItemId, deleteType);
       setBaseProducts((prev) => prev.filter((item) => item.id !== deleteItemId));
       setTotalCount((prev) => prev - 1);
       toast({
@@ -136,7 +145,7 @@ export default function BaseProductList() {
 
   const confirmBulkDelete = async () => {
     try {
-      await bulkDeleteBaseProducts(bulkDeleteIds);
+      await bulkDeleteBaseProducts(bulkDeleteIds, deleteType);
       setBaseProducts((prev) => prev.filter((p) => !bulkDeleteIds.includes(p.id!)));
       setTotalCount((prev) => prev - bulkDeleteIds.length);
       toast({
@@ -172,13 +181,7 @@ export default function BaseProductList() {
           aria-label="Select all"
         />
       ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
+      cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />,
       enableSorting: false,
       enableHiding: false,
     },
@@ -386,7 +389,13 @@ export default function BaseProductList() {
       />
 
       {/* Bulk Delete Confirmation Dialog */}
-      <AlertDialog open={showBulkDeleteDialog} onOpenChange={() => setShowBulkDeleteDialog(false)}>
+      <AlertDialog
+        open={showBulkDeleteDialog}
+        onOpenChange={(open) => {
+          setShowBulkDeleteDialog(open);
+          if (!open) setDeleteType("soft");
+        }}
+      >
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <div className="flex items-center gap-3">
@@ -397,15 +406,33 @@ export default function BaseProductList() {
                 <AlertDialogTitle className="text-base">
                   Delete {bulkDeleteIds.length} base product{bulkDeleteIds.length !== 1 ? "s" : ""}?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-xs mt-0.5">
-                  This action is permanent and cannot be undone.
-                </AlertDialogDescription>
+                <AlertDialogDescription className="text-xs mt-0.5">This action is permanent and cannot be undone.</AlertDialogDescription>
               </div>
             </div>
           </AlertDialogHeader>
 
-          <div className="my-1 rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
-            All related product models and variants will also be permanently deleted.
+          <div className="space-y-3">
+            <div className="rounded-md border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+              All related product models and variants will also be permanently deleted.
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Delete Type</Label>
+              <RadioGroup value={deleteType} onValueChange={(value) => setDeleteType(value as "soft" | "force")} className="flex gap-4">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="soft" id="bulk-soft" />
+                  <Label htmlFor="bulk-soft" className="text-sm cursor-pointer">
+                    Move to Trash (soft delete)
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="force" id="bulk-force" />
+                  <Label htmlFor="bulk-force" className="text-sm cursor-pointer">
+                    Delete Permanently
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
           </div>
 
           <div className="max-h-48 overflow-y-auto rounded-md border divide-y text-sm">
@@ -420,10 +447,7 @@ export default function BaseProductList() {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmBulkDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2"
-            >
+            <AlertDialogAction onClick={confirmBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2">
               <Trash2 className="h-4 w-4" />
               Delete {bulkDeleteIds.length} Product{bulkDeleteIds.length !== 1 ? "s" : ""}
             </AlertDialogAction>
@@ -432,7 +456,15 @@ export default function BaseProductList() {
       </AlertDialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteItemId} onOpenChange={() => setDeleteItemId(null)}>
+      <AlertDialog
+        open={!!deleteItemId}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteItemId(null);
+            setDeleteType("soft");
+          }
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -440,6 +472,27 @@ export default function BaseProductList() {
               This action cannot be undone. This will permanently delete the base product and remove its data from the servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Delete Type</Label>
+              <RadioGroup value={deleteType} onValueChange={(value) => setDeleteType(value as "soft" | "force")} className="flex gap-4">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="soft" id="single-soft" />
+                  <Label htmlFor="single-soft" className="text-sm cursor-pointer">
+                    Move to Trash
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="force" id="single-force" />
+                  <Label htmlFor="single-force" className="text-sm cursor-pointer">
+                    Delete Permanently
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
