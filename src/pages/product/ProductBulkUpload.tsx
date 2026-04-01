@@ -909,25 +909,28 @@ function JobStatusCard({
 
 /* ─── Export Sheet Generator ─────────────────────────────────────────────── */
 
-function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[] }) {
+function generateUpdateSheet(
+  data: { bases: any[]; models: any[]; variants: any[] },
+) {
   const wb = XLSX.utils.book_new();
 
   const boolStr = (v: boolean | null | undefined) => (v ? "TRUE" : "FALSE");
 
+  // product_base
   const baseHeaders = ["title", "title_ar", "sort_order", "status"];
   const baseRows = data.bases.map((b) => [b.title, b.title_ar, b.sort_order, boolStr(b.status)]);
   const baseWs = XLSX.utils.aoa_to_sheet([baseHeaders, ...baseRows]);
   baseWs["!cols"] = [{ wch: 36 }, { wch: 36 }, { wch: 14 }, { wch: 10 }];
   XLSX.utils.book_append_sheet(wb, baseWs, "product_base");
 
-  const modelHeaders = ["base_title", "title", "title_ar", "code", "base_price", "sort_order", "status"];
-  const modelRows = data.models.map((m) => [
-    m.base_title, m.title, m.title_ar, m.code, m.base_price, m.sort_order, boolStr(m.status),
-  ]);
-  const modelWs = XLSX.utils.aoa_to_sheet([modelHeaders, ...modelRows]);
+  // product_models
+  const modelHeaders = ["base_title", "title", "title_ar", "code", "base_price", "sort_order", "status", "media_path"];
+  const modelDataRows = data.models.map((m) => [m.base_title, m.title, m.title_ar, m.code, m.base_price, m.sort_order, boolStr(m.status), m.media_path ?? ""]);
+  const modelWs = XLSX.utils.aoa_to_sheet([modelHeaders, ...modelDataRows]);
   modelWs["!cols"] = modelHeaders.map(() => ({ wch: 22 }));
   XLSX.utils.book_append_sheet(wb, modelWs, "product_models");
 
+  // product_variants
   const variantHeaders = [
     "base_title", "model_title", "product_code", "title", "title_ar",
     "design_title", "design_title_ar", "price", "stock", "is_primary", "is_featured",
@@ -937,8 +940,9 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
     "details", "details_ar",
     "details_points", "details_points_ar",
     "additional_details", "additional_details_ar",
+    "cover_image", "hover_image", "brochure", "images", "video_thumbnails", "project_images",
   ];
-  const variantRows = data.variants.map((v) => [
+  const variantDataRows = data.variants.map((v) => [
     v.base_title, v.model_title, v.product_code, v.title, v.title_ar,
     v.design_title, v.design_title_ar, v.price, v.stock, boolStr(v.is_primary), boolStr(v.is_featured),
     v.sort_order, boolStr(v.status), v.categories, v.attributes,
@@ -947,13 +951,16 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
     v.details, v.details_ar,
     v.details_points, v.details_points_ar,
     v.additional_details, v.additional_details_ar,
+    v.cover_image ?? "", v.hover_image ?? "", v.brochure ?? "",
+    v.images ?? "", v.video_thumbnails ?? "", v.project_images ?? "",
   ]);
   const wideVariantCols = new Set([
     "attributes", "categories",
     "description", "description_ar", "details", "details_ar", "details_points", "details_points_ar",
     "additional_details", "additional_details_ar", "enhance_title", "enhance_title_ar",
+    "images", "video_thumbnails", "project_images",
   ]);
-  const variantWs = XLSX.utils.aoa_to_sheet([variantHeaders, ...variantRows]);
+  const variantWs = XLSX.utils.aoa_to_sheet([variantHeaders, ...variantDataRows]);
   variantWs["!cols"] = variantHeaders.map((h) => wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 });
   XLSX.utils.book_append_sheet(wb, variantWs, "product_variants");
 
