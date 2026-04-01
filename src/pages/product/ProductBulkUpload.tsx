@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, type ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import * as XLSX from "xlsx";
@@ -16,6 +16,10 @@ import {
   Zap,
   Download,
   ArrowRight,
+  Search,
+  TableIcon,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +38,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import {
   validateBulkUpload,
@@ -42,12 +55,17 @@ import {
   validateFaqUpload,
   approveFaqUpload,
   getFaqUploadStatus,
+  exportVariantData,
   type ValidationError,
   type ValidationResult,
   type UploadJobStatus,
   type FaqValidationResult,
   type FaqJobStatus,
 } from "@/services/product/bulkUploadApi";
+import {
+  fetchProductVariantList,
+  type ProductVariant,
+} from "@/services/product/productVariantApi";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 
@@ -889,6 +907,326 @@ function JobStatusCard({
   );
 }
 
+/* ─── Export Sheet Generator ─────────────────────────────────────────────── */
+
+function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[] }) {
+  const wb = XLSX.utils.book_new();
+
+  const boolStr = (v: boolean | null | undefined) => (v ? "TRUE" : "FALSE");
+
+  const baseHeaders = ["title", "title_ar", "sort_order", "status"];
+  const baseRows = data.bases.map((b) => [b.title, b.title_ar, b.sort_order, boolStr(b.status)]);
+  const baseWs = XLSX.utils.aoa_to_sheet([baseHeaders, ...baseRows]);
+  baseWs["!cols"] = [{ wch: 36 }, { wch: 36 }, { wch: 14 }, { wch: 10 }];
+  XLSX.utils.book_append_sheet(wb, baseWs, "product_base");
+
+  const modelHeaders = ["base_title", "title", "title_ar", "code", "base_price", "sort_order", "status"];
+  const modelRows = data.models.map((m) => [
+    m.base_title, m.title, m.title_ar, m.code, m.base_price, m.sort_order, boolStr(m.status),
+  ]);
+  const modelWs = XLSX.utils.aoa_to_sheet([modelHeaders, ...modelRows]);
+  modelWs["!cols"] = modelHeaders.map(() => ({ wch: 22 }));
+  XLSX.utils.book_append_sheet(wb, modelWs, "product_models");
+
+  const variantHeaders = [
+    "base_title", "model_title", "product_code", "title", "title_ar",
+    "design_title", "design_title_ar", "price", "stock", "is_primary", "is_featured",
+    "sort_order", "status", "categories", "attributes",
+    "description", "description_ar",
+    "enhance_title", "enhance_title_ar",
+    "details", "details_ar",
+    "details_points", "details_points_ar",
+    "additional_details", "additional_details_ar",
+  ];
+  const variantRows = data.variants.map((v) => [
+    v.base_title, v.model_title, v.product_code, v.title, v.title_ar,
+    v.design_title, v.design_title_ar, v.price, v.stock, boolStr(v.is_primary), boolStr(v.is_featured),
+    v.sort_order, boolStr(v.status), v.categories, v.attributes,
+    v.description, v.description_ar,
+    v.enhance_title, v.enhance_title_ar,
+    v.details, v.details_ar,
+    v.details_points, v.details_points_ar,
+    v.additional_details, v.additional_details_ar,
+  ]);
+  const wideVariantCols = new Set([
+    "attributes", "categories",
+    "description", "description_ar", "details", "details_ar", "details_points", "details_points_ar",
+    "additional_details", "additional_details_ar", "enhance_title", "enhance_title_ar",
+  ]);
+  const variantWs = XLSX.utils.aoa_to_sheet([variantHeaders, ...variantRows]);
+  variantWs["!cols"] = variantHeaders.map((h) => wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 });
+  XLSX.utils.book_append_sheet(wb, variantWs, "product_variants");
+
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  XLSX.writeFile(wb, `bosq_bulk_update_${date}.xlsx`);
+}
+
+/* ─── Export Dialog ──────────────────────────────────────────────────────── */
+
+const EXPORT_PAGE_SIZE = 20;
+
+function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { toast } = useToast();
+
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [generating, setGenerating] = useState(false);
+
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounce search input
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearch(val);
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(val);
+      setPage(1);
+    }, 400);
+  };
+
+  // Fetch variants on page/search change
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await fetchProductVariantList(page, EXPORT_PAGE_SIZE, debouncedSearch || undefined);
+        if (cancelled) return;
+        setVariants(res.data.list);
+        setTotalPages(res.data.pagination.totalPages);
+        setTotalCount(res.data.pagination.totalCount);
+      } catch {
+        if (!cancelled) toast({ title: "Error", description: "Failed to load variants.", variant: "destructive" });
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    load();
+    return () => { cancelled = true; };
+  }, [open, page, debouncedSearch]);
+
+  // Reset dialog state when opened
+  useEffect(() => {
+    if (open) {
+      setSearch("");
+      setDebouncedSearch("");
+      setPage(1);
+      setSelectedIds(new Set());
+      setGenerating(false);
+    }
+  }, [open]);
+
+  const toggleId = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  // Toggle all on current page
+  const currentPageIds = variants.map((v) => v.id!).filter(Boolean);
+  const allCurrentSelected = currentPageIds.length > 0 && currentPageIds.every((id) => selectedIds.has(id));
+  const someCurrentSelected = currentPageIds.some((id) => selectedIds.has(id));
+
+  const togglePage = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allCurrentSelected) {
+        currentPageIds.forEach((id) => next.delete(id));
+      } else {
+        currentPageIds.forEach((id) => next.add(id));
+      }
+      return next;
+    });
+  };
+
+  const handleGenerate = async () => {
+    if (selectedIds.size === 0) return;
+    setGenerating(true);
+    try {
+      const result = await exportVariantData(Array.from(selectedIds));
+      if (result.status === "success" && result.data) {
+        generateUpdateSheet(result.data);
+        toast({ title: "Sheet generated", description: `Downloaded ${result.data.variants.length} variant row(s).` });
+        onClose();
+      } else {
+        toast({ title: "Export failed", description: result.message || "Could not generate sheet.", variant: "destructive" });
+      }
+    } catch (err: any) {
+      toast({ title: "Export failed", description: err.message || "Could not generate sheet.", variant: "destructive" });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const selectedCount = selectedIds.size;
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!v && !generating) onClose(); }}>
+      <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b shrink-0">
+          <DialogTitle className="flex items-center gap-2">
+            <TableIcon className="h-5 w-5 text-primary" />
+            Get Update Data Sheet
+          </DialogTitle>
+          <DialogDescription>
+            Select variants to include in a pre-filled Excel sheet you can edit and re-upload.
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Search */}
+        <div className="px-6 py-3 border-b shrink-0">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by SKU, name, or code..."
+              value={search}
+              onChange={handleSearchChange}
+              className="pl-9"
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="flex-1 overflow-auto min-h-0">
+          <Table>
+            <TableHeader className="sticky top-0 bg-background z-10">
+              <TableRow>
+                <TableHead className="w-10">
+                  <Checkbox
+                    checked={allCurrentSelected ? true : someCurrentSelected ? "indeterminate" : false}
+                    onCheckedChange={togglePage}
+                    disabled={loading || currentPageIds.length === 0}
+                    aria-label="Toggle current page"
+                  />
+                </TableHead>
+                <TableHead>SKU</TableHead>
+                <TableHead>Base Product</TableHead>
+                <TableHead>Model</TableHead>
+                <TableHead className="text-right">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 animate-spin mx-auto mb-2" />
+                    Loading variants…
+                  </TableCell>
+                </TableRow>
+              ) : variants.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                    No variants found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                variants.map((v) => {
+                  const id = v.id!;
+                  const isChecked = selectedIds.has(id);
+                  return (
+                    <TableRow
+                      key={id}
+                      className={`cursor-pointer hover:bg-muted/50 ${isChecked ? "bg-primary/5" : ""}`}
+                      onClick={() => toggleId(id)}
+                    >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={isChecked}
+                          onCheckedChange={() => toggleId(id)}
+                          aria-label={`Select variant ${v.sku}`}
+                        />
+                      </TableCell>
+                      <TableCell className="font-mono text-xs">{v.sku || "—"}</TableCell>
+                      <TableCell className="text-sm">{v.productModel?.product?.title || "—"}</TableCell>
+                      <TableCell className="text-sm">{v.productModel?.title || "—"}</TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant={v.status ? "default" : "secondary"} className="text-xs">
+                          {v.status ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Pagination + footer */}
+        <div className="px-6 py-3 border-t shrink-0 flex items-center justify-between gap-4 bg-muted/30">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1 || loading}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              Page {page} of {totalPages || 1}
+            </span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages || loading}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <span className="text-xs text-muted-foreground ml-2">
+              {totalCount} total
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {selectedCount > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {selectedCount} variant{selectedCount !== 1 ? "s" : ""} selected
+              </span>
+            )}
+            <Button variant="outline" size="sm" onClick={onClose} disabled={generating}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleGenerate}
+              disabled={selectedCount === 0 || generating}
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating…
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4 mr-2" />
+                  Generate Sheet{selectedCount > 0 ? ` (${selectedCount})` : ""}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 /* ─── Main Page ──────────────────────────────────────────────────────────── */
 
 export default function ProductBulkUpload() {
@@ -898,6 +1236,7 @@ export default function ProductBulkUpload() {
   const [file, setFile] = useState<File | null>(null);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const reset = () => {
     setPhase("idle");
@@ -969,11 +1308,20 @@ export default function ProductBulkUpload() {
             Upload an Excel file to create Products, Models, and Variants in bulk.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={downloadTemplate} className="shrink-0 gap-2">
-          <Download className="h-4 w-4" />
-          Download Template
-        </Button>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="outline" size="sm" onClick={() => setExportDialogOpen(true)} className="gap-2">
+            <TableIcon className="h-4 w-4" />
+            Get Update Data Sheet
+          </Button>
+          <Button variant="outline" size="sm" onClick={downloadTemplate} className="gap-2">
+            <Download className="h-4 w-4" />
+            Download Template
+          </Button>
+        </div>
       </div>
+
+      {/* Export Dialog */}
+      <ExportDialog open={exportDialogOpen} onClose={() => setExportDialogOpen(false)} />
 
       {/* Step Indicator */}
       <StepIndicator phase={phase} />

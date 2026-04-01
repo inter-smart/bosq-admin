@@ -223,6 +223,98 @@ export const approveFaqUpload = async (token: string): Promise<ApproveResult> =>
   return data;
 };
 
+/* =======================
+   Export Variant Data
+======================= */
+
+export interface ExportBaseRow {
+  title: string;
+  title_ar: string;
+  sort_order: number;
+  status: boolean;
+}
+
+export interface ExportModelRow {
+  base_title: string;
+  title: string;
+  title_ar: string;
+  code: string;
+  base_price: string | number;
+  sort_order: number;
+  status: boolean;
+  media_path: string;
+}
+
+export interface ExportVariantRow {
+  base_title: string;
+  model_title: string;
+  product_code: string;
+  title: string;
+  title_ar: string;
+  design_title: string;
+  design_title_ar: string;
+  price: string | number;
+  stock: string | number;
+  is_primary: boolean;
+  is_featured: boolean;
+  sort_order: number;
+  status: boolean;
+  categories: string;
+  attributes: string;
+  description: string;
+  description_ar: string;
+  enhance_title: string;
+  enhance_title_ar: string;
+  details: string;
+  details_ar: string;
+  details_points: string;
+  details_points_ar: string;
+  additional_details: string;
+  additional_details_ar: string;
+  cover_image: string;
+  hover_image: string;
+  brochure: string;
+  images: string;
+  video_thumbnails: string;
+  project_images: string;
+}
+
+export interface ExportVariantDataResult {
+  status: "success" | "error";
+  data?: {
+    bases: ExportBaseRow[];
+    models: ExportModelRow[];
+    variants: ExportVariantRow[];
+  };
+  message?: string;
+}
+
+/**
+ * Fetches full variant data (including model, base, categories, attributes, images)
+ * for the given variant IDs, ready for client-side Excel generation.
+ */
+export const exportVariantData = async (variantIds: number[]): Promise<ExportVariantDataResult> => {
+  const response = await fetch(
+    `${API_BASE_URL}/resources/product-bulk-upload/export-variant-data`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
+      body: JSON.stringify({ variant_ids: variantIds }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw { message: data.message || "Export request failed", ...data };
+  }
+
+  return data;
+};
+
 /**
  * Fetches the current state of a FAQ upload background job.
  */
