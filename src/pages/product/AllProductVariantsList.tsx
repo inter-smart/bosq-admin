@@ -77,7 +77,6 @@ export default function AllProductVariantsList() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
   const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
   const [tableKey, setTableKey] = useState(0);
@@ -207,28 +206,6 @@ export default function AllProductVariantsList() {
         setLoading(false);
         setSearching(false);
       }
-    }
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteItemId) return;
-
-    try {
-      await deleteProductVariant(deleteItemId, deleteType);
-      setVariants((prev) => prev.filter((item) => item.id !== deleteItemId));
-      setTotalCount((prev) => prev - 1);
-      toast({
-        title: "Success",
-        description: "Product variant deleted successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete product variant",
-        variant: "destructive",
-      });
-    } finally {
-      setDeleteItemId(null);
     }
   };
 
@@ -497,13 +474,6 @@ export default function AllProductVariantsList() {
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Manage Bought Together
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={() => setDeleteItemId(item.id!)}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -675,55 +645,6 @@ export default function AllProductVariantsList() {
           onBulkAction={handleBulkAction}
         />
       </div>
-
-      <AlertDialog
-        open={!!deleteItemId}
-        onOpenChange={(open) => { if (!open) { setDeleteItemId(null); setDeleteType("soft"); } }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              product variant and remove its data from the servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <div className="space-y-3">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Delete Type</Label>
-              <RadioGroup
-                value={deleteType}
-                onValueChange={(value) => setDeleteType(value as "soft" | "force")}
-                className="flex gap-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="soft" id="single-soft" />
-                  <Label htmlFor="single-soft" className="text-sm cursor-pointer">
-                    Move to Trash
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="force" id="single-force" />
-                  <Label htmlFor="single-force" className="text-sm cursor-pointer">
-                    Delete Permanently
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-          </div>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <AlertDialog open={showBulkDeleteDialog} onOpenChange={(open) => { setShowBulkDeleteDialog(open); if (!open) setDeleteType("soft"); }}>
         <AlertDialogContent className="max-w-md">

@@ -43,7 +43,6 @@ export default function BaseProductList() {
   const [statsLoading, setStatsLoading] = useState(true);
   const [counts, setCounts] = useState<DashboardCounts | null>(null);
   const [searching, setSearching] = useState(false);
-  const [deleteItemId, setDeleteItemId] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -111,28 +110,6 @@ export default function BaseProductList() {
     } finally {
       setLoading(false);
       setSearching(false);
-    }
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteItemId) return;
-
-    try {
-      await deleteBaseProduct(deleteItemId, deleteType);
-      setBaseProducts((prev) => prev.filter((item) => item.id !== deleteItemId));
-      setTotalCount((prev) => prev - 1);
-      toast({
-        title: "Success",
-        description: "Base product deleted successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete base product",
-        variant: "destructive",
-      });
-    } finally {
-      setDeleteItemId(null);
     }
   };
 
@@ -283,10 +260,6 @@ export default function BaseProductList() {
               <DropdownMenuItem onClick={() => navigate(`/product-models/${item.id}/list`)}>
                 <ListPlus className="mr-2 h-4 w-4" />
                 Manage Models
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={() => setDeleteItemId(item.id!)}>
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -450,53 +423,6 @@ export default function BaseProductList() {
             <AlertDialogAction onClick={confirmBulkDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 gap-2">
               <Trash2 className="h-4 w-4" />
               Delete {bulkDeleteIds.length} Product{bulkDeleteIds.length !== 1 ? "s" : ""}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog
-        open={!!deleteItemId}
-        onOpenChange={(open) => {
-          if (!open) {
-            setDeleteItemId(null);
-            setDeleteType("soft");
-          }
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the base product and remove its data from the servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <div className="space-y-3">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Delete Type</Label>
-              <RadioGroup value={deleteType} onValueChange={(value) => setDeleteType(value as "soft" | "force")} className="flex gap-4">
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="soft" id="single-soft" />
-                  <Label htmlFor="single-soft" className="text-sm cursor-pointer">
-                    Move to Trash
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="force" id="single-force" />
-                  <Label htmlFor="single-force" className="text-sm cursor-pointer">
-                    Delete Permanently
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-          </div>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
