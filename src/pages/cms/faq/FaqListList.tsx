@@ -220,7 +220,7 @@ export default function FaqListList() {
         const item = row.original;
         if (item.type === "product") {
           return (
-            <Badge variant="outline">{item.product?.title || "No Product"}</Badge>
+            <Badge variant="outline">{item.product_variant?.title || "Product Variant"}</Badge>
           );
         }
         return (

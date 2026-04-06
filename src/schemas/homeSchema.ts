@@ -35,7 +35,7 @@ export const homeSchema = z.object({
   journey_media_alt_ar: commonValidations.requiredString(
     "Journey Media Alt Text (Arabic)"
   ),
-  journey_link: commonValidations.optionalUrl,
+  journey_link: commonValidations.requiredUrl("Journey Link"),
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),

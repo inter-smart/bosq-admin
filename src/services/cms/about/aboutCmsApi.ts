@@ -15,6 +15,8 @@ export interface AboutCms {
   banner_media_mobile_path?: string | null;
   banner_media_desktop_path_ar?: string | null;
   banner_media_mobile_path_ar?: string | null;
+  banner_video_thumbnail_path: string | null; 
+  banner_video_thumbnail_path_ar: string | null;
   banner_media_alt?: string | null;
   banner_media_alt_ar?: string | null;
   banner_button_text?: string | null;

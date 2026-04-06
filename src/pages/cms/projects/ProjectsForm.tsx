@@ -23,11 +23,8 @@ import {
   fetchProjectById,
   createProject,
   updateProject,
+  fetchAllProjectCategoryList,
 } from "@/services/cms/projects/projectsApi";
-import {
-  fetchProjectCategoryList,
-  ProjectCategory,
-} from "@/services/cms/projects/projectCategoryApi";
 import {
   Select,
   SelectContent,
@@ -77,7 +74,7 @@ export default function ProjectsForm() {
   const [featureValueArInput, setFeatureValueArInput] = useState<string>("");
 
   // Categories
-  const [categories, setCategories] = useState<ProjectCategory[]>([]);
+  const [categories, setCategories] = useState<{ id: number; title: string; title_ar: string }[]>([]);
 
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
@@ -127,8 +124,8 @@ export default function ProjectsForm() {
 
   const loadCategories = async () => {
     try {
-      const response = await fetchProjectCategoryList(1, 100);
-      setCategories(response.data.list);
+      const response = await fetchAllProjectCategoryList();
+      setCategories(response.data);
     } catch (error) {
       console.error("Failed to load categories:", error);
     }

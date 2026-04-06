@@ -152,3 +152,8 @@ export const deleteProject = async (id: number): Promise<void> => {
     method: 'DELETE',
   });
 };
+
+export const fetchAllProjectCategoryList = async () => {
+  return apiCall('/projects/projects/all-categories');
+};
+

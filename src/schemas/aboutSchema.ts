@@ -13,9 +13,21 @@ export const aboutCmsSchema = z.object({
   banner_description: commonValidations.requiredText("Banner Description"),
   banner_description_ar: commonValidations.requiredString("Banner Description (Arabic)"),
   banner_media_desktop_path: commonValidations.validateFileUpload("Banner Desktop Media"),
-  banner_media_mobile_path: commonValidations.validateFileUpload("Banner Mobile Media"),
+  banner_media_mobile_path: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
   banner_media_desktop_path_ar: commonValidations.validateFileUpload("Banner Desktop Media (Arabic)"),
-  banner_media_mobile_path_ar: commonValidations.validateFileUpload("Banner Mobile Media (Arabic)"),
+  banner_media_mobile_path_ar: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
+  banner_video_thumbnail_path: commonValidations.validateFileUpload("Banner Video Thumbnail"),
+  banner_video_thumbnail_path_ar: commonValidations.validateFileUpload("Banner Video Thumbnail (Arabic)"),
   banner_media_alt: commonValidations.requiredString("Banner Media Alt Text"),
   banner_media_alt_ar: commonValidations.requiredString("Banner Media Alt Text (Arabic)"),
   banner_button_text: commonValidations.requiredString("Banner Button Text"),
@@ -54,6 +66,25 @@ export const aboutCmsSchema = z.object({
   // News Section
   news_title: commonValidations.requiredString("News Title"),
   news_title_ar: commonValidations.requiredString("News Title (Arabic)"),
+}).superRefine((data, ctx) => {
+  if (data.banner_media_type !== "video") {
+    const mobileVal = data.banner_media_mobile_path;
+    if (!(mobileVal instanceof File) && !(typeof mobileVal === "string" && mobileVal.length > 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Banner Mobile Media is required. Please upload Banner Mobile Media.",
+        path: ["banner_media_mobile_path"],
+      });
+    }
+    const mobileArVal = data.banner_media_mobile_path_ar;
+    if (!(mobileArVal instanceof File) && !(typeof mobileArVal === "string" && mobileArVal.length > 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Banner Mobile Media (Arabic) is required. Please upload Banner Mobile Media (Arabic).",
+        path: ["banner_media_mobile_path_ar"],
+      });
+    }
+  }
 });
 
 export type AboutCmsFormData = z.infer<typeof aboutCmsSchema>;

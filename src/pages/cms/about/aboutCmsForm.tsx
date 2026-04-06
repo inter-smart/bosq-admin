@@ -57,6 +57,8 @@ export default function AboutCmsForm() {
       banner_media_mobile_path: null,
       banner_media_desktop_path_ar: null,
       banner_media_mobile_path_ar: null,
+      banner_video_thumbnail_path: null,
+      banner_video_thumbnail_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       banner_button_text: "",
@@ -100,6 +102,8 @@ export default function AboutCmsForm() {
       form.setValue("banner_media_mobile_path", null);
       form.setValue("banner_media_desktop_path_ar", null);
       form.setValue("banner_media_mobile_path_ar", null);
+      form.setValue("banner_video_thumbnail_path", null);
+      form.setValue("banner_video_thumbnail_path_ar", null);
     }
 
     // Update prevMediaType after initial loading is complete
@@ -131,6 +135,12 @@ export default function AboutCmsForm() {
           banner_media_mobile_path: data.banner_media_mobile_path || null,
           banner_media_desktop_path_ar: data.banner_media_desktop_path_ar || null,
           banner_media_mobile_path_ar: data.banner_media_mobile_path_ar || null,
+          banner_video_thumbnail_path: data.banner_video_thumbnail_path
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_video_thumbnail_path}`
+            : null,
+          banner_video_thumbnail_path_ar: data.banner_video_thumbnail_path_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_video_thumbnail_path_ar}`
+            : null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
           banner_button_text: data.banner_button_text || "",
@@ -184,6 +194,7 @@ export default function AboutCmsForm() {
     // Error callback - runs when validation fails
     (errors) => {
       // Get the first error field and focus it
+      console.log(errors)
       const firstErrorField = Object.keys(errors)[0] as keyof AboutCmsFormData;
 
       if (firstErrorField) {
@@ -309,6 +320,18 @@ export default function AboutCmsForm() {
         formData.append(
           "banner_media_mobile_path_ar",
           data.banner_media_mobile_path_ar
+        );
+      }
+      if (data.banner_video_thumbnail_path instanceof File) {
+        formData.append(
+          "banner_video_thumbnail_path",
+          data.banner_video_thumbnail_path
+        );
+      }
+      if (data.banner_video_thumbnail_path_ar instanceof File) {
+        formData.append(
+          "banner_video_thumbnail_path_ar",
+          data.banner_video_thumbnail_path_ar
         );
       }
 
@@ -585,32 +608,27 @@ export default function AboutCmsForm() {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="banner_media_mobile_path"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
-                          (Mobile)
-                        </FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept={
-                              watchBannerMediaType === "image"
-                                ? "image/*"
-                                : "video/*"
-                            }
-                            recommendedDimensions="640px × 1138px"
-                            placeholder={`Upload mobile banner ${watchBannerMediaType}`}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {watchBannerMediaType === "image" && (
+                    <FormField
+                      control={form.control}
+                      name="banner_media_mobile_path"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image (Mobile)</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              accept="image/*"
+                              recommendedDimensions="640px × 1138px"
+                              placeholder="Upload mobile banner image"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -641,33 +659,72 @@ export default function AboutCmsForm() {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="banner_media_mobile_path_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
-                          (Mobile - AR)
-                        </FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept={
-                              watchBannerMediaType === "image"
-                                ? "image/*"
-                                : "video/*"
-                            }
-                            recommendedDimensions="640px × 1138px"
-                            placeholder={`Upload mobile banner ${watchBannerMediaType} (AR)`}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {watchBannerMediaType === "image" && (
+                    <FormField
+                      control={form.control}
+                      name="banner_media_mobile_path_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image (Mobile - AR)</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              accept="image/*"
+                              recommendedDimensions="640px × 1138px"
+                              placeholder="Upload mobile banner image (AR)"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
+
+                {watchBannerMediaType === "video" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="banner_video_thumbnail_path"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Video Thumbnail</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              accept="image/*"
+                              recommendedDimensions="1920px x 732px"
+                              placeholder="Upload video thumbnail image"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="banner_video_thumbnail_path_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Video Thumbnail (AR)</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              accept="image/*"
+                              recommendedDimensions="1920px x 732px"
+                              placeholder="Upload video thumbnail image (AR)"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
@@ -793,9 +850,11 @@ export default function AboutCmsForm() {
 
 
               {/* Journey Media */}
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <h3 className="text-lg font-semibold">Journey Section Media</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                {/* Image 1 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <FormField
                     control={form.control}
                     name="journey_one_media_path"
@@ -819,7 +878,42 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="journey_one_media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image 1 Alt Text (English)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter alt text" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="journey_one_media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image 1 Alt Text (AR)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
+                {/* Image 2 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <FormField
                     control={form.control}
                     name="journey_two_media_path"
@@ -843,7 +937,42 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="journey_two_media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image 2 Alt Text (English)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter alt text" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="journey_two_media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image 2 Alt Text (AR)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
 
+                {/* Image 3 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                   <FormField
                     control={form.control}
                     name="journey_three_media_path"
@@ -867,105 +996,38 @@ export default function AboutCmsForm() {
                       </FormItem>
                     )}
                   />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="journey_one_media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image 1 Alt Text (English)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter alt text" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_two_media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image 2 Alt Text (English)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter alt text" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_three_media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image 3 Alt Text (English)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter alt text" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="journey_one_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image Alt Text 1 (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_two_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image Alt Text 2 (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_three_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image Alt Text 3 (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل النص البديل"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="journey_three_media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image 3 Alt Text (English)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter alt text" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="journey_three_media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image 3 Alt Text (AR)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="أدخل النص البديل"
+                              {...field}
+                              dir="rtl"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
 

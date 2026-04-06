@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useNavigate } from "react-router-dom";
@@ -66,6 +66,9 @@ export default function FaqListForm() {
   // Display name for current variant in edit mode
   const [currentVariantTitle, setCurrentVariantTitle] = useState<string>("");
 
+  // Prevents cascade effects from clearing product_variant_id during edit initialization
+  const isInitializingRef = useRef(false);
+
   const form = useForm<FaqListFormData>({
     resolver: zodResolver(faqListSchema),
     defaultValues: {
@@ -93,40 +96,44 @@ export default function FaqListForm() {
   // Load models when base product changes
   useEffect(() => {
     if (selectedBaseId) {
-      setModels([]);
-      setVariantCategories([]);
-      setVariants([]);
-      setSelectedModelId(null);
-      setSelectedCategoryId(null);
-      form.setValue("product_variant_id", undefined);
+      if (!isInitializingRef.current) {
+        setModels([]);
+        setVariantCategories([]);
+        setVariants([]);
+        setSelectedModelId(null);
+        setSelectedCategoryId(null);
+        form.setValue("product_variant_id", undefined);
 
-      getFaqModelsDropdown(selectedBaseId).then((res) => {
-        if (res.success) setModels(res.data.models);
-      }).catch(() => {});
+        getFaqModelsDropdown(selectedBaseId).then((res) => {
+          if (res.success) setModels(res.data.models);
+        }).catch(() => {});
+      }
     }
   }, [selectedBaseId]);
 
   // Load variant categories when model changes
   useEffect(() => {
     if (selectedModelId) {
-      setVariantCategories([]);
-      setVariants([]);
-      setSelectedCategoryId(null);
-      form.setValue("product_variant_id", undefined);
+      if (!isInitializingRef.current) {
+        setVariantCategories([]);
+        setVariants([]);
+        setSelectedCategoryId(null);
+        form.setValue("product_variant_id", undefined);
 
-      Promise.all([
-        getFaqCategoriesDropdown(selectedModelId),
-        getFaqVariantsDropdown(selectedModelId),
-      ]).then(([catRes, varRes]) => {
-        if (catRes.success) setVariantCategories(catRes.data.categories);
-        if (varRes.success) setVariants(varRes.data.variants);
-      }).catch(() => {});
+        Promise.all([
+          getFaqCategoriesDropdown(selectedModelId),
+          getFaqVariantsDropdown(selectedModelId),
+        ]).then(([catRes, varRes]) => {
+          if (catRes.success) setVariantCategories(catRes.data.categories);
+          if (varRes.success) setVariants(varRes.data.variants);
+        }).catch(() => {});
+      }
     }
   }, [selectedModelId]);
 
   // Reload variants when category filter changes
   useEffect(() => {
-    if (selectedModelId) {
+    if (selectedModelId && !isInitializingRef.current) {
       setVariants([]);
       form.setValue("product_variant_id", undefined);
 
@@ -135,6 +142,14 @@ export default function FaqListForm() {
       }).catch(() => {});
     }
   }, [selectedCategoryId]);
+
+  // Reset initialization flag after cascade pre-population effects have run
+  // Must be placed AFTER the cascade effects so it executes last in the same render cycle
+  useEffect(() => {
+    if (isInitializingRef.current && selectedBaseId && selectedModelId) {
+      isInitializingRef.current = false;
+    }
+  }, [selectedBaseId, selectedModelId]);
 
   const loadDropdownData = async () => {
     try {
@@ -169,8 +184,34 @@ export default function FaqListForm() {
           status: data.status ?? true,
         });
 
-        if (data.product_variant) {
+        if (data.type === "product" && data.product_variant) {
           setCurrentVariantTitle(data.product_variant.title);
+
+          const modelId = data.product_variant.product_model_id;
+          const baseId = data.product_variant.productModel?.product_id;
+
+          if (baseId && modelId) {
+            // Set flag BEFORE state updates so cascade effects see it and skip clearing
+            isInitializingRef.current = true;
+
+            const [modelsRes, catRes, varRes] = await Promise.all([
+              getFaqModelsDropdown(baseId),
+              getFaqCategoriesDropdown(modelId),
+              getFaqVariantsDropdown(modelId),
+            ]);
+
+            if (modelsRes.success) setModels(modelsRes.data.models);
+            if (catRes.success) setVariantCategories(catRes.data.categories);
+            if (varRes.success) setVariants(varRes.data.variants);
+
+            // Triggers cascade effects (blocked by isInitializingRef)
+            setSelectedBaseId(baseId);
+            setSelectedModelId(modelId);
+
+            // Re-affirm form value after all state updates
+            form.setValue("product_variant_id", data.product_variant_id);
+            // isInitializingRef is cleared by the "clear init flag" effect
+          }
         }
       }
     } catch (error) {

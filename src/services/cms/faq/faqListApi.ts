@@ -24,6 +24,11 @@ export interface FaqList {
     title: string;
     title_ar: string;
     sku: string;
+    product_model_id: number;
+    productModel?: {
+      id: number;
+      product_id: number;
+    };
   };
 }
 
