@@ -22,29 +22,10 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
@@ -62,10 +43,7 @@ import {
   type FaqValidationResult,
   type FaqJobStatus,
 } from "@/services/product/bulkUploadApi";
-import {
-  fetchProductVariantList,
-  type ProductVariant,
-} from "@/services/product/productVariantApi";
+import { fetchProductVariantList, type ProductVariant } from "@/services/product/productVariantApi";
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 
@@ -82,12 +60,7 @@ function StepIndicator({ phase }: { phase: Phase }) {
   ];
 
   const activeStep =
-    phase === "idle" ? 0
-    : phase === "validating" ? 1
-    : phase === "validated_fail" ? 1
-    : phase === "validated_ok" ? 2
-    : phase === "approving" ? 2
-    : 3;
+    phase === "idle" ? 0 : phase === "validating" ? 1 : phase === "validated_fail" ? 1 : phase === "validated_ok" ? 2 : phase === "approving" ? 2 : 3;
 
   return (
     <div className="flex items-center w-full mb-8">
@@ -99,26 +72,18 @@ function StepIndicator({ phase }: { phase: Phase }) {
                 idx < activeStep
                   ? "bg-primary border-primary text-primary-foreground"
                   : idx === activeStep
-                  ? "border-primary text-primary bg-primary/10"
-                  : "border-muted-foreground/30 text-muted-foreground"
+                    ? "border-primary text-primary bg-primary/10"
+                    : "border-muted-foreground/30 text-muted-foreground"
               }`}
             >
               {idx < activeStep ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
             </div>
-            <span
-              className={`text-xs mt-1 whitespace-nowrap ${
-                idx <= activeStep ? "text-primary font-medium" : "text-muted-foreground"
-              }`}
-            >
+            <span className={`text-xs mt-1 whitespace-nowrap ${idx <= activeStep ? "text-primary font-medium" : "text-muted-foreground"}`}>
               {step.label}
             </span>
           </div>
           {idx < steps.length - 1 && (
-            <div
-              className={`flex-1 h-0.5 mx-2 mt-[-14px] transition-colors ${
-                idx < activeStep ? "bg-primary" : "bg-muted-foreground/20"
-              }`}
-            />
+            <div className={`flex-1 h-0.5 mx-2 mt-[-14px] transition-colors ${idx < activeStep ? "bg-primary" : "bg-muted-foreground/20"}`} />
           )}
         </div>
       ))}
@@ -145,9 +110,7 @@ function downloadTemplate() {
   // base_title must match a title from product_base sheet
   // No "slug" column — slug is auto-generated from title on insert
   // media_path: single filename from uploads/bulk/ (upload via Bulk Image Upload first)
-  const modelHeaders = [
-    "base_title", "title", "title_ar", "code", "base_price", "sort_order", "status", "media_path",
-  ];
+  const modelHeaders = ["base_title", "title", "title_ar", "code", "base_price", "sort_order", "status", "media_path"];
   const modelSample = ["Executive Chair", "Black Edition", "الإصدار الأسود", "EC-BLK", 299.99, 1, true, "ec-blk-model.jpg"];
   const modelSample2 = ["Executive Chair", "White Edition", "الإصدار الأبيض", "EC-WHT", 319.99, 2, true, "ec-wht-model.jpg"];
 
@@ -164,62 +127,156 @@ function downloadTemplate() {
   // video_thumbnails: comma-separated thumbnail filenames, one per video in "images" order
   // project_images: comma-separated filenames for the project/inspiration gallery
   const variantHeaders = [
-    "base_title", "model_title", "product_code", "title", "title_ar",
-    "design_title", "design_title_ar", "price", "stock", "is_primary", "is_featured",
-    "sort_order", "status", "categories", "attributes",
-    "description", "description_ar",
-    "enhance_title", "enhance_title_ar",
-    "details", "details_ar",
-    "details_points", "details_points_ar",
-    "additional_details", "additional_details_ar",
-    "cover_image", "hover_image", "brochure", "images", "video_thumbnails", "project_images",
+    "base_title",
+    "model_title",
+    "product_code",
+    "title",
+    "title_ar",
+    "design_title",
+    "design_title_ar",
+    "price",
+    "stock",
+    "is_featured",
+    "sort_order",
+    "status",
+    "categories",
+    "attributes",
+    "description",
+    "description_ar",
+    "enhance_title",
+    "enhance_title_ar",
+    "details",
+    "details_ar",
+    "details_points",
+    "details_points_ar",
+    "additional_details",
+    "additional_details_ar",
+    "cover_image",
+    "hover_image",
+    "brochure",
+    "images",
+    "video_thumbnails",
+    "project_images",
   ];
   const variantSample1 = [
-    "Executive Chair", "Black Edition", "EC-BLK-M-001",
-    "Medium", "متوسط", "Classic Black", "أسود كلاسيك",
-    349.99, 50, true, false,
-    1, true, "office-chairs,ergonomic", "color:black|size:medium",
-    "Premium ergonomic office chair with lumbar support", "كرسي مكتبي مريح وعالي الجودة",
-    "Best-in-class Executive Chair", "أفضل كرسي تنفيذي في فئته",
-    "Crafted from premium materials for all-day comfort.", "مصنوع من مواد فاخرة لراحة طوال اليوم.",
+    "Executive Chair",
+    "Black Edition",
+    "EC-BLK-M-001",
+    "Medium",
+    "متوسط",
+    "Classic Black",
+    "أسود كلاسيك",
+    349.99,
+    50,
+    true,
+    false,
+    1,
+    true,
+    "office-chairs,ergonomic",
+    "color:black|size:medium",
+    "Premium ergonomic office chair with lumbar support",
+    "كرسي مكتبي مريح وعالي الجودة",
+    "Best-in-class Executive Chair",
+    "أفضل كرسي تنفيذي في فئته",
+    "Crafted from premium materials for all-day comfort.",
+    "مصنوع من مواد فاخرة لراحة طوال اليوم.",
     "• Adjustable lumbar support\n• 4D armrests\n• Breathable mesh back",
     "• دعم قطني قابل للتعديل\n• مسند ذراع رباعي الأبعاد",
-    "", "",
-    "ec-blk-m-cover.jpg", "ec-blk-m-hover.jpg", "ec-blk-m-brochure.pdf",
-    "ec-blk-m-1.jpg,ec-blk-m-2.jpg,ec-blk-m-tour.mp4", "ec-blk-m-tour-thumb.jpg",
+    "",
+    "",
+    "ec-blk-m-cover.jpg",
+    "ec-blk-m-hover.jpg",
+    "ec-blk-m-brochure.pdf",
+    "ec-blk-m-1.jpg,ec-blk-m-2.jpg,ec-blk-m-tour.mp4",
+    "ec-blk-m-tour-thumb.jpg",
     "ec-blk-m-proj1.jpg,ec-blk-m-proj2.jpg",
   ];
   const variantSample2 = [
-    "Executive Chair", "Black Edition", "EC-BLK-L-002",
-    "Large", "كبير", "Classic Black", "أسود كلاسيك",
-    369.99, 30, false, false,
-    2, true, "office-chairs,ergonomic", "color:black|size:large",
-    "Premium ergonomic office chair with lumbar support", "كرسي مكتبي مريح وعالي الجودة",
-    "Best-in-class Executive Chair", "أفضل كرسي تنفيذي في فئته",
-    "Crafted from premium materials for all-day comfort.", "مصنوع من مواد فاخرة لراحة طوال اليوم.",
-    "", "", "", "",
-    "ec-blk-l-cover.jpg", "ec-blk-l-hover.jpg", "",
-    "ec-blk-l-1.jpg,ec-blk-l-2.jpg", "", "",
+    "Executive Chair",
+    "Black Edition",
+    "EC-BLK-L-002",
+    "Large",
+    "كبير",
+    "Classic Black",
+    "أسود كلاسيك",
+    369.99,
+    30,
+    false,
+    false,
+    2,
+    true,
+    "office-chairs,ergonomic",
+    "color:black|size:large",
+    "Premium ergonomic office chair with lumbar support",
+    "كرسي مكتبي مريح وعالي الجودة",
+    "Best-in-class Executive Chair",
+    "أفضل كرسي تنفيذي في فئته",
+    "Crafted from premium materials for all-day comfort.",
+    "مصنوع من مواد فاخرة لراحة طوال اليوم.",
+    "",
+    "",
+    "",
+    "",
+    "ec-blk-l-cover.jpg",
+    "ec-blk-l-hover.jpg",
+    "",
+    "ec-blk-l-1.jpg,ec-blk-l-2.jpg",
+    "",
+    "",
   ];
   const variantSample3 = [
-    "Executive Chair", "White Edition", "EC-WHT-M-003",
-    "Medium", "متوسط", "Pearl White", "أبيض لؤلؤي",
-    379.99, 20, true, false,
-    1, true, "office-chairs", "color:white|size:medium",
-    "Premium ergonomic office chair", "كرسي مكتبي مريح",
-    "Pearl White Executive Chair", "كرسي تنفيذي أبيض لؤلؤي",
-    "Premium materials for all-day comfort.", "مواد فاخرة لراحة طوال اليوم.",
-    "", "", "", "",
-    "ec-wht-m-cover.jpg", "ec-wht-m-hover.jpg", "",
-    "ec-wht-m-1.jpg,ec-wht-m-tour.mp4", "ec-wht-m-tour-thumb.jpg",
+    "Executive Chair",
+    "White Edition",
+    "EC-WHT-M-003",
+    "Medium",
+    "متوسط",
+    "Pearl White",
+    "أبيض لؤلؤي",
+    379.99,
+    20,
+    true,
+    false,
+    1,
+    true,
+    "office-chairs",
+    "color:white|size:medium",
+    "Premium ergonomic office chair",
+    "كرسي مكتبي مريح",
+    "Pearl White Executive Chair",
+    "كرسي تنفيذي أبيض لؤلؤي",
+    "Premium materials for all-day comfort.",
+    "مواد فاخرة لراحة طوال اليوم.",
+    "",
+    "",
+    "",
+    "",
+    "ec-wht-m-cover.jpg",
+    "ec-wht-m-hover.jpg",
+    "",
+    "ec-wht-m-1.jpg,ec-wht-m-tour.mp4",
+    "ec-wht-m-tour-thumb.jpg",
     "ec-wht-m-proj1.jpg",
   ];
 
   const variantWs = XLSX.utils.aoa_to_sheet([variantHeaders, variantSample1, variantSample2, variantSample3]);
-  const wideVariantCols = new Set(["attributes", "categories", "images", "video_thumbnails", "project_images",
-    "description", "description_ar", "details", "details_ar", "details_points", "details_points_ar",
-    "additional_details", "additional_details_ar", "enhance_title", "enhance_title_ar"]);
-  variantWs["!cols"] = variantHeaders.map((h) => wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 });
+  const wideVariantCols = new Set([
+    "attributes",
+    "categories",
+    "images",
+    "video_thumbnails",
+    "project_images",
+    "description",
+    "description_ar",
+    "details",
+    "details_ar",
+    "details_points",
+    "details_points_ar",
+    "additional_details",
+    "additional_details_ar",
+    "enhance_title",
+    "enhance_title_ar",
+  ]);
+  variantWs["!cols"] = variantHeaders.map((h) => (wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 }));
   XLSX.utils.book_append_sheet(wb, variantWs, "product_variants");
 
   XLSX.writeFile(wb, "bosq_bulk_upload_template.xlsx");
@@ -240,7 +297,8 @@ function downloadFaqTemplate() {
     "ما المواد المستخدمة في صنع هذا الكرسي؟",
     "The chair is crafted from premium mesh fabric and high-grade aluminium for the frame.",
     "الكرسي مصنوع من قماش الشبك الفاخر وإطار من الألومنيوم عالي الجودة.",
-    1, true,
+    1,
+    true,
   ];
   const sample2 = [
     "EC-BLK-BLACK-MEDIUM",
@@ -248,13 +306,12 @@ function downloadFaqTemplate() {
     "هل يأتي مع ضمان؟",
     "Yes, this chair comes with a 2-year manufacturer warranty.",
     "نعم، يأتي هذا الكرسي مع ضمان المصنع لمدة سنتين.",
-    2, true,
+    2,
+    true,
   ];
 
   const ws = XLSX.utils.aoa_to_sheet([headers, sample1, sample2]);
-  ws["!cols"] = headers.map((h) =>
-    ["question", "question_ar", "answer", "answer_ar"].includes(h) ? { wch: 50 } : { wch: 26 }
-  );
+  ws["!cols"] = headers.map((h) => (["question", "question_ar", "answer", "answer_ar"].includes(h) ? { wch: 50 } : { wch: 26 }));
   XLSX.utils.book_append_sheet(wb, ws, "product_faqs");
   XLSX.writeFile(wb, "bosq_faq_upload_template.xlsx");
 }
@@ -268,9 +325,9 @@ function UploadGuide() {
 
   const tabs: { key: GuideTab; label: string }[] = [
     { key: "checklist", label: "Pre-Upload Checklist" },
-    { key: "images",    label: "Image & Media Rules"  },
-    { key: "data",      label: "Sheet & Data Rules"   },
-    { key: "upsert",    label: "Re-upload Behavior"   },
+    { key: "images", label: "Image & Media Rules" },
+    { key: "data", label: "Sheet & Data Rules" },
+    { key: "upsert", label: "Re-upload Behavior" },
   ];
 
   return (
@@ -292,9 +349,7 @@ function UploadGuide() {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={`flex-1 min-w-fit rounded-md px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
-                tab === t.key
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                tab === t.key ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {t.label}
@@ -305,36 +360,36 @@ function UploadGuide() {
         {/* ── Tab: Pre-Upload Checklist ────────────────────────────────── */}
         {tab === "checklist" && (
           <div className="space-y-3">
-            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
-              Complete all steps in order before uploading
-            </p>
-            {([
-              {
-                title: "Upload all images and videos first",
-                desc: "Every image or video you plan to reference in the Excel sheet must be uploaded to the server before you run validation. Use the Bulk Image Upload page — files are stored under uploads/bulk/ using their original filenames.",
-                link: true,
-              },
-              {
-                title: "Prepare your Excel workbook with 3 required sheets",
-                desc: 'The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). Use the Download Template button above to get a correctly named file. FAQs are uploaded separately using the FAQ Upload section below.',
-              },
-              {
-                title: "Fill all required fields — leave no required cell empty",
-                desc: "Fields marked as required (red dot in the Column Reference) must be present and non-empty in every row. A single missing required field will cause that row — and the entire upload — to fail validation.",
-              },
-              {
-                title: "Ensure all cross-sheet references match exactly",
-                desc: "base_title in product_models must exactly match a title in product_base. base_title + model_title in product_variants must exactly match a row in product_models. Any mismatch is a validation error.",
-              },
-              {
-                title: "Verify every image filename before saving the file",
-                desc: "Filenames in media_path (product_models), cover_image, hover_image, images, and video_thumbnails (product_variants) must already exist in uploads/bulk/. Filenames are case-sensitive. Do not include the folder path — filenames only.",
-              },
-              {
-                title: "Validate first, approve only after zero errors",
-                desc: "Click Validate File and fix every reported error before clicking Approve. Do not bypass the validation step. The approval button only becomes available after a clean validation pass.",
-              },
-            ] as { title: string; desc: string; link?: boolean }[]).map((item, i) => (
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">Complete all steps in order before uploading</p>
+            {(
+              [
+                {
+                  title: "Upload all images and videos first",
+                  desc: "Every image or video you plan to reference in the Excel sheet must be uploaded to the server before you run validation. Use the Bulk Image Upload page — files are stored under uploads/bulk/ using their original filenames.",
+                  link: true,
+                },
+                {
+                  title: "Prepare your Excel workbook with 3 required sheets",
+                  desc: "The workbook must contain sheets named product_base, product_models, and product_variants (exact names, any order). Use the Download Template button above to get a correctly named file. FAQs are uploaded separately using the FAQ Upload section below.",
+                },
+                {
+                  title: "Fill all required fields — leave no required cell empty",
+                  desc: "Fields marked as required (red dot in the Column Reference) must be present and non-empty in every row. A single missing required field will cause that row — and the entire upload — to fail validation.",
+                },
+                {
+                  title: "Ensure all cross-sheet references match exactly",
+                  desc: "base_title in product_models must exactly match a title in product_base. base_title + model_title in product_variants must exactly match a row in product_models. Any mismatch is a validation error.",
+                },
+                {
+                  title: "Verify every image filename before saving the file",
+                  desc: "Filenames in media_path (product_models), cover_image, hover_image, images, and video_thumbnails (product_variants) must already exist in uploads/bulk/. Filenames are case-sensitive. Do not include the folder path — filenames only.",
+                },
+                {
+                  title: "Validate first, approve only after zero errors",
+                  desc: "Click Validate File and fix every reported error before clicking Approve. Do not bypass the validation step. The approval button only becomes available after a clean validation pass.",
+                },
+              ] as { title: string; desc: string; link?: boolean }[]
+            ).map((item, i) => (
               <div key={i} className="flex gap-3">
                 <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
                   {i + 1}
@@ -365,27 +420,14 @@ function UploadGuide() {
 
             <div className="rounded-lg border p-3 space-y-2">
               <p className="text-xs font-semibold font-mono text-primary">product_models</p>
-              <FieldRule
-                field="media_path"
-                required
-                desc="Single filename. The main display image for the model."
-                example="ec-blk-model.jpg"
-              />
+              <FieldRule field="media_path" required desc="Single filename. The main display image for the model." example="ec-blk-model.jpg" />
             </div>
 
             <div className="rounded-lg border p-3 space-y-2">
               <p className="text-xs font-semibold font-mono text-primary">product_variants</p>
               <div className="space-y-2">
-                <FieldRule
-                  field="cover_image"
-                  desc="Single filename. The primary card/cover image shown in listings."
-                  example="ec-blk-m-cover.jpg"
-                />
-                <FieldRule
-                  field="hover_image"
-                  desc="Single filename. The alternate image shown on hover."
-                  example="ec-blk-m-hover.jpg"
-                />
+                <FieldRule field="cover_image" desc="Single filename. The primary card/cover image shown in listings." example="ec-blk-m-cover.jpg" />
+                <FieldRule field="hover_image" desc="Single filename. The alternate image shown on hover." example="ec-blk-m-hover.jpg" />
                 <FieldRule
                   field="brochure"
                   desc="Single filename for a downloadable brochure/PDF attached to this variant."
@@ -412,11 +454,8 @@ function UploadGuide() {
             <div className="rounded-md bg-muted/50 border p-3 space-y-1.5 text-xs text-muted-foreground">
               <p className="font-semibold text-foreground">Video Detection & Thumbnail Rules</p>
               <p>
-                Supported video extensions:{" "}
-                <code className="bg-muted px-1 rounded">.mp4</code>{" "}
-                <code className="bg-muted px-1 rounded">.webm</code>{" "}
-                <code className="bg-muted px-1 rounded">.mov</code>{" "}
-                <code className="bg-muted px-1 rounded">.avi</code>{" "}
+                Supported video extensions: <code className="bg-muted px-1 rounded">.mp4</code> <code className="bg-muted px-1 rounded">.webm</code>{" "}
+                <code className="bg-muted px-1 rounded">.mov</code> <code className="bg-muted px-1 rounded">.avi</code>{" "}
                 <code className="bg-muted px-1 rounded">.mkv</code>
               </p>
               <p>
@@ -430,11 +469,19 @@ function UploadGuide() {
               <p className="font-semibold flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" /> Strict Rules — Violations Fail Validation
               </p>
-              <p>• Filenames are <strong>case-sensitive</strong> — <code>Cover.jpg</code> and <code>cover.jpg</code> are different files</p>
-              <p>• Enter filenames <strong>only</strong> — do not include the <code>uploads/bulk/</code> prefix</p>
+              <p>
+                • Filenames are <strong>case-sensitive</strong> — <code>Cover.jpg</code> and <code>cover.jpg</code> are different files
+              </p>
+              <p>
+                • Enter filenames <strong>only</strong> — do not include the <code>uploads/bulk/</code> prefix
+              </p>
               <p>• No spaces around commas in comma-separated lists</p>
-              <p>• Files must be uploaded to the server <strong>before</strong> you validate the Excel file</p>
-              <p>• Any filename not found in <code>uploads/bulk/</code> will be reported as a validation error</p>
+              <p>
+                • Files must be uploaded to the server <strong>before</strong> you validate the Excel file
+              </p>
+              <p>
+                • Any filename not found in <code>uploads/bulk/</code> will be reported as a validation error
+              </p>
             </div>
           </div>
         )}
@@ -445,14 +492,11 @@ function UploadGuide() {
             <div className="rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30 p-3 text-xs text-blue-800 dark:text-blue-300 space-y-1">
               <p className="font-semibold">Content fields are now on product_variants</p>
               <p>
-                <code className="bg-muted px-1 rounded">description</code>,{" "}
-                <code className="bg-muted px-1 rounded">details</code>,{" "}
-                <code className="bg-muted px-1 rounded">enhance_title</code>,{" "}
-                <code className="bg-muted px-1 rounded">details_points</code>,{" "}
-                and <code className="bg-muted px-1 rounded">additional_details</code>{" "}
-                (plus their <code className="bg-muted px-1 rounded">_ar</code> equivalents) are columns on{" "}
-                <strong>product_variants</strong>, not product_base.
-                The product_base sheet now only needs <code className="bg-muted px-1 rounded">title</code> and <code className="bg-muted px-1 rounded">title_ar</code>.
+                <code className="bg-muted px-1 rounded">description</code>, <code className="bg-muted px-1 rounded">details</code>,{" "}
+                <code className="bg-muted px-1 rounded">enhance_title</code>, <code className="bg-muted px-1 rounded">details_points</code>, and{" "}
+                <code className="bg-muted px-1 rounded">additional_details</code> (plus their <code className="bg-muted px-1 rounded">_ar</code>{" "}
+                equivalents) are columns on <strong>product_variants</strong>, not product_base. The product_base sheet now only needs{" "}
+                <code className="bg-muted px-1 rounded">title</code> and <code className="bg-muted px-1 rounded">title_ar</code>.
               </p>
             </div>
 
@@ -460,12 +504,12 @@ function UploadGuide() {
               <p className="text-xs font-semibold">Sheet Linking (cross-sheet references)</p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
-                  <code className="bg-muted px-1 rounded text-foreground">product_models → base_title</code>{" "}
-                  must exactly match a <code className="bg-muted px-1 rounded text-foreground">title</code> value in the product_base sheet.
+                  <code className="bg-muted px-1 rounded text-foreground">product_models → base_title</code> must exactly match a{" "}
+                  <code className="bg-muted px-1 rounded text-foreground">title</code> value in the product_base sheet.
                 </p>
                 <p>
-                  <code className="bg-muted px-1 rounded text-foreground">product_variants → base_title + model_title</code>{" "}
-                  must exactly match a row in product_models under the same <code className="bg-muted px-1 rounded text-foreground">base_title</code>.
+                  <code className="bg-muted px-1 rounded text-foreground">product_variants → base_title + model_title</code> must exactly match a row
+                  in product_models under the same <code className="bg-muted px-1 rounded text-foreground">base_title</code>.
                 </p>
                 <p className="pt-1 text-[11px] text-blue-700 dark:text-blue-400">
                   <strong>FAQs</strong> are uploaded separately in the FAQ Upload section below — they are not part of this workbook.
@@ -480,21 +524,21 @@ function UploadGuide() {
               <p className="text-xs font-semibold">Data Types</p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
-                  <span className="font-medium text-foreground">Boolean fields</span>{" "}
-                  (<code className="bg-muted px-1 rounded">status</code>, <code className="bg-muted px-1 rounded">is_primary</code>, <code className="bg-muted px-1 rounded">is_featured</code>)
-                  — accepted values: <code className="bg-muted px-1 rounded">true</code> / <code className="bg-muted px-1 rounded">false</code>,{" "}
-                  <code className="bg-muted px-1 rounded">1</code> / <code className="bg-muted px-1 rounded">0</code>,{" "}
-                  <code className="bg-muted px-1 rounded">yes</code> / <code className="bg-muted px-1 rounded">no</code>
+                  <span className="font-medium text-foreground">Boolean fields</span> (<code className="bg-muted px-1 rounded">status</code>,{" "}
+                  <code className="bg-muted px-1 rounded">is_featured</code>) — accepted values: <code className="bg-muted px-1 rounded">true</code> /{" "}
+                  <code className="bg-muted px-1 rounded">false</code>, <code className="bg-muted px-1 rounded">1</code> /{" "}
+                  <code className="bg-muted px-1 rounded">0</code>, <code className="bg-muted px-1 rounded">yes</code> /{" "}
+                  <code className="bg-muted px-1 rounded">no</code>
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Decimal fields</span>{" "}
-                  (<code className="bg-muted px-1 rounded">base_price</code>, <code className="bg-muted px-1 rounded">price</code>)
-                  — must be valid numbers, e.g. <code className="bg-muted px-1 rounded">299.99</code>
+                  <span className="font-medium text-foreground">Decimal fields</span> (<code className="bg-muted px-1 rounded">base_price</code>,{" "}
+                  <code className="bg-muted px-1 rounded">price</code>) — must be valid numbers, e.g.{" "}
+                  <code className="bg-muted px-1 rounded">299.99</code>
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Integer fields</span>{" "}
-                  (<code className="bg-muted px-1 rounded">stock</code>, <code className="bg-muted px-1 rounded">sort_order</code>)
-                  — must be whole numbers, e.g. <code className="bg-muted px-1 rounded">50</code>
+                  <span className="font-medium text-foreground">Integer fields</span> (<code className="bg-muted px-1 rounded">stock</code>,{" "}
+                  <code className="bg-muted px-1 rounded">sort_order</code>) — must be whole numbers, e.g.{" "}
+                  <code className="bg-muted px-1 rounded">50</code>
                 </p>
               </div>
             </div>
@@ -503,8 +547,8 @@ function UploadGuide() {
               <p className="text-xs font-semibold">Categories — product_variants</p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
-                  Enter comma-separated category <strong>slugs</strong> (not display names).{" "}
-                  Example: <code className="bg-muted px-1 rounded">office-chairs,ergonomic</code>
+                  Enter comma-separated category <strong>slugs</strong> (not display names). Example:{" "}
+                  <code className="bg-muted px-1 rounded">office-chairs,ergonomic</code>
                 </p>
                 <p>All slugs must already exist in the database — unknown slugs are a validation error.</p>
               </div>
@@ -514,11 +558,13 @@ function UploadGuide() {
               <p className="text-xs font-semibold">Attributes — product_variants</p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
-                  Enter pipe-separated <code className="bg-muted px-1 rounded">attribute_slug:value_slug</code> pairs.{" "}
-                  Example: <code className="bg-muted px-1 rounded">color:black|size:medium</code>
+                  Enter pipe-separated <code className="bg-muted px-1 rounded">attribute_slug:value_slug</code> pairs. Example:{" "}
+                  <code className="bg-muted px-1 rounded">color:black|size:medium</code>
                 </p>
                 <p>Both the attribute slug and the value slug must exist in the database — unknown slugs are a validation error.</p>
-                <p>A variant can have multiple attribute pairs separated by <code className="bg-muted px-1 rounded">|</code>.</p>
+                <p>
+                  A variant can have multiple attribute pairs separated by <code className="bg-muted px-1 rounded">|</code>.
+                </p>
               </div>
             </div>
 
@@ -526,7 +572,9 @@ function UploadGuide() {
               <p className="text-xs font-semibold">Slugs (product_base & product_models)</p>
               <p className="text-xs text-muted-foreground">
                 Slugs are <strong>auto-generated</strong> from the <code className="bg-muted px-1 rounded">title</code> field — do{" "}
-                <strong>not</strong> include a slug column in either sheet. If the generated slug already exists, a numeric suffix is appended automatically (e.g. <code className="bg-muted px-1 rounded">my-chair-1</code>). Slugs are <strong>never changed</strong> on re-upload to preserve existing URLs.
+                <strong>not</strong> include a slug column in either sheet. If the generated slug already exists, a numeric suffix is appended
+                automatically (e.g. <code className="bg-muted px-1 rounded">my-chair-1</code>). Slugs are <strong>never changed</strong> on re-upload
+                to preserve existing URLs.
               </p>
             </div>
           </div>
@@ -540,8 +588,8 @@ function UploadGuide() {
                 <CheckCircle2 className="h-3.5 w-3.5" /> Re-uploading the same file is safe
               </p>
               <p>
-                If a record already exists in the database it will be <strong>updated</strong> with the new values from the sheet.
-                Existing records are never deleted. New rows create new records; existing rows update existing records.
+                If a record already exists in the database it will be <strong>updated</strong> with the new values from the sheet. Existing records
+                are never deleted. New rows create new records; existing rows update existing records.
               </p>
             </div>
 
@@ -550,15 +598,22 @@ function UploadGuide() {
               <div className="space-y-2 text-xs text-muted-foreground">
                 <div className="flex gap-2">
                   <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductBase</code>
-                  <span>Matched by <code className="bg-muted px-1 rounded">title</code> (case-sensitive)</span>
+                  <span>
+                    Matched by <code className="bg-muted px-1 rounded">title</code> (case-sensitive)
+                  </span>
                 </div>
                 <div className="flex gap-2">
                   <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductModels</code>
-                  <span>Matched by <code className="bg-muted px-1 rounded">base_title + title</code> combination</span>
+                  <span>
+                    Matched by <code className="bg-muted px-1 rounded">base_title + title</code> combination
+                  </span>
                 </div>
                 <div className="flex gap-2">
                   <code className="bg-muted px-1.5 py-0.5 rounded text-foreground shrink-0">ProductVariants</code>
-                  <span>Matched by auto-generated <code className="bg-muted px-1 rounded">sku</code> (always present — derived from model code + attribute slugs); falls back to <code className="bg-muted px-1 rounded">product_code</code> as a secondary key.</span>
+                  <span>
+                    Matched by auto-generated <code className="bg-muted px-1 rounded">sku</code> (always present — derived from model code + attribute
+                    slugs); falls back to <code className="bg-muted px-1 rounded">product_code</code> as a secondary key.
+                  </span>
                 </div>
               </div>
             </div>
@@ -570,25 +625,42 @@ function UploadGuide() {
                   <span className="font-medium text-foreground">All data fields</span> — overwritten with the new values from the sheet
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Slug</span> — <strong>never changed</strong> on update to avoid breaking existing product URLs
+                  <span className="font-medium text-foreground">Slug</span> — <strong>never changed</strong> on update to avoid breaking existing
+                  product URLs
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Categories & Attributes</span> — fully replaced: all existing links for updated variants are removed, then the new set from the sheet is inserted
+                  <span className="font-medium text-foreground">Categories & Attributes</span> — fully replaced: all existing links for updated
+                  variants are removed, then the new set from the sheet is inserted
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Gallery Images & Project Images</span> — add-only: new filenames are inserted; images that already exist for a variant are never removed or duplicated
+                  <span className="font-medium text-foreground">Gallery Images & Project Images</span> — add-only: new filenames are inserted; images
+                  that already exist for a variant are never removed or duplicated
                 </p>
               </div>
             </div>
 
             <div className="rounded-md bg-muted/50 border p-3 text-xs text-muted-foreground space-y-1.5">
               <p className="font-medium text-foreground">Common re-upload scenarios</p>
-              <p>• <strong>Price/stock change</strong> — update the value in the sheet and re-upload; variants will be updated, no errors</p>
-              <p>• <strong>New variant added</strong> — add the row to the sheet; existing rows update, new row creates a new variant</p>
-              <p>• <strong>Image replaced</strong> — the new cover_image path overwrites the old one; old gallery images remain (use the product editor to remove them)</p>
-              <p>• <strong>Category changed</strong> — update the categories cell; the old category links are removed and the new ones are applied</p>
-              <p>• <strong>FAQ updated</strong> — use the FAQ Upload section below; upload a new FAQ sheet and all old FAQs for affected variants are replaced</p>
-              <p>• <strong>Project images added</strong> — add filenames to the project_images cell; existing project images are kept (add-only)</p>
+              <p>
+                • <strong>Price/stock change</strong> — update the value in the sheet and re-upload; variants will be updated, no errors
+              </p>
+              <p>
+                • <strong>New variant added</strong> — add the row to the sheet; existing rows update, new row creates a new variant
+              </p>
+              <p>
+                • <strong>Image replaced</strong> — the new cover_image path overwrites the old one; old gallery images remain (use the product editor
+                to remove them)
+              </p>
+              <p>
+                • <strong>Category changed</strong> — update the categories cell; the old category links are removed and the new ones are applied
+              </p>
+              <p>
+                • <strong>FAQ updated</strong> — use the FAQ Upload section below; upload a new FAQ sheet and all old FAQs for affected variants are
+                replaced
+              </p>
+              <p>
+                • <strong>Project images added</strong> — add filenames to the project_images cell; existing project images are kept (add-only)
+              </p>
             </div>
           </div>
         )}
@@ -599,23 +671,15 @@ function UploadGuide() {
 
 /* ─── Field Rule Row ─────────────────────────────────────────────────────── */
 
-function FieldRule({
-  field,
-  required = false,
-  desc,
-  example,
-}: {
-  field: string;
-  required?: boolean;
-  desc: string;
-  example: string;
-}) {
+function FieldRule({ field, required = false, desc, example }: { field: string; required?: boolean; desc: string; example: string }) {
   return (
     <div className="rounded-md bg-muted/40 p-2 space-y-0.5">
       <div className="flex items-center gap-1.5">
         <code className="text-[11px] font-semibold text-primary">{field}</code>
         {required && (
-          <Badge variant="destructive" className="text-[9px] px-1 py-0">required</Badge>
+          <Badge variant="destructive" className="text-[9px] px-1 py-0">
+            required
+          </Badge>
         )}
       </div>
       <p className="text-[11px] text-muted-foreground leading-relaxed">{desc}</p>
@@ -651,16 +715,31 @@ function ColumnReference() {
       // sku is auto-generated — do NOT include a sku column
       required: ["base_title", "model_title"],
       optional: [
-        "product_code", "title", "title_ar", "design_title", "design_title_ar",
-        "price", "stock", "is_primary", "is_featured", "sort_order", "status",
+        "product_code",
+        "title",
+        "title_ar",
+        "design_title",
+        "design_title_ar",
+        "price",
+        "stock",
+        "is_featured",
+        "sort_order",
+        "status",
         "categories (comma-separated slugs)",
         "attributes (attr_slug:value_slug | separated)",
-        "description", "description_ar",
-        "enhance_title", "enhance_title_ar",
-        "details", "details_ar",
-        "details_points", "details_points_ar",
-        "additional_details", "additional_details_ar",
-        "cover_image (filename)", "hover_image (filename)", "brochure (filename)",
+        "description",
+        "description_ar",
+        "enhance_title",
+        "enhance_title_ar",
+        "details",
+        "details_ar",
+        "details_points",
+        "details_points_ar",
+        "additional_details",
+        "additional_details_ar",
+        "cover_image (filename)",
+        "hover_image (filename)",
+        "brochure (filename)",
         "images (comma-separated filenames)",
         "video_thumbnails (one per video, in order)",
         "project_images (comma-separated filenames)",
@@ -690,7 +769,9 @@ function ColumnReference() {
                     <div key={f} className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-destructive shrink-0" />
                       <span className="font-mono text-[11px]">{f}</span>
-                      <Badge variant="destructive" className="text-[9px] px-1 py-0 ml-auto">req</Badge>
+                      <Badge variant="destructive" className="text-[9px] px-1 py-0 ml-auto">
+                        req
+                      </Badge>
                     </div>
                   ))}
                   {sheet.optional.map((f) => (
@@ -705,11 +786,9 @@ function ColumnReference() {
           </div>
           <div className="mt-3 space-y-1.5 text-xs text-muted-foreground">
             <p>
-              <strong>Linking:</strong>{" "}
-              <code className="bg-muted px-1 rounded">base_title</code> in product_models must match a{" "}
+              <strong>Linking:</strong> <code className="bg-muted px-1 rounded">base_title</code> in product_models must match a{" "}
               <code className="bg-muted px-1 rounded">title</code> in product_base.{" "}
-              <code className="bg-muted px-1 rounded">base_title + model_title</code> in product_variants
-              must match a row in product_models.
+              <code className="bg-muted px-1 rounded">base_title + model_title</code> in product_variants must match a row in product_models.
             </p>
             <p>
               <strong>Slugs:</strong> Auto-generated from <code className="bg-muted px-1 rounded">title</code> — do not include a slug column.
@@ -723,10 +802,9 @@ function ColumnReference() {
             </p>
             <p>
               <strong>Images:</strong> All image filenames (<code className="bg-muted px-1 rounded">media_path</code> in product_models,{" "}
-              <code className="bg-muted px-1 rounded">cover_image</code>, <code className="bg-muted px-1 rounded">hover_image</code>,
-              and <code className="bg-muted px-1 rounded">images</code> in product_variants) must exist in{" "}
-              <code className="bg-muted px-1 rounded">uploads/bulk/</code> before running this upload.
-              See the image workflow note above.
+              <code className="bg-muted px-1 rounded">cover_image</code>, <code className="bg-muted px-1 rounded">hover_image</code>, and{" "}
+              <code className="bg-muted px-1 rounded">images</code> in product_variants) must exist in{" "}
+              <code className="bg-muted px-1 rounded">uploads/bulk/</code> before running this upload. See the image workflow note above.
             </p>
           </div>
         </CardContent>
@@ -776,13 +854,7 @@ function ErrorTable({ errors }: { errors: ValidationError[] }) {
 
 /* ─── Helper: Job Status Card ────────────────────────────────────────────── */
 
-function JobStatusCard({
-  jobId,
-  onReset,
-}: {
-  jobId: string;
-  onReset: () => void;
-}) {
+function JobStatusCard({ jobId, onReset }: { jobId: string; onReset: () => void }) {
   const [status, setStatus] = useState<UploadJobStatus | null>(null);
   const [polling, setPolling] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -812,14 +884,16 @@ function JobStatusCard({
   }, [fetchStatus]);
 
   const stateConfig: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
-    waiting:   { icon: <Clock className="h-5 w-5" />, color: "text-yellow-500", label: "Waiting in queue" },
-    active:    { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-blue-500", label: "Processing" },
+    waiting: { icon: <Clock className="h-5 w-5" />, color: "text-yellow-500", label: "Waiting in queue" },
+    active: { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-blue-500", label: "Processing" },
     completed: { icon: <CheckCircle2 className="h-5 w-5" />, color: "text-green-500", label: "Completed" },
-    failed:    { icon: <XCircle className="h-5 w-5" />, color: "text-destructive", label: "Failed" },
-    delayed:   { icon: <Clock className="h-5 w-5" />, color: "text-muted-foreground", label: "Delayed" },
+    failed: { icon: <XCircle className="h-5 w-5" />, color: "text-destructive", label: "Failed" },
+    delayed: { icon: <Clock className="h-5 w-5" />, color: "text-muted-foreground", label: "Delayed" },
   };
 
-  const cfg = status ? (stateConfig[status.state] ?? { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-muted-foreground", label: status.state }) : null;
+  const cfg = status
+    ? (stateConfig[status.state] ?? { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-muted-foreground", label: status.state })
+    : null;
 
   return (
     <Card>
@@ -827,9 +901,7 @@ function JobStatusCard({
         <CardTitle className="flex items-center gap-2 text-base">
           <Zap className="h-5 w-5 text-primary" />
           Upload Job
-          <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">
-            #{jobId}
-          </code>
+          <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">#{jobId}</code>
         </CardTitle>
         {polling && (
           <CardDescription className="flex items-center gap-1.5">
@@ -871,11 +943,7 @@ function JobStatusCard({
                   ))}
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: "Category Links", value: status.result.category_links },
-                    { label: "Attribute Links", value: status.result.attribute_links },
-                    { label: "Images", value: status.result.images_inserted ?? 0 },
-                  ].map((stat) => (
+                  {[{ label: "Category Links", value: status.result.category_links }].map((stat) => (
                     <div key={stat.label} className="rounded-lg border p-3 text-center">
                       <p className="text-2xl font-bold text-primary">{stat.value}</p>
                       <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
@@ -888,9 +956,7 @@ function JobStatusCard({
             {status.state === "failed" && status.error && (
               <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
                 {status.error}
-                {status.attempts_made !== undefined && (
-                  <p className="mt-1 text-xs opacity-70">Attempts made: {status.attempts_made}</p>
-                )}
+                {status.attempts_made !== undefined && <p className="mt-1 text-xs opacity-70">Attempts made: {status.attempts_made}</p>}
               </div>
             )}
           </>
@@ -909,9 +975,7 @@ function JobStatusCard({
 
 /* ─── Export Sheet Generator ─────────────────────────────────────────────── */
 
-function generateUpdateSheet(
-  data: { bases: any[]; models: any[]; variants: any[] },
-) {
+function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[] }) {
   const wb = XLSX.utils.book_new();
 
   const boolStr = (v: boolean | null | undefined) => (v ? "TRUE" : "FALSE");
@@ -925,43 +989,104 @@ function generateUpdateSheet(
 
   // product_models
   const modelHeaders = ["base_title", "title", "title_ar", "code", "base_price", "sort_order", "status", "media_path"];
-  const modelDataRows = data.models.map((m) => [m.base_title, m.title, m.title_ar, m.code, m.base_price, m.sort_order, boolStr(m.status), m.media_path ?? ""]);
+  const modelDataRows = data.models.map((m) => [
+    m.base_title,
+    m.title,
+    m.title_ar,
+    m.code,
+    m.base_price,
+    m.sort_order,
+    boolStr(m.status),
+    m.media_path ?? "",
+  ]);
   const modelWs = XLSX.utils.aoa_to_sheet([modelHeaders, ...modelDataRows]);
   modelWs["!cols"] = modelHeaders.map(() => ({ wch: 22 }));
   XLSX.utils.book_append_sheet(wb, modelWs, "product_models");
 
   // product_variants
   const variantHeaders = [
-    "base_title", "model_title", "product_code", "title", "title_ar",
-    "design_title", "design_title_ar", "price", "stock", "is_primary", "is_featured",
-    "sort_order", "status", "categories", "attributes",
-    "description", "description_ar",
-    "enhance_title", "enhance_title_ar",
-    "details", "details_ar",
-    "details_points", "details_points_ar",
-    "additional_details", "additional_details_ar",
-    "cover_image", "hover_image", "brochure", "images", "video_thumbnails", "project_images",
+    "base_title",
+    "model_title",
+    "product_code",
+    "title",
+    "title_ar",
+    "design_title",
+    "design_title_ar",
+    "price",
+    "stock",
+    "is_featured",
+    "sort_order",
+    "status",
+    "categories",
+    "attributes",
+    "description",
+    "description_ar",
+    "enhance_title",
+    "enhance_title_ar",
+    "details",
+    "details_ar",
+    "details_points",
+    "details_points_ar",
+    "additional_details",
+    "additional_details_ar",
+    "cover_image",
+    "hover_image",
+    "brochure",
+    "images",
+    "video_thumbnails",
+    "project_images",
   ];
   const variantDataRows = data.variants.map((v) => [
-    v.base_title, v.model_title, v.product_code, v.title, v.title_ar,
-    v.design_title, v.design_title_ar, v.price, v.stock, boolStr(v.is_primary), boolStr(v.is_featured),
-    v.sort_order, boolStr(v.status), v.categories, v.attributes,
-    v.description, v.description_ar,
-    v.enhance_title, v.enhance_title_ar,
-    v.details, v.details_ar,
-    v.details_points, v.details_points_ar,
-    v.additional_details, v.additional_details_ar,
-    v.cover_image ?? "", v.hover_image ?? "", v.brochure ?? "",
-    v.images ?? "", v.video_thumbnails ?? "", v.project_images ?? "",
+    v.base_title,
+    v.model_title,
+    v.product_code,
+    v.title,
+    v.title_ar,
+    v.design_title,
+    v.design_title_ar,
+    v.price,
+    v.stock,
+    boolStr(v.is_featured),
+    v.sort_order,
+    boolStr(v.status),
+    v.categories,
+    v.attributes,
+    v.description,
+    v.description_ar,
+    v.enhance_title,
+    v.enhance_title_ar,
+    v.details,
+    v.details_ar,
+    v.details_points,
+    v.details_points_ar,
+    v.additional_details,
+    v.additional_details_ar,
+    v.cover_image ?? "",
+    v.hover_image ?? "",
+    v.brochure ?? "",
+    v.images ?? "",
+    v.video_thumbnails ?? "",
+    v.project_images ?? "",
   ]);
   const wideVariantCols = new Set([
-    "attributes", "categories",
-    "description", "description_ar", "details", "details_ar", "details_points", "details_points_ar",
-    "additional_details", "additional_details_ar", "enhance_title", "enhance_title_ar",
-    "images", "video_thumbnails", "project_images",
+    "attributes",
+    "categories",
+    "description",
+    "description_ar",
+    "details",
+    "details_ar",
+    "details_points",
+    "details_points_ar",
+    "additional_details",
+    "additional_details_ar",
+    "enhance_title",
+    "enhance_title_ar",
+    "images",
+    "video_thumbnails",
+    "project_images",
   ]);
   const variantWs = XLSX.utils.aoa_to_sheet([variantHeaders, ...variantDataRows]);
-  variantWs["!cols"] = variantHeaders.map((h) => wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 });
+  variantWs["!cols"] = variantHeaders.map((h) => (wideVariantCols.has(h) ? { wch: 44 } : { wch: 22 }));
   XLSX.utils.book_append_sheet(wb, variantWs, "product_variants");
 
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
@@ -1019,7 +1144,9 @@ function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void })
     };
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [open, page, debouncedSearch]);
 
   // Reset dialog state when opened
@@ -1081,28 +1208,26 @@ function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void })
   const selectedCount = selectedIds.size;
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v && !generating) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        if (!v && !generating) onClose();
+      }}
+    >
       <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 gap-0">
         <DialogHeader className="px-6 pt-6 pb-4 border-b shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <TableIcon className="h-5 w-5 text-primary" />
             Get Update Data Sheet
           </DialogTitle>
-          <DialogDescription>
-            Select variants to include in a pre-filled Excel sheet you can edit and re-upload.
-          </DialogDescription>
+          <DialogDescription>Select variants to include in a pre-filled Excel sheet you can edit and re-upload.</DialogDescription>
         </DialogHeader>
 
         {/* Search */}
         <div className="px-6 py-3 border-b shrink-0">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by SKU, name, or code..."
-              value={search}
-              onChange={handleSearchChange}
-              className="pl-9"
-            />
+            <Input placeholder="Search variant by SKU or title" value={search} onChange={handleSearchChange} className="pl-9" />
           </div>
         </div>
 
@@ -1120,6 +1245,7 @@ function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void })
                   />
                 </TableHead>
                 <TableHead>SKU</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead>Base Product</TableHead>
                 <TableHead>Model</TableHead>
                 <TableHead className="text-right">Status</TableHead>
@@ -1144,19 +1270,12 @@ function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void })
                   const id = v.id!;
                   const isChecked = selectedIds.has(id);
                   return (
-                    <TableRow
-                      key={id}
-                      className={`cursor-pointer hover:bg-muted/50 ${isChecked ? "bg-primary/5" : ""}`}
-                      onClick={() => toggleId(id)}
-                    >
+                    <TableRow key={id} className={`cursor-pointer hover:bg-muted/50 ${isChecked ? "bg-primary/5" : ""}`} onClick={() => toggleId(id)}>
                       <TableCell onClick={(e) => e.stopPropagation()}>
-                        <Checkbox
-                          checked={isChecked}
-                          onCheckedChange={() => toggleId(id)}
-                          aria-label={`Select variant ${v.sku}`}
-                        />
+                        <Checkbox checked={isChecked} onCheckedChange={() => toggleId(id)} aria-label={`Select variant ${v.sku}`} />
                       </TableCell>
                       <TableCell className="font-mono text-xs">{v.sku || "—"}</TableCell>
+                      <TableCell className="text-sm">{v.title || "—"}</TableCell>
                       <TableCell className="text-sm">{v.productModel?.product?.title || "—"}</TableCell>
                       <TableCell className="text-sm">{v.productModel?.title || "—"}</TableCell>
                       <TableCell className="text-right">
@@ -1196,9 +1315,7 @@ function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void })
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
-            <span className="text-xs text-muted-foreground ml-2">
-              {totalCount} total
-            </span>
+            <span className="text-xs text-muted-foreground ml-2">{totalCount} total</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -1210,11 +1327,7 @@ function ExportDialog({ open, onClose }: { open: boolean; onClose: () => void })
             <Button variant="outline" size="sm" onClick={onClose} disabled={generating}>
               Cancel
             </Button>
-            <Button
-              size="sm"
-              onClick={handleGenerate}
-              disabled={selectedCount === 0 || generating}
-            >
+            <Button size="sm" onClick={handleGenerate} disabled={selectedCount === 0 || generating}>
               {generating ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1253,13 +1366,16 @@ export default function ProductBulkUpload() {
   };
 
   /* File drop */
-  const onDrop = useCallback((accepted: File[]) => {
-    if (accepted.length > 0) {
-      setFile(accepted[0]);
-      setValidationResult(null);
-      if (phase !== "idle") setPhase("idle");
-    }
-  }, [phase]);
+  const onDrop = useCallback(
+    (accepted: File[]) => {
+      if (accepted.length > 0) {
+        setFile(accepted[0]);
+        setValidationResult(null);
+        if (phase !== "idle") setPhase("idle");
+      }
+    },
+    [phase],
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -1311,9 +1427,7 @@ export default function ProductBulkUpload() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Bulk Product Upload</h1>
-          <p className="text-muted-foreground mt-1">
-            Upload an Excel file to create Products, Models, and Variants in bulk.
-          </p>
+          <p className="text-muted-foreground mt-1">Upload an Excel file to create Products, Models, and Variants in bulk.</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <Button variant="outline" size="sm" onClick={() => setExportDialogOpen(true)} className="gap-2">
@@ -1353,8 +1467,8 @@ export default function ProductBulkUpload() {
                 isDragActive
                   ? "border-primary bg-primary/5"
                   : file
-                  ? "border-primary/50 bg-primary/5"
-                  : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
+                    ? "border-primary/50 bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
               } ${isDisabled ? "pointer-events-none opacity-60" : ""}`}
             >
               <input {...getInputProps()} />
@@ -1362,27 +1476,19 @@ export default function ProductBulkUpload() {
                 <>
                   <FileSpreadsheet className="h-10 w-10 text-primary mb-3" />
                   <p className="font-medium text-sm">{file.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {(file.size / 1024).toFixed(1)} KB — click or drop to replace
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{(file.size / 1024).toFixed(1)} KB — click or drop to replace</p>
                 </>
               ) : (
                 <>
                   <UploadCloud className="h-10 w-10 text-muted-foreground mb-3" />
-                  <p className="text-sm font-medium">
-                    {isDragActive ? "Drop the file here" : "Drop your Excel file here"}
-                  </p>
+                  <p className="text-sm font-medium">{isDragActive ? "Drop the file here" : "Drop your Excel file here"}</p>
                   <p className="text-xs text-muted-foreground mt-1">Supports .xlsx and .xls — max 50 MB</p>
                 </>
               )}
             </div>
 
             {file && (
-              <Button
-                className="w-full mt-4"
-                onClick={handleValidate}
-                disabled={isDisabled}
-              >
+              <Button className="w-full mt-4" onClick={handleValidate} disabled={isDisabled}>
                 {phase === "validating" ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1454,11 +1560,7 @@ export default function ProductBulkUpload() {
               )}
 
               {validationResult.status === "success" && (
-                <Button
-                  className="flex-1"
-                  onClick={handleApprove}
-                  disabled={phase === "approving"}
-                >
+                <Button className="flex-1" onClick={handleApprove} disabled={phase === "approving"}>
                   {phase === "approving" ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1478,9 +1580,7 @@ export default function ProductBulkUpload() {
       )}
 
       {/* Job Monitor */}
-      {phase === "monitoring" && jobId && (
-        <JobStatusCard jobId={jobId} onReset={reset} />
-      )}
+      {phase === "monitoring" && jobId && <JobStatusCard jobId={jobId} onReset={reset} />}
 
       {/* ── FAQ Upload Section ─────────────────────────────────────────── */}
       <FaqUploadSection />
@@ -1515,15 +1615,22 @@ function FaqUploadSection() {
     if (faqIntervalRef.current) clearInterval(faqIntervalRef.current);
   };
 
-  const onFaqDrop = useCallback((accepted: File[]) => {
-    if (accepted.length > 0) {
-      setFaqFile(accepted[0]);
-      setFaqValidationResult(null);
-      if (faqPhase !== "idle") setFaqPhase("idle");
-    }
-  }, [faqPhase]);
+  const onFaqDrop = useCallback(
+    (accepted: File[]) => {
+      if (accepted.length > 0) {
+        setFaqFile(accepted[0]);
+        setFaqValidationResult(null);
+        if (faqPhase !== "idle") setFaqPhase("idle");
+      }
+    },
+    [faqPhase],
+  );
 
-  const { getRootProps: getFaqRootProps, getInputProps: getFaqInputProps, isDragActive: isFaqDragActive } = useDropzone({
+  const {
+    getRootProps: getFaqRootProps,
+    getInputProps: getFaqInputProps,
+    isDragActive: isFaqDragActive,
+  } = useDropzone({
     onDrop: onFaqDrop,
     accept: {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
@@ -1591,11 +1698,11 @@ function FaqUploadSection() {
   const isFaqDisabled = faqPhase === "validating" || faqPhase === "approving" || faqPhase === "monitoring";
 
   const stateConfig: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
-    waiting:   { icon: <Clock className="h-5 w-5" />, color: "text-yellow-500", label: "Waiting in queue" },
-    active:    { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-blue-500", label: "Processing" },
+    waiting: { icon: <Clock className="h-5 w-5" />, color: "text-yellow-500", label: "Waiting in queue" },
+    active: { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-blue-500", label: "Processing" },
     completed: { icon: <CheckCircle2 className="h-5 w-5" />, color: "text-green-500", label: "Completed" },
-    failed:    { icon: <XCircle className="h-5 w-5" />, color: "text-destructive", label: "Failed" },
-    delayed:   { icon: <Clock className="h-5 w-5" />, color: "text-muted-foreground", label: "Delayed" },
+    failed: { icon: <XCircle className="h-5 w-5" />, color: "text-destructive", label: "Failed" },
+    delayed: { icon: <Clock className="h-5 w-5" />, color: "text-muted-foreground", label: "Delayed" },
   };
 
   return (
@@ -1617,22 +1724,18 @@ function FaqUploadSection() {
       {/* Brief guide */}
       <div className="rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground space-y-1.5">
         <p className="font-semibold text-foreground text-sm">How it works</p>
+        <p>1. Upload your products via the main bulk upload above first.</p>
         <p>
-          1. Upload your products via the main bulk upload above first.
-        </p>
-        <p>
-          2. Fill the FAQ sheet: each row needs a <code className="bg-muted px-1 rounded text-foreground">sku</code> matching
-          the auto-generated SKU of the target variant, plus <code className="bg-muted px-1 rounded text-foreground">question</code> and{" "}
+          2. Fill the FAQ sheet: each row needs a <code className="bg-muted px-1 rounded text-foreground">sku</code> matching the auto-generated SKU
+          of the target variant, plus <code className="bg-muted px-1 rounded text-foreground">question</code> and{" "}
           <code className="bg-muted px-1 rounded text-foreground">answer</code>.
         </p>
         <p>
-          3. SKU formula: <code className="bg-muted px-1 rounded text-foreground">{"{model_code}-{attr_value_slug1}-{attr_value_slug2}"}</code>{" "}
-          (all uppercase). Example: model code <code className="bg-muted px-1 rounded">EC-BLK</code> + attributes{" "}
+          3. SKU formula: <code className="bg-muted px-1 rounded text-foreground">{"{model_code}-{attr_value_slug1}-{attr_value_slug2}"}</code> (all
+          uppercase). Example: model code <code className="bg-muted px-1 rounded">EC-BLK</code> + attributes{" "}
           <code className="bg-muted px-1 rounded">color:black|size:medium</code> → <code className="bg-muted px-1 rounded">EC-BLK-BLACK-MEDIUM</code>
         </p>
-        <p>
-          4. Re-uploading replaces all existing FAQs for the affected variants (full replace per variant).
-        </p>
+        <p>4. Re-uploading replaces all existing FAQs for the affected variants (full replace per variant).</p>
       </div>
 
       {/* Drop zone */}
@@ -1640,7 +1743,9 @@ function FaqUploadSection() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Select FAQ Excel File</CardTitle>
-            <CardDescription>Must contain a sheet named <code>product_faqs</code>.</CardDescription>
+            <CardDescription>
+              Must contain a sheet named <code>product_faqs</code>.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div
@@ -1649,8 +1754,8 @@ function FaqUploadSection() {
                 isFaqDragActive
                   ? "border-primary bg-primary/5"
                   : faqFile
-                  ? "border-primary/50 bg-primary/5"
-                  : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
+                    ? "border-primary/50 bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
               } ${isFaqDisabled ? "pointer-events-none opacity-60" : ""}`}
             >
               <input {...getFaqInputProps()} />
@@ -1658,27 +1763,19 @@ function FaqUploadSection() {
                 <>
                   <FileSpreadsheet className="h-10 w-10 text-primary mb-3" />
                   <p className="font-medium text-sm">{faqFile.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {(faqFile.size / 1024).toFixed(1)} KB — click or drop to replace
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{(faqFile.size / 1024).toFixed(1)} KB — click or drop to replace</p>
                 </>
               ) : (
                 <>
                   <UploadCloud className="h-10 w-10 text-muted-foreground mb-3" />
-                  <p className="text-sm font-medium">
-                    {isFaqDragActive ? "Drop the file here" : "Drop your FAQ Excel file here"}
-                  </p>
+                  <p className="text-sm font-medium">{isFaqDragActive ? "Drop the file here" : "Drop your FAQ Excel file here"}</p>
                   <p className="text-xs text-muted-foreground mt-1">Supports .xlsx and .xls — max 50 MB</p>
                 </>
               )}
             </div>
 
             {faqFile && (
-              <Button
-                className="w-full mt-4"
-                onClick={handleFaqValidate}
-                disabled={isFaqDisabled}
-              >
+              <Button className="w-full mt-4" onClick={handleFaqValidate} disabled={isFaqDisabled}>
                 {faqPhase === "validating" ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1745,11 +1842,7 @@ function FaqUploadSection() {
                 </Button>
               )}
               {faqValidationResult.status === "success" && (
-                <Button
-                  className="flex-1"
-                  onClick={handleFaqApprove}
-                  disabled={faqPhase === "approving"}
-                >
+                <Button className="flex-1" onClick={handleFaqApprove} disabled={faqPhase === "approving"}>
                   {faqPhase === "approving" ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1775,9 +1868,7 @@ function FaqUploadSection() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Zap className="h-5 w-5 text-primary" />
               FAQ Upload Job
-              <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">
-                #{faqJobId}
-              </code>
+              <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">#{faqJobId}</code>
             </CardTitle>
             {faqPolling && (
               <CardDescription className="flex items-center gap-1.5">
@@ -1794,39 +1885,44 @@ function FaqUploadSection() {
               </div>
             )}
 
-            {faqJobStatus && (() => {
-              const cfg = stateConfig[faqJobStatus.state] ?? { icon: <Loader2 className="h-5 w-5 animate-spin" />, color: "text-muted-foreground", label: faqJobStatus.state };
-              return (
-                <>
-                  <div className={`flex items-center gap-2 font-medium ${cfg.color}`}>
-                    {cfg.icon}
-                    {cfg.label}
-                  </div>
-
-                  {faqJobStatus.state === "completed" && faqJobStatus.result && (
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-lg border p-3 text-center">
-                        <p className="text-2xl font-bold text-primary">{faqJobStatus.result.faqs_inserted}</p>
-                        <p className="text-xs text-muted-foreground mt-1">FAQs Inserted</p>
-                      </div>
-                      <div className="rounded-lg border p-3 text-center">
-                        <p className="text-2xl font-bold text-primary">{faqJobStatus.result.variants_updated}</p>
-                        <p className="text-xs text-muted-foreground mt-1">Variants Updated</p>
-                      </div>
+            {faqJobStatus &&
+              (() => {
+                const cfg = stateConfig[faqJobStatus.state] ?? {
+                  icon: <Loader2 className="h-5 w-5 animate-spin" />,
+                  color: "text-muted-foreground",
+                  label: faqJobStatus.state,
+                };
+                return (
+                  <>
+                    <div className={`flex items-center gap-2 font-medium ${cfg.color}`}>
+                      {cfg.icon}
+                      {cfg.label}
                     </div>
-                  )}
 
-                  {faqJobStatus.state === "failed" && faqJobStatus.error && (
-                    <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
-                      {faqJobStatus.error}
-                      {faqJobStatus.attempts_made !== undefined && (
-                        <p className="mt-1 text-xs opacity-70">Attempts made: {faqJobStatus.attempts_made}</p>
-                      )}
-                    </div>
-                  )}
-                </>
-              );
-            })()}
+                    {faqJobStatus.state === "completed" && faqJobStatus.result && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-lg border p-3 text-center">
+                          <p className="text-2xl font-bold text-primary">{faqJobStatus.result.faqs_inserted}</p>
+                          <p className="text-xs text-muted-foreground mt-1">FAQs Inserted</p>
+                        </div>
+                        <div className="rounded-lg border p-3 text-center">
+                          <p className="text-2xl font-bold text-primary">{faqJobStatus.result.variants_updated}</p>
+                          <p className="text-xs text-muted-foreground mt-1">Variants Updated</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {faqJobStatus.state === "failed" && faqJobStatus.error && (
+                      <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
+                        {faqJobStatus.error}
+                        {faqJobStatus.attempts_made !== undefined && (
+                          <p className="mt-1 text-xs opacity-70">Attempts made: {faqJobStatus.attempts_made}</p>
+                        )}
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
             {!faqPolling && (
               <Button variant="outline" size="sm" onClick={resetFaq} className="w-full">
@@ -1843,20 +1939,12 @@ function FaqUploadSection() {
 
 /* ─── Small helper ───────────────────────────────────────────────────────── */
 
-function StatBadge({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: number;
-  color: "blue" | "purple" | "green" | "red";
-}) {
+function StatBadge({ label, value, color }: { label: string; value: number; color: "blue" | "purple" | "green" | "red" }) {
   const cls: Record<string, string> = {
-    blue:   "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+    blue: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
     purple: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-    green:  "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-    red:    "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    green: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+    red: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
   };
 
   return (
