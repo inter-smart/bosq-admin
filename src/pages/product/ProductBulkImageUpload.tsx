@@ -14,23 +14,13 @@ import {
   ChevronDown,
   ChevronUp,
   FileVideo,
+  FileSpreadsheet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import {
-  uploadBulkImages,
-  getBulkImageUploadStatus,
-  type BulkImageJobStatus,
-  type BulkImageJobState,
-} from "@/services/product/bulkImageUploadApi";
+import { uploadBulkImages, getBulkImageUploadStatus, type BulkImageJobStatus, type BulkImageJobState } from "@/services/product/bulkImageUploadApi";
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 
@@ -50,6 +40,10 @@ const ACCEPTED_TYPES = {
   "video/quicktime": [".mov"],
   "video/x-msvideo": [".avi"],
   "video/x-matroska": [".mkv"],
+  "application/pdf": [".pdf"],
+  "application/vnd.ms-excel": [".xls"],
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+  "text/csv": [".csv"],
 };
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
@@ -68,30 +62,30 @@ function isVideo(file: File): boolean {
   return file.type.startsWith("video/");
 }
 
+function getFileIcon(file: File) {
+  if (file.type.startsWith("video/")) return <FileVideo className="h-4 w-4 text-purple-500 shrink-0" />;
+  if (file.type === "application/pdf") return <FileSpreadsheet className="h-4 w-4 text-red-500 shrink-0" />;
+  if (
+    file.type === "application/vnd.ms-excel" ||
+    file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+    file.type === "text/csv"
+  ) return <FileSpreadsheet className="h-4 w-4 text-green-500 shrink-0" />;
+  return <ImageIcon className="h-4 w-4 text-blue-500 shrink-0" />;
+}
+
 /* ─── Progress Bar ───────────────────────────────────────────────────────── */
 
 function ProgressBar({ value }: { value: number }) {
   return (
     <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-      <div
-        className="h-3 rounded-full bg-primary transition-all duration-500 ease-out"
-        style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
-      />
+      <div className="h-3 rounded-full bg-primary transition-all duration-500 ease-out" style={{ width: `${Math.min(100, Math.max(0, value))}%` }} />
     </div>
   );
 }
 
 /* ─── Job Status Monitor ─────────────────────────────────────────────────── */
 
-function JobMonitor({
-  jobId,
-  totalFiles,
-  onReset,
-}: {
-  jobId: string;
-  totalFiles: number;
-  onReset: () => void;
-}) {
+function JobMonitor({ jobId, totalFiles, onReset }: { jobId: string; totalFiles: number; onReset: () => void }) {
   const [status, setStatus] = useState<BulkImageJobStatus | null>(null);
   const [polling, setPolling] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -121,10 +115,7 @@ function JobMonitor({
     };
   }, [fetchStatus]);
 
-  const stateConfig: Record<
-    BulkImageJobState,
-    { icon: React.ReactNode; color: string; label: string }
-  > = {
+  const stateConfig: Record<BulkImageJobState, { icon: React.ReactNode; color: string; label: string }> = {
     waiting: {
       icon: <Clock className="h-5 w-5" />,
       color: "text-yellow-500",
@@ -157,15 +148,10 @@ function JobMonitor({
     },
   };
 
-  const cfg = status
-    ? (stateConfig[status.state] ?? stateConfig.unknown)
-    : null;
+  const cfg = status ? (stateConfig[status.state] ?? stateConfig.unknown) : null;
 
   const progress = status?.progress ?? 0;
-  const processedCount =
-    status?.result
-      ? status.result.saved_count + status.result.skipped_count
-      : Math.round((progress / 100) * totalFiles);
+  const processedCount = status?.result ? status.result.saved_count + status.result.skipped_count : Math.round((progress / 100) * totalFiles);
 
   return (
     <Card>
@@ -173,9 +159,7 @@ function JobMonitor({
         <CardTitle className="flex items-center gap-2 text-base">
           <Zap className="h-5 w-5 text-primary" />
           Upload Job
-          <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">
-            #{jobId}
-          </code>
+          <code className="ml-auto font-mono text-xs bg-muted px-2 py-1 rounded text-muted-foreground">#{jobId}</code>
         </CardTitle>
         {polling && (
           <CardDescription className="flex items-center gap-1.5 text-xs">
@@ -206,7 +190,9 @@ function JobMonitor({
               <div className="space-y-1.5">
                 <ProgressBar value={progress} />
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{processedCount} / {totalFiles} files</span>
+                  <span>
+                    {processedCount} / {totalFiles} files
+                  </span>
                   <span>{progress}%</span>
                 </div>
               </div>
@@ -220,18 +206,14 @@ function JobMonitor({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-lg border p-3 text-center bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">
-                      {status.result.saved_count}
-                    </p>
+                    <p className="text-2xl font-bold text-green-700 dark:text-green-400">{status.result.saved_count}</p>
                     <p className="text-xs text-green-600 dark:text-green-500 mt-1 flex items-center justify-center gap-1">
                       <CheckCircle2 className="h-3 w-3" />
                       Saved
                     </p>
                   </div>
                   <div className="rounded-lg border p-3 text-center bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-                    <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">
-                      {status.result.skipped_count}
-                    </p>
+                    <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{status.result.skipped_count}</p>
                     <p className="text-xs text-yellow-600 dark:text-yellow-500 mt-1 flex items-center justify-center gap-1">
                       <AlertTriangle className="h-3 w-3" />
                       Skipped (duplicates)
@@ -253,11 +235,7 @@ function JobMonitor({
                         {status.result.skipped_files.length !== 1 ? "s" : ""}
                         &nbsp;(already exist in bulk folder)
                       </span>
-                      {skippedOpen ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )}
+                      {skippedOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </button>
                     {skippedOpen && (
                       <div className="max-h-48 overflow-y-auto bg-white dark:bg-background">
@@ -280,23 +258,14 @@ function JobMonitor({
             {status.state === "failed" && status.error && (
               <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
                 {status.error}
-                {status.attempts_made !== undefined && (
-                  <p className="mt-1 text-xs opacity-70">
-                    Attempts made: {status.attempts_made}
-                  </p>
-                )}
+                {status.attempts_made !== undefined && <p className="mt-1 text-xs opacity-70">Attempts made: {status.attempts_made}</p>}
               </div>
             )}
           </>
         )}
 
         {!polling && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onReset}
-            className="w-full"
-          >
+          <Button variant="outline" size="sm" onClick={onReset} className="w-full">
             <RefreshCw className="h-4 w-4 mr-2" />
             Upload More Files
           </Button>
@@ -352,7 +321,7 @@ export default function ProductBulkImageUpload() {
         return merged.slice(0, MAX_FILES);
       });
     },
-    [toast]
+    [toast],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -397,13 +366,10 @@ export default function ProductBulkImageUpload() {
     <div className="max-w-4xl mx-auto space-y-6 p-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Bulk Image &amp; Video Upload
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Bulk media upload</h1>
         <p className="text-muted-foreground mt-1">
-          Upload up to {MAX_FILES} images or videos at once. Files are saved to{" "}
-          <code className="bg-muted px-1 rounded text-xs">uploads/bulk/</code>{" "}
-          with their original filenames. Duplicates are automatically skipped.
+          Upload up to {MAX_FILES} images, videos or other media at once. Files are saved to{" "}
+          <code className="bg-muted px-1 rounded text-xs">uploads/bulk/</code> with their original filenames. Duplicates are automatically skipped.
         </p>
       </div>
 
@@ -414,6 +380,8 @@ export default function ProductBulkImageUpload() {
           { label: "Max 50 MB per file", color: "secondary" },
           { label: "Images: jpg, png, webp, gif, bmp, svg, tiff", color: "outline" },
           { label: "Videos: mp4, webm, mov, avi, mkv", color: "outline" },
+          { label: "PDFs: pdf", color: "outline" },
+          { label: "Sheets: xls, xlsx, csv", color: "outline" },
         ].map((b) => (
           <Badge key={b.label} variant={b.color as any} className="text-xs">
             {b.label}
@@ -434,8 +402,7 @@ export default function ProductBulkImageUpload() {
               )}
             </CardTitle>
             <CardDescription>
-              Drag &amp; drop images and videos here, or click to browse. You
-              can add files in multiple batches up to {MAX_FILES} total.
+              Drag &amp; drop your files here, or click to browse. You can add files in multiple batches up to {MAX_FILES} total.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -446,47 +413,28 @@ export default function ProductBulkImageUpload() {
                 isDragActive
                   ? "border-primary bg-primary/5"
                   : files.length > 0
-                  ? "border-primary/50 bg-primary/5"
-                  : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
+                    ? "border-primary/50 bg-primary/5"
+                    : "border-muted-foreground/25 hover:border-primary/40 hover:bg-muted/30"
               } ${isDisabled ? "pointer-events-none opacity-60" : ""}`}
             >
               <input {...getInputProps()} />
               <UploadCloud className="h-10 w-10 text-muted-foreground mb-3" />
               <p className="text-sm font-medium">
-                {isDragActive
-                  ? "Drop files here"
-                  : files.length > 0
-                  ? "Drop more files or click to add"
-                  : "Drop your images & videos here"}
+                {isDragActive ? "Drop files here" : files.length > 0 ? "Drop more files or click to add" : "Drop your images & videos here"}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Accepts images and videos — max {MAX_FILES} files, 50 MB each
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">Accepts images, videos and PDFs — max {MAX_FILES} files, 50 MB each</p>
             </div>
 
             {/* File list */}
             {files.length > 0 && (
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">
-                  Selected files ({files.length})
-                </p>
+                <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">Selected files ({files.length})</p>
                 <div className="max-h-64 overflow-y-auto rounded-md border divide-y">
                   {files.map((file, idx) => (
-                    <div
-                      key={`${file.name}-${file.size}-${idx}`}
-                      className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-muted/40"
-                    >
-                      {isVideo(file) ? (
-                        <FileVideo className="h-4 w-4 text-purple-500 shrink-0" />
-                      ) : (
-                        <ImageIcon className="h-4 w-4 text-blue-500 shrink-0" />
-                      )}
-                      <span className="flex-1 truncate font-mono text-xs">
-                        {file.name}
-                      </span>
-                      <span className="text-xs text-muted-foreground shrink-0">
-                        {formatBytes(file.size)}
-                      </span>
+                    <div key={`${file.name}-${file.size}-${idx}`} className="flex items-center gap-3 px-3 py-2 text-sm hover:bg-muted/40">
+                      {getFileIcon(file)}
+                      <span className="flex-1 truncate font-mono text-xs">{file.name}</span>
+                      <span className="text-xs text-muted-foreground shrink-0">{formatBytes(file.size)}</span>
                       {!isDisabled && (
                         <button
                           type="button"
@@ -506,20 +454,11 @@ export default function ProductBulkImageUpload() {
             {/* Upload button */}
             {files.length > 0 && (
               <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={reset}
-                  disabled={isDisabled}
-                  className="shrink-0"
-                >
+                <Button variant="outline" onClick={reset} disabled={isDisabled} className="shrink-0">
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Clear All
                 </Button>
-                <Button
-                  className="flex-1"
-                  onClick={handleUpload}
-                  disabled={isDisabled}
-                >
+                <Button className="flex-1" onClick={handleUpload} disabled={isDisabled}>
                   {phase === "uploading" ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -541,9 +480,7 @@ export default function ProductBulkImageUpload() {
       )}
 
       {/* Job Monitor */}
-      {phase === "monitoring" && jobId && (
-        <JobMonitor jobId={jobId} totalFiles={totalFiles} onReset={reset} />
-      )}
+      {phase === "monitoring" && jobId && <JobMonitor jobId={jobId} totalFiles={totalFiles} onReset={reset} />}
     </div>
   );
 }
