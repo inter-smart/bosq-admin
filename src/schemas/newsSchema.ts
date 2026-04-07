@@ -37,8 +37,8 @@ export const newsSchema = z.object({
   name: commonValidations.requiredString("Name"),
 
   meta_title: commonValidations.requiredString("Meta Title"),
-  meta_description: commonValidations.optionalString("Meta Description"),
-  meta_keywords: commonValidations.optionalString("Meta Keywords"),
+  meta_description: commonValidations.requiredString("Meta Description"),
+  meta_keywords: commonValidations.requiredString("Meta Keywords"),
 
   description: commonValidations.requiredText("Description"),
   media_alt: commonValidations.optionalString("Media Alt Text"),
@@ -49,11 +49,11 @@ export const newsSchema = z.object({
   title_ar: commonValidations.requiredString("Arabic Title"),
   name_ar: commonValidations.requiredString("Arabic Name"),
   description_ar: commonValidations.requiredText("Arabic Description"),
-  meta_title_ar: commonValidations.optionalString("Arabic Meta Title"),
-  meta_description_ar: commonValidations.optionalString(
+  meta_title_ar: commonValidations.requiredString("Arabic Meta Title"),
+  meta_description_ar: commonValidations.requiredString(
     "Arabic Meta Description"
   ),
-  meta_keywords_ar: commonValidations.optionalString("Arabic Meta Keywords"),
+  meta_keywords_ar: commonValidations.requiredString("Arabic Meta Keywords"),
   media_alt_ar: commonValidations.optionalString("Arabic Media Alt Text"),
   thumbnail_alt_ar: commonValidations.optionalString(
     "Arabic Thumbnail Alt Text"

@@ -30,12 +30,19 @@ export const homeSchema = z.object({
   ),
   journey_media_type: commonValidations.requiredString("Media Type"),
   journey_media_desktop_path: commonValidations.validateFileUpload("Journey Media"),
-  journey_media_mobile_path: commonValidations.validateFileUpload("Journey Media Mobile"),
+  journey_media_mobile_path: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
   journey_media_alt: commonValidations.requiredString("Journey Media Alt Text"),
   journey_media_alt_ar: commonValidations.requiredString(
     "Journey Media Alt Text (Arabic)"
   ),
   journey_link: commonValidations.requiredUrl("Journey Link"),
+  journey_thumbnail_path: commonValidations.validateFileUpload("Journey Thumbnail"),
+  journey_thumbnail_path_ar: commonValidations.validateFileUpload("Journey Thumbnail (Arabic)"),
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),
@@ -65,6 +72,17 @@ export const homeSchema = z.object({
   form_media_alt_ar: commonValidations.requiredString(
     "Form Media Alt Text (Arabic)"
   ),
+}).superRefine((data, ctx) => {
+  if (data.journey_media_type !== "video") {
+    const mobileVal = data.journey_media_mobile_path;
+    if (!(mobileVal instanceof File) && !(typeof mobileVal === "string" && mobileVal.length > 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Journey Media Mobile is required. Please upload Journey Media Mobile.",
+        path: ["journey_media_mobile_path"],
+      });
+    }
+  }
 });
 
 export const homeBannerSchema = z.object({

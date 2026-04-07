@@ -22,11 +22,13 @@ export interface HomeCms {
   journey_description?: string | null;
   journey_description_ar?: string | null;
   journey_media_type?: "image" | "video" | null;
-  journey_media_desktop_path?: File | null;  
+  journey_media_desktop_path?: File | null;
   journey_media_mobile_path?: File | null;
   journey_media_alt?: string | null;
   journey_media_alt_ar?: string | null;
   journey_link?: string | null;
+  journey_thumbnail_path?: File | null;
+  journey_thumbnail_path_ar?: File | null;
 
   // PROJECT
   project_title?: string | null;

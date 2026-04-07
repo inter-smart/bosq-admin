@@ -45,6 +45,8 @@ export default function SustainabilityCmsForm() {
       banner_media_alt: "",
       banner_media_alt_ar: "",
       banner_media_type: null,
+      banner_media_thumbnail: null,
+      banner_media_thumbnail_ar: null,
       section1_title: "",
       section1_title_ar: "",
       section1_description: "",
@@ -61,6 +63,8 @@ export default function SustainabilityCmsForm() {
     if (!initialLoading && prevBannerMediaType !== null && prevBannerMediaType !== watchBannerMediaType) {
       form.setValue("banner_media_desktop_path", null);
       form.setValue("banner_media_mobile_path", null);
+      form.setValue("banner_media_thumbnail", null);
+      form.setValue("banner_media_thumbnail_ar", null);
     }
     if (!initialLoading) {
       setPrevBannerMediaType(watchBannerMediaType);
@@ -96,6 +100,12 @@ export default function SustainabilityCmsForm() {
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
           banner_media_type: data.banner_media_type || null,
+          banner_media_thumbnail: data.banner_media_thumbnail
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_thumbnail}`
+            : null,
+          banner_media_thumbnail_ar: data.banner_media_thumbnail_ar
+            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_thumbnail_ar}`
+            : null,
           section1_title: data.section1_title || "",
           section1_title_ar: data.section1_title_ar || "",
           section1_description: data.section1_description || "",
@@ -176,6 +186,12 @@ export default function SustainabilityCmsForm() {
           "banner_media_mobile_path_ar",
           data.banner_media_mobile_path_ar
         );
+      }
+      if (data.banner_media_thumbnail instanceof File) {
+        formData.append("banner_media_thumbnail", data.banner_media_thumbnail);
+      }
+      if (data.banner_media_thumbnail_ar instanceof File) {
+        formData.append("banner_media_thumbnail_ar", data.banner_media_thumbnail_ar);
       }
 
       // Section 1
@@ -340,84 +356,120 @@ export default function SustainabilityCmsForm() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="banner_media_mobile_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Media (Mobile)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept={
-                            form.watch("banner_media_type") === "video"
-                              ? "video/*"
-                              : "image/*"
-                          }
-                          recommendedDimensions="640px × 1138px"
-                          placeholder="Upload mobile banner media"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {watchBannerMediaType !== "video" && (
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Media (Mobile)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="640px × 1138px"
+                            placeholder="Upload mobile banner media"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
 
               {/* Banner Media Uploads (Arabic) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="banner_media_desktop_path_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Media (Desktop - AR)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept={
-                            form.watch("banner_media_type") === "video"
-                              ? "video/*"
-                              : "image/*"
-                          }
-                          recommendedDimensions="1920px × 730px"
-                          placeholder="Upload desktop banner media (Arabic)"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {watchBannerMediaType !== "video" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_media_desktop_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Media (Desktop - AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="1920px × 730px"
+                            placeholder="Upload desktop banner media (Arabic)"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="banner_media_mobile_path_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Banner Media (Mobile - AR)</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept={
-                            form.watch("banner_media_type") === "video"
-                              ? "video/*"
-                              : "image/*"
-                          }
-                          recommendedDimensions="640px × 1138px"
-                          placeholder="Upload mobile banner media (Arabic)"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="banner_media_mobile_path_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Media (Mobile - AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            recommendedDimensions="640px × 1138px"
+                            placeholder="Upload mobile banner media (Arabic)"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              {/* Banner Thumbnails (video only) */}
+              {watchBannerMediaType === "video" && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="banner_media_thumbnail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Thumbnail</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload banner thumbnail"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="banner_media_thumbnail_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Thumbnail (AR)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload banner thumbnail (AR)"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
 
               {/* Banner Alt Text */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

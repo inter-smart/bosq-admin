@@ -43,6 +43,8 @@ export default function HomeCmsForm() {
       journey_media_alt: "",
       journey_media_alt_ar: "",
       journey_link: "",
+      journey_thumbnail_path: null,
+      journey_thumbnail_path_ar: null,
       project_title: "",
       project_title_ar: "",
       fits_title: "",
@@ -106,6 +108,8 @@ export default function HomeCmsForm() {
           journey_media_alt: data.journey_media_alt || "",
           journey_media_alt_ar: data.journey_media_alt_ar || "",
           journey_link: data.journey_link || "",
+          journey_thumbnail_path: data.journey_thumbnail_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_thumbnail_path}` : null,
+          journey_thumbnail_path_ar: data.journey_thumbnail_path_ar ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_thumbnail_path_ar}` : null,
           project_title: data.project_title || "",
           project_title_ar: data.project_title_ar || "",
           fits_title: data.fits_title || "",
@@ -159,6 +163,8 @@ export default function HomeCmsForm() {
       if (data.journey_media_desktop_path instanceof File) formData.append("journey_media_desktop_path", data.journey_media_desktop_path);
 
       if (data.journey_media_mobile_path instanceof File) formData.append("journey_media_mobile_path", data.journey_media_mobile_path);
+      if (data.journey_thumbnail_path instanceof File) formData.append("journey_thumbnail_path", data.journey_thumbnail_path);
+      if (data.journey_thumbnail_path_ar instanceof File) formData.append("journey_thumbnail_path_ar", data.journey_thumbnail_path_ar);
       formData.append("journey_link", data.journey_link ?? "");
 
       // Project Section
@@ -521,20 +527,62 @@ export default function HomeCmsForm() {
                   )}
                 />
 
+                {watchJourneyMediaType !== "video" && (
+                  <FormField
+                    control={form.control}
+                    name="journey_media_mobile_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Journey Image (Mobile)</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload journey image (mobile)"
+                            preview
+                            recommendedDimensions="800px × 600px"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
-                  name="journey_media_mobile_path"
+                  name="journey_thumbnail_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Journey {watchJourneyMediaType === "image" ? "Image" : "Video"}</FormLabel>
+                      <FormLabel>Journey Thumbnail</FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
                           onChange={field.onChange}
-                          accept={watchJourneyMediaType === "image" ? "image/*" : "video/*"}
-                          placeholder={`Upload journey ${watchJourneyMediaType}`}
+                          accept="image/*"
+                          placeholder="Upload journey thumbnail"
                           preview
-                          recommendedDimensions="800px × 600px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="journey_thumbnail_path_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Journey Thumbnail (AR)</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          placeholder="Upload journey thumbnail (AR)"
+                          preview
                         />
                       </FormControl>
                       <FormMessage />

@@ -126,7 +126,7 @@ export default function AboutCmsForm() {
         form.reset({
           title: data.title || "",
           title_ar: data.title_ar || "",
-          banner_media_type: data.banner_media_type || "image",
+          banner_media_type: data.banner_media_type,
           banner_title: data.banner_title || "",
           banner_title_ar: data.banner_title_ar || "",
           banner_description: data.banner_description || "",
@@ -563,7 +563,7 @@ export default function AboutCmsForm() {
                       <FormLabel>Media Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -631,35 +631,28 @@ export default function AboutCmsForm() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="banner_media_desktop_path_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
-                          (Desktop - AR)
-                        </FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept={
-                              watchBannerMediaType === "image"
-                                ? "image/*"
-                                : "video/*"
-                            }
-                            recommendedDimensions="1920px x 732px"
-                            placeholder={`Upload desktop banner ${watchBannerMediaType} (AR)`}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                {watchBannerMediaType !== "video" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="banner_media_desktop_path_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image (Desktop - AR)</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              accept="image/*"
+                              recommendedDimensions="1920px x 732px"
+                              placeholder="Upload desktop banner image (AR)"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {watchBannerMediaType === "image" && (
                     <FormField
                       control={form.control}
                       name="banner_media_mobile_path_ar"
@@ -679,8 +672,8 @@ export default function AboutCmsForm() {
                         </FormItem>
                       )}
                     />
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {watchBannerMediaType === "video" && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

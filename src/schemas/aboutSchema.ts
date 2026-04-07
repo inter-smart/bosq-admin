@@ -19,7 +19,12 @@ export const aboutCmsSchema = z.object({
     z.null(),
     z.undefined(),
   ]),
-  banner_media_desktop_path_ar: commonValidations.validateFileUpload("Banner Desktop Media (Arabic)"),
+  banner_media_desktop_path_ar: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
   banner_media_mobile_path_ar: z.union([
     z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
     z.string().min(1),
@@ -82,6 +87,14 @@ export const aboutCmsSchema = z.object({
         code: z.ZodIssueCode.custom,
         message: "Banner Mobile Media (Arabic) is required. Please upload Banner Mobile Media (Arabic).",
         path: ["banner_media_mobile_path_ar"],
+      });
+    }
+    const desktopArVal = data.banner_media_desktop_path_ar;
+    if (!(desktopArVal instanceof File) && !(typeof desktopArVal === "string" && desktopArVal.length > 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Banner Desktop Media (Arabic) is required. Please upload Banner Desktop Media (Arabic).",
+        path: ["banner_media_desktop_path_ar"],
       });
     }
   }

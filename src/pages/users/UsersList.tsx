@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, Eye } from "lucide-react";
 import { fetchUsers, User } from "@/services/users/usersApi";
 import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { updateStatus } from "@/services/commonApi";
 import { exportToExcel, formatDateForExcel } from "@/utils/exportUtils";
 
 export default function UsersList() {
@@ -119,6 +121,31 @@ export default function UsersList() {
     }
   };
 
+  const handleStatusChange = async (userId: number, newStatus: boolean) => {
+    try {
+      await updateStatus({
+        model_name: "Users",
+        row_id: userId,
+        status: newStatus ? "active" : "inactive",
+      });
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId ? { ...u, status: newStatus ? "active" : "inactive" } : u
+        )
+      );
+      toast({
+        title: "Success",
+        description: `User ${newStatus ? "activated" : "deactivated"} successfully`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update user status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "id",
@@ -163,11 +190,18 @@ export default function UsersList() {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const status = row.getValue("status") as string;
+        const user = row.original;
+        const isActive = user.status === "active";
         return (
-          <Badge variant={status === "active" ? "default" : "secondary"}>
-            {status}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={isActive}
+              onCheckedChange={(checked) => handleStatusChange(user.id, checked)}
+            />
+            <Badge variant={isActive ? "default" : "secondary"}>
+              {user.status}
+            </Badge>
+          </div>
         );
       },
     },
