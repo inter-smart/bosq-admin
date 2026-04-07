@@ -46,7 +46,6 @@ export default function SustainabilityCmsForm() {
       banner_media_alt_ar: "",
       banner_media_type: null,
       banner_media_thumbnail: null,
-      banner_media_thumbnail_ar: null,
       section1_title: "",
       section1_title_ar: "",
       section1_description: "",
@@ -64,7 +63,6 @@ export default function SustainabilityCmsForm() {
       form.setValue("banner_media_desktop_path", null);
       form.setValue("banner_media_mobile_path", null);
       form.setValue("banner_media_thumbnail", null);
-      form.setValue("banner_media_thumbnail_ar", null);
     }
     if (!initialLoading) {
       setPrevBannerMediaType(watchBannerMediaType);
@@ -102,9 +100,6 @@ export default function SustainabilityCmsForm() {
           banner_media_type: data.banner_media_type || null,
           banner_media_thumbnail: data.banner_media_thumbnail
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_thumbnail}`
-            : null,
-          banner_media_thumbnail_ar: data.banner_media_thumbnail_ar
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_media_thumbnail_ar}`
             : null,
           section1_title: data.section1_title || "",
           section1_title_ar: data.section1_title_ar || "",
@@ -189,9 +184,6 @@ export default function SustainabilityCmsForm() {
       }
       if (data.banner_media_thumbnail instanceof File) {
         formData.append("banner_media_thumbnail", data.banner_media_thumbnail);
-      }
-      if (data.banner_media_thumbnail_ar instanceof File) {
-        formData.append("banner_media_thumbnail_ar", data.banner_media_thumbnail_ar);
       }
 
       // Section 1
@@ -427,9 +419,9 @@ export default function SustainabilityCmsForm() {
                 </div>
               )}
 
-              {/* Banner Thumbnails (video only) */}
+              {/* Banner Thumbnail (video only) */}
               {watchBannerMediaType === "video" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <FormField
                     control={form.control}
                     name="banner_media_thumbnail"
@@ -442,25 +434,6 @@ export default function SustainabilityCmsForm() {
                             onChange={field.onChange}
                             accept="image/*"
                             placeholder="Upload banner thumbnail"
-                            preview={true}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="banner_media_thumbnail_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Banner Thumbnail (AR)</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept="image/*"
-                            placeholder="Upload banner thumbnail (AR)"
                             preview={true}
                           />
                         </FormControl>

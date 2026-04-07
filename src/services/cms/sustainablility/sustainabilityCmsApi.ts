@@ -14,7 +14,6 @@ export interface SustainabilityCms {
   banner_media_alt_ar?: string | null;
   banner_media_type?: 'image' | 'video' | null;
   banner_media_thumbnail?: string | null;
-  banner_media_thumbnail_ar?: string | null;
 
   // SECTION 1
   section1_title?: string | null;
