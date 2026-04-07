@@ -44,7 +44,6 @@ export default function HomeCmsForm() {
       journey_media_alt_ar: "",
       journey_link: "",
       journey_thumbnail_path: null,
-      journey_thumbnail_path_ar: null,
       project_title: "",
       project_title_ar: "",
       fits_title: "",
@@ -109,7 +108,6 @@ export default function HomeCmsForm() {
           journey_media_alt_ar: data.journey_media_alt_ar || "",
           journey_link: data.journey_link || "",
           journey_thumbnail_path: data.journey_thumbnail_path ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_thumbnail_path}` : null,
-          journey_thumbnail_path_ar: data.journey_thumbnail_path_ar ? `${import.meta.env.VITE_IMAGE_URL}/${data.journey_thumbnail_path_ar}` : null,
           project_title: data.project_title || "",
           project_title_ar: data.project_title_ar || "",
           fits_title: data.fits_title || "",
@@ -164,7 +162,6 @@ export default function HomeCmsForm() {
 
       if (data.journey_media_mobile_path instanceof File) formData.append("journey_media_mobile_path", data.journey_media_mobile_path);
       if (data.journey_thumbnail_path instanceof File) formData.append("journey_thumbnail_path", data.journey_thumbnail_path);
-      if (data.journey_thumbnail_path_ar instanceof File) formData.append("journey_thumbnail_path_ar", data.journey_thumbnail_path_ar);
       formData.append("journey_link", data.journey_link ?? "");
 
       // Project Section
@@ -489,8 +486,7 @@ export default function HomeCmsForm() {
               />
 
               {/* Media + Alt Texts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* journey_link */}
+              <div className="grid grid-cols-1 gap-4">
                 <FormField
                   control={form.control}
                   name="journey_link"
@@ -504,19 +500,28 @@ export default function HomeCmsForm() {
                     </FormItem>
                   )}
                 />
+              </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Media */}
                 <FormField
                   control={form.control}
                   name="journey_media_desktop_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Journey {watchJourneyMediaType === "image" ? "Image" : "Video"}</FormLabel>
+                      <FormLabel>
+                        Journey{" "}
+                        {watchJourneyMediaType === "image" ? "Image" : "Video"}
+                      </FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
                           onChange={field.onChange}
-                          accept={watchJourneyMediaType === "image" ? "image/*" : "video/*"}
+                          accept={
+                            watchJourneyMediaType === "image"
+                              ? "image/*"
+                              : "video/*"
+                          }
                           placeholder={`Upload journey ${watchJourneyMediaType}`}
                           preview
                           recommendedDimensions="1080px × 563px"
@@ -527,7 +532,7 @@ export default function HomeCmsForm() {
                   )}
                 />
 
-                {watchJourneyMediaType !== "video" && (
+                {watchJourneyMediaType !== "video" ? (
                   <FormField
                     control={form.control}
                     name="journey_media_mobile_path"
@@ -548,21 +553,41 @@ export default function HomeCmsForm() {
                       </FormItem>
                     )}
                   />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="journey_thumbnail_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Journey Thumbnail</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload journey thumbnail"
+                            preview
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 )}
+              </div>
 
+              {/* Alt Texts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="journey_thumbnail_path"
+                  name="journey_media_alt"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Journey Thumbnail</FormLabel>
+                      <FormLabel>Media Alt Text (English)</FormLabel>
                       <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          placeholder="Upload journey thumbnail"
-                          preview
+                        <Input
+                          placeholder={`Enter ${watchJourneyMediaType} alt text`}
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -572,54 +597,17 @@ export default function HomeCmsForm() {
 
                 <FormField
                   control={form.control}
-                  name="journey_thumbnail_path_ar"
+                  name="journey_media_alt_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Journey Thumbnail (AR)</FormLabel>
+                      <FormLabel>Alt Text (AR)</FormLabel>
                       <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={field.onChange}
-                          accept="image/*"
-                          placeholder="Upload journey thumbnail (AR)"
-                          preview
-                        />
+                        <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
-                {/* Alt Texts */}
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="journey_media_alt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Media Alt Text (English)</FormLabel>
-                        <FormControl>
-                          <Input placeholder={`Enter ${watchJourneyMediaType} alt text`} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="journey_media_alt_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alt Text (AR)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -919,6 +907,6 @@ export default function HomeCmsForm() {
           </div>
         </form>
       </Form>
-    </div>
+    </div >
   );
 }

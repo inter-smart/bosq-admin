@@ -28,7 +28,6 @@ export interface HomeCms {
   journey_media_alt_ar?: string | null;
   journey_link?: string | null;
   journey_thumbnail_path?: File | null;
-  journey_thumbnail_path_ar?: File | null;
 
   // PROJECT
   project_title?: string | null;

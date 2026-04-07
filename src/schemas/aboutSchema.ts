@@ -31,8 +31,12 @@ export const aboutCmsSchema = z.object({
     z.null(),
     z.undefined(),
   ]),
-  banner_video_thumbnail_path: commonValidations.validateFileUpload("Banner Video Thumbnail"),
-  banner_video_thumbnail_path_ar: commonValidations.validateFileUpload("Banner Video Thumbnail (Arabic)"),
+  banner_video_thumbnail_path: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
   banner_media_alt: commonValidations.requiredString("Banner Media Alt Text"),
   banner_media_alt_ar: commonValidations.requiredString("Banner Media Alt Text (Arabic)"),
   banner_button_text: commonValidations.requiredString("Banner Button Text"),
@@ -95,6 +99,19 @@ export const aboutCmsSchema = z.object({
         code: z.ZodIssueCode.custom,
         message: "Banner Desktop Media (Arabic) is required. Please upload Banner Desktop Media (Arabic).",
         path: ["banner_media_desktop_path_ar"],
+      });
+    }
+  } else {
+    const thumbnailVal = data.banner_video_thumbnail_path;
+    if (
+      !(thumbnailVal instanceof File) &&
+      !(typeof thumbnailVal === "string" && thumbnailVal.length > 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "Banner Video Thumbnail is required. Please upload Banner Video Thumbnail.",
+        path: ["banner_video_thumbnail_path"],
       });
     }
   }

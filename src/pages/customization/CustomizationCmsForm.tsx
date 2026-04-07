@@ -48,7 +48,6 @@ export default function CustomizationCmsForm() {
       banner_media_mobile_path: null,
       banner_media_mobile_path_ar: null,
       banner_media_thumbnail: null,
-      banner_media_thumbnail_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       process_title: "",
@@ -86,7 +85,6 @@ export default function CustomizationCmsForm() {
       form.setValue("banner_media_mobile_path", null);
       form.setValue("banner_media_mobile_path_ar", null);
       form.setValue("banner_media_thumbnail", null);
-      form.setValue("banner_media_thumbnail_ar", null);
     }
 
     // Update prevMediaType after initial loading is complete
@@ -122,7 +120,6 @@ export default function CustomizationCmsForm() {
           banner_media_mobile_path: data.banner_media_mobile_path || null,
           banner_media_mobile_path_ar: data.banner_media_mobile_path_ar || null,
           banner_media_thumbnail: data.banner_media_thumbnail || null,
-          banner_media_thumbnail_ar: data.banner_media_thumbnail_ar || null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
           process_title: data.process_title || "",
@@ -198,9 +195,6 @@ export default function CustomizationCmsForm() {
       }
       if (data.banner_media_thumbnail instanceof File) {
         formData.append("banner_media_thumbnail", data.banner_media_thumbnail);
-      }
-      if (data.banner_media_thumbnail_ar instanceof File) {
-        formData.append("banner_media_thumbnail_ar", data.banner_media_thumbnail_ar);
       }
 
       // Process Section
@@ -294,7 +288,7 @@ export default function CustomizationCmsForm() {
                   name="title_ar"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title (AR)</FormLabel>
+                      <FormLabel>Title (AR)</FormLabel>         
                       <FormControl>
                         <Input
                           placeholder="أدخل عنوان التخصيص"
@@ -505,9 +499,9 @@ export default function CustomizationCmsForm() {
                 )}
               </div>
 
-              {/* Thumbnail Uploads (video only) */}
+              {/* Thumbnail Upload (video only) */}
               {watchBannerMediaType === "video" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <FormField
                     control={form.control}
                     name="banner_media_thumbnail"
@@ -520,25 +514,6 @@ export default function CustomizationCmsForm() {
                             onChange={field.onChange}
                             accept="image/*"
                             placeholder="Upload banner thumbnail"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="banner_media_thumbnail_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Banner Thumbnail (AR)</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept="image/*"
-                            placeholder="Upload banner thumbnail (AR)"
                           />
                         </FormControl>
                         <FormMessage />

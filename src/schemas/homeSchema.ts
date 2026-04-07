@@ -42,7 +42,6 @@ export const homeSchema = z.object({
   ),
   journey_link: commonValidations.requiredUrl("Journey Link"),
   journey_thumbnail_path: commonValidations.validateFileUpload("Journey Thumbnail"),
-  journey_thumbnail_path_ar: commonValidations.validateFileUpload("Journey Thumbnail (Arabic)"),
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),

@@ -6,6 +6,8 @@ export interface CustomizationCms {
   title_ar?: string | null;
   banner_media_desktop_path?: string | null;
   banner_media_mobile_path?: string | null;
+  banner_media_desktop_path_ar?: string | null;
+  banner_media_mobile_path_ar?: string | null;
   banner_media_thumbnail?: string | null;
   banner_media_thumbnail_ar?: string | null;
   banner_media_alt?: string | null;

@@ -58,7 +58,6 @@ export default function AboutCmsForm() {
       banner_media_desktop_path_ar: null,
       banner_media_mobile_path_ar: null,
       banner_video_thumbnail_path: null,
-      banner_video_thumbnail_path_ar: null,
       banner_media_alt: "",
       banner_media_alt_ar: "",
       banner_button_text: "",
@@ -103,7 +102,6 @@ export default function AboutCmsForm() {
       form.setValue("banner_media_desktop_path_ar", null);
       form.setValue("banner_media_mobile_path_ar", null);
       form.setValue("banner_video_thumbnail_path", null);
-      form.setValue("banner_video_thumbnail_path_ar", null);
     }
 
     // Update prevMediaType after initial loading is complete
@@ -137,9 +135,6 @@ export default function AboutCmsForm() {
           banner_media_mobile_path_ar: data.banner_media_mobile_path_ar || null,
           banner_video_thumbnail_path: data.banner_video_thumbnail_path
             ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_video_thumbnail_path}`
-            : null,
-          banner_video_thumbnail_path_ar: data.banner_video_thumbnail_path_ar
-            ? `${import.meta.env.VITE_IMAGE_URL}/${data.banner_video_thumbnail_path_ar}`
             : null,
           banner_media_alt: data.banner_media_alt || "",
           banner_media_alt_ar: data.banner_media_alt_ar || "",
@@ -326,12 +321,6 @@ export default function AboutCmsForm() {
         formData.append(
           "banner_video_thumbnail_path",
           data.banner_video_thumbnail_path
-        );
-      }
-      if (data.banner_video_thumbnail_path_ar instanceof File) {
-        formData.append(
-          "banner_video_thumbnail_path_ar",
-          data.banner_video_thumbnail_path_ar
         );
       }
 
@@ -676,7 +665,7 @@ export default function AboutCmsForm() {
                 )}
 
                 {watchBannerMediaType === "video" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <FormField
                       control={form.control}
                       name="banner_video_thumbnail_path"
@@ -690,26 +679,6 @@ export default function AboutCmsForm() {
                               accept="image/*"
                               recommendedDimensions="1920px x 732px"
                               placeholder="Upload video thumbnail image"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="banner_video_thumbnail_path_ar"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Video Thumbnail (AR)</FormLabel>
-                          <FormControl>
-                            <FileUpload
-                              value={field.value}
-                              onChange={field.onChange}
-                              accept="image/*"
-                              recommendedDimensions="1920px x 732px"
-                              placeholder="Upload video thumbnail image (AR)"
                             />
                           </FormControl>
                           <FormMessage />

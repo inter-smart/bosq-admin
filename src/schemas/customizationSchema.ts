@@ -33,8 +33,12 @@ export const customizationCmsSchema = z.object({
   ]),
   banner_media_alt: commonValidations.requiredString("Banner Media Alt Text"),
   banner_media_alt_ar: commonValidations.requiredString("Arabic Banner Media Alt Text"),
-  banner_media_thumbnail: commonValidations.validateFileUpload("Banner Thumbnail"),
-  banner_media_thumbnail_ar: commonValidations.validateFileUpload("Banner Thumbnail (Arabic)"),
+  banner_media_thumbnail: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
 
   // Process Section Fields
   process_title: commonValidations.requiredString("Process Title"),
@@ -83,6 +87,18 @@ export const customizationCmsSchema = z.object({
         code: z.ZodIssueCode.custom,
         message: "Banner Mobile Media (Arabic) is required. Please upload Banner Mobile Media (Arabic).",
         path: ["banner_media_mobile_path_ar"],
+      });
+    }
+  } else {
+    const thumbnailVal = data.banner_media_thumbnail;
+    if (
+      !(thumbnailVal instanceof File) &&
+      !(typeof thumbnailVal === "string" && thumbnailVal.length > 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Banner Thumbnail is required. Please upload Banner Thumbnail.",
+        path: ["banner_media_thumbnail"],
       });
     }
   }
