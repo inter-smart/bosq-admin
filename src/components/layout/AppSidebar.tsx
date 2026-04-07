@@ -39,30 +39,14 @@ import {
   Upload,
 } from "lucide-react";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const bosqLogo = "/bosq-logo-light.png";
 
-const mainNavItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
-];
+const mainNavItems = [{ title: "Dashboard", url: "/", icon: LayoutDashboard }];
 
-const ordersSection = [
-  { title: "All Orders", url: "/orders", icon: ShoppingBag },
-];
+const ordersSection = [{ title: "All Orders", url: "/orders", icon: ShoppingBag }];
 
 const enquiriesSection = [
   { title: "Contact Enquiries", url: "/contact-enquiries", icon: Mail },
@@ -78,12 +62,10 @@ const enquiriesSection = [
 ];
 
 const cmsSection = [
-   {
+  {
     title: "Master",
     icon: List,
-    subItems: [
-      { title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List },
-    ],
+    subItems: [{ title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List }],
   },
   {
     title: "Home",
@@ -208,7 +190,6 @@ const cmsSection = [
       { title: "Sustainability", url: "/sustainability", icon: List },
     ],
   },
- 
 ];
 
 const productsSection = [
@@ -254,7 +235,6 @@ const commonSection = [
   { title: "Payment Methods", url: "/payment-methods", icon: List },
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
 ];
-
 
 const policiesSection = [
   {
@@ -420,75 +400,42 @@ export function AppSidebar() {
     }
 
     // Auto-open Home section
-    if (
-      [
-        "/home-cms",
-        "/home-banner-slider",
-        "/home-brands",
-        "/smart-space-calculator",
-        "/find-your-fits",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setHomeOpen(true);
       return;
     }
 
     // Auto-open About section
-    if (
-      [
-        "/about-cms",
-        "/about-testimonials",
-        "/about-journeys",
-        "/about-our-clients",
-        "/why-bosq",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/about-cms", "/about-testimonials", "/about-journeys", "/about-our-clients", "/why-bosq"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setAboutOpen(true);
       return;
     }
 
     // Auto-open Ergonomic section
-    if (
-      ["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) =>
-        path.includes(r),
-      )
-    ) {
+    if (["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setErgonomicOpen(true);
       return;
     }
 
     // Auto-open Materials section
-    if (
-      [
-        "/materials-cms",
-        "/materials-category",
-        "/materials",
-        "/extra-materials",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/materials-cms", "/materials-category", "/materials", "/extra-materials"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setMaterialsOpen(true);
       return;
     }
 
     // Auto-open Delivery section
-    if (
-      ["/delivery-cms", "/delivery-time", "/delivery-method"].some((r) =>
-        path.includes(r),
-      )
-    ) {
+    if (["/delivery-cms", "/delivery-time", "/delivery-method"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setDeliveryOpen(true);
       return;
     }
 
     // Auto-open FAQ section
-    if (
-      ["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))
-    ) {
+    if (["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setFaqOpen(true);
       return;
@@ -521,11 +468,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Projects section
-    if (
-      ["/projects-cms", "/project-category", "/projects"].some((r) =>
-        path.includes(r),
-      )
-    ) {
+    if (["/projects-cms", "/project-category", "/projects"].some((r) => path.includes(r))) {
       setProjectsOpen(true);
       return;
     }
@@ -545,23 +488,14 @@ export function AppSidebar() {
     }
 
     // Auto-open Customisation section
-    if (
-      [
-        "/customization-cms",
-        "/customization-features",
-        "/customization-process",
-        "/customization-options",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/customization-cms", "/customization-features", "/customization-process", "/customization-options"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setCustomisationOpen(true);
       return;
     }
 
     // Auto-open Sustainability section
-    if (
-      ["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))
-    ) {
+    if (["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setSustainabilityOpen(true);
       return;
@@ -586,14 +520,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Common section
-    if (
-      [
-        "/site-settings",
-        "/social-media",
-        "/payment-methods",
-        "/meta-tags",
-      ].some((r) => path.includes(r))
-    ) {
+    if (["/site-settings", "/social-media", "/payment-methods", "/meta-tags"].some((r) => path.includes(r))) {
       setCommonOpen(true);
       return;
     }
@@ -606,20 +533,14 @@ export function AppSidebar() {
     }
 
     // Auto-open Privacy Policy section
-    if (
-      ["/privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))
-    ) {
+    if (["/privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setPrivacyOpen(true);
       return;
     }
 
     // Auto-open Terms and Conditions section
-    if (
-      ["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) =>
-        path.includes(r),
-      )
-    ) {
+    if (["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setTermsOpen(true);
       return;
@@ -633,9 +554,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Return Policy section
-    if (
-      ["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))
-    ) {
+    if (["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setReturnPolicyOpen(true);
       return;
@@ -654,12 +573,6 @@ export function AppSidebar() {
     }
   }, [location.pathname]);
 
-  const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center w-full text-left ${isActive
-      ? "bg-sidebar-accent text-sidebar-primary focus:text-sidebar-foreground focus:bg-sidebar-accent/50 font-medium"
-      : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-    }`;
-
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarContent className="bg-sidebar border-r border-sidebar-border">
@@ -667,17 +580,11 @@ export function AppSidebar() {
         <div className="py-4 border-b border-sidebar-border">
           {!isCollapsed ? (
             <div className="flex items-center justify-center">
-              <img
-                src={bosqLogo}
-                alt="BOSQ"
-                className="h-8 w-auto object-contain"
-              />
+              <img src={bosqLogo} alt="BOSQ" className="h-8 w-auto object-contain" />
             </div>
           ) : (
             <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center mx-auto">
-              <span className="text-primary-foreground font-bold text-sm">
-                B
-              </span>
+              <span className="text-primary-foreground font-bold text-sm">B</span>
             </div>
           )}
         </div>
@@ -687,8 +594,8 @@ export function AppSidebar() {
           <SidebarMenu>
             {mainNavItems.map((item) => (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <NavLink to={item.url} end className={getNavCls}>
+                <SidebarMenuButton asChild isActive={location.pathname === item.url} className="data-[active=true]:!text-sidebar-primary">
+                  <NavLink to={item.url} end>
                     <item.icon className="h-5 w-5" />
                     {!isCollapsed && <span className="ml-3">{item.title}</span>}
                   </NavLink>
@@ -705,9 +612,7 @@ export function AppSidebar() {
           open={ordersOpen}
           setOpen={setOrdersOpen}
           items={ordersSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* Enquiries */}
         <SidebarCollapsibleSection
@@ -716,9 +621,7 @@ export function AppSidebar() {
           open={enquiriesOpen}
           setOpen={setEnquiriesOpen}
           items={enquiriesSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* CMS Section with Nested Structure */}
         <SidebarGroup>
@@ -728,9 +631,7 @@ export function AppSidebar() {
               {!isCollapsed && (
                 <>
                   <span className="ml-2">CMS</span>
-                  <ChevronRight
-                    className={`h-4 w-4 ml-auto transition-transform ${cmsOpen ? "rotate-90" : ""}`}
-                  />
+                  <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${cmsOpen ? "rotate-90" : ""}`} />
                 </>
               )}
             </CollapsibleTrigger>
@@ -783,7 +684,6 @@ export function AppSidebar() {
                       open={sectionOpen}
                       setOpen={setSectionOpen}
                       items={section.subItems}
-                      getNavCls={getNavCls}
                     />
                   );
                 })}
@@ -799,9 +699,7 @@ export function AppSidebar() {
           open={productsOpen}
           setOpen={setProductsOpen}
           items={productsSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* Projects */}
         <SidebarCollapsibleSection
@@ -810,9 +708,7 @@ export function AppSidebar() {
           open={projectsOpen}
           setOpen={setProjectsOpen}
           items={projectsSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* Blog Section */}
         <SidebarCollapsibleSection
@@ -821,9 +717,7 @@ export function AppSidebar() {
           open={blogOpen}
           setOpen={setBlogOpen}
           items={blogsSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* News */}
         <SidebarCollapsibleSection
@@ -832,9 +726,7 @@ export function AppSidebar() {
           open={newsOpen}
           setOpen={setNewsOpen}
           items={newsSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* Landing Pages */}
         {/* <SidebarCollapsibleSection
@@ -843,9 +735,7 @@ export function AppSidebar() {
           open={landingPagesOpen}
           setOpen={setLandingPagesOpen}
           items={landingPagesSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        /> */}
+          isCollapsed={isCollapsed}        /> */}
 
         {/* Settings */}
         <SidebarCollapsibleSection
@@ -854,9 +744,7 @@ export function AppSidebar() {
           open={commonOpen}
           setOpen={setCommonOpen}
           items={commonSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* Users */}
         <SidebarCollapsibleSection
@@ -865,9 +753,7 @@ export function AppSidebar() {
           open={usersOpen}
           setOpen={setUsersOpen}
           items={usersSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         <SidebarCollapsibleSection
           title="Coupons"
@@ -875,24 +761,17 @@ export function AppSidebar() {
           open={couponsOpen}
           setOpen={setCouponsOpen}
           items={couponsSection}
-          isCollapsed={isCollapsed}
-          getNavCls={getNavCls}
-        />
+          isCollapsed={isCollapsed}        />
 
         {/* Policies */}
         <SidebarGroup>
-          <Collapsible
-            open={!isCollapsed && policiesOpen}
-            onOpenChange={setPoliciesOpen}
-          >
+          <Collapsible open={!isCollapsed && policiesOpen} onOpenChange={setPoliciesOpen}>
             <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
               <ShieldCheck className="h-4 w-4" />
               {!isCollapsed && (
                 <>
                   <span className="ml-2">Policies</span>
-                  <ChevronRight
-                    className={`h-4 w-4 ml-auto transition-transform ${policiesOpen ? "rotate-90" : ""}`}
-                  />
+                  <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${policiesOpen ? "rotate-90" : ""}`} />
                 </>
               )}
             </CollapsibleTrigger>
@@ -905,7 +784,6 @@ export function AppSidebar() {
                   open={privacyOpen}
                   setOpen={setPrivacyOpen}
                   items={policiesSection[0].subItems}
-                  getNavCls={getNavCls}
                 />
 
                 <NestedSection
@@ -914,7 +792,6 @@ export function AppSidebar() {
                   open={termsOpen}
                   setOpen={setTermsOpen}
                   items={policiesSection[1].subItems}
-                  getNavCls={getNavCls}
                 />
 
                 <NestedSection
@@ -923,7 +800,6 @@ export function AppSidebar() {
                   open={warrantyOpen}
                   setOpen={setWarrantyOpen}
                   items={policiesSection[2].subItems}
-                  getNavCls={getNavCls}
                 />
 
                 <NestedSection
@@ -932,7 +808,6 @@ export function AppSidebar() {
                   open={returnPolicyOpen}
                   setOpen={setReturnPolicyOpen}
                   items={policiesSection[3].subItems}
-                  getNavCls={getNavCls}
                 />
               </CollapsibleContent>
             )}
@@ -946,29 +821,21 @@ export function AppSidebar() {
 /**
  * Nested Section Component (for Home, FAQ, Contact under CMS)
  */
-function NestedSection({
-  title,
-  icon: Icon,
-  open,
-  setOpen,
-  items,
-  getNavCls,
-}: any) {
+function NestedSection({ title, icon: Icon, open, setOpen, items }: any) {
+  const location = useLocation();
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex items-center w-full p-2 text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
         <Icon className="h-4 w-4" />
         <span className="ml-2">{title}</span>
-        <ChevronRight
-          className={`h-4 w-4 ml-auto transition-transform ${open ? "rotate-90" : ""}`}
-        />
+        <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${open ? "rotate-90" : ""}`} />
       </CollapsibleTrigger>
       <CollapsibleContent className="ml-6 mt-1 space-y-1">
         <SidebarMenu>
           {items.map((item: any) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild size="sm">
-                <NavLink to={item.url} className={getNavCls}>
+              <SidebarMenuButton asChild size="sm" isActive={location.pathname === item.url} className="data-[active=true]:!text-sidebar-primary">
+                <NavLink to={item.url}>
                   <item.icon className="h-4 w-4" />
                   <span className="ml-2">{item.title}</span>
                 </NavLink>
@@ -984,15 +851,8 @@ function NestedSection({
 /**
  * Reusable Sidebar Section Component
  */
-function SidebarCollapsibleSection({
-  title,
-  icon: Icon,
-  open,
-  setOpen,
-  items,
-  isCollapsed,
-  getNavCls,
-}: any) {
+function SidebarCollapsibleSection({ title, icon: Icon, open, setOpen, items, isCollapsed }: any) {
+  const location = useLocation();
   return (
     <SidebarGroup>
       <Collapsible open={!isCollapsed && open} onOpenChange={setOpen}>
@@ -1001,9 +861,7 @@ function SidebarCollapsibleSection({
           {!isCollapsed && (
             <>
               <span className="ml-2">{title}</span>
-              <ChevronRight
-                className={`h-4 w-4 ml-auto transition-transform ${open ? "rotate-90" : ""}`}
-              />
+              <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${open ? "rotate-90" : ""}`} />
             </>
           )}
         </CollapsibleTrigger>
@@ -1012,8 +870,8 @@ function SidebarCollapsibleSection({
             <SidebarMenu>
               {items.map((item: any) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild size="sm">
-                    <NavLink to={item.url} className={getNavCls}>
+                  <SidebarMenuButton asChild size="sm" isActive={location.pathname === item.url} className="data-[active=true]:!text-sidebar-primary">
+                    <NavLink to={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span className="ml-2">{item.title}</span>
                     </NavLink>
