@@ -304,12 +304,8 @@ export default function CouponsForm() {
         formData.append("min_product_amount", String(data.min_product_amount));
         formData.append("max_discount_amount", String(data.max_discount_amount));
       } else {
-        // min_product_amount is not applicable for common scope — omit it entirely
-        // so the backend optional() check skips it (sending "0" is truthy and
-        // would fail the flat-discount cross-check on the server).
-        // max_discount_amount is auto-derived from discount_value so the backend
-        // flat-check (max >= discount) always passes.
-        formData.append("max_discount_amount", String(data.discount_value));
+        formData.append("min_product_amount", "0.00");
+        formData.append("max_discount_amount", "0.00");
       }
       formData.append("scope_type", data.scope_type);
       formData.append("usage_limit_total", String(data.usage_limit_total));
