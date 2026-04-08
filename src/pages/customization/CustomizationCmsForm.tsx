@@ -394,7 +394,7 @@ export default function CustomizationCmsForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Media Type</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={(value) => { field.onChange(value); form.setValue("banner_media_desktop_path_ar", null); form.setValue("banner_media_mobile_path_ar", null); }} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select media type" />
@@ -431,6 +431,27 @@ export default function CustomizationCmsForm() {
                     </FormItem>
                   )}
                 />
+
+                {watchBannerMediaType === "video" && (
+                  <FormField
+                    control={form.control}
+                    name="banner_media_thumbnail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Thumbnail</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload banner thumbnail"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 {watchBannerMediaType !== "video" && (
                   <FormField
@@ -498,30 +519,6 @@ export default function CustomizationCmsForm() {
                   />
                 )}
               </div>
-
-              {/* Thumbnail Upload (video only) */}
-              {watchBannerMediaType === "video" && (
-                <div className="grid grid-cols-1 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="banner_media_thumbnail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Banner Thumbnail</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept="image/*"
-                            placeholder="Upload banner thumbnail"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <FormField

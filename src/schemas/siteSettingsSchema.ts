@@ -6,8 +6,6 @@ export const headerFooterSchema = z.object({
   address: commonValidations.requiredText("Address"),
   address_ar: commonValidations.requiredText("Address (Arabic)").optional(),
 
-  email: commonValidations.validateEmail("Email"),
-  phone_number: commonValidations.validatePhoneNumber("Phone Number"),
 
   // Header Logo
   header_logo_media_path: commonValidations.validateFileUpload("Header Logo"),

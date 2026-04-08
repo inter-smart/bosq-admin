@@ -23,14 +23,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { fetchSustainabilityCms, saveSustainabilityCms } from "@/services/cms/sustainablility/sustainabilityCmsApi";
-import { sustainabilityCmsSchema, type SustainabilityCmsFormData } from "@/schemas/sustainabilitySchema";
+import {
+  fetchSustainabilityCms,
+  saveSustainabilityCms,
+} from "@/services/cms/sustainablility/sustainabilityCmsApi";
+import {
+  sustainabilityCmsSchema,
+  type SustainabilityCmsFormData,
+} from "@/schemas/sustainabilitySchema";
 
 export default function SustainabilityCmsForm() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [prevBannerMediaType, setPrevBannerMediaType] = useState<string | null>(null);
+  const [prevBannerMediaType, setPrevBannerMediaType] = useState<string | null>(
+    null,
+  );
 
   const form = useForm<SustainabilityCmsFormData>({
     resolver: zodResolver(sustainabilityCmsSchema),
@@ -59,7 +67,11 @@ export default function SustainabilityCmsForm() {
   const watchBannerMediaType = form.watch("banner_media_type");
 
   useEffect(() => {
-    if (!initialLoading && prevBannerMediaType !== null && prevBannerMediaType !== watchBannerMediaType) {
+    if (
+      !initialLoading &&
+      prevBannerMediaType !== null &&
+      prevBannerMediaType !== watchBannerMediaType
+    ) {
       form.setValue("banner_media_desktop_path", null);
       form.setValue("banner_media_mobile_path", null);
       form.setValue("banner_media_thumbnail", null);
@@ -129,7 +141,7 @@ export default function SustainabilityCmsForm() {
     (errors) => {
       // Get the first error field and focus it
       const firstErrorField = Object.keys(
-        errors
+        errors,
       )[0] as keyof SustainabilityCmsFormData;
 
       if (firstErrorField) {
@@ -137,7 +149,7 @@ export default function SustainabilityCmsForm() {
           form.setFocus(firstErrorField);
         }, 100);
       }
-    }
+    },
   );
 
   const onSubmit = async (data: SustainabilityCmsFormData) => {
@@ -161,25 +173,25 @@ export default function SustainabilityCmsForm() {
       if (data.banner_media_desktop_path instanceof File) {
         formData.append(
           "banner_media_desktop_path",
-          data.banner_media_desktop_path
+          data.banner_media_desktop_path,
         );
       }
       if (data.banner_media_mobile_path instanceof File) {
         formData.append(
           "banner_media_mobile_path",
-          data.banner_media_mobile_path
+          data.banner_media_mobile_path,
         );
       }
       if (data.banner_media_desktop_path_ar instanceof File) {
         formData.append(
           "banner_media_desktop_path_ar",
-          data.banner_media_desktop_path_ar
+          data.banner_media_desktop_path_ar,
         );
       }
       if (data.banner_media_mobile_path_ar instanceof File) {
         formData.append(
           "banner_media_mobile_path_ar",
-          data.banner_media_mobile_path_ar
+          data.banner_media_mobile_path_ar,
         );
       }
       if (data.banner_media_thumbnail instanceof File) {
@@ -194,17 +206,17 @@ export default function SustainabilityCmsForm() {
       if (data.section1_description)
         formData.append("section1_description", data.section1_description);
       if (data.section1_description_ar)
-        formData.append("section1_description_ar", data.section1_description_ar);
+        formData.append(
+          "section1_description_ar",
+          data.section1_description_ar,
+        );
       if (data.section1_media_alt)
         formData.append("section1_media_alt", data.section1_media_alt);
       if (data.section1_media_alt_ar)
         formData.append("section1_media_alt_ar", data.section1_media_alt_ar);
       // Add section1 file upload
       if (data.section1_media_path instanceof File) {
-        formData.append(
-          "section1_media_path",
-          data.section1_media_path
-        );
+        formData.append("section1_media_path", data.section1_media_path);
       }
 
       await saveSustainabilityCms(formData);
@@ -303,7 +315,13 @@ export default function SustainabilityCmsForm() {
                   <FormItem>
                     <FormLabel>Banner Media Type</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        form.setValue("banner_media_desktop_path", null);
+                        form.setValue("banner_media_desktop_path_ar", null);
+                        form.setValue("banner_media_mobile_path", null);
+                        form.setValue("banner_media_mobile_path_ar", null);
+                      }}
                       value={field.value || undefined}
                     >
                       <FormControl>
@@ -347,6 +365,28 @@ export default function SustainabilityCmsForm() {
                     </FormItem>
                   )}
                 />
+
+                {watchBannerMediaType === "video" && (
+                  <FormField
+                    control={form.control}
+                    name="banner_media_thumbnail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Thumbnail</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={field.onChange}
+                            accept="image/*"
+                            placeholder="Upload banner thumbnail"
+                            preview={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 {watchBannerMediaType !== "video" && (
                   <FormField
@@ -419,31 +459,6 @@ export default function SustainabilityCmsForm() {
                 </div>
               )}
 
-              {/* Banner Thumbnail (video only) */}
-              {watchBannerMediaType === "video" && (
-                <div className="grid grid-cols-1 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="banner_media_thumbnail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Banner Thumbnail</FormLabel>
-                        <FormControl>
-                          <FileUpload
-                            value={field.value}
-                            onChange={field.onChange}
-                            accept="image/*"
-                            placeholder="Upload banner thumbnail"
-                            preview={true}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              )}
-
               {/* Banner Alt Text */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -453,10 +468,7 @@ export default function SustainabilityCmsForm() {
                     <FormItem>
                       <FormLabel>Media Alt Text (English)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter media alt text"
-                          {...field}
-                        />
+                        <Input placeholder="Enter media alt text" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -595,10 +607,7 @@ export default function SustainabilityCmsForm() {
                     <FormItem>
                       <FormLabel>Media Alt Text (English)</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter media alt text"
-                          {...field}
-                        />
+                        <Input placeholder="Enter media alt text" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

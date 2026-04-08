@@ -41,7 +41,12 @@ export const homeSchema = z.object({
     "Journey Media Alt Text (Arabic)"
   ),
   journey_link: commonValidations.requiredUrl("Journey Link"),
-  journey_thumbnail_path: commonValidations.validateFileUpload("Journey Thumbnail"),
+  journey_thumbnail_path: z.union([
+    z.instanceof(File).refine((f) => f.size <= 5 * 1024 * 1024, { message: "Max 5MB allowed" }),
+    z.string().min(1),
+    z.null(),
+    z.undefined(),
+  ]),
 
   // PROJECT SECTION
   project_title: commonValidations.requiredString("Project Title"),
@@ -72,6 +77,16 @@ export const homeSchema = z.object({
     "Form Media Alt Text (Arabic)"
   ),
 }).superRefine((data, ctx) => {
+  if (data.journey_media_type === "video") {
+    const thumbVal = data.journey_thumbnail_path;
+    if (!(thumbVal instanceof File) && !(typeof thumbVal === "string" && thumbVal.length > 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Journey Thumbnail is required. Please upload Journey Thumbnail.",
+        path: ["journey_thumbnail_path"],
+      });
+    }
+  }
   if (data.journey_media_type !== "video") {
     const mobileVal = data.journey_media_mobile_path;
     if (!(mobileVal instanceof File) && !(typeof mobileVal === "string" && mobileVal.length > 0)) {

@@ -68,6 +68,7 @@ export default function HomeCmsForm() {
     if (!initialLoading && prevMediaType !== null && prevMediaType !== watchJourneyMediaType) {
       form.setValue("journey_media_desktop_path", null);
       form.setValue("journey_media_mobile_path", null);
+      form.setValue("journey_thumbnail_path", null);
     }
 
     // Update prevMediaType after initial loading is complete
@@ -219,7 +220,9 @@ export default function HomeCmsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit, (error)=>{
+          console.log(error)
+        })} className="space-y-6">
           {/* About Section */}
           <Card>
             <CardHeader>
@@ -462,6 +465,23 @@ export default function HomeCmsForm() {
                 </div>
               </div>
 
+               {/* Media + Alt Texts */}
+              <div className="grid grid-cols-1 gap-4">
+                <FormField
+                  control={form.control}
+                  name="journey_link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter link" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               {/* Media Type */}
               <FormField
                 control={form.control}
@@ -485,22 +505,7 @@ export default function HomeCmsForm() {
                 )}
               />
 
-              {/* Media + Alt Texts */}
-              <div className="grid grid-cols-1 gap-4">
-                <FormField
-                  control={form.control}
-                  name="journey_link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Link</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter link" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+             
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Media */}

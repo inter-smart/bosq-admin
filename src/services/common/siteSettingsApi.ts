@@ -20,9 +20,6 @@ export interface HeaderFooterSettings {
   sale_enquiry_email: string;
   sales_phone_number: string;
 
-  phone_number: string;
-  email: string;
-
   support_enquiry_title: string;
   support_enquiry_title_ar: string;
   support_email: string;

@@ -25,8 +25,6 @@ export default function HeaderFooterForm() {
     defaultValues: {
       address: "",
       address_ar: "",
-      phone_number: "",
-      email: "",
       header_media_alt: "",
       header_media_alt_ar: "",
       footer_media_alt: "",
@@ -67,8 +65,6 @@ export default function HeaderFooterForm() {
           sale_enquiry_title_ar: data.sale_enquiry_title_ar || "",
           sale_enquiry_email: data.sale_enquiry_email || "",
           sales_phone_number: data.sales_phone_number || "",
-          phone_number: data.phone_number || "",
-          email: data.email || "",
           support_enquiry_title: data.support_enquiry_title || "",
           support_enquiry_title_ar: data.support_enquiry_title_ar || "",
           support_email: data.support_email || "",
@@ -174,21 +170,6 @@ export default function HeaderFooterForm() {
                   )}
                 />
 
-                {/* Phone Number */}
-                <FormField
-                  control={form.control}
-                  name="phone_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter phone number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 {/* Sales Phone Number */}
                 <FormField
                   control={form.control}
@@ -204,22 +185,6 @@ export default function HeaderFooterForm() {
                   )}
                 />
 
-
-
-                {/* General Email */}
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="Enter email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
                 {/* Sale Enquiry Email */}
                 <FormField
