@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderStats } from "@/services/dashboard/dashboardApi";
 
@@ -55,9 +55,9 @@ function MiniPieChart({ title, data }: { title: string; data: { name: string; va
     );
   }
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <p className="text-sm font-medium text-center mb-2">{title}</p>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={160}>
         <PieChart>
           <Pie data={data} cx="50%" cy="50%" innerRadius={50} outerRadius={75} dataKey="value" paddingAngle={2}>
             {data.map((entry, i) => (
@@ -65,9 +65,16 @@ function MiniPieChart({ title, data }: { title: string; data: { name: string; va
             ))}
           </Pie>
           <Tooltip content={<CustomTooltip />} />
-          <Legend formatter={(value, entry: any) => <span style={{ color: entry.color, fontSize: 12 }}>{value}</span>} />
         </PieChart>
       </ResponsiveContainer>
+      <div className="flex flex-col gap-1 mt-2">
+        {data.map((entry) => (
+          <div key={entry.name} className="flex items-center gap-1.5 text-xs">
+            <span className="inline-block w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: entry.color }} />
+            <span style={{ color: entry.color }}>{entry.name}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
