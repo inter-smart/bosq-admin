@@ -1,100 +1,149 @@
-import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
+import { useEffect, useState, useCallback } from "react";
 import { MetricsCard } from "@/components/dashboard/MetricsCard";
-import { QuickActions } from "@/components/dashboard/QuickActions";
-import { useEffect, useState } from "react";
-import { fetchDashboardCounts, DashboardCounts } from "@/services/dashboard/dashboardApi";
+import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
+import { RevenueOrderChart } from "@/components/dashboard/RevenueOrderChart";
+import { OrderBreakdownCharts } from "@/components/dashboard/OrderBreakdownCharts";
+import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
+import { LowStockTable } from "@/components/dashboard/LowStockTable";
+import { CouponStatsSection } from "@/components/dashboard/CouponStatsSection";
+import { UserGrowthChart } from "@/components/dashboard/UserGrowthChart";
 import {
-  ShoppingBag,
+  fetchOrderStats,
+  fetchProductStats,
+  fetchCouponAnalytics,
+  fetchUserStats,
+  OrderStats,
+  ProductStats,
+  CouponAnalytics,
+  UserStats,
+} from "@/services/dashboard/dashboardApi";
+import {
+  DollarSign,
   ShoppingCart,
+  ShoppingBag,
   Users,
-  FileText,
-  Newspaper,
-  Briefcase,
-  Loader2,
 } from "lucide-react";
 
+function formatCurrency(value: number) {
+  return `AED ${value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
+
 const Index = () => {
-  const [counts, setCounts] = useState<DashboardCounts | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState<number | undefined>(undefined);
+
+  // Data states
+  const [orderStats, setOrderStats] = useState<OrderStats | null>(null);
+  const [productStats, setProductStats] = useState<ProductStats | null>(null);
+  const [couponAnalytics, setCouponAnalytics] = useState<CouponAnalytics | null>(null);
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
+
+  // Loading states per section
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingCoupons, setLoadingCoupons] = useState(true);
+  const [loadingUsers, setLoadingUsers] = useState(true);
+
+  const loadAll = useCallback(async () => {
+    const filter = { year, month };
+
+    setLoadingOrders(true);
+    setLoadingProducts(true);
+    setLoadingCoupons(true);
+    setLoadingUsers(true);
+
+    // Fire all four requests in parallel
+    fetchOrderStats(filter)
+      .then((d) => setOrderStats(d))
+      .catch((e) => console.error("Order stats failed:", e))
+      .finally(() => setLoadingOrders(false));
+
+    fetchProductStats(filter)
+      .then((d) => setProductStats(d))
+      .catch((e) => console.error("Product stats failed:", e))
+      .finally(() => setLoadingProducts(false));
+
+    fetchCouponAnalytics(filter)
+      .then((d) => setCouponAnalytics(d))
+      .catch((e) => console.error("Coupon analytics failed:", e))
+      .finally(() => setLoadingCoupons(false));
+
+    fetchUserStats(filter)
+      .then((d) => setUserStats(d))
+      .catch((e) => console.error("User stats failed:", e))
+      .finally(() => setLoadingUsers(false));
+  }, [year, month]);
 
   useEffect(() => {
-    const loadCounts = async () => {
-      try {
-        const response = await fetchDashboardCounts();
-        if (response.success) {
-          setCounts(response.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch dashboard counts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    loadAll();
+  }, [loadAll]);
 
-    loadCounts();
-  }, []);
+  const handleFilterChange = (newYear: number, newMonth?: number) => {
+    setYear(newYear);
+    setMonth(newMonth);
+  };
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome back! Here's what's happening with your BOSQ content.
-        </p>
+      {/* Page Header + Filters */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">
+            Your BOSQ ecommerce analytics at a glance
+          </p>
+        </div>
+        <DashboardFilters year={year} month={month} onChange={handleFilterChange} />
       </div>
 
-      {/* Metrics Grid */}
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <MetricsCard
-            title="Total Products"
-            value={counts?.totalProducts ?? 0}
-            icon={ShoppingBag}
-            description="Products in the catalog"
-          />
-          <MetricsCard
-            title="Total Orders"
-            value={counts?.totalOrders ?? 0}
-            icon={ShoppingCart}
-            description="All time orders"
-          />
-          <MetricsCard
-            title="Total Users"
-            value={counts?.totalUsers ?? 0}
-            icon={Users}
-            description="Registered users"
-          />
-          <MetricsCard
-            title="Total Blog Posts"
-            value={counts?.totalBlogs ?? 0}
-            icon={FileText}
-            description="Published articles"
-          />
-          <MetricsCard
-            title="Total News"
-            value={counts?.totalNews ?? 0}
-            icon={Newspaper}
-            description="Published news items"
-          />
-          <MetricsCard
-            title="Total Projects"
-            value={counts?.totalProjects ?? 0}
-            icon={Briefcase}
-            description="Active projects"
-          />
-        </div>
-      )}
+      {/* KPI Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricsCard
+          title="Total Revenue"
+          value={loadingOrders ? "—" : formatCurrency(orderStats?.totalRevenue ?? 0)}
+          icon={DollarSign}
+          description={loadingOrders ? "Loading..." : `Avg order: ${formatCurrency(orderStats?.avgOrderValue ?? 0)}`}
+        />
+        <MetricsCard
+          title="Total Orders"
+          value={loadingOrders ? "—" : (orderStats?.totalOrders ?? 0)}
+          icon={ShoppingCart}
+          description="For selected period"
+        />
+        <MetricsCard
+          title="Total Products"
+          value={loadingProducts ? "—" : (productStats?.totalVariants ?? 0)}
+          icon={ShoppingBag}
+          description={loadingProducts ? "Loading..." : `${productStats?.activeVariants ?? 0} active variants`}
+        />
+        <MetricsCard
+          title="Total Users"
+          value={loadingUsers ? "—" : (userStats?.totalUsers ?? 0)}
+          icon={Users}
+          description={loadingUsers ? "Loading..." : `${userStats?.newUsersThisPeriod ?? 0} new this period`}
+        />
+      </div>
 
-      {/* Content Grid */}
+      {/* Revenue & Orders Chart — full width */}
+      <RevenueOrderChart
+        data={orderStats?.byPeriod ?? []}
+        loading={loadingOrders}
+      />
+
+      {/* Order Breakdown + Top Products — half/half */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ActivityFeed />
-        <QuickActions />
+        <OrderBreakdownCharts data={orderStats} loading={loadingOrders} />
+        <TopProductsChart data={productStats?.topSellers ?? []} loading={loadingProducts} />
       </div>
+
+      {/* Low Stock + Coupon Analytics — half/half */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <LowStockTable data={productStats?.lowStock ?? []} loading={loadingProducts} />
+        <CouponStatsSection data={couponAnalytics} loading={loadingCoupons} />
+      </div>
+
+      {/* User Growth — full width */}
+      <UserGrowthChart data={userStats} loading={loadingUsers} />
     </div>
   );
 };
