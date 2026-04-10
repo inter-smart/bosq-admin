@@ -147,10 +147,7 @@ export default function ProductVariantForm() {
         setModel(modelResponse.data);
       }
 
-      const [attributesResponse, categoriesResponse] = await Promise.all([
-        fetchAttributesWithValues(),
-        fetchProductCategoryList(1, 200),
-      ]);
+      const [attributesResponse, categoriesResponse] = await Promise.all([fetchAttributesWithValues(), fetchProductCategoryList(1, 200)]);
 
       if (attributesResponse.success) {
         setAttributes(attributesResponse.data);
@@ -396,231 +393,231 @@ export default function ProductVariantForm() {
         {/* Basic Information - only show when editing */}
         {isEditing && (
           <>
-          <Card>
-            <CardHeader>
-              <CardTitle>Variant Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input id="title" placeholder="Enter variant title" {...register("title")} />
-                  {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="title_ar">Title (Arabic)</Label>
-                  <Input id="title_ar" placeholder="أدخل عنوان المنتج" dir="rtl" {...register("title_ar")} />
-                  {errors.title_ar && <p className="text-sm text-destructive">{errors.title_ar.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Cover Image</Label>
-                  <Controller
-                    name="cover_image"
-                    control={control}
-                    render={({ field }) => (
-                      <FileUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        accept="image/*"
-                        recommendedDimensions="430px × 412px"
-                        placeholder="Drop cover image here or click to browse"
-                      />
-                    )}
-                  />
-                  {errors.cover_image && <p className="text-sm text-destructive">{errors.cover_image.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Hover Image</Label>
-                  <Controller
-                    name="hover_image"
-                    control={control}
-                    render={({ field }) => (
-                      <FileUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        accept="image/*"
-                        recommendedDimensions="430px × 412px"
-                        placeholder="Drop hover image here or click to browse"
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="design_title">Design Title</Label>
-                  <Input id="design_title" placeholder="Enter design title" {...register("design_title")} />
-                  {errors.design_title && <p className="text-sm text-destructive">{errors.design_title.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="design_title_ar">Design Title (Arabic)</Label>
-                  <Input id="design_title_ar" placeholder="أدخل عنوان التصميم" dir="rtl" {...register("design_title_ar")} />
-                  {errors.design_title_ar && <p className="text-sm text-destructive">{errors.design_title_ar.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="sku">SKU</Label>
-                  <Input id="sku" placeholder="Enter SKU" disabled {...register("sku")} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="product_code">Product Code</Label>
-                  <Input id="product_code" placeholder="Enter product code" disabled {...register("product_code")} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price</Label>
-                  <Input id="price" type="number" step="0.01" placeholder="Enter price" disabled {...register("price")} />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="stock">Stock</Label>
-                  <Input id="stock" type="number" placeholder="Enter stock quantity" {...register("stock")} />
-                  {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="sort_order">Sort Order</Label>
-                  <Input id="sort_order" type="number" placeholder="1" {...register("sort_order")} />
-                  {errors.sort_order && <p className="text-sm text-destructive">{errors.sort_order.message}</p>}
-                </div>
-
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label>Status</Label>
-                    <p className="text-sm text-muted-foreground">Enable or disable this variant</p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Variant Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input id="title" placeholder="Enter variant title" {...register("title")} />
+                    {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
                   </div>
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
-                  />
-                </div>
 
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label>Featured</Label>
-                    <p className="text-sm text-muted-foreground">Mark this variant as featured</p>
+                  <div className="space-y-2">
+                    <Label htmlFor="title_ar">Title (Arabic)</Label>
+                    <Input id="title_ar" placeholder="أدخل عنوان المنتج" dir="rtl" {...register("title_ar")} />
+                    {errors.title_ar && <p className="text-sm text-destructive">{errors.title_ar.message}</p>}
                   </div>
-                  <Controller
-                    name="is_featured"
-                    control={control}
-                    render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
-                  />
+
+                  <div className="space-y-2">
+                    <Label>Cover Image</Label>
+                    <Controller
+                      name="cover_image"
+                      control={control}
+                      render={({ field }) => (
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          recommendedDimensions="430px × 412px"
+                          placeholder="Drop cover image here or click to browse"
+                        />
+                      )}
+                    />
+                    {errors.cover_image && <p className="text-sm text-destructive">{errors.cover_image.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Hover Image</Label>
+                    <Controller
+                      name="hover_image"
+                      control={control}
+                      render={({ field }) => (
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="image/*"
+                          recommendedDimensions="430px × 412px"
+                          placeholder="Drop hover image here or click to browse"
+                        />
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="design_title">Design Title</Label>
+                    <Input id="design_title" placeholder="Enter design title" {...register("design_title")} />
+                    {errors.design_title && <p className="text-sm text-destructive">{errors.design_title.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="design_title_ar">Design Title (Arabic)</Label>
+                    <Input id="design_title_ar" placeholder="أدخل عنوان التصميم" dir="rtl" {...register("design_title_ar")} />
+                    {errors.design_title_ar && <p className="text-sm text-destructive">{errors.design_title_ar.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="sku">SKU</Label>
+                    <Input id="sku" placeholder="Enter SKU" disabled {...register("sku")} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="product_code">Product Code</Label>
+                    <Input id="product_code" placeholder="Enter product code" disabled {...register("product_code")} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Price</Label>
+                    <Input id="price" type="number" step="0.01" placeholder="Enter price" disabled {...register("price")} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="stock">Stock</Label>
+                    <Input id="stock" type="number" placeholder="Enter stock quantity" {...register("stock")} />
+                    {errors.stock && <p className="text-sm text-destructive">{errors.stock.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="sort_order">Sort Order</Label>
+                    <Input id="sort_order" type="number" placeholder="1" {...register("sort_order")} />
+                    {errors.sort_order && <p className="text-sm text-destructive">{errors.sort_order.message}</p>}
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label>Status</Label>
+                      <p className="text-sm text-muted-foreground">Enable or disable this variant</p>
+                    </div>
+                    <Controller
+                      name="status"
+                      control={control}
+                      render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label>Featured</Label>
+                      <p className="text-sm text-muted-foreground">Mark this variant as featured</p>
+                    </div>
+                    <Controller
+                      name="is_featured"
+                      control={control}
+                      render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+                    />
+                  </div>
+
+                  <div className="space-y-2 col-span-2">
+                    <Label>Product Brochure (Optional)</Label>
+                    <Controller
+                      name="brochure"
+                      control={control}
+                      render={({ field }) => (
+                        <FileUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          accept="application/pdf"
+                          preview={false}
+                          maxSize={10 * 1024 * 1024}
+                        />
+                      )}
+                    />
+                    <p className="text-sm text-muted-foreground">Upload a product brochure (PDF only, max 10MB)</p>
+                  </div>
                 </div>
 
-                <div className="space-y-2 col-span-2">
-                  <Label>Product Brochure (Optional)</Label>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea id="description" placeholder="Enter product description" className="min-h-[100px]" {...register("description")} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description_ar">Description (Arabic)</Label>
+                    <Textarea id="description_ar" placeholder="أدخل وصف المنتج" className="min-h-[100px]" dir="rtl" {...register("description_ar")} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="enhance_title">Enhance Title</Label>
+                    <Input id="enhance_title" placeholder="Enter enhance title" {...register("enhance_title")} />
+                    {errors.enhance_title && <p className="text-sm text-destructive">{errors.enhance_title.message}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="enhance_title_ar">Enhance Title (Arabic)</Label>
+                    <Input id="enhance_title_ar" placeholder="أدخل عنوان التحسين" dir="rtl" {...register("enhance_title_ar")} />
+                    {errors.enhance_title_ar && <p className="text-sm text-destructive">{errors.enhance_title_ar.message}</p>}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label>Details (Optional)</Label>
                   <Controller
-                    name="brochure"
+                    name="details"
                     control={control}
                     render={({ field }) => (
-                      <FileUpload
-                        value={field.value}
-                        onChange={field.onChange}
-                        accept="application/pdf"
-                        preview={false}
-                        maxSize={10 * 1024 * 1024}
-                      />
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter detailed product information..." />
                     )}
                   />
-                  <p className="text-sm text-muted-foreground">Upload a product brochure (PDF only, max 10MB)</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea id="description" placeholder="Enter product description" className="min-h-[100px]" {...register("description")} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description_ar">Description (Arabic)</Label>
-                  <Textarea id="description_ar" placeholder="أدخل وصف المنتج" className="min-h-[100px]" dir="rtl" {...register("description_ar")} />
+                  <Label>Details (Arabic) (Optional)</Label>
+                  <Controller
+                    name="details_ar"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل المنتج..." dir="rtl" />
+                    )}
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="enhance_title">Enhance Title</Label>
-                  <Input id="enhance_title" placeholder="Enter enhance title" {...register("enhance_title")} />
-                  {errors.enhance_title && <p className="text-sm text-destructive">{errors.enhance_title.message}</p>}
+                  <Label>Details Points (Optional)</Label>
+                  <Controller
+                    name="details_points"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter product detail points..." />
+                    )}
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="enhance_title_ar">Enhance Title (Arabic)</Label>
-                  <Input id="enhance_title_ar" placeholder="أدخل عنوان التحسين" dir="rtl" {...register("enhance_title_ar")} />
-                  {errors.enhance_title_ar && <p className="text-sm text-destructive">{errors.enhance_title_ar.message}</p>}
+                  <Label>Details Points (Arabic) (Optional)</Label>
+                  <Controller
+                    name="details_points_ar"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل نقاط تفاصيل المنتج..." dir="rtl" />
+                    )}
+                  />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label>Details (Optional)</Label>
-                <Controller
-                  name="details"
-                  control={control}
-                  render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter detailed product information..." />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Details (Arabic) (Optional)</Label>
-                <Controller
-                  name="details_ar"
-                  control={control}
-                  render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل المنتج..." dir="rtl" />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Details Points (Optional)</Label>
-                <Controller
-                  name="details_points"
-                  control={control}
-                  render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter product detail points..." />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Details Points (Arabic) (Optional)</Label>
-                <Controller
-                  name="details_points_ar"
-                  control={control}
-                  render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل نقاط تفاصيل المنتج..." dir="rtl" />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Additional Details (Optional)</Label>
-                <Controller
-                  name="additional_details"
-                  control={control}
-                  render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter any additional product details..." />
-                  )}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Additional Details (Arabic) (Optional)</Label>
-                <Controller
-                  name="additional_details_ar"
-                  control={control}
-                  render={({ field }) => (
-                    <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إإضافية للمنتج..." dir="rtl" />
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                <div className="space-y-2">
+                  <Label>Additional Details (Optional)</Label>
+                  <Controller
+                    name="additional_details"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="Enter any additional product details..." />
+                    )}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Additional Details (Arabic) (Optional)</Label>
+                  <Controller
+                    name="additional_details_ar"
+                    control={control}
+                    render={({ field }) => (
+                      <RichTextEditor value={field.value || ""} onChange={field.onChange} placeholder="أدخل تفاصيل إإضافية للمنتج..." dir="rtl" />
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </>
         )}
 
@@ -705,158 +702,122 @@ export default function ProductVariantForm() {
         )}
 
         {/* Category Selection */}
-        {isEditing && allCategories.length > 0 && (() => {
-          const parentCategories = allCategories.filter((c) => !c.parent_id);
-          const childrenOf = (parentId: number) =>
-            allCategories.filter((c) => c.parent_id === parentId);
+        {isEditing &&
+          allCategories.length > 0 &&
+          (() => {
+            const parentCategories = allCategories.filter((c) => !c.parent_id);
+            const childrenOf = (parentId: number) => allCategories.filter((c) => c.parent_id === parentId);
 
-          const toggleParent = (parentId: number, childIds: number[], checked: boolean) => {
-            setSelectedCategoryIds((prev) => {
-              const without = prev.filter((id) => id !== parentId && !childIds.includes(id));
-              return checked ? [...without, parentId, ...childIds] : without;
-            });
-          };
+            const toggleParent = (parentId: number, checked: boolean) => {
+              setSelectedCategoryIds((prev) =>
+                checked ? [...prev, parentId] : prev.filter((id) => id !== parentId),
+              );
+            };
 
-          const toggleChild = (childId: number, parentId: number, childIds: number[], checked: boolean) => {
-            setSelectedCategoryIds((prev) => {
-              const next = checked ? [...prev, childId] : prev.filter((id) => id !== childId);
-              const anyChildSelected = childIds.some((id) => next.includes(id));
-              const withoutParent = next.filter((id) => id !== parentId);
-              return anyChildSelected ? [...withoutParent, parentId] : withoutParent;
-            });
-          };
+            const toggleChild = (childId: number, checked: boolean) => {
+              setSelectedCategoryIds((prev) =>
+                checked ? [...prev, childId] : prev.filter((id) => id !== childId),
+              );
+            };
 
-          const selectedCats = selectedCategoryIds
-            .map((id) => allCategories.find((c) => c.id === id))
-            .filter(Boolean) as typeof allCategories;
+            const selectedCats = selectedCategoryIds.map((id) => allCategories.find((c) => c.id === id)).filter(Boolean) as typeof allCategories;
 
-          return (
-            <Card>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-muted-foreground" />
-                    <CardTitle className="text-base">Categories</CardTitle>
-                  </div>
-                  {selectedCategoryIds.length > 0 && (
-                    <Badge variant="secondary" className="text-xs font-medium">
-                      {selectedCategoryIds.length} selected
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Selected chips */}
-                {selectedCats.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {selectedCats.map((cat) => (
-                      <Badge
-                        key={cat.id}
-                        variant="outline"
-                        className="gap-1 pr-1 text-xs font-normal h-6"
-                      >
-                        {cat.name}
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSelectedCategoryIds((prev) =>
-                              prev.filter((i) => i !== cat.id)
-                            )
-                          }
-                          className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 transition-opacity"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
+            return (
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4 text-muted-foreground" />
+                      <CardTitle className="text-base">Categories</CardTitle>
+                    </div>
+                    {selectedCategoryIds.length > 0 && (
+                      <Badge variant="secondary" className="text-xs font-medium">
+                        {selectedCategoryIds.length} selected
                       </Badge>
-                    ))}
+                    )}
                   </div>
-                )}
-              </CardHeader>
 
-              <CardContent>
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                  {parentCategories.map((parent) => {
-                    const children = childrenOf(parent.id!);
-                    const childIds = children.map((c) => c.id!);
-                    const selectedChildren = childIds.filter((id) => selectedCategoryIds.includes(id));
-                    const allSelected = childIds.length > 0 && selectedChildren.length === childIds.length;
-                    const someSelected = selectedChildren.length > 0 && !allSelected;
-                    const parentChecked = childIds.length === 0
-                      ? selectedCategoryIds.includes(parent.id!)
-                      : allSelected;
-                    const isGroupActive = parentChecked || someSelected;
-
-                    return (
-                      <div
-                        key={parent.id}
-                        className={`rounded-lg border p-3 space-y-2.5 transition-colors ${
-                          isGroupActive
-                            ? "border-primary/40 bg-primary/5"
-                            : "border-border bg-muted/20 hover:bg-muted/40"
-                        }`}
-                      >
-                        {/* Parent row */}
-                        <div className={`flex items-center gap-2 ${children.length > 0 ? "pb-2 border-b border-border/60" : ""}`}>
-                          <Checkbox
-                            id={`category-${parent.id}`}
-                            checked={someSelected ? "indeterminate" : parentChecked}
-                            onCheckedChange={(checked) => {
-                              if (childIds.length === 0) {
-                                setSelectedCategoryIds((prev) =>
-                                  checked
-                                    ? [...prev, parent.id!]
-                                    : prev.filter((id) => id !== parent.id)
-                                );
-                              } else {
-                                toggleParent(parent.id!, childIds, !!checked);
-                              }
-                            }}
-                          />
-                          <label
-                            htmlFor={`category-${parent.id}`}
-                            className="text-sm font-semibold leading-none cursor-pointer flex-1"
+                  {/* Selected chips */}
+                  {selectedCats.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-2">
+                      {selectedCats.map((cat) => (
+                        <Badge key={cat.id} variant="outline" className="gap-1 pr-1 text-xs font-normal h-6">
+                          {cat.name}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCategoryIds((prev) => prev.filter((i) => i !== cat.id))}
+                            className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 transition-opacity"
                           >
-                            {parent.name}
-                          </label>
-                          {someSelected && (
-                            <span className="text-xs text-muted-foreground tabular-nums">
-                              {selectedChildren.length}/{childIds.length}
-                            </span>
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </CardHeader>
+
+                <CardContent>
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                    {parentCategories.map((parent) => {
+                      const children = childrenOf(parent.id!);
+                      const childIds = children.map((c) => c.id!);
+                      const selectedChildren = childIds.filter((id) => selectedCategoryIds.includes(id));
+                      const someChildSelected = selectedChildren.length > 0 && selectedChildren.length < childIds.length;
+                      const parentChecked = selectedCategoryIds.includes(parent.id!);
+                      const isGroupActive = parentChecked || selectedChildren.length > 0;
+
+                      return (
+                        <div
+                          key={parent.id}
+                          className={`rounded-lg border p-3 space-y-2.5 transition-colors ${
+                            isGroupActive ? "border-primary/40 bg-primary/5" : "border-border bg-muted/20 hover:bg-muted/40"
+                          }`}
+                        >
+                          {/* Parent row */}
+                          <div className={`flex items-center gap-2 ${children.length > 0 ? "pb-2 border-b border-border/60" : ""}`}>
+                            <Checkbox
+                              id={`category-${parent.id}`}
+                              checked={someChildSelected && !parentChecked ? "indeterminate" : parentChecked}
+                              onCheckedChange={(checked) => toggleParent(parent.id!, !!checked)}
+                            />
+                            <label htmlFor={`category-${parent.id}`} className="text-sm font-semibold leading-none cursor-pointer flex-1">
+                              {parent.name}
+                            </label>
+                            {selectedChildren.length > 0 && (
+                              <span className="text-xs text-muted-foreground tabular-nums">
+                                {selectedChildren.length}/{childIds.length}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Children rows */}
+                          {children.length > 0 && (
+                            <div className="space-y-2">
+                              {children.map((child) => (
+                                <div key={child.id} className="flex items-center gap-2 group">
+                                  <Checkbox
+                                    id={`category-${child.id}`}
+                                    checked={selectedCategoryIds.includes(child.id!)}
+                                    onCheckedChange={(checked) => toggleChild(child.id!, !!checked)}
+                                  />
+                                  <label
+                                    htmlFor={`category-${child.id}`}
+                                    className="text-xs leading-none cursor-pointer text-muted-foreground group-hover:text-foreground transition-colors"
+                                  >
+                                    {child.name}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
-
-                        {/* Children rows */}
-                        {children.length > 0 && (
-                          <div className="space-y-2">
-                            {children.map((child) => (
-                              <div
-                                key={child.id}
-                                className="flex items-center gap-2 group"
-                              >
-                                <Checkbox
-                                  id={`category-${child.id}`}
-                                  checked={selectedCategoryIds.includes(child.id!)}
-                                  onCheckedChange={(checked) =>
-                                    toggleChild(child.id!, parent.id!, childIds, !!checked)
-                                  }
-                                />
-                                <label
-                                  htmlFor={`category-${child.id}`}
-                                  className="text-xs leading-none cursor-pointer text-muted-foreground group-hover:text-foreground transition-colors"
-                                >
-                                  {child.name}
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })()}
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
 
         {/* Submit Buttons */}
         <div className="flex justify-end gap-4">
