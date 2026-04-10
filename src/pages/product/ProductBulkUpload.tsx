@@ -134,7 +134,6 @@ function downloadTemplate() {
     "title_ar",
     "design_title",
     "design_title_ar",
-    "price",
     "stock",
     "is_featured",
     "sort_order",
@@ -166,14 +165,12 @@ function downloadTemplate() {
     "متوسط",
     "Classic Black",
     "أسود كلاسيك",
-    349.99,
     50,
     true,
-    false,
     1,
     true,
     "office-chairs,ergonomic",
-    "color:black|size:medium",
+    "color:black:30|size:medium:20",
     "Premium ergonomic office chair with lumbar support",
     "كرسي مكتبي مريح وعالي الجودة",
     "Best-in-class Executive Chair",
@@ -199,14 +196,12 @@ function downloadTemplate() {
     "كبير",
     "Classic Black",
     "أسود كلاسيك",
-    369.99,
     30,
-    false,
     false,
     2,
     true,
     "office-chairs,ergonomic",
-    "color:black|size:large",
+    "color:black:30|size:large:40",
     "Premium ergonomic office chair with lumbar support",
     "كرسي مكتبي مريح وعالي الجودة",
     "Best-in-class Executive Chair",
@@ -232,14 +227,12 @@ function downloadTemplate() {
     "متوسط",
     "Pearl White",
     "أبيض لؤلؤي",
-    379.99,
     20,
     true,
-    false,
     1,
     true,
     "office-chairs",
-    "color:white|size:medium",
+    "color:white:30|size:medium:30",
     "Premium ergonomic office chair",
     "كرسي مكتبي مريح",
     "Pearl White Executive Chair",
@@ -531,8 +524,7 @@ function UploadGuide() {
                   <code className="bg-muted px-1 rounded">no</code>
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Decimal fields</span> (<code className="bg-muted px-1 rounded">base_price</code>,{" "}
-                  <code className="bg-muted px-1 rounded">price</code>) — must be valid numbers, e.g.{" "}
+                  <span className="font-medium text-foreground">Decimal fields</span> (<code className="bg-muted px-1 rounded">base_price</code>) — must be valid numbers, e.g.{" "}
                   <code className="bg-muted px-1 rounded">299.99</code>
                 </p>
                 <p>
@@ -558,12 +550,13 @@ function UploadGuide() {
               <p className="text-xs font-semibold">Attributes — product_variants</p>
               <div className="space-y-1.5 text-xs text-muted-foreground">
                 <p>
-                  Enter pipe-separated <code className="bg-muted px-1 rounded">attribute_slug:value_slug</code> pairs. Example:{" "}
-                  <code className="bg-muted px-1 rounded">color:black|size:medium</code>
+                  Enter pipe-separated <code className="bg-muted px-1 rounded">attribute_slug:value_slug:price</code> triplets. Example:{" "}
+                  <code className="bg-muted px-1 rounded">color:black:30|size:medium:20</code>
                 </p>
                 <p>Both the attribute slug and the value slug must exist in the database — unknown slugs are a validation error.</p>
                 <p>
-                  A variant can have multiple attribute pairs separated by <code className="bg-muted px-1 rounded">|</code>.
+                  The <code className="bg-muted px-1 rounded">:price</code> part is the surcharge for that attribute (e.g. +30). The variant's final price is computed as{" "}
+                  <code className="bg-muted px-1 rounded">base_price + sum of attribute prices</code>. Price defaults to <code className="bg-muted px-1 rounded">0</code> if omitted.
                 </p>
               </div>
             </div>
@@ -720,13 +713,12 @@ function ColumnReference() {
         "title_ar",
         "design_title",
         "design_title_ar",
-        "price",
         "stock",
         "is_featured",
         "sort_order",
         "status",
         "categories (comma-separated slugs)",
-        "attributes (attr_slug:value_slug | separated)",
+        "attributes (attr_slug:value_slug:price | separated)",
         "description",
         "description_ar",
         "enhance_title",
@@ -1012,7 +1004,6 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
     "title_ar",
     "design_title",
     "design_title_ar",
-    "price",
     "stock",
     "is_featured",
     "sort_order",
@@ -1044,7 +1035,6 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
     v.title_ar,
     v.design_title,
     v.design_title_ar,
-    v.price,
     v.stock,
     boolStr(v.is_featured),
     v.sort_order,
