@@ -82,13 +82,9 @@ export default function LandingPageForm() {
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === "title") {
-        const currentSlug = form.getValues("slug");
-
-        if (!isEditing || !currentSlug) {
-          form.setValue("slug", slugify(value.title || ""), {
-            shouldValidate: true,
-          });
-        }
+        form.setValue("slug", slugify(value.title || ""), {
+          shouldValidate: true,
+        });
       }
     });
 

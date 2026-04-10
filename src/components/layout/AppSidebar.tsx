@@ -225,9 +225,9 @@ const newsSection = [
   { title: "News", url: "/news", icon: List },
 ];
 
-// const landingPagesSection = [
-//   { title: "Landing Pages", url: "/landing-page", icon: List },
-// ];
+const landingPagesSection = [
+  { title: "Landing Pages", url: "/landing-page", icon: List },
+];
 
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
@@ -729,13 +729,13 @@ export function AppSidebar() {
           isCollapsed={isCollapsed}        />
 
         {/* Landing Pages */}
-        {/* <SidebarCollapsibleSection
+         <SidebarCollapsibleSection
           title="Landing Pages"
           icon={Layers}
           open={landingPagesOpen}
           setOpen={setLandingPagesOpen}
           items={landingPagesSection}
-          isCollapsed={isCollapsed}        /> */}
+          isCollapsed={isCollapsed}        /> 
 
         {/* Settings */}
         <SidebarCollapsibleSection

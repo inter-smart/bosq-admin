@@ -10,6 +10,8 @@ export interface ProductType {
   title_ar: string;
   description?: string;
   description_ar?: string;
+  features?: string;
+  features_ar?: string;
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
   media_alt?: string;
@@ -52,24 +54,6 @@ export interface ProductVariantData {
   id: number;
   sku: string;
   title: string;
-  model?: {
-    id: number;
-    title: string;
-    product?: {
-      id: number;
-      slug: string;
-      title: string;
-      category?: {
-        id: number;
-        slug: string;
-        name: string;
-        name_ar: string;
-        parent_id: number | null;
-        parent?: { id: number; slug: string; name: string; name_ar: string; parent_id: number | null };
-        children?: { id: number; slug: string; name: string; name_ar: string; parent_id: number | null }[];
-      };
-    };
-  };
 }
 
 export interface ProductTypeWithRelations extends ProductType {
@@ -91,21 +75,10 @@ export interface ProductCategory {
   children?: ProductCategory[];
 }
 
-export interface Product {
-  id: number;
-  title: string;
-  slug: string;
-}
-
-export interface ProductModel {
-  id: number;
-  title: string;
-  slug: string;
-}
-
 export interface ProductVariant {
   id: number;
   sku: string;
+  title?: string;
 }
 
 interface ListResponse<T> {
@@ -159,14 +132,6 @@ export const fetchCategoriesForProductType = async (): Promise<ListResponse<Prod
   return apiCall("/product-type/product-category");
 };
 
-export const fetchProductsForProductType = async (categoryId: number): Promise<ListResponse<Product>> => {
-  return apiCall(`/product-type/product/${categoryId}`);
-};
-
-export const fetchModelsForProductType = async (productId: number): Promise<ListResponse<ProductModel>> => {
-  return apiCall(`/product-type/product-model/${productId}`);
-};
-
-export const fetchVariantsForProductType = async (modelId: number): Promise<ListResponse<ProductVariant>> => {
-  return apiCall(`/product-type/product-variant/${modelId}`);
+export const fetchVariantsByCategoryForProductType = async (categoryId: number): Promise<ListResponse<ProductVariant>> => {
+  return apiCall(`/product-type/variants-by-category/${categoryId}`);
 };
