@@ -16,7 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ChevronDown, ChevronUp} from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { fetchProductCategoryList, deleteProductCategory, ProductCategory } from "@/services/product/productCategoriesApi";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -125,11 +125,7 @@ export default function ProductCategoriesList() {
       header: "Name",
       cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("name")}</div>,
     },
-      {
-      accessorKey: "parent_name",
-      header: "Parent Category",
-      cell: ({ row }) => <div className="font-medium max-w-[200px] truncate">{row.getValue("parent_name")}</div>,
-    },
+
     {
       accessorKey: "slug",
       header: "Slug",
@@ -155,10 +151,7 @@ export default function ProductCategoriesList() {
       enableSorting: true,
       cell: ({ row }) => {
         const item = row.original;
-        const currentVal =
-          editingSortOrder[item.id!] !== undefined
-            ? editingSortOrder[item.id!]
-            : String(row.getValue("sort_order") || 1);
+        const currentVal = editingSortOrder[item.id!] !== undefined ? editingSortOrder[item.id!] : String(row.getValue("sort_order") || 1);
         const numVal = Math.max(1, parseInt(currentVal, 10) || 1);
         return (
           <div className="flex items-center gap-1">
@@ -182,12 +175,7 @@ export default function ProductCategoriesList() {
               }}
               className="w-14 h-7 text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-7 w-7"
-              onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}
-            >
+            <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}>
               <ChevronUp className="h-3 w-3" />
             </Button>
           </div>
