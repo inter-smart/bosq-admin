@@ -230,7 +230,7 @@ export default function MetaTagsForm() {
                     rows={3}
                   />
                   <p className="text-sm text-muted-foreground mt-1">
-                    {`eg: <meta name="description" content="John Doe" />`}
+                    {`eg: <meta name="description" content="John Doe"/>`}
                   </p>
                 </div>
                 <div>
@@ -244,7 +244,7 @@ export default function MetaTagsForm() {
                   />
 
                   <p className="text-sm text-muted-foreground mt-1">
-                    {`eg: <meta name="description" content="John Doe" />`}
+                    {`eg: <meta name="description" content="John Doe"/>`}
                   </p>
                 </div>
               </div>
