@@ -74,7 +74,7 @@ export default function ProjectsForm() {
   const [featureValueArInput, setFeatureValueArInput] = useState<string>("");
 
   // Categories
-  const [categories, setCategories] = useState<{ id: number; title: string; title_ar: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string; name_ar: string }[]>([]);
 
   const form = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),

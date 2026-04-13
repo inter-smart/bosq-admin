@@ -30,21 +30,19 @@ import {
   createProductType,
   updateProductType,
   fetchCategoriesForProductType,
-  fetchProductsForProductType,
-  fetchModelsForProductType,
-  fetchVariantsForProductType,
+  fetchVariantsByCategoryForProductType,
   ProductCategory,
-  Product,
-  ProductModel,
   ProductVariant,
   ProductVariantData,
 } from "@/services/landingPage/productTypeApi";
 import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 import {
   ProductTypeFormData,
   productTypeSchema,
 } from "@/schemas/productTypeSchema";
 import { Badge } from "@/components/ui/badge";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export default function ProductTypeForm() {
   const { toast } = useToast();
@@ -69,20 +67,11 @@ export default function ProductTypeForm() {
 
   // Cascade state
   const [categories, setCategories] = useState<ProductCategory[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [models, setModels] = useState<ProductModel[]>([]);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
 
   const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<
     number | null
   >(null);
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<
-    number | null
-  >(null);
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(
-    null
-  );
-  const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
 
   const isLoadingRef = useRef(false);
 
@@ -92,7 +81,9 @@ export default function ProductTypeForm() {
       title: "",
       title_ar: "",
       description: "",
+      features: "",
       description_ar: "",
+      features_ar: "",
       media_alt: "",
       media_alt_ar: "",
       sort_order: 1,
@@ -108,30 +99,15 @@ export default function ProductTypeForm() {
     }
   }, [id, isEditing]);
 
-  // Load products when category changes
+  // Load variants directly when category changes
   useEffect(() => {
     if (isLoadingRef.current) return;
-    const categoryId = selectedSubCategoryId || selectedParentCategoryId;
-    if (categoryId) {
-      loadProducts(categoryId);
+    if (selectedParentCategoryId) {
+      loadVariantsByCategory(selectedParentCategoryId);
+    } else {
+      setVariants([]);
     }
-  }, [selectedSubCategoryId, selectedParentCategoryId]);
-
-  // Load models when product changes
-  useEffect(() => {
-    if (isLoadingRef.current) return;
-    if (selectedProductId) {
-      loadModels(selectedProductId);
-    }
-  }, [selectedProductId]);
-
-  // Load variants when model changes
-  useEffect(() => {
-    if (isLoadingRef.current) return;
-    if (selectedModelId) {
-      loadVariants(selectedModelId);
-    }
-  }, [selectedModelId]);
+  }, [selectedParentCategoryId]);
 
   const loadCategories = async () => {
     try {
@@ -148,39 +124,9 @@ export default function ProductTypeForm() {
     }
   };
 
-  const loadProducts = async (categoryId: number) => {
+  const loadVariantsByCategory = async (categoryId: number) => {
     try {
-      const response = await fetchProductsForProductType(categoryId);
-      if (response.success) {
-        setProducts(response.data);
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load products",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loadModels = async (productId: number) => {
-    try {
-      const response = await fetchModelsForProductType(productId);
-      if (response.success) {
-        setModels(response.data);
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load product models",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loadVariants = async (modelId: number) => {
-    try {
-      const response = await fetchVariantsForProductType(modelId);
+      const response = await fetchVariantsByCategoryForProductType(categoryId);
       if (response.success) {
         setVariants(response.data);
       }
@@ -205,7 +151,9 @@ export default function ProductTypeForm() {
           title: data.title || "",
           title_ar: data.title_ar || "",
           description: data.description || "",
+          features: data.features || "",
           description_ar: data.description_ar || "",
+          features_ar: data.features_ar || "",
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           sort_order: data.sort_order || 1,
@@ -247,23 +195,19 @@ export default function ProductTypeForm() {
     }
   };
 
-  const addVariant = (variantId: number) => {
-    const variant = variants.find((v) => v.id === variantId);
-    if (!variant) return;
-
-    if (selectedVariants.some((v) => v.id === variantId)) {
-      toast({
-        title: "Info",
-        description: "This variant is already added",
-      });
-      return;
-    }
-
-    const updated = [...selectedVariants, { id: variant.id, sku: variant.sku }];
-    setSelectedVariants(updated);
+  const handleVariantsChange = (selectedIds: (number | string)[]) => {
+    const ids = selectedIds as number[];
+    const updated = variants
+      .filter((v) => ids.includes(v.id))
+      .map((v) => ({ id: v.id, sku: v.sku }));
+    const outsideModel = selectedVariants.filter(
+      (sv) => !variants.some((v) => v.id === sv.id)
+    );
+    const merged = [...outsideModel, ...updated];
+    setSelectedVariants(merged);
     form.setValue(
       "product_variants",
-      updated.map((v) => v.id)
+      merged.map((v) => v.id)
     );
   };
 
@@ -285,8 +229,10 @@ export default function ProductTypeForm() {
       formData.append("title", data.title);
       formData.append("title_ar", data.title_ar);
       if (data.description) formData.append("description", data.description);
+      if (data.features) formData.append("features", data.features);
       if (data.description_ar)
         formData.append("description_ar", data.description_ar);
+      if (data.features_ar) formData.append("features_ar", data.features_ar);
       if (data.media_alt) formData.append("media_alt", data.media_alt);
       if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
       formData.append("sort_order", (data.sort_order || 0).toString());
@@ -411,6 +357,23 @@ export default function ProductTypeForm() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="features"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Features</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            placeholder="Enter product type features"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -444,6 +407,24 @@ export default function ProductTypeForm() {
                             rows={4}
                             {...field}
                             dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="features_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Features (Arabic)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            dir="rtl"
+                            placeholder="أدخل مميزات نوع المنتج"
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -554,25 +535,20 @@ export default function ProductTypeForm() {
               <CardTitle>Product Variants</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {/* 1. Parent Category */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1. Category */}
                 <div className="space-y-2">
-                  <FormLabel>Parent Category</FormLabel>
+                  <FormLabel>Category</FormLabel>
                   <Select
                     onValueChange={(value) => {
                       const catId = parseInt(value);
                       setSelectedParentCategoryId(catId);
-                      setSelectedSubCategoryId(null);
-                      setSelectedProductId(null);
-                      setSelectedModelId(null);
-                      setProducts([]);
-                      setModels([]);
                       setVariants([]);
                     }}
                     value={selectedParentCategoryId?.toString() || ""}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select parent category" />
+                      <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (
@@ -584,130 +560,18 @@ export default function ProductTypeForm() {
                   </Select>
                 </div>
 
-                {/* 2. Subcategory */}
+                {/* 2. Variants (directly from category) */}
                 {selectedParentCategoryId && (
                   <div className="space-y-2">
-                    <FormLabel>Subcategory</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        const subCatId = parseInt(value);
-                        setSelectedSubCategoryId(subCatId);
-                        setSelectedProductId(null);
-                        setSelectedModelId(null);
-                        setProducts([]);
-                        setModels([]);
-                        setVariants([]);
-                      }}
-                      value={selectedSubCategoryId?.toString() || ""}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select subcategory" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories
-                          .find((c) => c.id === selectedParentCategoryId)
-                          ?.children?.map((sub) => (
-                            <SelectItem
-                              key={sub.id}
-                              value={sub.id.toString()}
-                            >
-                              {sub.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {/* 3. Product */}
-                {(selectedSubCategoryId || selectedParentCategoryId) && (
-                  <div className="space-y-2">
-                    <FormLabel>Product</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        const prodId = parseInt(value);
-                        setSelectedProductId(prodId);
-                        setSelectedModelId(null);
-                        setModels([]);
-                        setVariants([]);
-                      }}
-                      value={selectedProductId?.toString() || ""}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select product" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {products.map((prod) => (
-                          <SelectItem
-                            key={prod.id}
-                            value={prod.id.toString()}
-                          >
-                            {prod.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {/* 4. Model */}
-                {selectedProductId && (
-                  <div className="space-y-2">
-                    <FormLabel>Model</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        const modelId = parseInt(value);
-                        setSelectedModelId(modelId);
-                        setVariants([]);
-                      }}
-                      value={selectedModelId?.toString() || ""}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {models.map((model) => (
-                          <SelectItem
-                            key={model.id}
-                            value={model.id.toString()}
-                          >
-                            {model.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {/* 5. Variant */}
-                {selectedModelId && (
-                  <div className="space-y-2">
-                    <FormLabel>Variant</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        addVariant(parseInt(value));
-                      }}
-                      value=""
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Add variant" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {variants
-                          .filter(
-                            (v) =>
-                              !selectedVariants.some((sv) => sv.id === v.id)
-                          )
-                          .map((variant) => (
-                            <SelectItem
-                              key={variant.id}
-                              value={variant.id.toString()}
-                            >
-                              {variant.sku}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Variants</FormLabel>
+                    <MultiSelect
+                      options={variants.map((v) => ({ id: v.id, name: v.sku }))}
+                      selected={selectedVariants
+                        .filter((sv) => variants.some((v) => v.id === sv.id))
+                        .map((sv) => sv.id)}
+                      onChange={handleVariantsChange}
+                      placeholder="Select variants..."
+                    />
                   </div>
                 )}
               </div>
