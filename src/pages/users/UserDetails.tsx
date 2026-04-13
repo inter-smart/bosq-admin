@@ -191,7 +191,7 @@ export default function UserDetails() {
               )}
             </div>
 
-            <Separator />
+            {/* <Separator />
 
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Mobile Verified</span>
@@ -206,7 +206,7 @@ export default function UserDetails() {
                   Not Verified
                 </Badge>
               )}
-            </div>
+            </div> */}
 
             <Separator />
 
