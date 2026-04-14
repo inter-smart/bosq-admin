@@ -620,29 +620,27 @@ export default function OrderDetails() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Section 1: User Details */}
-        <Card className="border-primary/10 shadow-sm">
-          <CardHeader className="pb-3 border-b bg-muted/30">
-            <CardTitle className="text-base flex items-center gap-2">
-              <User className="h-4 w-4 text-primary" />
-              Customer Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                {order.user?.first_name?.[0]}
-                {order.user?.last_name?.[0]}
-              </div>
-              <div>
-                <p className="font-semibold text-lg leading-none">
-                  {order?.user?.name
-                    ? (order?.user?.name ?? null)
-                    : `${order?.user?.first_name} ${order?.user?.last_name}`}
-                </p>
-              </div>
-            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {/* Section 1: User Details */}
+                <Card className="border-primary/10 shadow-sm">
+                    <CardHeader className="pb-3 border-b bg-muted/30">
+                        <CardTitle className="text-base flex items-center gap-2">
+                            <User className="h-4 w-4 text-primary" />
+                            Customer Information
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-5 space-y-4">
+                        <div className="flex items-start gap-3">
+                            {/* <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                {order.user?.name}
+                            </div> */}
+                            <div>
+                                <p className="font-semibold text-lg leading-none">
+                                    {order.user ? `${order.user.name}` : "Guest Customer"}
+                                </p>
+                                {/* <p className="text-sm text-muted-foreground mt-1">ID: #{order.user?.id || 'N/A'}</p> */}
+                            </div>
+                        </div>
 
             <div className="space-y-3 pt-2">
               <div className="flex items-center gap-2 text-sm">

@@ -19,8 +19,7 @@ export interface Order {
     updatedAt: string;
     user?: {
         id: number;
-        first_name: string;
-        last_name: string;
+        name: string;
         email: string;
         name: string;
         mobile: string;
