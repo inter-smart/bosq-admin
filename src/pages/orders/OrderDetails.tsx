@@ -216,9 +216,7 @@ export default function OrderDetails() {
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
 
-      const firstName = order?.user?.first_name?.trim();
-      const lastName = order?.user?.last_name?.trim();
-      const fullName = [firstName, lastName].filter(Boolean).join(" ");
+      const fullName = order?.user?.name?.trim();
 
       const customerName = fullName || order?.user?.name || "Guest Customer";
 
@@ -349,7 +347,7 @@ export default function OrderDetails() {
           doc.rect(margin, y - 4, contentWidth, 10, "F");
         }
         const unitPrice = parseFloat(item.price);
-        const discountAmt = parseFloat(item.discount_amount);
+        const discountAmt = parseFloat(item?.discount_amount);
         const lineSubtotal = unitPrice * item.quantity - discountAmt;
         const productTitle = item.variant?.title ?? "Unknown Product";
         const sku = item.variant?.sku ? `SKU: ${item.variant.sku}` : "";

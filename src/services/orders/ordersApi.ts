@@ -9,6 +9,7 @@ export interface Order {
     payment_type: 'cod' | 'online';
     subtotal: string;
     discount_total: string;
+    discount_amount: number;
     tax_total: string;
     grand_total: string;
     est_delivery_details?: string | null;
@@ -21,7 +22,6 @@ export interface Order {
         id: number;
         name: string;
         email: string;
-        name: string;
         mobile: string;
     };
     items?: OrderItem[];

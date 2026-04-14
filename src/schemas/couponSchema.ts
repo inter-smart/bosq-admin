@@ -139,6 +139,18 @@ export const couponSchema = z
       message: "Maximum discount amount must be at least the discount value for flat discounts",
       path: ["max_discount_amount"],
     },
+  )
+  .refine(
+    (data) => {
+      if (data.discount_type === "flat" && data.discount_value >= data.min_order_amount) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Discount value must be less than min order amount",
+      path: ["discount_value"],
+    },
   );
 
 export type CouponFormData = z.infer<typeof couponSchema>;
