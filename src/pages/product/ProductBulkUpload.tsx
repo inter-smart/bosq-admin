@@ -524,8 +524,8 @@ function UploadGuide() {
                   <code className="bg-muted px-1 rounded">no</code>
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Decimal fields</span> (<code className="bg-muted px-1 rounded">base_price</code>) — must be valid numbers, e.g.{" "}
-                  <code className="bg-muted px-1 rounded">299.99</code>
+                  <span className="font-medium text-foreground">Decimal fields</span> (<code className="bg-muted px-1 rounded">base_price</code>) —
+                  must be valid numbers, e.g. <code className="bg-muted px-1 rounded">299.99</code>
                 </p>
                 <p>
                   <span className="font-medium text-foreground">Integer fields</span> (<code className="bg-muted px-1 rounded">stock</code>,{" "}
@@ -555,8 +555,9 @@ function UploadGuide() {
                 </p>
                 <p>Both the attribute slug and the value slug must exist in the database — unknown slugs are a validation error.</p>
                 <p>
-                  The <code className="bg-muted px-1 rounded">:price</code> part is the surcharge for that attribute (e.g. +30). The variant's final price is computed as{" "}
-                  <code className="bg-muted px-1 rounded">base_price + sum of attribute prices</code>. Price defaults to <code className="bg-muted px-1 rounded">0</code> if omitted.
+                  The <code className="bg-muted px-1 rounded">:price</code> part is the surcharge for that attribute (e.g. +30). The variant's final
+                  price is computed as <code className="bg-muted px-1 rounded">base_price + sum of attribute prices</code>. Price defaults to{" "}
+                  <code className="bg-muted px-1 rounded">0</code> if omitted.
                 </p>
               </div>
             </div>
@@ -1000,6 +1001,7 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
     "base_title",
     "model_title",
     "product_code",
+    "sku",
     "title",
     "title_ar",
     "design_title",
@@ -1031,6 +1033,7 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
     v.base_title,
     v.model_title,
     v.product_code,
+    v.sku,
     v.title,
     v.title_ar,
     v.design_title,

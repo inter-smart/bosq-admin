@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
   MoreHorizontal,
   Edit,
@@ -238,7 +239,7 @@ export default function AllProductVariantsList() {
     }
   };
 
-  const { editingSortOrder, handleSortOrderChange } =
+  const { editingSortOrder, handleSortOrderChange, handleStatusChange } =
     useCommonTableActions<ProductVariant>({
       modelName: "ProductVariants",
       data: variants,
@@ -424,6 +425,19 @@ export default function AllProductVariantsList() {
             >
               <ChevronUp className="h-3 w-3" />
             </Button>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const item = row.original;
+        const status = row.getValue("status") as boolean;
+        return (
+          <div className="flex items-center gap-2">
+            <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
           </div>
         );
       },
