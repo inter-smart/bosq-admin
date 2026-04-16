@@ -129,7 +129,6 @@ function downloadTemplate() {
   const variantHeaders = [
     "base_title",
     "model_title",
-    "product_code",
     "title",
     "title_ar",
     "design_title",
@@ -709,7 +708,6 @@ function ColumnReference() {
       // sku is auto-generated — do NOT include a sku column
       required: ["base_title", "model_title"],
       optional: [
-        "product_code",
         "title",
         "title_ar",
         "design_title",
@@ -1000,7 +998,6 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
   const variantHeaders = [
     "base_title",
     "model_title",
-    "product_code",
     "sku",
     "title",
     "title_ar",
@@ -1032,7 +1029,6 @@ function generateUpdateSheet(data: { bases: any[]; models: any[]; variants: any[
   const variantDataRows = data.variants.map((v) => [
     v.base_title,
     v.model_title,
-    v.product_code,
     v.sku,
     v.title,
     v.title_ar,
