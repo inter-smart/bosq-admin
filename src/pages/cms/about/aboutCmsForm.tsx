@@ -576,8 +576,7 @@ export default function AboutCmsForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {watchBannerMediaType === "image" ? "Image" : "Video"}{" "}
-                          (Desktop)
+                          {watchBannerMediaType === "image" ? "Image (Desktop)" : "Banner Video"}
                         </FormLabel>
                         <FormControl>
                           <FileUpload
@@ -589,7 +588,7 @@ export default function AboutCmsForm() {
                                 : "video/*"
                             }
                             recommendedDimensions="1920px x 732px"
-                            placeholder={`Upload desktop banner ${watchBannerMediaType}`}
+                            placeholder={`Upload ${watchBannerMediaType === "image"? "desktop banner": "banner"} ${watchBannerMediaType}`}
                           />
                         </FormControl>
                         <FormMessage />
@@ -611,6 +610,28 @@ export default function AboutCmsForm() {
                               accept="image/*"
                               recommendedDimensions="640px × 1138px"
                               placeholder="Upload mobile banner image"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+
+                  {watchBannerMediaType === "video" && (
+                    <FormField
+                      control={form.control}
+                      name="banner_video_thumbnail_path"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Video Thumbnail</FormLabel>
+                          <FormControl>
+                            <FileUpload
+                              value={field.value}
+                              onChange={field.onChange}
+                              accept="image/*"
+                              recommendedDimensions="1920px x 732px"
+                              placeholder="Upload video thumbnail image"
                             />
                           </FormControl>
                           <FormMessage />
@@ -655,30 +676,6 @@ export default function AboutCmsForm() {
                               accept="image/*"
                               recommendedDimensions="640px × 1138px"
                               placeholder="Upload mobile banner image (AR)"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
-
-                {watchBannerMediaType === "video" && (
-                  <div className="grid grid-cols-1 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="banner_video_thumbnail_path"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Video Thumbnail</FormLabel>
-                          <FormControl>
-                            <FileUpload
-                              value={field.value}
-                              onChange={field.onChange}
-                              accept="image/*"
-                              recommendedDimensions="1920px x 732px"
-                              placeholder="Upload video thumbnail image"
                             />
                           </FormControl>
                           <FormMessage />

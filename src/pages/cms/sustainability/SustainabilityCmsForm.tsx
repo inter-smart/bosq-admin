@@ -346,7 +346,7 @@ export default function SustainabilityCmsForm() {
                   name="banner_media_desktop_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Banner Media (Desktop)</FormLabel>
+                      <FormLabel>{watchBannerMediaType === "image" ? "Banner Media (Desktop)" : "Banner Video"}</FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
@@ -357,7 +357,7 @@ export default function SustainabilityCmsForm() {
                               : "image/*"
                           }
                           recommendedDimensions="1920px × 730px"
-                          placeholder="Upload desktop banner media"
+                          placeholder={`Upload ${watchBannerMediaType === "image" ? "desktop banner" : "banner video"}`}
                           preview={true}
                         />
                       </FormControl>

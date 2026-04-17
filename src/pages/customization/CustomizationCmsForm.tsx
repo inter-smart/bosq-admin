@@ -417,13 +417,13 @@ export default function CustomizationCmsForm() {
                   name="banner_media_desktop_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Desktop Media</FormLabel>
+                      <FormLabel>{ watchBannerMediaType === "image"?"Desktop Media": "Banner Video"}</FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
                           onChange={field.onChange}
                           accept={watchBannerMediaType === "video" ? "video/*" : "image/*"}
-                          placeholder="Upload desktop media"
+                          placeholder={`Upload ${watchBannerMediaType === "image" ? "desktop media": "banner video"}`}
                           recommendedDimensions="1920px × 730px"
                         />
                       </FormControl>
@@ -438,7 +438,7 @@ export default function CustomizationCmsForm() {
                     name="banner_media_thumbnail"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Banner Thumbnail</FormLabel>
+                        <FormLabel>Video Thumbnail</FormLabel>
                         <FormControl>
                           <FileUpload
                             value={field.value}
