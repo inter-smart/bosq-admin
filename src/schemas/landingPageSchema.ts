@@ -7,7 +7,7 @@ export const landingPageSchema = z.object({
   description: commonValidations.requiredText("Description"),
   button_label: commonValidations.optionalString("Button Label"),
   link: commonValidations.optionalString("Link"),
-  slug: commonValidations.requiredString("Slug"),
+  slug: commonValidations.slug,
   media_alt: commonValidations.optionalString("Media Alt Text"),
 
   // Arabic fields

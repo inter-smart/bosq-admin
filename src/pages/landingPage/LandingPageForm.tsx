@@ -401,9 +401,9 @@ export default function LandingPageForm() {
               <CardTitle>Landing Page Content</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* English Fields */}
-                <div className="space-y-4">
+              <div className="space-y-4">
+                {/* Title row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="title"
@@ -420,6 +420,27 @@ export default function LandingPageForm() {
 
                   <FormField
                     control={form.control}
+                    name="title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان الصفحة المقصودة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Slug row — English only */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
                     name="slug"
                     render={({ field }) => (
                       <FormItem>
@@ -431,7 +452,11 @@ export default function LandingPageForm() {
                       </FormItem>
                     )}
                   />
+                  <div />
+                </div>
 
+                {/* Description row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
                     name="description"
@@ -451,60 +476,6 @@ export default function LandingPageForm() {
 
                   <FormField
                     control={form.control}
-                    name="button_label"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Button Label</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Shop Now" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="link"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Button Link</FormLabel>
-                        <FormControl>
-                          <Input placeholder="/products/summer-collection" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          The URL where the button will navigate
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Arabic Fields */}
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الصفحة المقصودة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="h-[42px]"></div>
-
-                  <FormField
-                    control={form.control}
                     name="description_ar"
                     render={({ field }) => (
                       <FormItem>
@@ -515,6 +486,23 @@ export default function LandingPageForm() {
                             placeholder="أدخل وصف الصفحة المقصودة"
                             {...field}
                           />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Button Label row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="button_label"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Label</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Shop Now" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -539,6 +527,24 @@ export default function LandingPageForm() {
                     )}
                   />
                 </div>
+
+                {/* Button Link — English only */}
+                <FormField
+                  control={form.control}
+                  name="link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Button Link</FormLabel>
+                      <FormControl>
+                        <Input placeholder="/products/summer-collection" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        The URL where the button will navigate
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </CardContent>
           </Card>

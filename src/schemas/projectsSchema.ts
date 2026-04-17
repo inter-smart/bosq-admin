@@ -77,7 +77,7 @@ export const projectSchema = z.object({
   section4_title_ar: commonValidations.requiredString("Section 4 Title (Arabic)"),
 
   // SEO & Slug
-  slug: commonValidations.requiredString("Slug"),
+  slug: commonValidations.slug,
   meta_title: commonValidations.requiredString("Meta Title"),
   meta_description: commonValidations.requiredText("Meta Description"),
   meta_keywords: commonValidations.requiredString("Meta Keywords"),

@@ -47,6 +47,14 @@ export const commonValidations = {
   // Status validations
   booleanStatus: () => z.boolean(),
 
+  slug: z
+    .string()
+    .min(1, `Slug is required`)
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug must contain only lowercase letters, numbers and hyphens",
+    ),
+
   statusEnum: z.enum(["active", "inactive"]),
 
   publishStatus: z.enum(["published", "draft"]),
@@ -98,9 +106,13 @@ export const commonValidations = {
           })
           .refine(
             (f) =>
-              ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"].includes(
-                f.type,
-              ),
+              [
+                "image/jpeg",
+                "image/png",
+                "image/webp",
+                "image/gif",
+                "image/avif",
+              ].includes(f.type),
             {
               message: "Only JPEG, PNG, WEBP, and GIF images are allowed",
             },
