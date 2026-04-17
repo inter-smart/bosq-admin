@@ -86,6 +86,10 @@ export default function ProductTypeForm() {
       features_ar: "",
       media_alt: "",
       media_alt_ar: "",
+      button: "",
+      button_ar: "",
+      link: "",
+      slug: "",
       sort_order: 1,
       status: true,
       product_variants: [],
@@ -156,6 +160,10 @@ export default function ProductTypeForm() {
           features_ar: data.features_ar || "",
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
+          button: data.button || "",
+          button_ar: data.button_ar || "",
+          link: data.link || "",
+          slug: data.slug || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           product_variants: data.product_variants || [],
@@ -235,6 +243,10 @@ export default function ProductTypeForm() {
       if (data.features_ar) formData.append("features_ar", data.features_ar);
       if (data.media_alt) formData.append("media_alt", data.media_alt);
       if (data.media_alt_ar) formData.append("media_alt_ar", data.media_alt_ar);
+      if (data.button) formData.append("button", data.button);
+      if (data.button_ar) formData.append("button_ar", data.button_ar);
+      if (data.link) formData.append("link", data.link);
+      if (data.slug) formData.append("slug", data.slug);
       formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
       formData.append("landing_page_id", landingPageId || "");
@@ -526,6 +538,83 @@ export default function ProductTypeForm() {
                   )}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Call to Action Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Call to Action</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="button"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Label</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter button label" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="link"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Link URL</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter URL" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="button_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Label (Arabic)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل نص الزر"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input placeholder="enter-slug-here" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Unique URL identifier (lowercase letters, numbers, and hyphens only)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

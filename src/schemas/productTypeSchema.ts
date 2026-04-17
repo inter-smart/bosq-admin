@@ -12,6 +12,13 @@ export const productTypeSchema = z.object({
   media_mobile_path: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]).optional(),
   media_alt: commonValidations.optionalString("Media Alt Text"),
   media_alt_ar: commonValidations.optionalString("Media Alt Text (Arabic)"),
+  button: commonValidations.optionalString("Button Text"),
+  button_ar: commonValidations.optionalString("Button Text (Arabic)"),
+  link: commonValidations.optionalString("Link"),
+  slug: z.string().optional().refine(
+    (v) => !v || /^[a-z0-9-]+$/.test(v),
+    { message: "Slug must be lowercase letters, numbers, and hyphens only" }
+  ),
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
   product_variants: z.array(z.number()).optional(),

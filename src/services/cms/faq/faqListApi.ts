@@ -29,6 +29,7 @@ export interface FaqList {
       id: number;
       product_id: number;
     };
+    categories?: Array<{ id: number }>;
   };
 }
 

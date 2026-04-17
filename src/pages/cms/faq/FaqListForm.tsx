@@ -87,10 +87,13 @@ export default function FaqListForm() {
   const selectedType = form.watch("type");
 
   useEffect(() => {
-    loadDropdownData();
-    if (isEditing && id) {
-      loadFaqData(parseInt(id));
-    }
+    const init = async () => {
+      await loadDropdownData();
+      if (isEditing && id) {
+        loadFaqData(parseInt(id));
+      }
+    };
+    init();
   }, [id, isEditing]);
 
   // Load models when base product changes
@@ -144,12 +147,11 @@ export default function FaqListForm() {
   }, [selectedCategoryId]);
 
   // Reset initialization flag after cascade pre-population effects have run
-  // Must be placed AFTER the cascade effects so it executes last in the same render cycle
   useEffect(() => {
     if (isInitializingRef.current && selectedBaseId && selectedModelId) {
       isInitializingRef.current = false;
     }
-  }, [selectedBaseId, selectedModelId]);
+  }, [selectedBaseId, selectedModelId, selectedCategoryId]);
 
   const loadDropdownData = async () => {
     try {
@@ -202,7 +204,20 @@ export default function FaqListForm() {
 
             if (modelsRes.success) setModels(modelsRes.data.models);
             if (catRes.success) setVariantCategories(catRes.data.categories);
-            if (varRes.success) setVariants(varRes.data.variants);
+
+            // Restore category filter from the saved variant's categories
+            const variantCategoryIds = data.product_variant.categories?.map((c) => c.id) ?? [];
+            const matchedCategory = catRes.success
+              ? catRes.data.categories.find((c) => variantCategoryIds.includes(c.id))
+              : undefined;
+
+            if (matchedCategory) {
+              setSelectedCategoryId(matchedCategory.id);
+              const filteredVarRes = await getFaqVariantsDropdown(modelId, matchedCategory.id);
+              if (filteredVarRes.success) setVariants(filteredVarRes.data.variants);
+            } else {
+              if (varRes.success) setVariants(varRes.data.variants);
+            }
 
             // Triggers cascade effects (blocked by isInitializingRef)
             setSelectedBaseId(baseId);
@@ -429,7 +444,10 @@ export default function FaqListForm() {
                     <div className="space-y-1">
                       <label className="text-sm font-medium">Base Product</label>
                       <Select
-                        onValueChange={(value) => setSelectedBaseId(parseInt(value))}
+                        onValueChange={(value) => {
+                          form.setValue("product_variant_id", undefined);
+                          setSelectedBaseId(parseInt(value));
+                        }}
                         value={selectedBaseId ? String(selectedBaseId) : ""}
                       >
                         <SelectTrigger>
@@ -450,12 +468,15 @@ export default function FaqListForm() {
                       <div className="space-y-1">
                         <label className="text-sm font-medium">Model</label>
                         <Select
-                          onValueChange={(value) => setSelectedModelId(parseInt(value))}
+                          onValueChange={(value) => {
+                            form.setValue("product_variant_id", undefined);
+                            setSelectedModelId(parseInt(value));
+                          }}
                           value={selectedModelId ? String(selectedModelId) : ""}
                           disabled={models.length === 0}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={models.length === 0 ? "Loading..." : "Select model"} />
+                            <SelectValue placeholder={models.length === 0 ? "No models found" : "Select model"} />
                           </SelectTrigger>
                           <SelectContent>
                             {models.map((m) => (
@@ -473,9 +494,10 @@ export default function FaqListForm() {
                       <div className="space-y-1">
                         <label className="text-sm font-medium">Category (Optional)</label>
                         <Select
-                          onValueChange={(value) =>
-                            setSelectedCategoryId(value === "all" ? null : parseInt(value))
-                          }
+                          onValueChange={(value) => {
+                            form.setValue("product_variant_id", undefined);
+                            setSelectedCategoryId(value === "all" ? null : parseInt(value));
+                          }}
                           value={selectedCategoryId ? String(selectedCategoryId) : "all"}
                         >
                           <SelectTrigger>
@@ -508,7 +530,7 @@ export default function FaqListForm() {
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder={variants.length === 0 ? "Loading..." : "Select variant"} />
+                                  <SelectValue placeholder={variants.length === 0 ? "No variants found" : "Select variant"} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>

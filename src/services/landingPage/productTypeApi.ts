@@ -16,6 +16,9 @@ export interface ProductType {
   media_mobile_path?: string | null;
   media_alt?: string;
   media_alt_ar?: string;
+  button?: string;
+  button_ar?: string;
+  link?: string;
   slug?: string;
   landing_page_id?: number;
   product_variants: number[];
