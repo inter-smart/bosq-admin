@@ -37,6 +37,7 @@ export default function ProductCategoriesForm() {
       name: "",
       name_ar: "",
       description: "",
+      description_ar: "",
       parent_id: null,
       media_path: null,
       sort_order: 1,
@@ -78,6 +79,7 @@ export default function ProductCategoriesForm() {
           name: data.name || "",
           name_ar: data.name_ar || "",
           description: data.description || "",
+          description_ar: data.description_ar || "",
           parent_id: data.parent_id || null,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -104,6 +106,7 @@ export default function ProductCategoriesForm() {
       formData.append("name", data.name);
       formData.append("name_ar", data.name_ar);
       formData.append("description", data.description || "");
+      formData.append("description_ar", data.description_ar || "");
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -249,6 +252,28 @@ export default function ProductCategoriesForm() {
                           value={field.value || ""}
                           onChange={field.onChange}
                           placeholder="Enter category description..."
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Description (Arabic) */}
+              <div className="mt-6">
+                <FormField
+                  control={form.control}
+                  name="description_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description (Arabic)</FormLabel>
+                      <FormControl>
+                        <RichTextEditor
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="Enter category description in Arabic..."
+                          dir="rtl"
                         />
                       </FormControl>
                       <FormMessage />

@@ -9,11 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import HardBreak from "@tiptap/extension-hard-break";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Bold,
   Italic,
@@ -72,7 +68,7 @@ export function RichTextEditor({
         },
       }),
       Image.configure({
-        inline: false,
+        inline: true,
         allowBase64: true,
       }),
       Link.configure({
@@ -146,7 +142,7 @@ export function RichTextEditor({
           "[&_img]:rounded-md [&_img]:border [&_img]:max-w-full",
           "[&_strong]:font-bold [&_em]:italic",
           "[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:mt-5 [&_h2]:mb-3",
-          "[&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2"
+          "[&_h3]:text-2xl [&_h3]:font-bold [&_h3]:mt-4 [&_h3]:mb-2",
         ),
 
         dir: dir,
@@ -162,18 +158,7 @@ export function RichTextEditor({
           const currentLength = editor?.getText().length || 0;
 
           // Allow backspace, delete, and navigation keys
-          if (
-            [
-              "Backspace",
-              "Delete",
-              "ArrowLeft",
-              "ArrowRight",
-              "ArrowUp",
-              "ArrowDown",
-              "Home",
-              "End",
-            ].includes(event.key)
-          ) {
+          if (["Backspace", "Delete", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
             return false;
           }
 
@@ -251,14 +236,7 @@ export function RichTextEditor({
     disabled?: boolean;
     children: React.ReactNode;
   }) => (
-    <Button
-      type="button"
-      variant={isActive ? "default" : "ghost"}
-      size="sm"
-      onClick={onClick}
-      disabled={disabled}
-      className="h-8 w-8 p-0"
-    >
+    <Button type="button" variant={isActive ? "default" : "ghost"} size="sm" onClick={onClick} disabled={disabled} className="h-8 w-8 p-0">
       {children}
     </Button>
   );
@@ -277,43 +255,28 @@ export function RichTextEditor({
         <div className="border-b bg-muted/50 p-2">
           <div className={cn("flex flex-wrap gap-1")}>
             {/* Text Formatting */}
-            <ToolbarButton
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              isActive={editor.isActive("bold")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive("bold")}>
               <Bold className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              isActive={editor.isActive("italic")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive("italic")}>
               <Italic className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => editor.chain().focus().toggleStrike().run()}
-              isActive={editor.isActive("strike")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive("strike")}>
               <Strikethrough className="h-4 w-4" />
             </ToolbarButton>
 
             {/* Text Color */}
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 relative"
-                >
+                <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0 relative">
                   <Palette className="h-4 w-4" />
                   {editor.getAttributes("textStyle").color && (
                     <div
                       className="absolute bottom-0 right-0 w-2 h-2 rounded-full border border-white"
                       style={{
-                        backgroundColor:
-                          editor.getAttributes("textStyle").color,
+                        backgroundColor: editor.getAttributes("textStyle").color,
                       }}
                     />
                   )}
@@ -322,32 +285,22 @@ export function RichTextEditor({
               <PopoverContent className="w-64 p-3">
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      Color Picker
-                    </Label>
+                    <Label className="text-sm font-medium mb-2 block">Color Picker</Label>
                     <input
                       type="color"
-                      value={
-                        editor.getAttributes("textStyle").color || "#000000"
-                      }
+                      value={editor.getAttributes("textStyle").color || "#000000"}
                       className="w-full h-10 rounded border border-input bg-background cursor-pointer"
-                      onChange={(e) =>
-                        editor.chain().focus().setColor(e.target.value).run()
-                      }
+                      onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
                       title="Select color"
                     />
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      Hex Color
-                    </Label>
+                    <Label className="text-sm font-medium mb-2 block">Hex Color</Label>
                     <input
                       type="text"
                       placeholder="#000000"
-                      defaultValue={
-                        editor.getAttributes("textStyle").color || ""
-                      }
+                      defaultValue={editor.getAttributes("textStyle").color || ""}
                       className="w-full px-3 py-2 text-sm rounded border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
                       onChange={(e) => {
                         const color = e.target.value;
@@ -364,13 +317,7 @@ export function RichTextEditor({
                     />
                   </div>
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => editor.chain().focus().unsetColor().run()}
-                    className="w-full"
-                  >
+                  <Button type="button" variant="outline" size="sm" onClick={() => editor.chain().focus().unsetColor().run()} className="w-full">
                     Reset Color
                   </Button>
                 </div>
@@ -381,51 +328,35 @@ export function RichTextEditor({
 
             {/* Headings */}
             <ToolbarButton
-              onClick={() =>
-                editor.chain().focus().toggleHeading({ level: 2 }).run()
-              }
+              onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
               isActive={editor.isActive("heading", { level: 2 })}
             >
               <Heading2 className="h-4 w-4" />
             </ToolbarButton>
 
             <ToolbarButton
-              onClick={() =>
-                editor.chain().focus().toggleHeading({ level: 3 }).run()
-              }
+              onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
               isActive={editor.isActive("heading", { level: 3 })}
             >
               <Heading3 className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => editor.chain().focus().setParagraph().run()}
-              isActive={editor.isActive("paragraph")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().setParagraph().run()} isActive={editor.isActive("paragraph")}>
               <Type className="h-4 w-4" />
             </ToolbarButton>
 
             <Separator orientation="vertical" className="mx-1 h-8" />
 
             {/* Lists */}
-            <ToolbarButton
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
-              isActive={editor.isActive("bulletList")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive("bulletList")}>
               <List className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              isActive={editor.isActive("orderedList")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive("orderedList")}>
               <ListOrdered className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => editor.chain().focus().toggleBlockquote().run()}
-              isActive={editor.isActive("blockquote")}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} isActive={editor.isActive("blockquote")}>
               <Quote className="h-4 w-4" />
             </ToolbarButton>
 
@@ -440,64 +371,38 @@ export function RichTextEditor({
               <Smile className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={handleLinkToggle}
-              isActive={editor.isActive("link")}
-            >
+            <ToolbarButton onClick={handleLinkToggle} isActive={editor.isActive("link")}>
               <LinkIcon className="h-4 w-4" />
             </ToolbarButton>
 
             <Separator orientation="vertical" className="mx-1 h-8" />
 
             {/* Undo/Redo */}
-            <ToolbarButton
-              onClick={() => editor.chain().focus().undo().run()}
-              disabled={!editor.can().undo()}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()}>
               <Undo className="h-4 w-4" />
             </ToolbarButton>
 
-            <ToolbarButton
-              onClick={() => editor.chain().focus().redo().run()}
-              disabled={!editor.can().redo()}
-            >
+            <ToolbarButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()}>
               <Redo className="h-4 w-4" />
             </ToolbarButton>
           </div>
         </div>
 
         {/* Editor */}
-        <EditorContent
-          editor={editor}
-          className="min-h-[300px]"
-          placeholder={placeholder}
-        />
+        <EditorContent editor={editor} className="min-h-[300px]" placeholder={placeholder} />
 
         {/* Character counter */}
         {maxLength && (
-          <div
-            className={cn(
-              "px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground",
-              dir === "rtl" ? "text-left" : "text-right"
-            )}
-          >
+          <div className={cn("px-3 py-2 border-t bg-muted/30 text-sm text-muted-foreground", dir === "rtl" ? "text-left" : "text-right")}>
             {editor?.getText().length || 0}/{maxLength} characters
           </div>
         )}
       </div>
 
       {/* Modals */}
-      <IconSelector
-        isOpen={showIconSelector}
-        onClose={() => setShowIconSelector(false)}
-        onSelectIcon={handleIconSelect}
-      />
+      <IconSelector isOpen={showIconSelector} onClose={() => setShowIconSelector(false)} onSelectIcon={handleIconSelect} />
 
-      <ImageUploadModal
-        isOpen={showImageModal}
-        onClose={() => setShowImageModal(false)}
-        onInsertImage={handleImageInsert}
-      />
+      <ImageUploadModal isOpen={showImageModal} onClose={() => setShowImageModal(false)} onInsertImage={handleImageInsert} />
     </div>
   );
 }

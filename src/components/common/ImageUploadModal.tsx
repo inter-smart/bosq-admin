@@ -1,22 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileUpload } from "./FileUpload";
 
 interface ImageUploadModalProps {
@@ -31,6 +19,7 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
   const [altText, setAltText] = useState("");
   const [titleText, setTitleText] = useState("");
   const [activeTab, setActiveTab] = useState("upload");
+  const [uploading, setUploading] = useState(false);
 
   const handleReset = () => {
     setUploadedFile(null);
@@ -45,15 +34,28 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
     onClose();
   };
 
-  const handleInsert = () => {
+  const handleInsert = async () => {
     let src = "";
-    
+
     if (activeTab === "upload" && uploadedFile) {
-      src = URL.createObjectURL(uploadedFile);
+      try {
+        setUploading(true);
+        const formData = new FormData();
+        formData.append("image", uploadedFile);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/backend/media-upload`, { method: "POST", body: formData });
+        const json = await response.json();
+        if (!response.ok || !json.data?.path) throw new Error(json.message || "Upload failed");
+        src = `${import.meta.env.VITE_IMAGE_URL}/${json.data.path}`;
+      } catch (err) {
+        console.error("Image upload failed:", err);
+        return;
+      } finally {
+        setUploading(false);
+      }
     } else if (activeTab === "url" && imageUrl.trim()) {
       src = imageUrl.trim();
     }
-    
+
     if (src && altText.trim()) {
       onInsertImage(src, altText.trim(), titleText.trim() || undefined);
       handleClose();
@@ -61,8 +63,7 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
   };
 
   const canInsert = () => {
-    const hasValidSrc = (activeTab === "upload" && uploadedFile) || 
-                       (activeTab === "url" && imageUrl.trim());
+    const hasValidSrc = (activeTab === "upload" && uploadedFile) || (activeTab === "url" && imageUrl.trim());
     return hasValidSrc && altText.trim();
   };
 
@@ -82,16 +83,14 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Insert Image</DialogTitle>
-          <DialogDescription>
-            Upload an image or provide a URL to insert into your content
-          </DialogDescription>
+          <DialogDescription>Upload an image or provide a URL to insert into your content</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-1">
               <TabsTrigger value="upload">Upload Image</TabsTrigger>
-              <TabsTrigger value="url">Image URL</TabsTrigger>
+              {/* <TabsTrigger value="url">Image URL</TabsTrigger> */}
             </TabsList>
 
             <TabsContent value="upload" className="space-y-4">
@@ -104,7 +103,6 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
                   placeholder="Drop an image file here or click to browse"
                   preview={true}
                   className="mt-2"
-                  enableCropping={false}
                 />
               </div>
             </TabsContent>
@@ -133,7 +131,7 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
                   alt={altText || "Preview"}
                   className="max-w-full h-auto max-h-48 rounded border"
                   onError={(e) => {
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.style.display = "none";
                   }}
                 />
               </div>
@@ -151,9 +149,7 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
               rows={2}
               required
             />
-            <p className="text-xs text-muted-foreground mt-1">
-              Alt text is required for accessibility and SEO
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">Alt text is required for accessibility and SEO</p>
           </div>
 
           {/* Title Text - Optional */}
@@ -172,11 +168,8 @@ export function ImageUploadModal({ isOpen, onClose, onInsertImage }: ImageUpload
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button 
-            onClick={handleInsert} 
-            disabled={!canInsert()}
-          >
-            Insert Image
+          <Button onClick={handleInsert} disabled={!canInsert() || uploading}>
+            {uploading ? "Uploading..." : "Insert Image"}
           </Button>
         </DialogFooter>
       </DialogContent>
