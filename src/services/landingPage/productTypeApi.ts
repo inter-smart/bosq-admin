@@ -12,8 +12,7 @@ export interface ProductType {
   description_ar?: string;
   features?: string;
   features_ar?: string;
-  media_desktop_path?: string | null;
-  media_mobile_path?: string | null;
+  media_path?: string | null;
   media_alt?: string;
   media_alt_ar?: string;
   button?: string;
