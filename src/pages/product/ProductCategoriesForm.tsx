@@ -8,6 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
+import { RichTextEditor } from "@/components/common/RichTextEditor";
 import { Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -35,6 +36,7 @@ export default function ProductCategoriesForm() {
     defaultValues: {
       name: "",
       name_ar: "",
+      description: "",
       parent_id: null,
       media_path: null,
       sort_order: 1,
@@ -75,6 +77,7 @@ export default function ProductCategoriesForm() {
         form.reset({
           name: data.name || "",
           name_ar: data.name_ar || "",
+          description: data.description || "",
           parent_id: data.parent_id || null,
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
@@ -100,6 +103,7 @@ export default function ProductCategoriesForm() {
 
       formData.append("name", data.name);
       formData.append("name_ar", data.name_ar);
+      formData.append("description", data.description || "");
       formData.append("sort_order", (data.sort_order || 1).toString());
       formData.append("status", (data.status ?? true).toString());
 
@@ -226,6 +230,27 @@ export default function ProductCategoriesForm() {
                         </SelectContent>
                       </Select>
                       <FormDescription>Leave empty for a top-level category</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Description */}
+              <div className="mt-6">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <RichTextEditor
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="Enter category description..."
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
