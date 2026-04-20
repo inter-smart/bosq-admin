@@ -96,7 +96,10 @@ export interface OrderResponse {
 export const fetchOrders = async (
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
+    status?: string,
+    startDate?: string,
+    endDate?: string,
 ): Promise<OrdersResponse> => {
     const params: Record<string, string | number> = {
         page,
@@ -107,6 +110,9 @@ export const fetchOrders = async (
         params.search = search;
         params.limit = 100000;
     }
+    if (status && status !== "all") params.status = status;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
 
     return apiCall('/orders', { params });
 };
