@@ -23,7 +23,10 @@ import {
   createLandingPage,
   updateLandingPage,
 } from "@/services/landingPage/landingPageApi";
-import { landingPageSchema, LandingPageFormData } from "@/schemas/landingPageSchema";
+import {
+  landingPageSchema,
+  LandingPageFormData,
+} from "@/schemas/landingPageSchema";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 
@@ -35,8 +38,12 @@ export default function LandingPageForm() {
   const MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [desktopImageFile, setDesktopImageFile] = useState<File | string | null>(null);
-  const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(null);
+  const [desktopImageFile, setDesktopImageFile] = useState<
+    File | string | null
+  >(null);
+  const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
+    null,
+  );
 
   const form = useForm<LandingPageFormData>({
     resolver: zodResolver(landingPageSchema),
@@ -201,7 +208,8 @@ export default function LandingPageForm() {
       toast({
         title: "Error",
         description:
-          error.message || `Failed to ${isEditing ? "update" : "create"} landing page`,
+          error.message ||
+          `Failed to ${isEditing ? "update" : "create"} landing page`,
         variant: "destructive",
       });
     } finally {
@@ -212,7 +220,9 @@ export default function LandingPageForm() {
   if (initialLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading landing page data...</div>
+        <div className="text-muted-foreground">
+          Loading landing page data...
+        </div>
       </div>
     );
   }
@@ -239,6 +249,255 @@ export default function LandingPageForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Landing Page Content Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Landing Page Content</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                {/* Title row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter landing page title"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل عنوان الصفحة المقصودة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Slug row — English only */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="slug"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slug</FormLabel>
+                        <FormControl>
+                          <Input placeholder="auto-generated-slug" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div />
+                </div>
+
+                {/* Description row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            placeholder="Enter landing page description"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description (AR)</FormLabel>
+                        <FormControl>
+                          <RichTextEditor
+                            dir="rtl"
+                            placeholder="أدخل وصف الصفحة المقصودة"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Button Label row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="button_label"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Label</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Shop Now" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="button_label_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Button Label (AR)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="تسوق الآن" {...field} dir="rtl" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Button Link — English only */}
+                <FormField
+                  control={form.control}
+                  name="link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Button Link</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="/products/summer-collection"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        The URL where the button will navigate
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Landing Page Images Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Landing Page Images</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="media_desktop_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desktop Image</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setDesktopImageFile(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload desktop image"
+                          preview={true}
+                          recommendedDimensions="1920px x 1080px"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_mobile_path"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Image</FormLabel>
+                      <FormControl>
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setMobileImageFile(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload mobile image"
+                          recommendedDimensions="600px x 400px"
+                          preview={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_alt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Alt Text</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter media alt text for accessibility"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="media_alt_ar"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Media Alt Text (AR)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="أدخل النص البديل للوسائط"
+                          {...field}
+                          dir="rtl"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* SEO Meta Card */}
           <Card>
             <CardHeader>
@@ -391,253 +650,6 @@ export default function LandingPageForm() {
                     )}
                   />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Landing Page Content Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Landing Page Content</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
-                {/* Title row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter landing page title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الصفحة المقصودة"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Slug row — English only */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input placeholder="auto-generated-slug" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div />
-                </div>
-
-                {/* Description row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            placeholder="Enter landing page description"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="description_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description (AR)</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            dir="rtl"
-                            placeholder="أدخل وصف الصفحة المقصودة"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Button Label row */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="button_label"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Button Label</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Shop Now" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="button_label_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Button Label (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="تسوق الآن"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Button Link — English only */}
-                <FormField
-                  control={form.control}
-                  name="link"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Button Link</FormLabel>
-                      <FormControl>
-                        <Input placeholder="/products/summer-collection" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        The URL where the button will navigate
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Landing Page Images Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Landing Page Images</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="media_desktop_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Desktop Image</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={(file) => {
-                            field.onChange(file);
-                            setDesktopImageFile(file);
-                          }}
-                          accept="image/*"
-                          placeholder="Upload desktop image"
-                          preview={true}
-                          recommendedDimensions="1920px x 1080px"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="media_mobile_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mobile Image</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={(file) => {
-                            field.onChange(file);
-                            setMobileImageFile(file);
-                          }}
-                          accept="image/*"
-                          placeholder="Upload mobile image"
-                          recommendedDimensions="600px x 400px"
-                          preview={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="media_alt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Media Alt Text</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter media alt text for accessibility"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="media_alt_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Media Alt Text (AR)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="أدخل النص البديل للوسائط"
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </CardContent>
           </Card>

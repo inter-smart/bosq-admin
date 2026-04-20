@@ -133,10 +133,10 @@ export default function ProductTypeList() {
       ),
     },
     {
-      accessorKey: "media_desktop_path",
+      accessorKey: "media_path",
       header: "Image",
       cell: ({ row }) => {
-        const mediaPath = row.getValue("media_desktop_path") as string | null;
+        const mediaPath = row.getValue("media_path") as string | null;
         return mediaPath ? (
           <img
             src={`${import.meta.env.VITE_IMAGE_URL}/${mediaPath}`}

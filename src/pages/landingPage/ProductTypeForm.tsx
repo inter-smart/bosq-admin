@@ -53,12 +53,7 @@ export default function ProductTypeForm() {
 
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
-  const [desktopImageFile, setDesktopImageFile] = useState<
-    File | string | null
-  >(null);
-  const [mobileImageFile, setMobileImageFile] = useState<
-    File | string | null
-  >(null);
+  const [imageFile, setImageFile] = useState<File | string | null>(null);
 
   // Selected variants list
   const [selectedVariants, setSelectedVariants] = useState<
@@ -169,15 +164,10 @@ export default function ProductTypeForm() {
           product_variants: data.product_variants || [],
         });
 
-        if (data.media_desktop_path) {
-          const desktopUrl = `${MEDIA_URL}/${data.media_desktop_path}`;
-          setDesktopImageFile(desktopUrl);
-          form.setValue("media_desktop_path", desktopUrl);
-        }
-        if (data.media_mobile_path) {
-          const mobileUrl = `${MEDIA_URL}/${data.media_mobile_path}`;
-          setMobileImageFile(mobileUrl);
-          form.setValue("media_mobile_path", mobileUrl);
+        if (data.media_path) {
+          const imageUrl = `${MEDIA_URL}/${data.media_path}`;
+          setImageFile(imageUrl);
+          form.setValue("media_path", imageUrl);
         }
 
         // Populate selected variants from the response
@@ -255,11 +245,8 @@ export default function ProductTypeForm() {
         JSON.stringify(selectedVariants.map((v) => v.id))
       );
 
-      if (desktopImageFile instanceof File) {
-        formData.append("media_desktop_path", desktopImageFile);
-      }
-      if (mobileImageFile instanceof File) {
-        formData.append("media_mobile_path", mobileImageFile);
+      if (imageFile instanceof File) {
+        formData.append("media_path", imageFile);
       }
 
       if (isEditing && id) {
@@ -457,45 +444,21 @@ export default function ProductTypeForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="media_desktop_path"
+                  name="media_path"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Desktop Image</FormLabel>
+                      <FormLabel>Image</FormLabel>
                       <FormControl>
                         <FileUpload
                           value={field.value}
                           onChange={(file) => {
                             field.onChange(file);
-                            setDesktopImageFile(file);
+                            setImageFile(file);
                           }}
                           accept="image/*"
-                          placeholder="Upload desktop image"
+                          placeholder="Upload image"
                           preview={true}
                           recommendedDimensions="1920px x 1080px"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="media_mobile_path"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Mobile Image</FormLabel>
-                      <FormControl>
-                        <FileUpload
-                          value={field.value}
-                          onChange={(file) => {
-                            field.onChange(file);
-                            setMobileImageFile(file);
-                          }}
-                          accept="image/*"
-                          placeholder="Upload mobile image"
-                          recommendedDimensions="600px x 400px"
-                          preview={true}
                         />
                       </FormControl>
                       <FormMessage />
