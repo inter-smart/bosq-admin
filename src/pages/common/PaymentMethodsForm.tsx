@@ -168,7 +168,7 @@ export default function PaymentMethodsForm() {
                       <FileUpload
                         value={field.value}
                         onChange={(file) => field.onChange(file)}
-                        accept=".png, .jpg, .jpeg"
+                        accept=".png, .jpg, .jpeg, .svg"
                         preview={true}
                         recommendedDimensions="300px x 300px"
                       />
