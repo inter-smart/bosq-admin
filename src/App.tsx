@@ -20,6 +20,7 @@ const SocialMediaList = lazy(() => import("./pages/common/SocialMediaList"));
 const SocialMediaForm = lazy(() => import("./pages/common/SocialMediaForm"));
 const MetaTagsList = lazy(() => import("./pages/common/MetaTagsList"));
 const MetaTagsForm = lazy(() => import("./pages/common/MetaTagsForm"));
+const ManageMailers = lazy(() => import("./pages/common/ManageMailers"));
 
 // coupons
 const CouponsList = lazy(() => import("./pages/coupons/CouponsList"));
@@ -497,6 +498,16 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <MetaTagsForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Mailer Settings Route */}
+            <Route
+              path="/mailer-settings"
+              element={
+                <ProtectedRoute>
+                  <ManageMailers />
                 </ProtectedRoute>
               }
             />
