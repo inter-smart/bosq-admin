@@ -234,6 +234,7 @@ const commonSection = [
   { title: "Social Media", url: "/social-media", icon: Share2 },
   { title: "Payment Methods", url: "/payment-methods", icon: List },
   { title: "Meta Tags", url: "/meta-tags", icon: Tags },
+  { title: "Manage Mailers", url: "/mailer-settings", icon: Mail },
 ];
 
 const policiesSection = [
@@ -520,7 +521,7 @@ export function AppSidebar() {
     }
 
     // Auto-open Common section
-    if (["/site-settings", "/social-media", "/payment-methods", "/meta-tags"].some((r) => path.includes(r))) {
+    if (["/site-settings", "/social-media", "/payment-methods", "/meta-tags", "/mailer-settings"].some((r) => path.includes(r))) {
       setCommonOpen(true);
       return;
     }
