@@ -90,6 +90,21 @@ export const apiCall = async (
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
 
+    if (response.status === 401) {
+      // Clear all authentication data
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_data");
+      localStorage.removeItem("token_expires_at");
+      localStorage.removeItem("bosq_auth");
+      localStorage.removeItem("bosq_remember");
+
+      // Redirect to login page
+      // Use window.location.href to ensure a clean state
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+
     throw {
       message: errorData.message || errorData.error?.message || "Unknown error",
       ...errorData,
