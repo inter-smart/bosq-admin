@@ -4,27 +4,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { mailerTabSchema, type MailerTabFormData } from "@/schemas/mailerSettingsSchema";
-import {
-  fetchMailerSettings,
-  updateMailerSetting,
-  type MailerSetting,
-  type MailerType,
-} from "@/services/common/mailerSettingsApi";
+import { fetchMailerSettings, updateMailerSetting, type MailerSetting, type MailerType } from "@/services/common/mailerSettingsApi";
 
 const MAILER_TABS: { type: MailerType; label: string }[] = [
+  { type: "admin", label: "Admin" },
   { type: "auth", label: "Auth" },
   { type: "enquiries", label: "Enquiries" },
   { type: "newsletter", label: "Newsletter" },
@@ -88,7 +76,7 @@ function MailerTabForm({ type, label, initialData, onSaved }: MailerTabFormProps
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                To <span className="text-destructive">*</span>
+                From <span className="text-destructive">*</span>
               </FormLabel>
               <FormControl>
                 <Input type="email" placeholder="recipient@example.com" {...field} />
@@ -105,15 +93,9 @@ function MailerTabForm({ type, label, initialData, onSaved }: MailerTabFormProps
             <FormItem>
               <FormLabel>CC</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="cc1@example.com, cc2@example.com"
-                  {...field}
-                />
+                <Input type="text" placeholder="cc1@example.com, cc2@example.com" {...field} />
               </FormControl>
-              <FormDescription>
-                Optional. Separate multiple addresses with commas.
-              </FormDescription>
+              <FormDescription>Optional. Comma-separated, no spaces — e.g. cc1@example.com,cc2@example.com</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -152,9 +134,7 @@ export default function ManageMailers() {
   }, []);
 
   const handleSaved = (updated: MailerSetting) => {
-    setSettings((prev) =>
-      prev.map((s) => (s.type === updated.type ? updated : s))
-    );
+    setSettings((prev) => prev.map((s) => (s.type === updated.type ? updated : s)));
   };
 
   return (
@@ -167,7 +147,7 @@ export default function ManageMailers() {
           {initialLoading ? (
             <div className="py-8 text-center text-muted-foreground">Loading...</div>
           ) : (
-            <Tabs defaultValue="auth">
+            <Tabs defaultValue="admin">
               <TabsList>
                 {MAILER_TABS.map(({ type, label }) => (
                   <TabsTrigger key={type} value={type}>
@@ -178,12 +158,7 @@ export default function ManageMailers() {
 
               {MAILER_TABS.map(({ type, label }) => (
                 <TabsContent key={type} value={type}>
-                  <MailerTabForm
-                    type={type}
-                    label={label}
-                    initialData={settings.find((s) => s.type === type)}
-                    onSaved={handleSaved}
-                  />
+                  <MailerTabForm type={type} label={label} initialData={settings.find((s) => s.type === type)} onSaved={handleSaved} />
                 </TabsContent>
               ))}
             </Tabs>

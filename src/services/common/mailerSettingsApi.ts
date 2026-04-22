@@ -1,6 +1,6 @@
 import { apiCall } from "@/utils/apiUtils";
 
-export type MailerType = "auth" | "enquiries" | "newsletter" | "orders";
+export type MailerType = "auth" | "enquiries" | "newsletter" | "orders" | "admin";
 
 export interface MailerSetting {
   id: number;
@@ -27,13 +27,9 @@ export interface MailerSettingUpdateResponse {
   data: MailerSetting;
 }
 
-export const fetchMailerSettings = (): Promise<MailerSettingsResponse> =>
-  apiCall("/sitesettings/mailer-settings");
+export const fetchMailerSettings = (): Promise<MailerSettingsResponse> => apiCall("/sitesettings/mailer-settings");
 
-export const updateMailerSetting = (
-  type: MailerType,
-  data: { to_email: string; cc_emails?: string | null }
-): Promise<MailerSettingUpdateResponse> =>
+export const updateMailerSetting = (type: MailerType, data: { to_email: string; cc_emails?: string | null }): Promise<MailerSettingUpdateResponse> =>
   apiCall(`/sitesettings/mailer-settings/${type}`, {
     method: "PUT",
     data,
