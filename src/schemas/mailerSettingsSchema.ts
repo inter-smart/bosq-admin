@@ -3,9 +3,9 @@ import { z } from "zod";
 const strictEmailField = z
   .string()
   .min(1, "From email is required")
+  .email("Must be a valid email address")
   .refine((val) => val === val.trim(), "No leading or trailing spaces allowed")
-  .refine((val) => !/\s/.test(val), "Email must not contain spaces")
-  .email("Must be a valid email address");
+  .refine((val) => !/\s/.test(val), "Email must not contain spaces");
 
 export const mailerTabSchema = z.object({
   to_email: strictEmailField,
