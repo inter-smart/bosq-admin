@@ -24,20 +24,8 @@ import {
 import { fetchOrderById, updateOrder, Order } from "@/services/orders/ordersApi";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import jsPDF from "jspdf";
@@ -52,7 +40,7 @@ export default function OrderDetails() {
   // Cancellation Dialog State
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
-  const [pendingStatus, setPendingStatus] = useState<Order['status'] | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<Order["status"] | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -79,7 +67,7 @@ export default function OrderDetails() {
     }
   };
 
-  const handleStatusSelect = (newStatus: Order['status']) => {
+  const handleStatusSelect = (newStatus: Order["status"]) => {
     if (newStatus === "cancelled") {
       setPendingStatus(newStatus);
       setCancelReason("");
@@ -102,7 +90,7 @@ export default function OrderDetails() {
     handleStatusChange("cancelled", cancelReason);
   };
 
-  const handleStatusChange = async (newStatus: Order['status'], reason?: string) => {
+  const handleStatusChange = async (newStatus: Order["status"], reason?: string) => {
     if (!order) return;
     try {
       setLoading(true);
@@ -178,12 +166,7 @@ export default function OrderDetails() {
       doc.text(`Date: ${orderDate}`, pageWidth - margin, y + 6, {
         align: "right",
       });
-      doc.text(
-        `Status: ${order.status.toUpperCase()}`,
-        pageWidth - margin,
-        y + 11,
-        { align: "right" },
-      );
+      doc.text(`Status: ${order.status.toUpperCase()}`, pageWidth - margin, y + 11, { align: "right" });
       y += 18;
 
       doc.setDrawColor(220, 220, 220);
@@ -192,12 +175,8 @@ export default function OrderDetails() {
       y += 8;
 
       // ── CUSTOMER + BILLING ADDRESS ───────────────────────────────────
-      const billingAddr = order.addresses?.find(
-        (a) => a.address_type === "billing",
-      );
-      const shippingAddr = order.addresses?.find(
-        (a) => a.address_type === "shipping",
-      );
+      const billingAddr = order.addresses?.find((a) => a.address_type === "billing");
+      const shippingAddr = order.addresses?.find((a) => a.address_type === "shipping");
 
       // Same anchor as header right-side text
       const rx = pageWidth - margin;
@@ -257,11 +236,7 @@ export default function OrderDetails() {
           leftY += 5;
         }
         leftY += 3;
-        doc.text(
-          `Ph: ${shippingAddr.country_code} ${shippingAddr.phone}`,
-          margin,
-          leftY
-        );
+        doc.text(`Ph: ${shippingAddr.country_code} ${shippingAddr.phone}`, margin, leftY);
         leftY += 5;
       }
 
@@ -285,12 +260,7 @@ export default function OrderDetails() {
           rightY += 5;
         }
         rightY += 3; // breathing gap before phone
-        doc.text(
-          `Ph: ${billingAddr.country_code} ${billingAddr.phone}`,
-          rx,
-          rightY,
-          { align: "right" },
-        );
+        doc.text(`Ph: ${billingAddr.country_code} ${billingAddr.phone}`, rx, rightY, { align: "right" });
         rightY += 5;
       }
 
@@ -303,11 +273,7 @@ export default function OrderDetails() {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(8.5);
       doc.setTextColor(80, 80, 80);
-      doc.text(
-        `Payment: ${order.payment_status.toUpperCase()}   |   Method: ${order.payment_type.toUpperCase()}`,
-        margin,
-        y,
-      );
+      doc.text(`Payment: ${order.payment_status.toUpperCase()}   |   Method: ${order.payment_type.toUpperCase()}`, margin, y);
       y += 8;
       doc.setDrawColor(220, 220, 220);
       doc.line(margin, y, pageWidth - margin, y);
@@ -353,10 +319,7 @@ export default function OrderDetails() {
         const sku = item.variant?.sku ? `SKU: ${item.variant.sku}` : "";
 
         doc.setFont("helvetica", "bold");
-        const t =
-          productTitle.length > 38
-            ? productTitle.substring(0, 36) + ".."
-            : productTitle;
+        const t = productTitle.length > 38 ? productTitle.substring(0, 36) + ".." : productTitle;
         doc.text(t, cols.product, y);
         if (sku) {
           doc.setFont("helvetica", "normal");
@@ -369,12 +332,7 @@ export default function OrderDetails() {
         doc.setFont("helvetica", "normal");
         doc.text(String(item.quantity), cols.qty, y, { align: "center" });
         doc.text(aed(unitPrice), cols.price, y, { align: "center" });
-        const discountValue =
-          typeof discountAmt === "number" &&
-            !isNaN(discountAmt) &&
-            discountAmt > 0
-            ? aed(discountAmt)
-            : "-";
+        const discountValue = typeof discountAmt === "number" && !isNaN(discountAmt) && discountAmt > 0 ? aed(discountAmt) : "-";
 
         doc.text(discountValue, cols.discount, y, { align: "center" });
         doc.setFont("helvetica", "bold");
@@ -395,12 +353,7 @@ export default function OrderDetails() {
       const summaryLabelX = pageWidth - margin - 70;
       const summaryValueX = pageWidth - margin;
 
-      const drawRow = (
-        label: string,
-        value: string,
-        bold = false,
-        color: [number, number, number] = [30, 30, 30],
-      ) => {
+      const drawRow = (label: string, value: string, bold = false, color: [number, number, number] = [30, 30, 30]) => {
         doc.setFont("helvetica", bold ? "bold" : "normal");
         doc.setFontSize(bold ? 10 : 9);
         doc.setTextColor(...color);
@@ -412,12 +365,7 @@ export default function OrderDetails() {
       drawRow("Subtotal", aed(order.subtotal));
       drawRow("Tax", aed(order.tax_total));
       if (parseFloat(String(order.discount_total || 0)) > 0) {
-        drawRow(
-          "Discount",
-          `- ${aed(order.discount_total)}`,
-          false,
-          [180, 30, 30],
-        );
+        drawRow("Discount", `- ${aed(order.discount_total)}`, false, [180, 30, 30]);
       }
       doc.setDrawColor(80, 80, 80);
       doc.line(summaryLabelX, y, summaryValueX, y);
@@ -431,12 +379,7 @@ export default function OrderDetails() {
       doc.setTextColor(150, 150, 150);
       doc.setDrawColor(220, 220, 220);
       doc.line(margin, pageHeight - 16, pageWidth - margin, pageHeight - 16);
-      doc.text(
-        "Thank you for shopping with BOSQ. For queries, contact support.",
-        pageWidth / 2,
-        pageHeight - 12,
-        { align: "center" },
-      );
+      doc.text("Thank you for shopping with BOSQ. For queries, contact support.", pageWidth / 2, pageHeight - 12, { align: "center" });
 
       doc.save(`invoice-${order.order_id}.pdf`);
       toast({
@@ -470,9 +413,7 @@ export default function OrderDetails() {
     );
   }
 
-
-
-  console.log(order.items)
+  console.log(order.items);
 
   if (!order) {
     return (
@@ -485,12 +426,8 @@ export default function OrderDetails() {
     );
   }
 
-  const billingAddress = order.addresses?.find(
-    (a) => a.address_type === "billing",
-  );
-  const shippingAddress = order.addresses?.find(
-    (a) => a.address_type === "shipping",
-  );
+  const billingAddress = order.addresses?.find((a) => a.address_type === "billing");
+  const shippingAddress = order.addresses?.find((a) => a.address_type === "shipping");
 
   const statusColors: Record<string, string> = {
     pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -507,38 +444,25 @@ export default function OrderDetails() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate("/orders")}
-          >
+          <Button variant="outline" size="icon" onClick={() => navigate("/orders")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight">
-                Order #{order.order_id}
-              </h1>
-              {['delivered', 'cancelled', 'returned'].includes(order.status) ? (
-                <Badge
-                  className={`${statusColors[order.status]} capitalize px-3 py-1 font-semibold border`}
-                >
-                  {order.status}
-                </Badge>
+              <h1 className="text-2xl font-bold tracking-tight">Order #{order.order_id}</h1>
+              {["cancelled", "returned"].includes(order.status) ? (
+                <Badge className={`${statusColors[order.status]} capitalize px-3 py-1 font-semibold border`}>{order.status}</Badge>
               ) : (
-                <Select
-                  value={order.status}
-                  onValueChange={(val: any) => handleStatusSelect(val)}
-                >
+                <Select value={order.status} onValueChange={(val: any) => handleStatusSelect(val)}>
                   <SelectTrigger className={`w-[140px] h-8 capitalize ${statusColors[order.status]} font-semibold`}>
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {['pending', 'confirmed', 'packed', 'shipped', 'delivered', 'cancelled', 'returned'].map(s => {
+                    {["pending", "confirmed", "packed", "shipped", "delivered", "cancelled", "returned"].map((s) => {
                       let disabled = false;
-                      if (s === 'delivered' && order.status !== 'shipped') disabled = true;
-                      if (s === 'shipped' && order.status !== 'packed') disabled = true;
-                      if (s === 'packed' && order.status !== 'confirmed') disabled = true;
+                      if (s === "delivered" && order.status !== "shipped") disabled = true;
+                      if (s === "shipped" && order.status !== "packed") disabled = true;
+                      if (s === "packed" && order.status !== "confirmed") disabled = true;
 
                       return (
                         <SelectItem key={s} value={s} disabled={disabled} className="capitalize">
@@ -593,61 +517,45 @@ export default function OrderDetails() {
           </DialogContent>
         </Dialog>
         <div className="flex items-center gap-2">
-          <Badge
-            variant="outline"
-            className="px-3 py-1 border-primary/20 bg-primary/5 text-primary"
-          >
+          <Badge variant="outline" className="px-3 py-1 border-primary/20 bg-primary/5 text-primary">
             Payment: {order.payment_status.toUpperCase()}
           </Badge>
-          <Badge
-            variant="outline"
-            className="px-3 py-1 border-muted-foreground/20 bg-muted/5"
-          >
+          <Badge variant="outline" className="px-3 py-1 border-muted-foreground/20 bg-muted/5">
             <CreditCard className="mr-1.5 h-3.5 w-3.5" />
             {order.payment_type.toUpperCase()}
           </Badge>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownloadInvoice}
-            className="ml-2 flex items-center gap-1.5"
-          >
+          <Button variant="outline" size="sm" onClick={handleDownloadInvoice} className="ml-2 flex items-center gap-1.5">
             <Download className="h-4 w-4" />
             Download Invoice
           </Button>
         </div>
       </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {/* Section 1: User Details */}
-                <Card className="border-primary/10 shadow-sm">
-                    <CardHeader className="pb-3 border-b bg-muted/30">
-                        <CardTitle className="text-base flex items-center gap-2">
-                            <User className="h-4 w-4 text-primary" />
-                            Customer Information
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-5 space-y-4">
-                        <div className="flex items-start gap-3">
-                            {/* <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Section 1: User Details */}
+        <Card className="border-primary/10 shadow-sm">
+          <CardHeader className="pb-3 border-b bg-muted/30">
+            <CardTitle className="text-base flex items-center gap-2">
+              <User className="h-4 w-4 text-primary" />
+              Customer Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-5 space-y-4">
+            <div className="flex items-start gap-3">
+              {/* <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                                 {order.user?.name}
                             </div> */}
-                            <div>
-                                <p className="font-semibold text-lg leading-none">
-                                    {order.user ? `${order.user.name}` : "Guest Customer"}
-                                </p>
-                                {/* <p className="text-sm text-muted-foreground mt-1">ID: #{order.user?.id || 'N/A'}</p> */}
-                            </div>
-                        </div>
+              <div>
+                <p className="font-semibold text-lg leading-none">{order.user ? `${order.user.name}` : "Guest Customer"}</p>
+                {/* <p className="text-sm text-muted-foreground mt-1">ID: #{order.user?.id || 'N/A'}</p> */}
+              </div>
+            </div>
 
             <div className="space-y-3 pt-2">
               <div className="flex items-center gap-2 text-sm">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Email:</span>
-                <a
-                  href={`mailto:${order.user?.email}`}
-                  className="text-primary hover:underline"
-                >
+                <a href={`mailto:${order.user?.email}`} className="text-primary hover:underline">
                   {order.user?.email}
                 </a>
               </div>
@@ -671,36 +579,22 @@ export default function OrderDetails() {
           <CardContent className="pt-5 grid md:grid-cols-2 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] uppercase font-bold tracking-wider"
-                >
+                <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider">
                   Shipping Address
                 </Badge>
               </div>
-              {shippingAddress ? (
-                <AddressData address={shippingAddress} />
-              ) : (
-                <AddressData address={billingAddress} />
-              )}
+              {shippingAddress ? <AddressData address={shippingAddress} /> : <AddressData address={billingAddress} />}
             </div>
 
             <Separator className="md:hidden" />
 
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] uppercase font-bold tracking-wider"
-                >
+                <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider">
                   Billing Address
                 </Badge>
               </div>
-              {billingAddress ? (
-                <AddressData address={billingAddress} />
-              ) : (
-                <AddressData address={shippingAddress} />
-              )}
+              {billingAddress ? <AddressData address={billingAddress} /> : <AddressData address={shippingAddress} />}
             </div>
           </CardContent>
         </Card>
@@ -718,43 +612,29 @@ export default function OrderDetails() {
               <div className="flex items-start gap-2 text-sm">
                 <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-                    Est. Delivery Details
-                  </p>
-                  <p className="mt-0.5">
-                    {order.est_delivery_details || "Not specified"}
-                  </p>
+                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">Est. Delivery Details</p>
+                  <p className="mt-0.5">{order.est_delivery_details || "Not specified"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Tag className="h-4 w-4 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-                    Courier Partner
-                  </p>
-                  <p className="mt-0.5">
-                    {order.partner_name || "Not assigned"}
-                  </p>
+                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">Courier Partner</p>
+                  <p className="mt-0.5">{order.partner_name || "Not assigned"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-sm">
                 <Package className="h-4 w-4 text-muted-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-                    AWB Number
-                  </p>
-                  <p className="mt-0.5 font-mono">
-                    {order.awb_number || "Not available"}
-                  </p>
+                  <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">AWB Number</p>
+                  <p className="mt-0.5 font-mono">{order.awb_number || "Not available"}</p>
                 </div>
               </div>
               {order.order_url && (
                 <div className="flex items-start gap-2 text-sm">
                   <Globe className="h-4 w-4 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">
-                      Tracking Link
-                    </p>
+                    <p className="font-medium text-xs text-muted-foreground uppercase tracking-wider">Tracking Link</p>
                     <a
                       href={order.order_url}
                       target="_blank"
@@ -794,15 +674,11 @@ export default function OrderDetails() {
               </thead>
               <tbody className="divide-y">
                 {order.items?.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-muted/5 transition-colors"
-                  >
+                  <tr key={item.id} className="hover:bg-muted/5 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="h-16 w-16 rounded border bg-white flex-shrink-0 flex items-center justify-center overflow-hidden">
-                          {item.variant?.media_path ||
-                            item.product?.media_path ? (
+                          {item.variant?.media_path || item.product?.media_path ? (
                             <img
                               src={
                                 `${import.meta.env.VITE_IMAGE_URL}/${item.variant?.media_path || item.product?.media_path}` ||
@@ -816,41 +692,25 @@ export default function OrderDetails() {
                           )}
                         </div>
                         <div>
-                          <p className="font-semibold text-primary">
-                            {item.product?.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            SKU: {item.variant?.sku}
-                          </p>
+                          <p className="font-semibold text-primary">{item.product?.title}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">SKU: {item.variant?.sku}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="text-xs font-medium">
-                        {item.variant?.title}
-                      </p>
+                      <p className="text-xs font-medium">{item.variant?.title}</p>
                     </td>
                     <td className="px-6 py-4 text-center">
                       <span className="inline-flex items-center justify-center h-8 w-8 rounded-full bg-muted text-foreground font-medium">
                         {item.quantity}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-medium">
-                      AED {parseFloat(item.price).toLocaleString()}
-                    </td>
-                    <td
-                      className={`px-6 py-4 ${parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}
-                    >
-                      {parseFloat(item?.discount_amount) > 0
-                        ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
-                        : "-"}
+                    <td className="px-6 py-4 text-right font-medium">AED {parseFloat(item.price).toLocaleString()}</td>
+                    <td className={`px-6 py-4 ${parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}>
+                      {parseFloat(item?.discount_amount) > 0 ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}` : "-"}
                     </td>
                     <td className="px-6 py-4 text-right font-bold">
-                      AED{" "}
-                      {(
-                        parseFloat(item.price) * item.quantity -
-                        parseFloat(item.discount_amount)
-                      ).toLocaleString()}
+                      AED {(parseFloat(item.price) * item.quantity - parseFloat(item.discount_amount)).toLocaleString()}
                     </td>
                   </tr>
                 ))}
@@ -872,33 +732,22 @@ export default function OrderDetails() {
           <CardContent className="py-6 space-y-4">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Subtotal</span>
-              <span className="font-medium">
-                AED {parseFloat(order.subtotal).toLocaleString()}
-              </span>
+              <span className="font-medium">AED {parseFloat(order.subtotal).toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tax Total</span>
-              <span className="font-medium">
-                AED {parseFloat(order.tax_total).toLocaleString()}
-              </span>
+              <span className="font-medium">AED {parseFloat(order.tax_total).toLocaleString()}</span>
             </div>
             {parseFloat(String(order.discount_total || 0)) > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Discount Total</span>
-                <span className="text-red-500 font-medium">
-                  -AED{" "}
-                  {parseFloat(order?.discount_total || "0").toLocaleString()}
-                </span>
+                <span className="text-red-500 font-medium">-AED {parseFloat(order?.discount_total || "0").toLocaleString()}</span>
               </div>
             )}
             <Separator />
             <div className="flex justify-between items-center pt-2">
-              <span className="text-base font-bold text-primary">
-                Grand Total
-              </span>
-              <span className="text-2xl font-black text-primary">
-                AED {parseFloat(order.grand_total).toLocaleString()}
-              </span>
+              <span className="text-base font-bold text-primary">Grand Total</span>
+              <span className="text-2xl font-black text-primary">AED {parseFloat(order.grand_total).toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
@@ -907,17 +756,13 @@ export default function OrderDetails() {
   );
 }
 
-
-
 function AddressData({ address }) {
   return (
     <div className="space-y-1.5 text-sm">
       <p className="font-bold text-base">{address.name}</p>
       <p className="text-muted-foreground">{address.company_name}</p>
       <p className="text-muted-foreground">{address.street_address}</p>
-      {address.apartment && (
-        <p className="text-muted-foreground">{address.apartment}</p>
-      )}
+      {address.apartment && <p className="text-muted-foreground">{address.apartment}</p>}
       <p className="font-medium">{address.state?.name}</p>
       <div className="pt-2">
         <p className="text-xs text-muted-foreground">
@@ -927,4 +772,4 @@ function AddressData({ address }) {
       </div>
     </div>
   );
-};
+}

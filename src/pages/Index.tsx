@@ -17,12 +17,7 @@ import {
   CouponAnalytics,
   UserStats,
 } from "@/services/dashboard/dashboardApi";
-import {
-  DollarSign,
-  ShoppingCart,
-  ShoppingBag,
-  Users,
-} from "lucide-react";
+import { DollarSign, ShoppingCart, ShoppingBag, Users } from "lucide-react";
 
 function formatCurrency(value: number) {
   return `AED ${value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
@@ -89,9 +84,7 @@ const Index = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground text-sm">
-            Your BOSQ ecommerce analytics at a glance
-          </p>
+          <p className="text-muted-foreground text-sm">Your BOSQ ecommerce analytics at a glance</p>
         </div>
         <DashboardFilters year={year} month={month} onChange={handleFilterChange} />
       </div>
@@ -125,10 +118,7 @@ const Index = () => {
       </div>
 
       {/* Revenue & Orders Chart — full width */}
-      <RevenueOrderChart
-        data={orderStats?.byPeriod ?? []}
-        loading={loadingOrders}
-      />
+      <RevenueOrderChart data={orderStats?.byPeriod ?? []} loading={loadingOrders} />
 
       {/* Order Breakdown + Top Products — half/half */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
