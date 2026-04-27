@@ -58,6 +58,14 @@ export interface ProductCategoryItemResponse {
   data: ProductCategory;
 }
 
+export interface ActiveCategoriesResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  statusCode: number;
+  data: ProductCategory[];
+}
+
 /* =======================
    API Calls
 ======================= */
@@ -87,6 +95,10 @@ export const fetchProductCategoryList = async (page: number = 1, limit: number =
   }
 
   return apiCall("/resources/product-categories", { params });
+};
+
+export const fetchActiveProductCategories = async (): Promise<ActiveCategoriesResponse> => {
+  return apiCall("/resources/product-categories/active");
 };
 
 // Fetch single ergonomics chair feature

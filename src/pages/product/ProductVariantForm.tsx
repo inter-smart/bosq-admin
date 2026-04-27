@@ -24,7 +24,7 @@ import {
   AttributeWithValues,
 } from "@/services/product/productVariantApi";
 import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
-import { fetchProductCategoryList, ProductCategory } from "@/services/product/productCategoriesApi";
+import { fetchActiveProductCategories, ProductCategory } from "@/services/product/productCategoriesApi";
 
 interface AttributeValueSelection {
   id: string;
@@ -147,7 +147,7 @@ export default function ProductVariantForm() {
         setModel(modelResponse.data);
       }
 
-      const [attributesResponse, categoriesResponse] = await Promise.all([fetchAttributesWithValues(), fetchProductCategoryList(1, 200)]);
+      const [attributesResponse, categoriesResponse] = await Promise.all([fetchAttributesWithValues(), fetchActiveProductCategories()]);
 
       if (attributesResponse.success) {
         setAttributes(attributesResponse.data);
@@ -160,7 +160,7 @@ export default function ProductVariantForm() {
       }
 
       if (categoriesResponse.success) {
-        setAllCategories(categoriesResponse.data.list);
+        setAllCategories(categoriesResponse.data);
       }
 
       if (isEditing && id) {

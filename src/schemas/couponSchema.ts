@@ -5,9 +5,9 @@ export const couponSchema = z
   .object({
     code: z.string().min(1, "Coupon code is required").max(50, "Coupon code must not exceed 50 characters"),
 
-    title: commonValidations.optionalString("Title"),
+    title: commonValidations.requiredString("Title"),
 
-    title_ar: commonValidations.optionalString("Title (Arabic)"),
+    title_ar: commonValidations.requiredString("Title (Arabic)"),
 
     media_path: commonValidations.fileUpload,
 
