@@ -17,8 +17,8 @@ export const landingPageSchema = z.object({
   media_alt_ar: commonValidations.optionalString("Media Alt Text (Arabic)"),
 
   // File uploads
-  media_desktop_path: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]).optional(),
-  media_mobile_path: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]).optional(),
+  media_desktop_path:commonValidations.validateFileUpload("Desktop Image"),
+  media_mobile_path:commonValidations.validateFileUpload("Mobile Image"),
 
   // SEO Meta
   meta_title: commonValidations.optionalString("Meta Title"),

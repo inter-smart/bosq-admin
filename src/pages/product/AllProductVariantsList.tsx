@@ -279,7 +279,7 @@ export default function AllProductVariantsList() {
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[150px] truncate">
+        <div className="font-medium max-w-[150px]">
           {row.getValue("title") || "N/A"}
         </div>
       ),
@@ -288,7 +288,7 @@ export default function AllProductVariantsList() {
       accessorKey: "sku",
       header: "SKU",
       cell: ({ row }) => (
-        <div className="font-mono text-sm max-w-[150px] truncate">
+        <div className="font-mono text-sm max-w-[150px]">
           {row.getValue("sku")}
         </div>
       ),
@@ -297,7 +297,7 @@ export default function AllProductVariantsList() {
       accessorKey: "productModel.product.title",
       header: "Base Product",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[150px] truncate">
+        <div className="font-medium max-w-[150px]">
           {row.original.productModel?.product?.title || "N/A"}
         </div>
       ),
@@ -306,7 +306,7 @@ export default function AllProductVariantsList() {
       accessorKey: "productModel.title",
       header: "Model",
       cell: ({ row }) => (
-        <div className="font-medium max-w-[150px] truncate">
+        <div className="font-medium max-w-[150px]">
           {row.original.productModel?.title || "N/A"}
         </div>
       ),

@@ -54,6 +54,8 @@ export const newsSchema = z.object({
     "Arabic Meta Description"
   ),
   meta_keywords_ar: commonValidations.requiredString("Arabic Meta Keywords"),
+  other_meta: commonValidations.requiredString("Other Meta"),
+  other_meta_ar: commonValidations.requiredString("Arabic Other Meta"),
   media_alt_ar: commonValidations.optionalString("Arabic Media Alt Text"),
   thumbnail_alt_ar: commonValidations.optionalString(
     "Arabic Thumbnail Alt Text"

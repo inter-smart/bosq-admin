@@ -8,7 +8,7 @@ export const productTypeSchema = z.object({
   features: commonValidations.optionalRichText,
   description_ar: commonValidations.optionalString("Description (Arabic)"),
   features_ar: commonValidations.optionalRichText,
-  media_path: z.union([z.instanceof(File), z.string(), z.null(), z.undefined()]).optional(),
+  media_path: commonValidations.validateFileUpload("Image"),
   media_alt: commonValidations.optionalString("Media Alt Text"),
   media_alt_ar: commonValidations.optionalString("Media Alt Text (Arabic)"),
   button: commonValidations.optionalString("Button Text"),

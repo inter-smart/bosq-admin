@@ -106,10 +106,11 @@ export default function FaqListForm() {
         setSelectedModelId(null);
         setSelectedCategoryId(null);
         form.setValue("product_variant_id", undefined);
+        form.clearErrors("product_variant_id");
 
         getFaqModelsDropdown(selectedBaseId).then((res) => {
           if (res.success) setModels(res.data.models);
-        }).catch(() => {});
+        }).catch(() => { });
       }
     }
   }, [selectedBaseId]);
@@ -122,6 +123,7 @@ export default function FaqListForm() {
         setVariants([]);
         setSelectedCategoryId(null);
         form.setValue("product_variant_id", undefined);
+        form.clearErrors("product_variant_id");
 
         Promise.all([
           getFaqCategoriesDropdown(selectedModelId),
@@ -129,7 +131,7 @@ export default function FaqListForm() {
         ]).then(([catRes, varRes]) => {
           if (catRes.success) setVariantCategories(catRes.data.categories);
           if (varRes.success) setVariants(varRes.data.variants);
-        }).catch(() => {});
+        }).catch(() => { });
       }
     }
   }, [selectedModelId]);
@@ -137,12 +139,22 @@ export default function FaqListForm() {
   // Reload variants when category filter changes
   useEffect(() => {
     if (selectedModelId && !isInitializingRef.current) {
-      setVariants([]);
-      form.setValue("product_variant_id", undefined);
+      const currentVariantId = form.getValues("product_variant_id");
 
       getFaqVariantsDropdown(selectedModelId, selectedCategoryId ?? undefined).then((res) => {
-        if (res.success) setVariants(res.data.variants);
-      }).catch(() => {});
+        if (res.success) {
+          const newVariants = res.data.variants;
+          setVariants(newVariants);
+
+          if (currentVariantId !== undefined) {
+            const isVariantStillValid = newVariants.some(v => v.id === currentVariantId);
+            if (!isVariantStillValid) {
+              form.setValue("product_variant_id", undefined);
+              form.clearErrors("product_variant_id");
+            }
+          }
+        }
+      }).catch(() => { });
     }
   }, [selectedCategoryId]);
 
@@ -446,6 +458,7 @@ export default function FaqListForm() {
                       <Select
                         onValueChange={(value) => {
                           form.setValue("product_variant_id", undefined);
+                          form.clearErrors("product_variant_id");
                           setSelectedBaseId(parseInt(value));
                         }}
                         value={selectedBaseId ? String(selectedBaseId) : ""}
@@ -470,6 +483,7 @@ export default function FaqListForm() {
                         <Select
                           onValueChange={(value) => {
                             form.setValue("product_variant_id", undefined);
+                            form.clearErrors("product_variant_id");
                             setSelectedModelId(parseInt(value));
                           }}
                           value={selectedModelId ? String(selectedModelId) : ""}
@@ -492,10 +506,9 @@ export default function FaqListForm() {
                     {/* Step 3: Category (optional filter) */}
                     {selectedModelId && variantCategories.length > 0 && (
                       <div className="space-y-1">
-                        <label className="text-sm font-medium">Category (Optional)</label>
+                        <label className="text-sm font-medium">Category (Optional - for filtering)</label>
                         <Select
                           onValueChange={(value) => {
-                            form.setValue("product_variant_id", undefined);
                             setSelectedCategoryId(value === "all" ? null : parseInt(value));
                           }}
                           value={selectedCategoryId ? String(selectedCategoryId) : "all"}
@@ -504,7 +517,7 @@ export default function FaqListForm() {
                             <SelectValue placeholder="All categories" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="all">All categories</SelectItem>
+                          <SelectItem value="all">All categories</SelectItem>
                             {variantCategories.map((c) => (
                               <SelectItem key={c.id} value={String(c.id)}>
                                 {c.name}

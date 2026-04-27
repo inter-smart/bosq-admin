@@ -64,6 +64,8 @@ export default function NewsForm() {
       meta_description: "",
       meta_description_ar: "",
       meta_keywords: "",
+      other_meta: "",
+      other_meta_ar: "",
       slug: "",
       meta_keywords_ar: "",
       description: "",
@@ -128,6 +130,8 @@ export default function NewsForm() {
           meta_description_ar: data.meta_description_ar || "",
           meta_keywords: data.meta_keywords || "",
           meta_keywords_ar: data.meta_keywords_ar || "",
+          other_meta: data.other_meta || "",
+          other_meta_ar: data.other_meta_ar || "",
           media_alt: data.media_alt || "",
           media_alt_ar: data.media_alt_ar || "",
           thumbnail_alt: data.thumbnail_alt || "",
@@ -190,6 +194,8 @@ export default function NewsForm() {
       formData.append("meta_description", data.meta_description);
       formData.append("slug", data.slug);
       formData.append("meta_keywords", data.meta_keywords);
+      formData.append("other_meta", data.other_meta || "");
+      formData.append("other_meta_ar", data.other_meta_ar || "");
       formData.append("media_alt", data.media_alt);
       if (data.thumbnail_alt)
         formData.append("thumbnail_alt", data.thumbnail_alt);
@@ -279,126 +285,6 @@ export default function NewsForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO Meta</CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* ================= ENGLISH META ================= */}
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="meta_title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter meta title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="meta_description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Description</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter meta description"
-                            {...field}
-                            rows={6}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="meta_keywords"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Keywords</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="keyword1, keyword2, keyword3"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* ================= ARABIC META ================= */}
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="meta_title_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Title (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="أدخل عنوان الميتا"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="meta_description_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Description (AR)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="أدخل وصف الميتا"
-                            {...field}
-                            rows={6}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="meta_keywords_ar"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Keywords (AR)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="كلمة1، كلمة2، كلمة3"
-                            {...field}
-                            dir="rtl"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           <Card>
             <CardHeader>
               <CardTitle>News Content</CardTitle>

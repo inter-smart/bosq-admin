@@ -1,4 +1,4 @@
-import { apiCall } from '@/utils/apiUtils';
+import { apiCall } from "@/utils/apiUtils";
 
 export interface News {
   id?: number;
@@ -16,6 +16,8 @@ export interface News {
   meta_description_ar?: string;
   meta_keywords: string;
   meta_keywords_ar?: string;
+  other_meta?: string;
+  other_meta_ar?: string;
 
   media_desktop_path?: string | null;
   media_mobile_path?: string | null;
@@ -66,7 +68,7 @@ export const fetchNewsList = async (
   search?: string,
   status?: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ): Promise<NewsResponse> => {
   const params: Record<string, string | number> = {
     page,
@@ -99,9 +101,11 @@ export const fetchNewsById = async (id: number): Promise<NewsItemResponse> => {
 };
 
 // Create news item
-export const createNews = async (formData: FormData): Promise<NewsItemResponse> => {
-  return apiCall('/news/news', {
-    method: 'POST',
+export const createNews = async (
+  formData: FormData,
+): Promise<NewsItemResponse> => {
+  return apiCall("/news/news", {
+    method: "POST",
     data: formData,
   });
 };
@@ -109,10 +113,10 @@ export const createNews = async (formData: FormData): Promise<NewsItemResponse> 
 // Update news item
 export const updateNews = async (
   id: number,
-  formData: FormData
+  formData: FormData,
 ): Promise<NewsItemResponse> => {
   return apiCall(`/news/news/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     data: formData,
   });
 };
@@ -120,6 +124,6 @@ export const updateNews = async (
 // Delete news item
 export const deleteNews = async (id: number): Promise<void> => {
   return apiCall(`/news/news/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 };
