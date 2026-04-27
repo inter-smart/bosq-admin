@@ -112,7 +112,11 @@ export default function CouponsList() {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "MMM dd, yyyy");
+      // Parse only the date part (YYYY-MM-DD) so the browser's UTC→local
+      // conversion doesn't shift the displayed day.
+      const datePart = dateString.split("T")[0];
+      const [year, month, day] = datePart.split("-").map(Number);
+      return format(new Date(year, month - 1, day), "MMM dd, yyyy");
     } catch {
       return dateString;
     }

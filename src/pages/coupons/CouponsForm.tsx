@@ -220,8 +220,8 @@ export default function CouponsForm() {
           scope_id: data.scope_id || null,
           usage_limit_total: data.usage_limit_total,
           usage_limit_per_user: data.usage_limit_per_user,
-          start_at: data.start_at ? data.start_at.split("T")[0] + "T00:00:00" : "",
-          end_at: data.end_at ? data.end_at.split("T")[0] + "T23:59:59" : "",
+          start_at: data.start_at ? data.start_at.slice(0, 10) + "T00:00:00" : "",
+          end_at: data.end_at ? data.end_at.slice(0, 10) + "T23:59:59" : "",
           status: data.status ?? true,
         });
 
@@ -310,8 +310,8 @@ export default function CouponsForm() {
       formData.append("scope_type", data.scope_type);
       formData.append("usage_limit_total", String(data.usage_limit_total));
       formData.append("usage_limit_per_user", String(data.usage_limit_per_user));
-      formData.append("start_at", data.start_at);
-      formData.append("end_at", data.end_at);
+      formData.append("start_at", data.start_at.slice(0, 10));
+      formData.append("end_at", data.end_at.slice(0, 10));
       formData.append("status", data.status.toString());
 
       if (data.title) formData.append("title", data.title);
@@ -968,7 +968,7 @@ export default function CouponsForm() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
+                            selected={field.value ? new Date(field.value.length === 10 ? field.value + "T00:00:00" : field.value) : undefined}
                             onSelect={(date) => {
                               if (!date) {
                                 field.onChange("");
@@ -1009,7 +1009,7 @@ export default function CouponsForm() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
+                            selected={field.value ? new Date(field.value.length === 10 ? field.value + "T00:00:00" : field.value) : undefined}
                             onSelect={(date) => {
                               if (!date) {
                                 field.onChange("");
