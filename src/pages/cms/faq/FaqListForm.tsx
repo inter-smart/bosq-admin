@@ -30,7 +30,6 @@ import {
   FaqList,
   getDropdown,
   getFaqModelsDropdown,
-  getFaqCategoriesDropdown,
   getFaqVariantsDropdown,
 } from "@/services/cms/faq/faqListApi";
 import { Switch } from "@/components/ui/switch";
@@ -53,15 +52,12 @@ export default function FaqListForm() {
   const [baseProducts, setBaseProducts] = useState<Array<{ id: number; title: string }>>([]);
   // Cascade: models (loaded when base product selected)
   const [models, setModels] = useState<Array<{ id: number; title: string; title_ar: string; slug: string }>>([]);
-  // Cascade: categories for variants of model
-  const [variantCategories, setVariantCategories] = useState<Array<{ id: number; name: string; name_ar: string; slug: string }>>([]);
-  // Cascade: variants (filtered by model + optional category)
+  // Cascade: variants (filtered by model)
   const [variants, setVariants] = useState<Array<{ id: number; title: string; title_ar: string; sku: string; design_title: string; design_title_ar: string }>>([]);
 
   // Cascade selection state
   const [selectedBaseId, setSelectedBaseId] = useState<number | null>(null);
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   // Display name for current variant in edit mode
   const [currentVariantTitle, setCurrentVariantTitle] = useState<string>("");
@@ -101,10 +97,8 @@ export default function FaqListForm() {
     if (selectedBaseId) {
       if (!isInitializingRef.current) {
         setModels([]);
-        setVariantCategories([]);
         setVariants([]);
         setSelectedModelId(null);
-        setSelectedCategoryId(null);
         form.setValue("product_variant_id", undefined);
         form.clearErrors("product_variant_id");
 
@@ -115,55 +109,27 @@ export default function FaqListForm() {
     }
   }, [selectedBaseId]);
 
-  // Load variant categories when model changes
+  // Load variants when model changes
   useEffect(() => {
     if (selectedModelId) {
       if (!isInitializingRef.current) {
-        setVariantCategories([]);
         setVariants([]);
-        setSelectedCategoryId(null);
         form.setValue("product_variant_id", undefined);
         form.clearErrors("product_variant_id");
 
-        Promise.all([
-          getFaqCategoriesDropdown(selectedModelId),
-          getFaqVariantsDropdown(selectedModelId),
-        ]).then(([catRes, varRes]) => {
-          if (catRes.success) setVariantCategories(catRes.data.categories);
+        getFaqVariantsDropdown(selectedModelId).then((varRes) => {
           if (varRes.success) setVariants(varRes.data.variants);
         }).catch(() => { });
       }
     }
   }, [selectedModelId]);
 
-  // Reload variants when category filter changes
-  useEffect(() => {
-    if (selectedModelId && !isInitializingRef.current) {
-      const currentVariantId = form.getValues("product_variant_id");
-
-      getFaqVariantsDropdown(selectedModelId, selectedCategoryId ?? undefined).then((res) => {
-        if (res.success) {
-          const newVariants = res.data.variants;
-          setVariants(newVariants);
-
-          if (currentVariantId !== undefined) {
-            const isVariantStillValid = newVariants.some(v => v.id === currentVariantId);
-            if (!isVariantStillValid) {
-              form.setValue("product_variant_id", undefined);
-              form.clearErrors("product_variant_id");
-            }
-          }
-        }
-      }).catch(() => { });
-    }
-  }, [selectedCategoryId]);
-
   // Reset initialization flag after cascade pre-population effects have run
   useEffect(() => {
     if (isInitializingRef.current && selectedBaseId && selectedModelId) {
       isInitializingRef.current = false;
     }
-  }, [selectedBaseId, selectedModelId, selectedCategoryId]);
+  }, [selectedBaseId, selectedModelId]);
 
   const loadDropdownData = async () => {
     try {
@@ -208,28 +174,13 @@ export default function FaqListForm() {
             // Set flag BEFORE state updates so cascade effects see it and skip clearing
             isInitializingRef.current = true;
 
-            const [modelsRes, catRes, varRes] = await Promise.all([
+            const [modelsRes, varRes] = await Promise.all([
               getFaqModelsDropdown(baseId),
-              getFaqCategoriesDropdown(modelId),
               getFaqVariantsDropdown(modelId),
             ]);
 
             if (modelsRes.success) setModels(modelsRes.data.models);
-            if (catRes.success) setVariantCategories(catRes.data.categories);
-
-            // Restore category filter from the saved variant's categories
-            const variantCategoryIds = data.product_variant.categories?.map((c) => c.id) ?? [];
-            const matchedCategory = catRes.success
-              ? catRes.data.categories.find((c) => variantCategoryIds.includes(c.id))
-              : undefined;
-
-            if (matchedCategory) {
-              setSelectedCategoryId(matchedCategory.id);
-              const filteredVarRes = await getFaqVariantsDropdown(modelId, matchedCategory.id);
-              if (filteredVarRes.success) setVariants(filteredVarRes.data.variants);
-            } else {
-              if (varRes.success) setVariants(varRes.data.variants);
-            }
+            if (varRes.success) setVariants(varRes.data.variants);
 
             // Triggers cascade effects (blocked by isInitializingRef)
             setSelectedBaseId(baseId);
@@ -395,7 +346,6 @@ export default function FaqListForm() {
                             form.clearErrors("product_variant_id");
                             setSelectedBaseId(null);
                             setSelectedModelId(null);
-                            setSelectedCategoryId(null);
                           } else {
                             form.setValue("faq_category_id", undefined);
                             form.clearErrors("faq_category_id");
@@ -503,32 +453,7 @@ export default function FaqListForm() {
                       </div>
                     )}
 
-                    {/* Step 3: Category (optional filter) */}
-                    {selectedModelId && variantCategories.length > 0 && (
-                      <div className="space-y-1">
-                        <label className="text-sm font-medium">Category (Optional - for filtering)</label>
-                        <Select
-                          onValueChange={(value) => {
-                            setSelectedCategoryId(value === "all" ? null : parseInt(value));
-                          }}
-                          value={selectedCategoryId ? String(selectedCategoryId) : "all"}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="All categories" />
-                          </SelectTrigger>
-                          <SelectContent>
-                          <SelectItem value="all">All categories</SelectItem>
-                            {variantCategories.map((c) => (
-                              <SelectItem key={c.id} value={String(c.id)}>
-                                {c.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-
-                    {/* Step 4: Variant */}
+                    {/* Step 3: Variant */}
                     {selectedModelId && (
                       <FormField
                         control={form.control}

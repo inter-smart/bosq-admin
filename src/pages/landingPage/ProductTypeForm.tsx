@@ -14,16 +14,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
-import { Save, ArrowLeft, X } from "lucide-react";
+import { Save, ArrowLeft, X, Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import {
   fetchProductTypeById,
@@ -67,6 +74,7 @@ export default function ProductTypeForm() {
   const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<
     number | null
   >(null);
+  const [categoryOpen, setCategoryOpen] = useState(false);
 
   const isLoadingRef = useRef(false);
 
@@ -591,25 +599,49 @@ export default function ProductTypeForm() {
                 {/* 1. Category */}
                 <div className="space-y-2">
                   <FormLabel>Category</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      const catId = parseInt(value);
-                      setSelectedParentCategoryId(catId);
-                      setVariants([]);
-                    }}
-                    value={selectedParentCategoryId?.toString() || ""}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id.toString()}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={categoryOpen}
+                        className="w-full justify-between"
+                      >
+                        {selectedParentCategoryId
+                          ? categories.find((c) => c.id === selectedParentCategoryId)?.name ?? "Select category"
+                          : "Select category"}
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search category..." />
+                        <CommandList>
+                          <CommandEmpty>No category found.</CommandEmpty>
+                          <CommandGroup>
+                            {categories.map((cat) => (
+                              <CommandItem
+                                key={cat.id}
+                                onSelect={() => {
+                                  setSelectedParentCategoryId(cat.id);
+                                  setVariants([]);
+                                  setCategoryOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedParentCategoryId === cat.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {cat.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
 
                 {/* 2. Variants (directly from category) */}
