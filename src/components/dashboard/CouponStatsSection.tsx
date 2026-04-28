@@ -94,7 +94,7 @@ export function CouponStatsSection({ data, loading }: CouponStatsSectionProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Stat cards row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <MiniStat icon={Tag} label="Total" value={data.totalCoupons} color="#3b82f6" />
           <MiniStat icon={CheckCircle} label="Active" value={data.activeCoupons} color="#22c55e" />
           <MiniStat icon={XCircle} label="Expired" value={data.expiredCoupons} color="#ef4444" />

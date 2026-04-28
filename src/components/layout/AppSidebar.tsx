@@ -306,7 +306,7 @@ const couponsSection = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state , isMobile} = useSidebar();
   const location = useLocation();
 
   const [cmsOpen, setCmsOpen] = useState(false);
@@ -338,7 +338,7 @@ export function AppSidebar() {
   const [masterOpen, setMasterOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
 
-  const isCollapsed = state === "collapsed";
+  const isCollapsed =!isMobile && state === "collapsed";
 
   // Helper function to close all sections
   const closeAllSections = () => {
