@@ -53,7 +53,6 @@ export default function OrderDetails() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-console.log("order details", order);
 
   // Cancellation Dialog State
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -836,6 +835,7 @@ console.log("order details", order);
                   <th className="px-4 sm:px-6 py-4 text-right">Price</th>
                   <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Discount</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Subtotal</th>
+                  <th className="px-4 sm:px-6 py-4 text-right">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
@@ -845,72 +845,75 @@ console.log("order details", order);
                     parseFloat(item.discount_amount) === 0 &&
                     parseFloat(order.discount_total || "0") > 0;
                   return (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-muted/5 transition-colors"
-                  >
-                    <td className="px-4 sm:px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 sm:h-16 sm:w-16 rounded border bg-white flex-shrink-0 flex items-center justify-center overflow-hidden">
-                          {item.variant?.media_path ||
-                          item.product?.media_path ? (
-                            <img
-                              src={
-                                `${import.meta.env.VITE_IMAGE_URL}/${item.variant?.media_path || item.product?.media_path}` ||
-                                item.product?.media_path
-                              }
-                              alt={item.product?.title}
-                              className="h-full w-full object-cover"
-                            />
-                          ) : (
-                            <Package className="h-6 w-6 sm:h-8 sm:w-8 text-muted/20" />
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-primary truncate max-w-[140px] sm:max-w-none">
-                            {item.product?.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            SKU: {item.variant?.sku}
-                          </p>
-                          <p className="text-xs font-medium md:hidden text-muted-foreground mt-0.5">
-                            {item.variant?.title}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
-                      <p className="text-xs font-medium">
-                        {item.variant?.title}
-                      </p>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 text-center">
-                      <span className="inline-flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-muted text-foreground font-medium text-xs sm:text-sm">
-                        {item.quantity}
-                      </span>
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 text-right font-medium whitespace-nowrap">
-                      AED {parseFloat(item.price).toLocaleString()}
-                    </td>
-                    <td
-                      className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${(useCouponOverride || parseFloat(item.discount_amount) > 0) ? "font-bold text-red-500 text-right" : "text-center"}`}
+                    <tr
+                      key={item.id}
+                      className="hover:bg-muted/5 transition-colors"
                     >
-                      {useCouponOverride
-                        ? `-AED ${parseFloat(order.discount_total).toLocaleString()}`
-                        : parseFloat(item?.discount_amount) > 0
-                          ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
-                          : "-"}
-                    </td>
-                    <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
-                      AED{" "}
-                      {useCouponOverride
-                        ? parseFloat(order.grand_total).toLocaleString()
-                        : (
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="h-12 w-12 sm:h-16 sm:w-16 rounded border bg-white flex-shrink-0 flex items-center justify-center overflow-hidden">
+                            {item.variant?.media_path ||
+                              item.product?.media_path ? (
+                              <img
+                                src={
+                                  `${import.meta.env.VITE_IMAGE_URL}/${item.variant?.media_path || item.product?.media_path}` ||
+                                  item.product?.media_path
+                                }
+                                alt={item.product?.title}
+                                className="h-full w-full object-cover"
+                              />
+                            ) : (
+                              <Package className="h-6 w-6 sm:h-8 sm:w-8 text-muted/20" />
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-primary truncate max-w-[140px] sm:max-w-none">
+                              {item.product?.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              SKU: {item.variant?.sku}
+                            </p>
+                            <p className="text-xs font-medium md:hidden text-muted-foreground mt-0.5">
+                              {item.variant?.title}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 hidden md:table-cell">
+                        <p className="text-xs font-medium">
+                          {item.variant?.title}
+                        </p>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-center">
+                        <span className="inline-flex items-center justify-center h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-muted text-foreground font-medium text-xs sm:text-sm">
+                          {item.quantity}
+                        </span>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-right font-medium whitespace-nowrap">
+                        AED {parseFloat(item.price).toLocaleString()}
+                      </td>
+                      <td
+                        className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${(useCouponOverride || parseFloat(item.discount_amount) > 0) ? "font-bold text-red-500 text-right" : "text-center"}`}
+                      >
+                        {useCouponOverride
+                          ? `-AED ${parseFloat(order.discount_total).toLocaleString()}`
+                          : parseFloat(item?.discount_amount) > 0
+                            ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
+                            : "-"}
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
+                        AED{" "}
+                        {useCouponOverride
+                          ? parseFloat(order.grand_total).toLocaleString()
+                          : (
                             parseFloat(item.price) * item.quantity -
                             parseFloat(item.discount_amount)
                           ).toLocaleString()}
-                    </td>
-                  </tr>
+                      </td>
+                      <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
+                        {item.status}
+                      </td>
+                    </tr>
                   );
                 })}
               </tbody>
@@ -935,7 +938,7 @@ console.log("order details", order);
                 AED {parseFloat(order.subtotal).toLocaleString()}
               </span>
             </div>
-          
+
             {parseFloat(String(order.discount_total || 0)) > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Discount</span>
@@ -945,7 +948,7 @@ console.log("order details", order);
                 </span>
               </div>
             )}
-              <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tax</span>
               <span className="font-medium">
                 AED {parseFloat(order.tax_total).toLocaleString()}
