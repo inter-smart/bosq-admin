@@ -564,7 +564,7 @@ export default function LandingPageForm() {
                         <FormLabel>Other Meta Tags</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={`<meta property="og:type" content="website" />`}
+                            placeholder={`<meta name="analytics-id" content="UA-XXXXX-X"/>`}
                             {...field}
                             rows={6}
                           />
@@ -640,7 +640,7 @@ export default function LandingPageForm() {
                         <FormLabel>Other Meta Tags (AR)</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={`<meta property="og:locale" content="ar_AR" />`}
+                            placeholder={`<meta name="analytics-id" content="UA-XXXXX-X"/>`}
                             {...field}
                             rows={6}
                           />
