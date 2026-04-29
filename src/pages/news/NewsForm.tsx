@@ -32,24 +32,24 @@ export default function NewsForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
   const [thumbnailFile, setThumbnailFile] = useState<File | string | null>(
-    null
+    null,
   );
   const [desktopImageFile, setDesktopImageFile] = useState<
     File | string | null
   >(null);
   const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
-    null
+    null,
   );
 
   const [thumbnailFileAr, setThumbnailFileAr] = useState<File | string | null>(
-    null
+    null,
   );
   const [desktopImageFileAr, setDesktopImageFileAr] = useState<
     File | string | null
   >(null);
-  const [mobileImageFileAr, setMobileImageFileAr] = useState<File | string | null>(
-    null
-  );
+  const [mobileImageFileAr, setMobileImageFileAr] = useState<
+    File | string | null
+  >(null);
 
   const form = useForm<NewsFormData>({
     resolver: zodResolver(newsSchema),
@@ -285,7 +285,6 @@ export default function NewsForm() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-  
           <Card>
             <CardHeader>
               <CardTitle>News Content</CardTitle>
@@ -432,71 +431,69 @@ export default function NewsForm() {
               <CardTitle>News Images</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-              <FormField
-                control={form.control}
-                name="thumbnail"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Thumbnail Image</FormLabel>
-
-                    <FormControl>
-                      <FileUpload
-                        value={field.value}
-                        onChange={(file) => {
-                          field.onChange(file);
-                          setThumbnailFile(file);
-                        }}
-                        accept="image/*"
-                        placeholder="Upload thumbnail image"
-                        recommendedDimensions="497px × 438px"
-                        preview={true}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="thumbnail_alt"
+                  name="thumbnail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Thumbnail Alt Text</FormLabel>
+                      <FormLabel>Thumbnail Image</FormLabel>
+
                       <FormControl>
-                        <Input
-                          placeholder="Enter thumbnail alt text"
-                          {...field}
+                        <FileUpload
+                          value={field.value}
+                          onChange={(file) => {
+                            field.onChange(file);
+                            setThumbnailFile(file);
+                          }}
+                          accept="image/*"
+                          placeholder="Upload thumbnail image"
+                          recommendedDimensions="497px × 438px"
+                          preview={true}
                         />
                       </FormControl>
+
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="thumbnail_alt_ar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Thumbnail Alt Text (AR)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="أدخل النص البديل للصورة المصغرة"
-                          {...field}
-                          dir="rtl"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="thumbnail_alt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Thumbnail Alt Text</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter thumbnail alt text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="thumbnail_alt_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Thumbnail Alt Text (AR)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="أدخل النص البديل للصورة المصغرة"
+                            {...field}
+                            dir="rtl"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -550,7 +547,7 @@ export default function NewsForm() {
                   )}
                 />
 
-    <FormField
+                <FormField
                   control={form.control}
                   name="media_desktop_path_ar"
                   render={({ field }) => (
@@ -600,9 +597,6 @@ export default function NewsForm() {
                   )}
                 />
 
-
-                
-
                 <FormField
                   control={form.control}
                   name="media_alt"
@@ -641,7 +635,7 @@ export default function NewsForm() {
             </CardContent>
           </Card>
 
-      <Card>
+          <Card>
             <CardHeader>
               <CardTitle>SEO Meta</CardTitle>
             </CardHeader>
@@ -774,11 +768,28 @@ export default function NewsForm() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="other_meta_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Other Meta Tags(AR)</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder={`<meta name="description" content="John Doe" />`}
+                            {...field}
+                            rows={6}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
             </CardContent>
           </Card>
-
 
           <Card>
             <CardHeader>
