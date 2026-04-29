@@ -39,7 +39,7 @@ import {
   Upload,
 } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const bosqLogo = "/bosq-logo-light.png";
@@ -580,8 +580,9 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="py-4 border-b border-sidebar-border">
           {!isCollapsed ? (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-between px-3">
               <img src={bosqLogo} alt="BOSQ" className="h-8 w-auto object-contain" />
+              <SidebarTrigger className="md:hidden" />
             </div>
           ) : (
             <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center mx-auto">
