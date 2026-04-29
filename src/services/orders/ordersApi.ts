@@ -35,7 +35,7 @@ export interface OrderItem {
     variant_id: number;
     quantity: number;
     price: string;
-    discount_total: string;
+    discount_amount: string;
     product?: {
         id: number;
         title: string;

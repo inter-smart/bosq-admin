@@ -53,6 +53,8 @@ export default function OrderDetails() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
+console.log("order details", order);
+
   // Cancellation Dialog State
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
@@ -357,7 +359,16 @@ export default function OrderDetails() {
         }
         const unitPrice = parseFloat(item.price);
         const discountAmt = parseFloat(item?.discount_amount);
-        const lineSubtotal = unitPrice * item.quantity - discountAmt;
+        const useCouponOverride =
+          (order.items ?? []).length === 1 &&
+          discountAmt === 0 &&
+          parseFloat(order.discount_total || "0") > 0;
+        const displayDiscount = useCouponOverride
+          ? parseFloat(order.discount_total)
+          : discountAmt;
+        const lineSubtotal = useCouponOverride
+          ? parseFloat(order.grand_total)
+          : unitPrice * item.quantity - discountAmt;
         const productTitle = item.variant?.title ?? "Unknown Product";
         const sku = item.variant?.sku ? `SKU: ${item.variant.sku}` : "";
 
@@ -378,14 +389,17 @@ export default function OrderDetails() {
         doc.setFont("helvetica", "normal");
         doc.text(String(item.quantity), cols.qty, y, { align: "center" });
         doc.text(aed(unitPrice), cols.price, y, { align: "center" });
-        const discountValue =
-          typeof discountAmt === "number" &&
-          !isNaN(discountAmt) &&
-          discountAmt > 0
-            ? aed(discountAmt)
-            : "-";
-
-        doc.text(discountValue, cols.discount, y, { align: "center" });
+        const hasDiscount =
+          typeof displayDiscount === "number" &&
+          !isNaN(displayDiscount) &&
+          displayDiscount > 0;
+        if (hasDiscount) {
+          doc.setTextColor(180, 30, 30);
+          doc.text(`- ${aed(displayDiscount)}`, cols.discount, y, { align: "center" });
+          doc.setTextColor(20, 20, 20);
+        } else {
+          doc.text("-", cols.discount, y, { align: "center" });
+        }
         doc.setFont("helvetica", "bold");
         doc.text(aed(lineSubtotal), cols.subtotal, y, { align: "right" });
         y += 11;
@@ -419,7 +433,6 @@ export default function OrderDetails() {
       };
 
       drawRow("Subtotal", aed(order.subtotal));
-      drawRow("Tax", aed(order.tax_total));
       if (parseFloat(String(order.discount_total || 0)) > 0) {
         drawRow(
           "Discount",
@@ -428,6 +441,7 @@ export default function OrderDetails() {
           [180, 30, 30],
         );
       }
+      drawRow("Tax", aed(order.tax_total));
       doc.setDrawColor(80, 80, 80);
       doc.line(summaryLabelX, y, summaryValueX, y);
       y += 5;
@@ -825,7 +839,12 @@ export default function OrderDetails() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {order.items?.map((item) => (
+                {order.items?.map((item) => {
+                  const useCouponOverride =
+                    order.items?.length === 1 &&
+                    parseFloat(item.discount_amount) === 0 &&
+                    parseFloat(order.discount_total || "0") > 0;
+                  return (
                   <tr
                     key={item.id}
                     className="hover:bg-muted/5 transition-colors"
@@ -874,21 +893,26 @@ export default function OrderDetails() {
                       AED {parseFloat(item.price).toLocaleString()}
                     </td>
                     <td
-                      className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}
+                      className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${(useCouponOverride || parseFloat(item.discount_amount) > 0) ? "font-bold text-red-500 text-right" : "text-center"}`}
                     >
-                      {parseFloat(item?.discount_amount) > 0
-                        ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
-                        : "-"}
+                      {useCouponOverride
+                        ? `-AED ${parseFloat(order.discount_total).toLocaleString()}`
+                        : parseFloat(item?.discount_amount) > 0
+                          ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
+                          : "-"}
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
                       AED{" "}
-                      {(
-                        parseFloat(item.price) * item.quantity -
-                        parseFloat(item.discount_amount)
-                      ).toLocaleString()}
+                      {useCouponOverride
+                        ? parseFloat(order.grand_total).toLocaleString()
+                        : (
+                            parseFloat(item.price) * item.quantity -
+                            parseFloat(item.discount_amount)
+                          ).toLocaleString()}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -911,21 +935,22 @@ export default function OrderDetails() {
                 AED {parseFloat(order.subtotal).toLocaleString()}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Tax Total</span>
-              <span className="font-medium">
-                AED {parseFloat(order.tax_total).toLocaleString()}
-              </span>
-            </div>
+          
             {parseFloat(String(order.discount_total || 0)) > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Discount Total</span>
+                <span className="text-muted-foreground">Discount</span>
                 <span className="text-red-500 font-medium">
                   -AED{" "}
                   {parseFloat(order?.discount_total || "0").toLocaleString()}
                 </span>
               </div>
             )}
+              <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Tax</span>
+              <span className="font-medium">
+                AED {parseFloat(order.tax_total).toLocaleString()}
+              </span>
+            </div>
             <Separator />
             <div className="flex justify-between items-center pt-2">
               <span className="text-base font-bold text-primary">
