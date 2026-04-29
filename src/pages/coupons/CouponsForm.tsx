@@ -476,6 +476,7 @@ export default function CouponsForm() {
                           min="0"
                           placeholder="0.00"
                           {...field}
+                          onFocus={(e) => e.target.select()}
                           onChange={(e) => {
                             let value = parseFloat(e.target.value) || 0;
                             value = Math.max(0, value);
@@ -505,6 +506,7 @@ export default function CouponsForm() {
                             placeholder="0.00"
                             {...field}
                             value={field.value ?? ""}
+                            onFocus={(e) => e.target.select()}
                             onChange={(e) => {
                               const value = Math.max(0, parseFloat(e.target.value) || 0);
                               field.onChange(value);
@@ -529,6 +531,7 @@ export default function CouponsForm() {
                           min="0"
                           placeholder="0.00"
                           {...field}
+                          onFocus={(e) => e.target.select()}
                           onChange={(e) => {
                             const value = Math.max(0, parseFloat(e.target.value) || 0);
                             field.onChange(value);
@@ -553,6 +556,7 @@ export default function CouponsForm() {
                             min="0"
                             placeholder="0.00"
                             {...field}
+                            onFocus={(e) => e.target.select()}
                             onChange={(e) => {
                               const value = Math.max(0, parseFloat(e.target.value) || 0);
                               field.onChange(value);
@@ -917,7 +921,7 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Total Usage Limit *</FormLabel>
                       <FormControl>
-                        <Input type="number" min="1" placeholder="1" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
+                        <Input type="number" min="1" placeholder="1" {...field} onFocus={(e) => e.target.select()} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
                       </FormControl>
                       <FormDescription>Maximum number of times this coupon can be used</FormDescription>
                       <FormMessage />
@@ -932,7 +936,7 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Per User Limit *</FormLabel>
                       <FormControl>
-                        <Input type="number" min="1" placeholder="1" {...field} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
+                        <Input type="number" min="1" placeholder="1" {...field} onFocus={(e) => e.target.select()} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
                       </FormControl>
                       <FormDescription>Maximum times a single user can use this coupon</FormDescription>
                       <FormMessage />
