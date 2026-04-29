@@ -562,8 +562,8 @@ export default function OrderDetails() {
                         "packed",
                         "shipped",
                         "delivered",
-                        "cancelled",
-                        "returned",
+                        // "cancelled",
+                        // "returned",
                       ].map((s) => {
                         let disabled = false;
                         if (s === "delivered" && order.status !== "shipped")
