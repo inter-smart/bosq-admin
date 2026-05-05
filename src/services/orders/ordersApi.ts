@@ -23,6 +23,7 @@ export interface Order {
         name: string;
         email: string;
         mobile: string;
+        country_code: string;
     };
     items?: OrderItem[];
     addresses?: OrderAddress[];

@@ -520,6 +520,9 @@ export default function OrderDetails() {
     returned: "bg-gray-100 text-gray-800 border-gray-200",
   };
 
+
+  console.log("orders",order.user)
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10 px-2 sm:px-0">
       {/* Header */}
@@ -699,7 +702,7 @@ export default function OrderDetails() {
               <div className="flex items-center gap-2 text-sm">
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Phone:</span>
-                <span>{order.user?.mobile}</span>
+                <span>{`${order?.user?.country_code} ${order.user?.mobile}`}</span>
               </div>
             </div>
           </CardContent>
