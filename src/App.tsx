@@ -271,6 +271,7 @@ const ExtraMaterialsForm = lazy(
 );
 
 // Delivery pages
+const DeliveryChargesList = lazy(() => import("./pages/deliveryCharges/DeliveryChargesList"));
 const DeliveryCmsForm = lazy(
   () => import("./pages/cms/delivery/DeliveryCmsForm"),
 );
@@ -1407,6 +1408,16 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <DeliveryCmsForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Delivery Charges Routes */}
+            <Route
+              path="/delivery-charges"
+              element={
+                <ProtectedRoute>
+                  <DeliveryChargesList />
                 </ProtectedRoute>
               }
             />
