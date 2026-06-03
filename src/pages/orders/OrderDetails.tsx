@@ -837,6 +837,7 @@ export default function OrderDetails() {
                   <th className="px-4 sm:px-6 py-4 text-center">Qty</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Price</th>
                   <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Discount</th>
+                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Shipping</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Subtotal</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Status</th>
                 </tr>
@@ -904,6 +905,11 @@ export default function OrderDetails() {
                             ? `-AED ${parseFloat(item?.discount_amount).toLocaleString()}`
                             : "-"}
                       </td>
+                      <td className="px-4 sm:px-6 py-4 hidden sm:table-cell text-right whitespace-nowrap">
+                        {parseFloat(item.shipping_charge || "0") > 0
+                          ? `AED ${parseFloat(item.shipping_charge).toLocaleString()}`
+                          : "-"}
+                      </td>
                       <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
                         AED{" "}
                         {useCouponOverride
@@ -957,6 +963,14 @@ export default function OrderDetails() {
                 AED {parseFloat(order.tax_total).toLocaleString()}
               </span>
             </div>
+            {parseFloat(String(order.shipping_total || 0)) > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Shipping</span>
+                <span className="font-medium">
+                  AED {parseFloat(order.shipping_total).toLocaleString()}
+                </span>
+              </div>
+            )}
             <Separator />
             <div className="flex justify-between items-center pt-2">
               <span className="text-base font-bold text-primary">

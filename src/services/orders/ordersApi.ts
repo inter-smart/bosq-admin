@@ -11,6 +11,7 @@ export interface Order {
     discount_total: string;
     discount_amount: number;
     tax_total: string;
+    shipping_total: string;
     grand_total: string;
     est_delivery_details?: string | null;
     awb_number?: string | null;
@@ -38,6 +39,7 @@ export interface OrderItem {
     price: string;
     status: string;
     discount_amount: string;
+    shipping_charge: string;
     product?: {
         id: number;
         title: string;

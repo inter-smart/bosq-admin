@@ -215,6 +215,7 @@ export default function OrdersList() {
         Phone: item.user?.mobile || "-",
         Status: item.status,
         "Payment Status": item.payment_status,
+        "Shipping Charge": `AED ${item.shipping_total || "0.00"}`,
         "Grand Total": `₹${item.grand_total}`,
         "Ordered At": formatDateForExcel(item.createdAt),
       }));
@@ -229,6 +230,7 @@ export default function OrdersList() {
         { wch: 20 }, // Phone
         { wch: 15 }, // Status
         { wch: 15 }, // Payment Status
+        { wch: 15 }, // Shipping Charge
         { wch: 15 }, // Grand Total
         { wch: 25 }, // Ordered At
       ];
@@ -316,6 +318,18 @@ export default function OrdersList() {
             className={`px-2 py-1 rounded-full text-xs font-medium ${colors[status] || "bg-gray-100 text-gray-800"}`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "shipping_total",
+      header: "Shipping Charge",
+      cell: ({ row }) => {
+        const shippingTotal = row.getValue("shipping_total") as string;
+        return (
+          <span className="text-sm font-medium">
+            AED {shippingTotal || "0.00"}
           </span>
         );
       },
