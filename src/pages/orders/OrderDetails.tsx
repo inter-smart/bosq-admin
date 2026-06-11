@@ -440,7 +440,12 @@ export default function OrderDetails() {
           [180, 30, 30],
         );
       }
-      drawRow("Tax", aed(order.tax_total));
+      if (order.shipping_charge && order.shipping_charge > 0) {
+        drawRow("Shipping", aed(order.shipping_charge));
+      }
+      if (order.tax_total && order.tax_total > 0) {
+        drawRow("Tax", aed(order.tax_total));
+      }
       doc.setDrawColor(80, 80, 80);
       doc.line(summaryLabelX, y, summaryValueX, y);
       y += 5;
@@ -957,12 +962,16 @@ export default function OrderDetails() {
                 </span>
               </div>
             )}
-            <div className="flex justify-between text-sm">
+
+            {
+              order?.tax_charge>0 && (
+                <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tax</span>
               <span className="font-medium">
                 AED {parseFloat(order.tax_total).toLocaleString()}
               </span>
             </div>
+            )}
             {parseFloat(String(order.shipping_total || 0)) > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
