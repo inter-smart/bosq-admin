@@ -779,7 +779,6 @@ const App = () => (
               }
             />
 
-            {/* Product Variant Images Routes */}
             <Route
               path="/product-variant-images/:variantId"
               element={
@@ -790,6 +789,14 @@ const App = () => (
             />
             <Route
               path="/product-variant-images/:variantId/add"
+              element={
+                <ProtectedRoute>
+                  <ProductVariantImagesForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-variant-images/:variantId/edit/:id"
               element={
                 <ProtectedRoute>
                   <ProductVariantImagesForm />

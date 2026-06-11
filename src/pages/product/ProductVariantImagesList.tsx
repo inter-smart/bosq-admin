@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Trash2, Star, MoreHorizontal, ChevronDown, ChevronUp} from "lucide-react";
+import { ArrowLeft, Trash2, Star, MoreHorizontal, ChevronDown, ChevronUp, Edit } from "lucide-react";
 import {
   fetchProductVariantImages,
   deleteProductVariantImage,
@@ -69,7 +69,6 @@ export default function ProductVariantImagesList() {
       const response = await fetchProductVariantImages(parseInt(variantId));
 
       if (response.success) {
-        // Sort images by sort_order
         const sortedImages = response.data.list.sort((a, b) => a.sort_order - b.sort_order);
         setImages(sortedImages);
       }
@@ -184,19 +183,17 @@ export default function ProductVariantImagesList() {
     return "/base-products";
   };
 
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
+    useCommonTableActions<ProductVariantImage>({
+      modelName: "ProductVariantImages",
+      data: images,
+      setData: setImages,
+    });
 
-
-    const { editingSortOrder, handleStatusChange, handleSortOrderChange } =
-      useCommonTableActions<ProductVariantImage>({
-        modelName: "ProductVariantImages",
-        data: images,
-        setData: setImages,
-      });
-  
   const columns: ColumnDef<ProductVariantImage>[] = [
     {
       id: "select",
-      header: ({ table }) => (
+      header: () => (
         <Checkbox
           checked={selectedImages.size === images.length && images.length > 0}
           onCheckedChange={toggleSelectAll}
@@ -255,7 +252,7 @@ export default function ProductVariantImagesList() {
         );
       },
     },
-     {
+    {
       accessorKey: "sort_order",
       header: "Sort Order",
       enableSorting: true,
@@ -308,7 +305,7 @@ export default function ProductVariantImagesList() {
         return (
           <div className="min-w-[100px]">
             {isPrimary ? (
-              <Badge className="bg-yellow-500">
+              <Badge className="bg-yellow-500 text-white border-none">
                 <Star className="h-3 w-3 mr-1 fill-current" />
                 Primary
               </Badge>
@@ -322,7 +319,6 @@ export default function ProductVariantImagesList() {
         );
       },
     },
-  
     {
       accessorKey: "status",
       header: "Status",
@@ -331,13 +327,8 @@ export default function ProductVariantImagesList() {
         const status = row.getValue("status") as boolean;
         return (
           <div className="flex items-center gap-2">
-            <Switch
-              checked={status}
-              onCheckedChange={() => handleStatusChange(item.id!, status)}
-            />
-            <Badge variant={status ? "default" : "secondary"}>
-              {status ? "active" : "inactive"}
-            </Badge>
+            <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
+            <Badge variant={status ? "default" : "secondary"}>{status ? "active" : "inactive"}</Badge>
           </div>
         );
       },
@@ -359,7 +350,6 @@ export default function ProductVariantImagesList() {
       header: "Actions",
       cell: ({ row }) => {
         const item = row.original;
-
         return (
           <div className="min-w-[80px]">
             <DropdownMenu>
@@ -370,6 +360,10 @@ export default function ProductVariantImagesList() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => navigate(`/product-variant-images/${variantId}/edit/${item.id}`)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
                 {!item.is_primary && (
                   <DropdownMenuItem onClick={() => handleSetPrimary(item.id!)}>
                     <Star className="mr-2 h-4 w-4" />

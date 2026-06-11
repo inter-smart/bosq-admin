@@ -669,11 +669,11 @@ export default function BlogsForm() {
                         <FormLabel>Other Meta Tags</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={`<meta name="description" content="John Doe" />`}
                             {...field}
                             rows={6}
                           />
                         </FormControl>
+                        <p className="text-muted-foreground text-sm">Example: &lt;meta name="description" content="John Doe" /&gt;</p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -745,11 +745,11 @@ export default function BlogsForm() {
                         <FormLabel>Other Meta Tags (AR)</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder={`<meta name="description" content="John Doe" />`}
                             {...field}
                             rows={6}
                           />
                         </FormControl>
+                        <p className="text-muted-foreground text-sm">Example: &lt;meta name="description" content="John Doe" /&gt;</p>
                         <FormMessage />
                       </FormItem>
                     )}
