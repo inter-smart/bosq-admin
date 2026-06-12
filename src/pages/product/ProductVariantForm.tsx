@@ -779,9 +779,8 @@ export default function ProductVariantForm() {
                       return (
                         <div
                           key={parent.id}
-                          className={`rounded-lg border p-3 space-y-2.5 transition-colors ${
-                            isGroupActive ? "border-primary/40 bg-primary/5" : "border-border bg-muted/20 hover:bg-muted/40"
-                          }`}
+                          className={`rounded-lg border p-3 space-y-2.5 transition-colors ${isGroupActive ? "border-primary/40 bg-primary/5" : "border-border bg-muted/20 hover:bg-muted/40"
+                            }`}
                         >
                           {/* Parent row */}
                           <div className={`flex items-center gap-2 ${children.length > 0 ? "pb-2 border-b border-border/60" : ""}`}>
