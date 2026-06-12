@@ -177,10 +177,7 @@ export default function ProductVariantImagesList() {
   };
 
   const getBackUrl = () => {
-    if (variant?.product_id) {
-      return `/product-variants/${variant.product_id}/list`;
-    }
-    return "/base-products";
+    return "/product-variants/all";
   };
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } =

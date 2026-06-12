@@ -677,12 +677,12 @@ export default function ProductVariantImagesForm() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold">
-            {isEditMode ? "Edit Image" : "Add Images"}
+            {isEditMode ? "Edit Media" : "Add Images"}
             {variant ? ` for ${variant.sku}` : ""}
           </h1>
           <p className="text-muted-foreground">
             {isEditMode
-              ? "Update the details for this product variant image"
+              ? "Update the details for this product variant media"
               : "Upload images for this product variant (1-10 images)"}
           </p>
         </div>
@@ -741,7 +741,7 @@ export default function ProductVariantImagesForm() {
         {images.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>{isEditMode ? "Image Details" : `Selected Media (${images.length}/10)`}</CardTitle>
+              <CardTitle>{isEditMode ? "Media Details" : `Selected Media (${images.length}/10)`}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -774,7 +774,7 @@ export default function ProductVariantImagesForm() {
           <Button type="submit" disabled={loading || images.length === 0 || images.length > 10 || validationErrors.length > 0}>
             {loading
               ? (isEditMode ? "Updating..." : "Uploading...")
-              : (isEditMode ? "Update Image" : "Upload Images")}
+              : (isEditMode ? "Update Media" : "Upload Images")}
           </Button>
         </div>
       </form>
