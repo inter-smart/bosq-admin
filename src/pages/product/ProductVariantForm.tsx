@@ -134,6 +134,16 @@ export default function ProductVariantForm() {
     return allSelections.every((s) => s.valueId !== null);
   }, [attributeSelections]);
 
+  const attributeValidationMessage = useMemo(() => {
+    if (isEditing) return null;
+    const allSelections = Object.values(attributeSelections).flat();
+    if (allSelections.length === 0) return "Add at least one attribute value to create the variant.";
+    const missingValues = allSelections.filter((s) => s.valueId === null);
+    if (missingValues.length > 0)
+      return `Select a value for ${missingValues.length} attribute row(s) before saving.`;
+    return null;
+  }, [attributeSelections, isEditing]);
+
   useEffect(() => {
     loadInitialData();
   }, [productId, id]);
@@ -820,7 +830,10 @@ export default function ProductVariantForm() {
           })()}
 
         {/* Submit Buttons */}
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end items-center gap-4">
+          {attributeValidationMessage && (
+            <p className="text-sm text-destructive flex-1">{attributeValidationMessage}</p>
+          )}
           <Button type="button" variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
