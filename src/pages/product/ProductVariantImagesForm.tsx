@@ -85,8 +85,10 @@ function SortableImageCard({
             <GripVertical className="h-5 w-5 text-muted-foreground" />
           </div>
 
-          <div className="flex flex-col gap-2">
-            {image.media_type === "image" && (
+    <div className="flex flex-col gap-2">
+      {image.preview ? (
+        <>
+                    {image.media_type === "image" && (
               <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border">
                 <img src={image.preview} alt="Preview" className="w-full h-full object-cover" />
               </div>
@@ -118,6 +120,26 @@ function SortableImageCard({
                 </div>
               </>
             )}
+            </>
+      ):(
+           <div className="w-24 h-24 flex-shrink-0">
+          <Input
+            type="file"
+            accept={image.media_type === "video" ? "video/*" : "image/*"}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onFileChange?.(image.id, f); }}
+            className="hidden"
+            id={`replace-media-add-${image.id}`}
+          />
+          <Label htmlFor={`replace-media-add-${image.id}`} className="cursor-pointer block h-full">
+            <div className="w-24 h-24 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center hover:border-primary hover:text-primary transition-colors">
+              <Upload className="h-5 w-5 mb-1" />
+              <span className="text-[10px]">
+                {image.media_type === "video" ? "Add Video" : "Add Image"}
+              </span>
+            </div>
+          </Label>
+        </div>
+      )}
           </div>
 
           <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
