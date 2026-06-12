@@ -87,7 +87,7 @@ export const uploadProductVariantImages = async (formData: FormData): Promise<Pr
 };
 
 // Update product variant image
-export const updateProductVariantImage = async (id: number, data: Partial<ProductVariantImage>): Promise<ProductVariantImageItemResponse> => {
+export const updateProductVariantImage = async (id: number, data: Partial<ProductVariantImage> | FormData): Promise<ProductVariantImageItemResponse> => {
   return apiCall(`/resources/product-variant-images/${id}`, {
     method: "PUT",
     data,

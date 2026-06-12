@@ -10,9 +10,11 @@ export interface Order {
     subtotal: string;
     discount_total: string;
     discount_amount: number;
-    tax_total: string;
-    shipping_total: string;
+    tax_total: number;
+    shipping_total: number;
     grand_total: string;
+    shipping_charge: number;
+    tax_charge: number;
     est_delivery_details?: string | null;
     awb_number?: string | null;
     order_url?: string | null;
