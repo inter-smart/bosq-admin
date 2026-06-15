@@ -53,6 +53,7 @@ export default function OrderDetails() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
+
   // Cancellation Dialog State
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
@@ -235,8 +236,9 @@ export default function OrderDetails() {
         doc.text(order.user.email, margin, leftY);
         leftY += 5;
       }
-      if (order.user?.mobile) {
-        doc.text(order.user.mobile, margin, leftY);
+      const userPhone = formatPhoneNumber(order.user?.country_code, order.user?.mobile);
+      if (userPhone && userPhone !== "N/A") {
+        doc.text(userPhone, margin, leftY);
         leftY += 5;
       }
 
@@ -267,7 +269,7 @@ export default function OrderDetails() {
         }
         leftY += 3;
         doc.text(
-          `Ph: ${shippingAddr.country_code} ${shippingAddr.phone}`,
+          `Ph: ${formatPhoneNumber(shippingAddr.country_code, shippingAddr.phone)}`,
           margin,
           leftY,
         );
@@ -295,7 +297,7 @@ export default function OrderDetails() {
         }
         rightY += 3; // breathing gap before phone
         doc.text(
-          `Ph: ${billingAddr.country_code} ${billingAddr.phone}`,
+          `Ph: ${formatPhoneNumber(billingAddr.country_code, billingAddr.phone)}`,
           rx,
           rightY,
           { align: "right" },
@@ -393,9 +395,7 @@ export default function OrderDetails() {
           displayDiscount > 0;
         if (hasDiscount) {
           doc.setTextColor(180, 30, 30);
-          doc.text(`- ${aed(displayDiscount)}`, cols.discount, y, {
-            align: "center",
-          });
+          doc.text(`- ${aed(displayDiscount)}`, cols.discount, y, { align: "center" });
           doc.setTextColor(20, 20, 20);
         } else {
           doc.text("-", cols.discount, y, { align: "center" });
@@ -441,12 +441,7 @@ export default function OrderDetails() {
           [180, 30, 30],
         );
       }
-      if (order.shipping_charge && order.shipping_charge > 0) {
-        drawRow("Shipping", aed(order.shipping_charge));
-      }
-      if (order.tax_total && order.tax_total > 0) {
-        drawRow("Tax", aed(order.tax_total));
-      }
+      drawRow("Tax", aed(order.tax_total));
       doc.setDrawColor(80, 80, 80);
       doc.line(summaryLabelX, y, summaryValueX, y);
       y += 5;
@@ -526,7 +521,8 @@ export default function OrderDetails() {
     returned: "bg-gray-100 text-gray-800 border-gray-200",
   };
 
-  console.log("orders", order.user);
+
+  console.log("orders",order.user)
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10 px-2 sm:px-0">
@@ -694,28 +690,21 @@ export default function OrderDetails() {
             </div>
 
             <div className="space-y-3 pt-2">
-              {order.user?.email && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Email:</span>
-                  <a
-                    href={`mailto:${order.user?.email}`}
-                    className="text-primary hover:underline"
-                  >
-                    {order.user?.email}
-                  </a>
-                </div>
-              )}
-
-              {order.user?.country_code && order.user?.mobile && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Phone:</span>
-                  <span>
-                    {order.user?.country_code} {order.user?.mobile}
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center gap-2 text-sm">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Email:</span>
+                <a
+                  href={`mailto:${order.user?.email}`}
+                  className="text-primary hover:underline"
+                >
+                  {order.user?.email}
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Phone:</span>
+                <span>{formatPhoneNumber(order.user?.country_code, order.user?.mobile)}</span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -845,17 +834,11 @@ export default function OrderDetails() {
               <thead>
                 <tr className="border-b bg-muted/10 text-muted-foreground font-medium uppercase text-[10px] tracking-wider">
                   <th className="px-4 sm:px-6 py-4 text-left">Product</th>
-                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">
-                    Details
-                  </th>
+                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Details</th>
                   <th className="px-4 sm:px-6 py-4 text-center">Qty</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Price</th>
-                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">
-                    Discount
-                  </th>
-                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">
-                    Shipping
-                  </th>
+                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Discount</th>
+                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Shipping</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Subtotal</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Status</th>
                 </tr>
@@ -875,7 +858,7 @@ export default function OrderDetails() {
                         <div className="flex items-center gap-3">
                           <div className="h-12 w-12 sm:h-16 sm:w-16 rounded border bg-white flex-shrink-0 flex items-center justify-center overflow-hidden">
                             {item.variant?.media_path ||
-                            item.product?.media_path ? (
+                              item.product?.media_path ? (
                               <img
                                 src={
                                   `${import.meta.env.VITE_IMAGE_URL}/${item.variant?.media_path || item.product?.media_path}` ||
@@ -915,7 +898,7 @@ export default function OrderDetails() {
                         AED {parseFloat(item.price).toLocaleString()}
                       </td>
                       <td
-                        className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${useCouponOverride || parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}
+                        className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${(useCouponOverride || parseFloat(item.discount_amount) > 0) ? "font-bold text-red-500 text-right" : "text-center"}`}
                       >
                         {useCouponOverride
                           ? `-AED ${parseFloat(order.discount_total).toLocaleString()}`
@@ -933,9 +916,9 @@ export default function OrderDetails() {
                         {useCouponOverride
                           ? parseFloat(order.grand_total).toLocaleString()
                           : (
-                              parseFloat(item.price) * item.quantity -
-                              parseFloat(item.discount_amount)
-                            ).toLocaleString()}
+                            parseFloat(item.price) * item.quantity -
+                            parseFloat(item.discount_amount)
+                          ).toLocaleString()}
                       </td>
                       <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
                         {item.status}
@@ -975,16 +958,12 @@ export default function OrderDetails() {
                 </span>
               </div>
             )}
-
-            {
-              order?.tax_charge>0 && (
-                <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tax</span>
               <span className="font-medium">
                 AED {parseFloat(order.tax_total).toLocaleString()}
               </span>
             </div>
-            )}
             {parseFloat(String(order.shipping_total || 0)) > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
@@ -1009,6 +988,27 @@ export default function OrderDetails() {
   );
 }
 
+const formatPhoneNumber = (countryCode?: string | null, phone?: string | null): string => {
+  const cleanCode = countryCode && !["null", "undefined"].includes(String(countryCode).trim().toLowerCase()) 
+    ? String(countryCode).trim() 
+    : "";
+  const cleanPhone = phone && !["null", "undefined"].includes(String(phone).trim().toLowerCase()) 
+    ? String(phone).trim() 
+    : "";
+    
+  if (!cleanCode) return cleanPhone || "N/A";
+  if (!cleanPhone) return cleanCode || "N/A";
+  
+  const normCode = cleanCode.replace(/\D/g, "");
+  const normPhone = cleanPhone.replace(/\D/g, "");
+  
+  if (normCode && normPhone.startsWith(normCode)) {
+    return cleanPhone;
+  }
+  
+  return `${cleanCode} ${cleanPhone}`;
+};
+
 function AddressData({ address }) {
   return (
     <div className="space-y-1.5 text-sm">
@@ -1020,7 +1020,9 @@ function AddressData({ address }) {
       )}
       <p className="font-medium">{address.state?.name}</p>
       <div className="pt-2">
-        <p className="text-xs text-muted-foreground">Phone: {address.phone}</p>
+        <p className="text-xs text-muted-foreground">
+          Phone: {formatPhoneNumber(address.country_code, address.phone)}
+        </p>
         <p className="text-xs text-muted-foreground">Email: {address.email}</p>
       </div>
     </div>
