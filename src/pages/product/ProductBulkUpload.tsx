@@ -159,7 +159,6 @@ function downloadTemplate() {
   const variantSample1 = [
     "Executive Chair",
     "Black Edition",
-    "EC-BLK-M-001",
     "Medium",
     "متوسط",
     "Classic Black",
@@ -190,7 +189,6 @@ function downloadTemplate() {
   const variantSample2 = [
     "Executive Chair",
     "Black Edition",
-    "EC-BLK-L-002",
     "Large",
     "كبير",
     "Classic Black",
@@ -221,7 +219,6 @@ function downloadTemplate() {
   const variantSample3 = [
     "Executive Chair",
     "White Edition",
-    "EC-WHT-M-003",
     "Medium",
     "متوسط",
     "Pearl White",
