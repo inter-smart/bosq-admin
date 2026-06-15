@@ -53,7 +53,6 @@ export default function OrderDetails() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
-
   // Cancellation Dialog State
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
@@ -394,7 +393,9 @@ export default function OrderDetails() {
           displayDiscount > 0;
         if (hasDiscount) {
           doc.setTextColor(180, 30, 30);
-          doc.text(`- ${aed(displayDiscount)}`, cols.discount, y, { align: "center" });
+          doc.text(`- ${aed(displayDiscount)}`, cols.discount, y, {
+            align: "center",
+          });
           doc.setTextColor(20, 20, 20);
         } else {
           doc.text("-", cols.discount, y, { align: "center" });
@@ -525,8 +526,7 @@ export default function OrderDetails() {
     returned: "bg-gray-100 text-gray-800 border-gray-200",
   };
 
-
-  console.log("orders",order.user)
+  console.log("orders", order.user);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10 px-2 sm:px-0">
@@ -694,21 +694,28 @@ export default function OrderDetails() {
             </div>
 
             <div className="space-y-3 pt-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium">Email:</span>
-                <a
-                  href={`mailto:${order.user?.email}`}
-                  className="text-primary hover:underline"
-                >
-                  {order.user?.email}
-                </a>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span className="font-medium">Phone:</span>
-                <span>{`${order?.user?.country_code} ${order.user?.mobile}`}</span>
-              </div>
+              {order.user?.email && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Email:</span>
+                  <a
+                    href={`mailto:${order.user?.email}`}
+                    className="text-primary hover:underline"
+                  >
+                    {order.user?.email}
+                  </a>
+                </div>
+              )}
+
+              {order.user?.country_code && order.user?.mobile && (
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">Phone:</span>
+                  <span>
+                    {order.user?.country_code} {order.user?.mobile}
+                  </span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -838,11 +845,17 @@ export default function OrderDetails() {
               <thead>
                 <tr className="border-b bg-muted/10 text-muted-foreground font-medium uppercase text-[10px] tracking-wider">
                   <th className="px-4 sm:px-6 py-4 text-left">Product</th>
-                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">Details</th>
+                  <th className="px-4 sm:px-6 py-4 text-left hidden md:table-cell">
+                    Details
+                  </th>
                   <th className="px-4 sm:px-6 py-4 text-center">Qty</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Price</th>
-                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Discount</th>
-                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">Shipping</th>
+                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">
+                    Discount
+                  </th>
+                  <th className="px-4 sm:px-6 py-4 text-right hidden sm:table-cell">
+                    Shipping
+                  </th>
                   <th className="px-4 sm:px-6 py-4 text-right">Subtotal</th>
                   <th className="px-4 sm:px-6 py-4 text-right">Status</th>
                 </tr>
@@ -862,7 +875,7 @@ export default function OrderDetails() {
                         <div className="flex items-center gap-3">
                           <div className="h-12 w-12 sm:h-16 sm:w-16 rounded border bg-white flex-shrink-0 flex items-center justify-center overflow-hidden">
                             {item.variant?.media_path ||
-                              item.product?.media_path ? (
+                            item.product?.media_path ? (
                               <img
                                 src={
                                   `${import.meta.env.VITE_IMAGE_URL}/${item.variant?.media_path || item.product?.media_path}` ||
@@ -902,7 +915,7 @@ export default function OrderDetails() {
                         AED {parseFloat(item.price).toLocaleString()}
                       </td>
                       <td
-                        className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${(useCouponOverride || parseFloat(item.discount_amount) > 0) ? "font-bold text-red-500 text-right" : "text-center"}`}
+                        className={`px-4 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap ${useCouponOverride || parseFloat(item.discount_amount) > 0 ? "font-bold text-red-500 text-right" : "text-center"}`}
                       >
                         {useCouponOverride
                           ? `-AED ${parseFloat(order.discount_total).toLocaleString()}`
@@ -920,9 +933,9 @@ export default function OrderDetails() {
                         {useCouponOverride
                           ? parseFloat(order.grand_total).toLocaleString()
                           : (
-                            parseFloat(item.price) * item.quantity -
-                            parseFloat(item.discount_amount)
-                          ).toLocaleString()}
+                              parseFloat(item.price) * item.quantity -
+                              parseFloat(item.discount_amount)
+                            ).toLocaleString()}
                       </td>
                       <td className="px-4 sm:px-6 py-4 text-right font-bold whitespace-nowrap">
                         {item.status}
@@ -1007,9 +1020,7 @@ function AddressData({ address }) {
       )}
       <p className="font-medium">{address.state?.name}</p>
       <div className="pt-2">
-        <p className="text-xs text-muted-foreground">
-          Phone: {address.country_code} {address.phone}
-        </p>
+        <p className="text-xs text-muted-foreground">Phone: {address.phone}</p>
         <p className="text-xs text-muted-foreground">Email: {address.email}</p>
       </div>
     </div>
