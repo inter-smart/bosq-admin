@@ -623,8 +623,8 @@ function UploadGuide() {
                   variants are removed, then the new set from the sheet is inserted
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Gallery Images & Project Images</span> — add-only: new filenames are inserted; images
-                  that already exist for a variant are never removed or duplicated
+                  <span className="font-medium text-foreground">Gallery Images & Project Images</span> — fully replaced: all existing image rows for
+                  updated variants are removed, then the new set from the sheet is inserted (empty cell = all images removed)
                 </p>
               </div>
             </div>
@@ -638,8 +638,8 @@ function UploadGuide() {
                 • <strong>New variant added</strong> — add the row to the sheet; existing rows update, new row creates a new variant
               </p>
               <p>
-                • <strong>Image replaced</strong> — the new cover_image path overwrites the old one; old gallery images remain (use the product editor
-                to remove them)
+                • <strong>Image replaced</strong> — the new cover_image path overwrites the old one; gallery images are fully replaced with the new set
+                from the sheet (clear the cell to remove all gallery images)
               </p>
               <p>
                 • <strong>Category changed</strong> — update the categories cell; the old category links are removed and the new ones are applied
@@ -649,7 +649,7 @@ function UploadGuide() {
                 replaced
               </p>
               <p>
-                • <strong>Project images added</strong> — add filenames to the project_images cell; existing project images are kept (add-only)
+                • <strong>Project images updated</strong> — update the project_images cell; existing project images are fully replaced with the new set (clear the cell to remove all)
               </p>
             </div>
           </div>
