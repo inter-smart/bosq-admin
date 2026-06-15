@@ -74,6 +74,26 @@ export const logout = (): void => {
 };
 
 /**
+ * Silently refresh the admin session token if the user is active.
+ * Updates localStorage with the new token and expiry.
+ * Returns true if refresh was successful, false otherwise.
+ */
+export const refreshSession = async (): Promise<boolean> => {
+  try {
+    const response = await apiCall('/auth/auth/refresh-token', { method: 'POST' });
+    if (response.success && response.data?.token) {
+      localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('user_data', JSON.stringify(response.data.user));
+      localStorage.setItem('token_expires_at', response.data.expiresAt);
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Get currently logged in user from localStorage
  */
 export const getCurrentUser = (): User | null => {
