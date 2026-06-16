@@ -236,8 +236,9 @@ export default function OrderDetails() {
         doc.text(order.user.email, margin, leftY);
         leftY += 5;
       }
-      if (order.user?.mobile) {
-        doc.text(order.user.mobile, margin, leftY);
+      const userPhone = formatPhoneNumber(order.user?.country_code, order.user?.mobile);
+      if (userPhone && userPhone !== "N/A") {
+        doc.text(userPhone, margin, leftY);
         leftY += 5;
       }
 
@@ -268,7 +269,7 @@ export default function OrderDetails() {
         }
         leftY += 3;
         doc.text(
-          `Ph: ${shippingAddr.country_code} ${shippingAddr.phone}`,
+          `Ph: ${formatPhoneNumber(shippingAddr.country_code, shippingAddr.phone)}`,
           margin,
           leftY,
         );
@@ -296,7 +297,7 @@ export default function OrderDetails() {
         }
         rightY += 3; // breathing gap before phone
         doc.text(
-          `Ph: ${billingAddr.country_code} ${billingAddr.phone}`,
+          `Ph: ${formatPhoneNumber(billingAddr.country_code, billingAddr.phone)}`,
           rx,
           rightY,
           { align: "right" },
@@ -440,12 +441,7 @@ export default function OrderDetails() {
           [180, 30, 30],
         );
       }
-      if (order.shipping_charge && order.shipping_charge > 0) {
-        drawRow("Shipping", aed(order.shipping_charge));
-      }
-      if (order.tax_total && order.tax_total > 0) {
-        drawRow("Tax", aed(order.tax_total));
-      }
+      drawRow("Tax", aed(order.tax_total));
       doc.setDrawColor(80, 80, 80);
       doc.line(summaryLabelX, y, summaryValueX, y);
       y += 5;
@@ -707,7 +703,7 @@ export default function OrderDetails() {
               <div className="flex items-center gap-2 text-sm">
                 <Phone className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Phone:</span>
-                <span>{`${order?.user?.country_code} ${order.user?.mobile}`}</span>
+                <span>{formatPhoneNumber(order.user?.country_code, order.user?.mobile)}</span>
               </div>
             </div>
           </CardContent>
@@ -962,16 +958,12 @@ export default function OrderDetails() {
                 </span>
               </div>
             )}
-
-            {
-              order?.tax_charge>0 && (
-                <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tax</span>
               <span className="font-medium">
                 AED {parseFloat(order.tax_total).toLocaleString()}
               </span>
             </div>
-            )}
             {parseFloat(String(order.shipping_total || 0)) > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Shipping</span>
@@ -996,6 +988,27 @@ export default function OrderDetails() {
   );
 }
 
+const formatPhoneNumber = (countryCode?: string | null, phone?: string | null): string => {
+  const cleanCode = countryCode && !["null", "undefined"].includes(String(countryCode).trim().toLowerCase()) 
+    ? String(countryCode).trim() 
+    : "";
+  const cleanPhone = phone && !["null", "undefined"].includes(String(phone).trim().toLowerCase()) 
+    ? String(phone).trim() 
+    : "";
+    
+  if (!cleanCode) return cleanPhone || "N/A";
+  if (!cleanPhone) return cleanCode || "N/A";
+  
+  const normCode = cleanCode.replace(/\D/g, "");
+  const normPhone = cleanPhone.replace(/\D/g, "");
+  
+  if (normCode && normPhone.startsWith(normCode)) {
+    return cleanPhone;
+  }
+  
+  return `${cleanCode} ${cleanPhone}`;
+};
+
 function AddressData({ address }) {
   return (
     <div className="space-y-1.5 text-sm">
@@ -1008,7 +1021,7 @@ function AddressData({ address }) {
       <p className="font-medium">{address.state?.name}</p>
       <div className="pt-2">
         <p className="text-xs text-muted-foreground">
-          Phone: {address.country_code} {address.phone}
+          Phone: {formatPhoneNumber(address.country_code, address.phone)}
         </p>
         <p className="text-xs text-muted-foreground">Email: {address.email}</p>
       </div>
