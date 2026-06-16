@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { isAuthenticated } from "@/services/auth/authApi";
-import SessionManager from "@/components/common/SessionManager";
 
 import { lazy } from "react";
 
@@ -398,12 +397,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (!authenticated) {
     return <Navigate to="/login" replace />;
   }
-  return (
-    <DashboardLayout>
-      <SessionManager />
-      {children}
-    </DashboardLayout>
-  );
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
 
 const App = () => (
