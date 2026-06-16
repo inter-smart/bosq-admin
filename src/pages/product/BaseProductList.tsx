@@ -142,7 +142,7 @@ export default function BaseProductList() {
     }
   };
 
-  const { editingSortOrder, handleSortOrderChange } = useCommonTableActions<BaseProduct>({
+  const { editingSortOrder, handleSortOrderChange, handleStatusChange } = useCommonTableActions<BaseProduct>({
     modelName: "ProductBase",
     data: baseProducts,
     setData: setBaseProducts,
@@ -222,6 +222,25 @@ export default function BaseProductList() {
             <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => handleSortOrderChange(item.id!, String(numVal + 1))}>
               <ChevronUp className="h-3 w-3" />
             </Button>
+          </div>
+        );
+      },
+    },
+     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        const item = row.original;
+        const status = row.getValue("status") as boolean;
+        return (
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={status}
+              onCheckedChange={() => handleStatusChange(item.id!, status)}
+            />
+            <Badge variant={status ? "default" : "secondary"}>
+              {status ? "active" : "inactive"}
+            </Badge>
           </div>
         );
       },

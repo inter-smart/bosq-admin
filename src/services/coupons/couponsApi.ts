@@ -148,6 +148,7 @@ export interface ProductModelResponse {
 
 export interface ProductVariant {
   id: number;
+  title: string;
   sku: string;
 }
 

@@ -713,7 +713,7 @@ export default function ProductVariantForm() {
 
         {/* Category Selection */}
         {isEditing &&
-          allCategories.length > 0 &&
+          allCategories.length > 0 && allCategories.some((c) => !c.parent_id)  &&
           (() => {
             const parentCategories = allCategories.filter((c) => !c.parent_id);
             const childrenOf = (parentId: number) => allCategories.filter((c) => c.parent_id === parentId);

@@ -5,8 +5,22 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
 import { Save, ArrowLeft } from "lucide-react";
@@ -29,7 +43,11 @@ import {
 } from "@/services/coupons/couponsApi";
 import { Switch } from "@/components/ui/switch";
 import { CouponFormData, couponSchema } from "@/schemas/couponSchema";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -51,13 +69,23 @@ export default function CouponsForm() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
 
   // Selected IDs for cascade
-  const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<number | null>(null);
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<number | null>(null);
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [selectedParentCategoryId, setSelectedParentCategoryId] = useState<
+    number | null
+  >(null);
+  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState<
+    number | null
+  >(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null,
+  );
   const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
   // For variant scope: category chosen after model (filters which variants to show)
-  const [selectedVariantCategoryId, setSelectedVariantCategoryId] = useState<number | null>(null);
-  const [variantCategories, setVariantCategories] = useState<ProductCategory[]>([]);
+  const [selectedVariantCategoryId, setSelectedVariantCategoryId] = useState<
+    number | null
+  >(null);
+  const [variantCategories, setVariantCategories] = useState<ProductCategory[]>(
+    [],
+  );
 
   // Ref to prevent scope reset when loading coupon data
   const isLoadingCouponRef = useRef(false);
@@ -96,7 +124,11 @@ export default function CouponsForm() {
   // For product/model/variant scope: pre-load all products when scope type changes
   useEffect(() => {
     if (isLoadingCouponRef.current) return;
-    if (watchScopeType === "product" || watchScopeType === "model" || watchScopeType === "variant") {
+    if (
+      watchScopeType === "product" ||
+      watchScopeType === "model" ||
+      watchScopeType === "variant"
+    ) {
       loadAllProducts();
     }
   }, [watchScopeType]);
@@ -168,7 +200,11 @@ export default function CouponsForm() {
         setProducts(response.data);
       }
     } catch (error) {
-      toast({ title: "Error", description: "Failed to load products", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to load products",
+        variant: "destructive",
+      });
     }
   };
 
@@ -179,7 +215,11 @@ export default function CouponsForm() {
         setVariantCategories(response.data);
       }
     } catch (error) {
-      toast({ title: "Error", description: "Failed to load categories", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to load categories",
+        variant: "destructive",
+      });
     }
   };
 
@@ -220,7 +260,9 @@ export default function CouponsForm() {
           scope_id: data.scope_id || null,
           usage_limit_total: data.usage_limit_total,
           usage_limit_per_user: data.usage_limit_per_user,
-          start_at: data.start_at ? data.start_at.slice(0, 10) + "T00:00:00" : "",
+          start_at: data.start_at
+            ? data.start_at.slice(0, 10) + "T00:00:00"
+            : "",
           end_at: data.end_at ? data.end_at.slice(0, 10) + "T23:59:59" : "",
           status: data.status ?? true,
         });
@@ -278,7 +320,10 @@ export default function CouponsForm() {
     await loadAllProducts();
     if (productId) setSelectedProductId(productId);
 
-    if ((data.scope_type === "model" || data.scope_type === "variant") && productId) {
+    if (
+      (data.scope_type === "model" || data.scope_type === "variant") &&
+      productId
+    ) {
       await loadModels(productId);
       if (modelId) setSelectedModelId(modelId);
     }
@@ -302,14 +347,20 @@ export default function CouponsForm() {
       formData.append("min_order_amount", String(data.min_order_amount));
       if (data.scope_type !== "common") {
         formData.append("min_product_amount", String(data.min_product_amount));
-        formData.append("max_discount_amount", String(data.max_discount_amount));
+        formData.append(
+          "max_discount_amount",
+          String(data.max_discount_amount),
+        );
       } else {
         formData.append("min_product_amount", "0.00");
         formData.append("max_discount_amount", "0.00");
       }
       formData.append("scope_type", data.scope_type);
       formData.append("usage_limit_total", String(data.usage_limit_total));
-      formData.append("usage_limit_per_user", String(data.usage_limit_per_user));
+      formData.append(
+        "usage_limit_per_user",
+        String(data.usage_limit_per_user),
+      );
       formData.append("start_at", data.start_at.slice(0, 10));
       formData.append("end_at", data.end_at.slice(0, 10));
       formData.append("status", data.status.toString());
@@ -339,7 +390,9 @@ export default function CouponsForm() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || `Failed to ${isEditing ? "update" : "create"} coupon`,
+        description:
+          error.message ||
+          `Failed to ${isEditing ? "update" : "create"} coupon`,
         variant: "destructive",
       });
     } finally {
@@ -358,17 +411,30 @@ export default function CouponsForm() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => navigate("/coupons")}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => navigate("/coupons")}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">{isEditing ? "Edit" : "Add"} Coupon</h1>
-          <p className="text-muted-foreground">{isEditing ? "Update" : "Create a new"} coupon</p>
+          <h1 className="text-2xl font-bold">
+            {isEditing ? "Edit" : "Add"} Coupon
+          </h1>
+          <p className="text-muted-foreground">
+            {isEditing ? "Update" : "Create a new"} coupon
+          </p>
         </div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, (err) => console.log("error", err))} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (err) =>
+            console.log("error", err),
+          )}
+          className="space-y-6"
+        >
           {/* Coupon Information */}
           <Card>
             <CardHeader>
@@ -386,7 +452,9 @@ export default function CouponsForm() {
                         placeholder="Enter coupon code (e.g., SAVE20)"
                         {...field}
                         className="uppercase"
-                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        onChange={(e) =>
+                          field.onChange(e.target.value.toUpperCase())
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -415,7 +483,11 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Title (Arabic)</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Arabic title" {...field} dir="rtl" />
+                        <Input
+                          placeholder="Enter Arabic title"
+                          {...field}
+                          dir="rtl"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -455,7 +527,9 @@ export default function CouponsForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="percentage">Percentage (%)</SelectItem>
+                          <SelectItem value="percentage">
+                            Percentage (%)
+                          </SelectItem>
                           <SelectItem value="flat">Flat Amount</SelectItem>
                         </SelectContent>
                       </Select>
@@ -469,7 +543,10 @@ export default function CouponsForm() {
                   name="discount_value"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Discount Value * {watchDiscountType === "percentage" && "(max 100)"}</FormLabel>
+                      <FormLabel>
+                        Discount Value *{" "}
+                        {watchDiscountType === "percentage" && "(max 100)"}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -508,7 +585,10 @@ export default function CouponsForm() {
                             value={field.value ?? ""}
                             onFocus={(e) => e.target.select()}
                             onChange={(e) => {
-                              const value = Math.max(0, parseFloat(e.target.value) || 0);
+                              const value = Math.max(
+                                0,
+                                parseFloat(e.target.value) || 0,
+                              );
                               field.onChange(value);
                             }}
                           />
@@ -533,7 +613,10 @@ export default function CouponsForm() {
                           {...field}
                           onFocus={(e) => e.target.select()}
                           onChange={(e) => {
-                            const value = Math.max(0, parseFloat(e.target.value) || 0);
+                            const value = Math.max(
+                              0,
+                              parseFloat(e.target.value) || 0,
+                            );
                             field.onChange(value);
                           }}
                         />
@@ -549,7 +632,10 @@ export default function CouponsForm() {
                     name="max_discount_amount"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Max Discount Amount * {watchDiscountType === "flat" && "(≥ discount value)"}</FormLabel>
+                        <FormLabel>
+                          Max Discount Amount *{" "}
+                          {watchDiscountType === "flat" && "(≥ discount value)"}
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -558,7 +644,10 @@ export default function CouponsForm() {
                             {...field}
                             onFocus={(e) => e.target.select()}
                             onChange={(e) => {
-                              const value = Math.max(0, parseFloat(e.target.value) || 0);
+                              const value = Math.max(
+                                0,
+                                parseFloat(e.target.value) || 0,
+                              );
                               field.onChange(value);
                             }}
                           />
@@ -591,14 +680,18 @@ export default function CouponsForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="common">Common (All Products)</SelectItem>
+                        <SelectItem value="common">
+                          Common (All Products)
+                        </SelectItem>
                         <SelectItem value="category">Category</SelectItem>
                         <SelectItem value="product">Base Product</SelectItem>
                         <SelectItem value="model">Product Model</SelectItem>
                         <SelectItem value="variant">Product Variant</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>Choose where this coupon can be applied</FormDescription>
+                    <FormDescription>
+                      Choose where this coupon can be applied
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -607,7 +700,6 @@ export default function CouponsForm() {
               {/* Cascade UI — layout differs per scope_type */}
               {watchScopeType !== "common" && (
                 <div className="space-y-4">
-
                   {/* CATEGORY scope: Parent Category → Subcategory */}
                   {watchScopeType === "category" && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -626,14 +718,27 @@ export default function CouponsForm() {
                             <SelectValue placeholder="Select parent category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {categories.map((cat) => (
-                              <SelectItem key={cat.id} value={cat.id.toString()}>
-                                {cat.name}
-                              </SelectItem>
-                            ))}
+                            {categories.length ? (
+                              categories.map((cat) => (
+                                <SelectItem
+                                  key={cat.id}
+                                  value={cat.id.toString()}
+                                >
+                                  {cat.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="py-2 text-center text-sm text-muted-foreground">
+                                No categories found.
+                              </div>
+                            )}
                           </SelectContent>
                         </Select>
-                        {!selectedParentCategoryId && <p className="text-sm text-destructive">Parent category is required</p>}
+                        {!selectedParentCategoryId && (
+                          <p className="text-sm text-destructive">
+                            Parent category is required
+                          </p>
+                        )}
                       </div>
 
                       {selectedParentCategoryId && (
@@ -651,13 +756,26 @@ export default function CouponsForm() {
                               <SelectValue placeholder="Select subcategory" />
                             </SelectTrigger>
                             <SelectContent>
-                              {categories
-                                .find((c) => c.id === selectedParentCategoryId)
-                                ?.children?.map((sub) => (
-                                  <SelectItem key={sub.id} value={sub.id.toString()}>
-                                    {sub.name}
-                                  </SelectItem>
-                                ))}
+                              {categories.find(
+                                (c) => c.id === selectedParentCategoryId,
+                              )?.children?.length ? (
+                                categories
+                                  .find(
+                                    (c) => c.id === selectedParentCategoryId,
+                                  )
+                                  ?.children?.map((sub) => (
+                                    <SelectItem
+                                      key={sub.id}
+                                      value={sub.id.toString()}
+                                    >
+                                      {sub.name}
+                                    </SelectItem>
+                                  ))
+                              ) : (
+                                <div className="py-2 text-center text-sm text-muted-foreground">
+                                  No subcategories found.
+                                </div>
+                              )}
                             </SelectContent>
                           </Select>
                         </div>
@@ -688,11 +806,20 @@ export default function CouponsForm() {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {products.map((prod) => (
-                                  <SelectItem key={prod.id} value={prod.id.toString()}>
-                                    {prod.title}
-                                  </SelectItem>
-                                ))}
+                                {products.length ? (
+                                  products.map((prod) => (
+                                    <SelectItem
+                                      key={prod.id}
+                                      value={prod.id.toString()}
+                                    >
+                                      {prod.title}
+                                    </SelectItem>
+                                  ))
+                                ) : (
+                                  <div className="py-2 text-center text-sm text-muted-foreground">
+                                    No products found.
+                                  </div>
+                                )}
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -722,14 +849,27 @@ export default function CouponsForm() {
                             <SelectValue placeholder="Select product" />
                           </SelectTrigger>
                           <SelectContent>
-                            {products.map((prod) => (
-                              <SelectItem key={prod.id} value={prod.id.toString()}>
-                                {prod.title}
-                              </SelectItem>
-                            ))}
+                            {products.length ? (
+                              products.map((prod) => (
+                                <SelectItem
+                                  key={prod.id}
+                                  value={prod.id.toString()}
+                                >
+                                  {prod.title}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="py-2 text-center text-sm text-muted-foreground">
+                                No products found.
+                              </div>
+                            )}
                           </SelectContent>
                         </Select>
-                        {!selectedProductId && <p className="text-sm text-destructive">Product is required</p>}
+                        {!selectedProductId && (
+                          <p className="text-sm text-destructive">
+                            Product is required
+                          </p>
+                        )}
                       </div>
 
                       {selectedProductId && (
@@ -753,11 +893,20 @@ export default function CouponsForm() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {models.map((model) => (
-                                    <SelectItem key={model.id} value={model.id.toString()}>
-                                      {model.title}
-                                    </SelectItem>
-                                  ))}
+                                  {models.length ? (
+                                    models.map((model) => (
+                                      <SelectItem
+                                        key={model.id}
+                                        value={model.id.toString()}
+                                      >
+                                        {model.title}
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <div className="py-2 text-center text-sm text-muted-foreground">
+                                      No models found.
+                                    </div>
+                                  )}
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -792,14 +941,27 @@ export default function CouponsForm() {
                             <SelectValue placeholder="Select product" />
                           </SelectTrigger>
                           <SelectContent>
-                            {products.map((prod) => (
-                              <SelectItem key={prod.id} value={prod.id.toString()}>
-                                {prod.title}
-                              </SelectItem>
-                            ))}
+                            {products.length ? (
+                              products.map((prod) => (
+                                <SelectItem
+                                  key={prod.id}
+                                  value={prod.id.toString()}
+                                >
+                                  {prod.title}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="py-2 text-center text-sm text-muted-foreground">
+                                No products found.
+                              </div>
+                            )}
                           </SelectContent>
                         </Select>
-                        {!selectedProductId && <p className="text-sm text-destructive">Product is required</p>}
+                        {!selectedProductId && (
+                          <p className="text-sm text-destructive">
+                            Product is required
+                          </p>
+                        )}
                       </div>
 
                       {/* 2. Model */}
@@ -822,14 +984,27 @@ export default function CouponsForm() {
                               <SelectValue placeholder="Select model" />
                             </SelectTrigger>
                             <SelectContent>
-                              {models.map((model) => (
-                                <SelectItem key={model.id} value={model.id.toString()}>
-                                  {model.title}
-                                </SelectItem>
-                              ))}
+                              {models.length ? (
+                                models.map((model) => (
+                                  <SelectItem
+                                    key={model.id}
+                                    value={model.id.toString()}
+                                  >
+                                    {model.title}
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <div className="py-2 text-center text-sm text-muted-foreground">
+                                  No models found.
+                                </div>
+                              )}
                             </SelectContent>
                           </Select>
-                          {!selectedModelId && <p className="text-sm text-destructive">Model is required</p>}
+                          {!selectedModelId && (
+                            <p className="text-sm text-destructive">
+                              Model is required
+                            </p>
+                          )}
                         </div>
                       )}
 
@@ -850,15 +1025,53 @@ export default function CouponsForm() {
                             <SelectTrigger>
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
-                            <SelectContent>
+                            {/* <SelectContent>
                               {variantCategories.map((cat) => (
-                                <SelectItem key={cat.id} value={cat.id.toString()}>
+                                <SelectItem
+                                  key={cat.id}
+                                  value={cat.id.toString()}
+                                >
                                   {cat.name}
                                 </SelectItem>
                               ))}
-                            </SelectContent>
+                            </SelectContent> */}
+                             <SelectContent>
+                            {categories.length ? (
+                              categories.map((cat) => (
+                                <SelectItem
+                                  key={cat.id}
+                                  value={cat.id.toString()}
+                                >
+                                  {cat.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="py-2 text-center text-sm text-muted-foreground">
+                                No categories found.
+                              </div>
+                            )}
+                          </SelectContent> <SelectContent>
+                            {categories.length ? (
+                              categories.map((cat) => (
+                                <SelectItem
+                                  key={cat.id}
+                                  value={cat.id.toString()}
+                                >
+                                  {cat.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <div className="py-2 text-center text-sm text-muted-foreground">
+                                No categories found.
+                              </div>
+                            )}
+                          </SelectContent>
                           </Select>
-                          {!selectedVariantCategoryId && <p className="text-sm text-destructive">Category is required</p>}
+                          {!selectedVariantCategoryId && (
+                            <p className="text-sm text-destructive">
+                              Category is required
+                            </p>
+                          )}
                         </div>
                       )}
 
@@ -870,18 +1083,32 @@ export default function CouponsForm() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Variant *</FormLabel>
-                              <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString() || ""}>
+                              <Select
+                                onValueChange={(value) =>
+                                  field.onChange(parseInt(value))
+                                }
+                                value={field.value?.toString() || ""}
+                              >
                                 <FormControl>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select variant" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {variants.map((variant) => (
-                                    <SelectItem key={variant.id} value={variant.id.toString()}>
-                                      {variant.sku}
-                                    </SelectItem>
-                                  ))}
+                                  {variants.length ? (
+                                    variants.map((variant) => (
+                                      <SelectItem
+                                        key={variant.id}
+                                        value={variant.id.toString()}
+                                      >
+                                        {variant.title}
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <div className="py-2 text-center text-sm text-muted-foreground">
+                                      No variants found.
+                                    </div>
+                                  )}
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -921,9 +1148,20 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Total Usage Limit *</FormLabel>
                       <FormControl>
-                        <Input type="number" min="1" placeholder="1" {...field} onFocus={(e) => e.target.select()} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
+                        <Input
+                          type="number"
+                          min="1"
+                          placeholder="1"
+                          {...field}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value) || 1)
+                          }
+                        />
                       </FormControl>
-                      <FormDescription>Maximum number of times this coupon can be used</FormDescription>
+                      <FormDescription>
+                        Maximum number of times this coupon can be used
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -936,9 +1174,20 @@ export default function CouponsForm() {
                     <FormItem>
                       <FormLabel>Per User Limit *</FormLabel>
                       <FormControl>
-                        <Input type="number" min="1" placeholder="1" {...field} onFocus={(e) => e.target.select()} onChange={(e) => field.onChange(parseInt(e.target.value) || 1)} />
+                        <Input
+                          type="number"
+                          min="1"
+                          placeholder="1"
+                          {...field}
+                          onFocus={(e) => e.target.select()}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value) || 1)
+                          }
+                        />
                       </FormControl>
-                      <FormDescription>Maximum times a single user can use this coupon</FormDescription>
+                      <FormDescription>
+                        Maximum times a single user can use this coupon
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -963,8 +1212,18 @@ export default function CouponsForm() {
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                              {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {field.value ? (
+                                format(new Date(field.value), "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -972,14 +1231,24 @@ export default function CouponsForm() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={field.value ? new Date(field.value.length === 10 ? field.value + "T00:00:00" : field.value) : undefined}
+                            selected={
+                              field.value
+                                ? new Date(
+                                    field.value.length === 10
+                                      ? field.value + "T00:00:00"
+                                      : field.value,
+                                  )
+                                : undefined
+                            }
                             onSelect={(date) => {
                               if (!date) {
                                 field.onChange("");
                                 return;
                               }
                               // Use local date to avoid UTC midnight shifting the day
-                              field.onChange(format(date, "yyyy-MM-dd") + "T00:00:00");
+                              field.onChange(
+                                format(date, "yyyy-MM-dd") + "T00:00:00",
+                              );
                             }}
                             disabled={(date) => {
                               const today = new Date();
@@ -1004,8 +1273,18 @@ export default function CouponsForm() {
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
-                            <Button variant="outline" className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                              {field.value ? format(new Date(field.value), "PPP") : <span>Pick a date</span>}
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {field.value ? (
+                                format(new Date(field.value), "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
@@ -1013,14 +1292,24 @@ export default function CouponsForm() {
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={field.value ? new Date(field.value.length === 10 ? field.value + "T00:00:00" : field.value) : undefined}
+                            selected={
+                              field.value
+                                ? new Date(
+                                    field.value.length === 10
+                                      ? field.value + "T00:00:00"
+                                      : field.value,
+                                  )
+                                : undefined
+                            }
                             onSelect={(date) => {
                               if (!date) {
                                 field.onChange("");
                                 return;
                               }
                               // Use local date + end-of-day time to cover the full chosen day
-                              field.onChange(format(date, "yyyy-MM-dd") + "T23:59:59");
+                              field.onChange(
+                                format(date, "yyyy-MM-dd") + "T23:59:59",
+                              );
                             }}
                             disabled={(date) => {
                               const today = new Date();
@@ -1052,10 +1341,15 @@ export default function CouponsForm() {
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">Active Status</FormLabel>
-                      <FormDescription>Enable or disable this coupon</FormDescription>
+                      <FormDescription>
+                        Enable or disable this coupon
+                      </FormDescription>
                     </div>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -1064,7 +1358,11 @@ export default function CouponsForm() {
           </Card>
 
           <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate("/coupons")}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate("/coupons")}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>

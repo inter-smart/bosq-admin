@@ -35,7 +35,18 @@ export interface ProductVariant {
   updatedAt?: string;
   deletedAt?: string | null;
   category_ids?: number[];
-  categories?: { id: number; name: string; name_ar: string; slug: string; parent_id?: number | null }[];
+  variant_attributes: {
+    attribute_id: number;
+    attribute_value_id: number;
+    price: string;
+  }[];
+  categories?: {
+    id: number;
+    name: string;
+    name_ar: string;
+    slug: string;
+    parent_id?: number | null;
+  }[];
   productModel?: {
     id: number;
     title: string;
@@ -141,12 +152,16 @@ export const fetchProductVariantList = async (
 };
 
 // Fetch single product variant
-export const fetchProductVariantById = async (id: number): Promise<ProductVariantItemResponse> => {
+export const fetchProductVariantById = async (
+  id: number,
+): Promise<ProductVariantItemResponse> => {
   return apiCall(`/resources/product-variants/${id}`);
 };
 
 // Create product variant
-export const createProductVariant = async (data: Partial<ProductVariant>): Promise<ProductVariantItemResponse> => {
+export const createProductVariant = async (
+  data: Partial<ProductVariant>,
+): Promise<ProductVariantItemResponse> => {
   return apiCall("/resources/product-variants", {
     method: "POST",
     data,
@@ -154,7 +169,10 @@ export const createProductVariant = async (data: Partial<ProductVariant>): Promi
 };
 
 // Update product variant
-export const updateProductVariant = async (id: number, data: Partial<ProductVariant> | FormData): Promise<ProductVariantItemResponse> => {
+export const updateProductVariant = async (
+  id: number,
+  data: Partial<ProductVariant> | FormData,
+): Promise<ProductVariantItemResponse> => {
   return apiCall(`/resources/product-variants/${id}`, {
     method: "PUT",
     data: data as any,
@@ -162,10 +180,16 @@ export const updateProductVariant = async (id: number, data: Partial<ProductVari
 };
 
 // Delete product variant
-export const deleteProductVariant = async (id: number, deleteType: "soft" | "force" = "soft"): Promise<void> => {
-  return apiCall(`/resources/product-variants/${id}?delete_type=${deleteType}`, {
-    method: "DELETE",
-  });
+export const deleteProductVariant = async (
+  id: number,
+  deleteType: "soft" | "force" = "soft",
+): Promise<void> => {
+  return apiCall(
+    `/resources/product-variants/${id}?delete_type=${deleteType}`,
+    {
+      method: "DELETE",
+    },
+  );
 };
 
 // Bulk delete product variants
@@ -180,9 +204,10 @@ export const bulkDeleteProductVariants = async (
 };
 
 // Fetch attributes with values
-export const fetchAttributesWithValues = async (): Promise<AttributesWithValuesResponse> => {
-  return apiCall("/common-actions/attributes/with-values");
-};
+export const fetchAttributesWithValues =
+  async (): Promise<AttributesWithValuesResponse> => {
+    return apiCall("/common-actions/attributes/with-values");
+  };
 
 /* =======================
    Bought Together
@@ -194,13 +219,21 @@ export interface BoughtTogetherResponse {
   data: ProductVariant & { boughtTogetherVariants: ProductVariant[] };
 }
 
-export const fetchBoughtTogether = async (variantId: number): Promise<BoughtTogetherResponse> => {
+export const fetchBoughtTogether = async (
+  variantId: number,
+): Promise<BoughtTogetherResponse> => {
   return apiCall(`/resources/product-variant-bought-together/${variantId}`);
 };
 
-export const syncBoughtTogether = async (variantId: number, relatedVariantIds: number[]): Promise<{ success: boolean; message: string }> => {
-  return apiCall(`/resources/product-variant-bought-together/${variantId}/sync`, {
-    method: "POST",
-    data: { related_variant_ids: relatedVariantIds },
-  });
+export const syncBoughtTogether = async (
+  variantId: number,
+  relatedVariantIds: number[],
+): Promise<{ success: boolean; message: string }> => {
+  return apiCall(
+    `/resources/product-variant-bought-together/${variantId}/sync`,
+    {
+      method: "POST",
+      data: { related_variant_ids: relatedVariantIds },
+    },
+  );
 };
