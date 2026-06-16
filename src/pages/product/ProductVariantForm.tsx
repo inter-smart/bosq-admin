@@ -653,14 +653,16 @@ export default function ProductVariantForm() {
                         variant="outline"
                         size="sm"
                         onClick={() => addValueSelection(attribute.id)}
-                        disabled={selections.length >= attribute.values.length}
+                        disabled={attribute.values.length === 0 || selections.length >= attribute.values.length}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                     )}
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {selections.length === 0 ? (
+                    {attribute.values.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-4">No values defined for {attribute.name.toLowerCase()}. Please add values in the Attributes section first.</p>
+                    ) : selections.length === 0 ? (
                       <p className="text-sm text-muted-foreground text-center py-4">Click + to add {attribute.name.toLowerCase()} values</p>
                     ) : (
                       selections.map((selection) => (

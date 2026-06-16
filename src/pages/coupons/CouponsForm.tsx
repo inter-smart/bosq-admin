@@ -1025,32 +1025,7 @@ export default function CouponsForm() {
                             <SelectTrigger>
                               <SelectValue placeholder="Select category" />
                             </SelectTrigger>
-                            {/* <SelectContent>
-                              {variantCategories.map((cat) => (
-                                <SelectItem
-                                  key={cat.id}
-                                  value={cat.id.toString()}
-                                >
-                                  {cat.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent> */}
                              <SelectContent>
-                            {categories.length ? (
-                              categories.map((cat) => (
-                                <SelectItem
-                                  key={cat.id}
-                                  value={cat.id.toString()}
-                                >
-                                  {cat.name}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <div className="py-2 text-center text-sm text-muted-foreground">
-                                No categories found.
-                              </div>
-                            )}
-                          </SelectContent> <SelectContent>
                             {categories.length ? (
                               categories.map((cat) => (
                                 <SelectItem
