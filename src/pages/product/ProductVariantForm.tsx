@@ -280,6 +280,15 @@ export default function ProductVariantForm() {
   const onSubmit = async (data: FormValues) => {
     if (!productId) return;
 
+    if (isEditing && selectedCategoryIds.length === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please select at least one category.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validate attribute selections (managed outside RHF)
     for (const selections of Object.values(attributeSelections)) {
       for (const selection of selections) {
