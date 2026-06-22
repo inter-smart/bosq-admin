@@ -114,10 +114,11 @@ export function MultiSelect({
       <PopoverContent
         className="w-[--radix-popover-trigger-width] p-0"
         align="start"
+        style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
       >
-        <Command>
+        <Command style={{ maxHeight: "var(--radix-popover-content-available-height)" }}>
           <CommandInput placeholder="Search options..." />
-          <CommandList>
+          <CommandList style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 50px)" }}>
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
