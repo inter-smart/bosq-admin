@@ -613,10 +613,14 @@ export default function ProductTypeForm() {
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                      <Command>
+                    <PopoverContent
+                      className="w-[--radix-popover-trigger-width] p-0"
+                      align="start"
+                      style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
+                    >
+                      <Command style={{ maxHeight: "var(--radix-popover-content-available-height)" }}>
                         <CommandInput placeholder="Search category..." />
-                        <CommandList>
+                        <CommandList style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 50px)" }}>
                           <CommandEmpty>No category found.</CommandEmpty>
                           <CommandGroup>
                             {categories.map((cat) => (
