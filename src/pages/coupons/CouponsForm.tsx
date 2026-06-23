@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/common/FileUpload";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, Check, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   fetchCouponById,
@@ -52,6 +52,134 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+interface SearchableSelectProps {
+  options: { id: number; name: string }[];
+  value: number | null;
+  onValueChange: (value: number | null) => void;
+  placeholder?: string;
+  searchPlaceholder?: string;
+  emptyText?: string;
+  disabled?: boolean;
+}
+
+function SearchableSelect({
+  options,
+  value,
+  onValueChange,
+  placeholder = "Select option...",
+  searchPlaceholder = "Search...",
+  emptyText = "No option found.",
+  disabled = false,
+}: SearchableSelectProps) {
+  const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      setSearchQuery("");
+      setVisibleCount(10);
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const filteredOptions = useMemo(() => {
+    if (!searchQuery) return options;
+    const query = searchQuery.toLowerCase();
+    return options.filter((option) =>
+      option.name.toLowerCase().includes(query)
+    );
+  }, [options, searchQuery]);
+
+  const displayedOptions = useMemo(() => {
+    return filteredOptions.slice(0, visibleCount);
+  }, [filteredOptions, visibleCount]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 10) {
+      setVisibleCount((prev) => prev + 10);
+    }
+  };
+
+  const selectedOption = options.find((o) => o.id === value);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between"
+          disabled={disabled}
+        >
+          {selectedOption ? selectedOption.name : placeholder}
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-[--radix-popover-trigger-width] p-0"
+        align="start"
+        style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
+      >
+        <Command
+          shouldFilter={false}
+          style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
+        >
+          <CommandInput
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+          />
+          <CommandList
+            onScroll={handleScroll}
+            style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 50px)" }}
+          >
+            {displayedOptions.length === 0 && <CommandEmpty>{emptyText}</CommandEmpty>}
+            <CommandGroup>
+              {displayedOptions.map((option) => (
+                <CommandItem
+                  key={option.id}
+                  onSelect={() => {
+                    onValueChange(option.id);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === option.id ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export default function CouponsForm() {
   const { toast } = useToast();
@@ -705,35 +833,18 @@ export default function CouponsForm() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <FormLabel>Parent Category *</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            const catId = parseInt(value);
-                            setSelectedParentCategoryId(catId);
+                        <SearchableSelect
+                          options={categories.map((cat) => ({ id: cat.id, name: cat.name }))}
+                          value={selectedParentCategoryId}
+                          onValueChange={(val) => {
+                            setSelectedParentCategoryId(val);
                             setSelectedSubCategoryId(null);
-                            form.setValue("scope_id", catId);
+                            form.setValue("scope_id", val);
                           }}
-                          value={selectedParentCategoryId?.toString() || ""}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select parent category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.length ? (
-                              categories.map((cat) => (
-                                <SelectItem
-                                  key={cat.id}
-                                  value={cat.id.toString()}
-                                >
-                                  {cat.name}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <div className="py-2 text-center text-sm text-muted-foreground">
-                                No categories found.
-                              </div>
-                            )}
-                          </SelectContent>
-                        </Select>
+                          placeholder="Select parent category"
+                          searchPlaceholder="Search parent category..."
+                          emptyText="No categories found."
+                        />
                         {!selectedParentCategoryId && (
                           <p className="text-sm text-destructive">
                             Parent category is required
@@ -744,40 +855,21 @@ export default function CouponsForm() {
                       {selectedParentCategoryId && (
                         <div className="space-y-2">
                           <FormLabel>Subcategory (Optional)</FormLabel>
-                          <Select
-                            onValueChange={(value) => {
-                              const subCatId = parseInt(value);
-                              setSelectedSubCategoryId(subCatId);
-                              form.setValue("scope_id", subCatId);
+                          <SearchableSelect
+                            options={
+                              categories
+                                .find((c) => c.id === selectedParentCategoryId)
+                                ?.children?.map((sub) => ({ id: sub.id, name: sub.name })) || []
+                            }
+                            value={selectedSubCategoryId}
+                            onValueChange={(val) => {
+                              setSelectedSubCategoryId(val);
+                              form.setValue("scope_id", val);
                             }}
-                            value={selectedSubCategoryId?.toString() || ""}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select subcategory" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {categories.find(
-                                (c) => c.id === selectedParentCategoryId,
-                              )?.children?.length ? (
-                                categories
-                                  .find(
-                                    (c) => c.id === selectedParentCategoryId,
-                                  )
-                                  ?.children?.map((sub) => (
-                                    <SelectItem
-                                      key={sub.id}
-                                      value={sub.id.toString()}
-                                    >
-                                      {sub.name}
-                                    </SelectItem>
-                                  ))
-                              ) : (
-                                <div className="py-2 text-center text-sm text-muted-foreground">
-                                  No subcategories found.
-                                </div>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            placeholder="Select subcategory"
+                            searchPlaceholder="Search subcategory..."
+                            emptyText="No subcategories found."
+                          />
                         </div>
                       )}
                     </div>
@@ -790,38 +882,21 @@ export default function CouponsForm() {
                         control={form.control}
                         name="scope_id"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Base Product *</FormLabel>
-                            <Select
-                              onValueChange={(value) => {
-                                const prodId = parseInt(value);
-                                setSelectedProductId(prodId);
-                                field.onChange(prodId);
-                              }}
-                              value={field.value?.toString() || ""}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select product" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {products.length ? (
-                                  products.map((prod) => (
-                                    <SelectItem
-                                      key={prod.id}
-                                      value={prod.id.toString()}
-                                    >
-                                      {prod.title}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <div className="py-2 text-center text-sm text-muted-foreground">
-                                    No products found.
-                                  </div>
-                                )}
-                              </SelectContent>
-                            </Select>
+                          <FormItem className="flex flex-col">
+                            <FormLabel className="mb-2">Base Product *</FormLabel>
+                            <FormControl>
+                              <SearchableSelect
+                                options={products.map((prod) => ({ id: prod.id, name: prod.title }))}
+                                value={field.value}
+                                onValueChange={(val) => {
+                                  setSelectedProductId(val);
+                                  field.onChange(val);
+                                }}
+                                placeholder="Select product"
+                                searchPlaceholder="Search product..."
+                                emptyText="No products found."
+                              />
+                            </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
@@ -834,37 +909,20 @@ export default function CouponsForm() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <FormLabel>Base Product *</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            const prodId = parseInt(value);
-                            setSelectedProductId(prodId);
+                        <SearchableSelect
+                          options={products.map((prod) => ({ id: prod.id, name: prod.title }))}
+                          value={selectedProductId}
+                          onValueChange={(val) => {
+                            setSelectedProductId(val);
                             setSelectedModelId(null);
                             setModels([]);
                             form.setValue("scope_id", null);
-                            loadModels(prodId);
+                            if (val) loadModels(val);
                           }}
-                          value={selectedProductId?.toString() || ""}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select product" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {products.length ? (
-                              products.map((prod) => (
-                                <SelectItem
-                                  key={prod.id}
-                                  value={prod.id.toString()}
-                                >
-                                  {prod.title}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <div className="py-2 text-center text-sm text-muted-foreground">
-                                No products found.
-                              </div>
-                            )}
-                          </SelectContent>
-                        </Select>
+                          placeholder="Select product"
+                          searchPlaceholder="Search product..."
+                          emptyText="No products found."
+                        />
                         {!selectedProductId && (
                           <p className="text-sm text-destructive">
                             Product is required
@@ -877,38 +935,21 @@ export default function CouponsForm() {
                           control={form.control}
                           name="scope_id"
                           render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Model *</FormLabel>
-                              <Select
-                                onValueChange={(value) => {
-                                  const modelId = parseInt(value);
-                                  setSelectedModelId(modelId);
-                                  field.onChange(modelId);
-                                }}
-                                value={field.value?.toString() || ""}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select model" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {models.length ? (
-                                    models.map((model) => (
-                                      <SelectItem
-                                        key={model.id}
-                                        value={model.id.toString()}
-                                      >
-                                        {model.title}
-                                      </SelectItem>
-                                    ))
-                                  ) : (
-                                    <div className="py-2 text-center text-sm text-muted-foreground">
-                                      No models found.
-                                    </div>
-                                  )}
-                                </SelectContent>
-                              </Select>
+                            <FormItem className="flex flex-col">
+                              <FormLabel className="mb-2">Model *</FormLabel>
+                              <FormControl>
+                                <SearchableSelect
+                                  options={models.map((model) => ({ id: model.id, name: model.title }))}
+                                  value={field.value}
+                                  onValueChange={(val) => {
+                                    setSelectedModelId(val);
+                                    field.onChange(val);
+                                  }}
+                                  placeholder="Select model"
+                                  searchPlaceholder="Search model..."
+                                  emptyText="No models found."
+                                />
+                              </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -923,40 +964,23 @@ export default function CouponsForm() {
                       {/* 1. Base Product */}
                       <div className="space-y-2">
                         <FormLabel>Base Product *</FormLabel>
-                        <Select
-                          onValueChange={(value) => {
-                            const prodId = parseInt(value);
-                            setSelectedProductId(prodId);
+                        <SearchableSelect
+                          options={products.map((prod) => ({ id: prod.id, name: prod.title }))}
+                          value={selectedProductId}
+                          onValueChange={(val) => {
+                            setSelectedProductId(val);
                             setSelectedModelId(null);
                             setSelectedVariantCategoryId(null);
                             setModels([]);
                             setVariantCategories([]);
                             setVariants([]);
                             form.setValue("scope_id", null);
-                            loadModels(prodId);
+                            if (val) loadModels(val);
                           }}
-                          value={selectedProductId?.toString() || ""}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select product" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {products.length ? (
-                              products.map((prod) => (
-                                <SelectItem
-                                  key={prod.id}
-                                  value={prod.id.toString()}
-                                >
-                                  {prod.title}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <div className="py-2 text-center text-sm text-muted-foreground">
-                                No products found.
-                              </div>
-                            )}
-                          </SelectContent>
-                        </Select>
+                          placeholder="Select product"
+                          searchPlaceholder="Search product..."
+                          emptyText="No products found."
+                        />
                         {!selectedProductId && (
                           <p className="text-sm text-destructive">
                             Product is required
@@ -968,38 +992,21 @@ export default function CouponsForm() {
                       {selectedProductId && (
                         <div className="space-y-2">
                           <FormLabel>Model *</FormLabel>
-                          <Select
-                            onValueChange={(value) => {
-                              const modelId = parseInt(value);
-                              setSelectedModelId(modelId);
+                          <SearchableSelect
+                            options={models.map((model) => ({ id: model.id, name: model.title }))}
+                            value={selectedModelId}
+                            onValueChange={(val) => {
+                              setSelectedModelId(val);
                               setSelectedVariantCategoryId(null);
                               setVariantCategories([]);
                               setVariants([]);
                               form.setValue("scope_id", null);
-                              loadModelCategories(modelId);
+                              if (val) loadModelCategories(val);
                             }}
-                            value={selectedModelId?.toString() || ""}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select model" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {models.length ? (
-                                models.map((model) => (
-                                  <SelectItem
-                                    key={model.id}
-                                    value={model.id.toString()}
-                                  >
-                                    {model.title}
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <div className="py-2 text-center text-sm text-muted-foreground">
-                                  No models found.
-                                </div>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            placeholder="Select model"
+                            searchPlaceholder="Search model..."
+                            emptyText="No models found."
+                          />
                           {!selectedModelId && (
                             <p className="text-sm text-destructive">
                               Model is required
@@ -1012,36 +1019,19 @@ export default function CouponsForm() {
                       {selectedModelId && (
                         <div className="space-y-2">
                           <FormLabel>Category *</FormLabel>
-                          <Select
-                            onValueChange={(value) => {
-                              const catId = parseInt(value);
-                              setSelectedVariantCategoryId(catId);
+                          <SearchableSelect
+                            options={categories.map((cat) => ({ id: cat.id, name: cat.name }))}
+                            value={selectedVariantCategoryId}
+                            onValueChange={(val) => {
+                              setSelectedVariantCategoryId(val);
                               setVariants([]);
                               form.setValue("scope_id", null);
-                              loadVariants(selectedModelId!, catId);
+                              if (val && selectedModelId) loadVariants(selectedModelId, val);
                             }}
-                            value={selectedVariantCategoryId?.toString() || ""}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                             <SelectContent>
-                            {categories.length ? (
-                              categories.map((cat) => (
-                                <SelectItem
-                                  key={cat.id}
-                                  value={cat.id.toString()}
-                                >
-                                  {cat.name}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <div className="py-2 text-center text-sm text-muted-foreground">
-                                No categories found.
-                              </div>
-                            )}
-                          </SelectContent>
-                          </Select>
+                            placeholder="Select category"
+                            searchPlaceholder="Search category..."
+                            emptyText="No categories found."
+                          />
                           {!selectedVariantCategoryId && (
                             <p className="text-sm text-destructive">
                               Category is required
@@ -1056,36 +1046,20 @@ export default function CouponsForm() {
                           control={form.control}
                           name="scope_id"
                           render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Variant *</FormLabel>
-                              <Select
-                                onValueChange={(value) =>
-                                  field.onChange(parseInt(value))
-                                }
-                                value={field.value?.toString() || ""}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select variant" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {variants.length ? (
-                                    variants.map((variant) => (
-                                      <SelectItem
-                                        key={variant.id}
-                                        value={variant.id.toString()}
-                                      >
-                                        {variant.title}
-                                      </SelectItem>
-                                    ))
-                                  ) : (
-                                    <div className="py-2 text-center text-sm text-muted-foreground">
-                                      No variants found.
-                                    </div>
-                                  )}
-                                </SelectContent>
-                              </Select>
+                            <FormItem className="flex flex-col">
+                              <FormLabel className="mb-2">Variant *</FormLabel>
+                              <FormControl>
+                                <SearchableSelect
+                                  options={variants.map((variant) => ({ id: variant.id, name: variant.title }))}
+                                  value={field.value}
+                                  onValueChange={(val) => {
+                                    field.onChange(val);
+                                  }}
+                                  placeholder="Select variant"
+                                  searchPlaceholder="Search variant..."
+                                  emptyText="No variants found."
+                                />
+                              </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
