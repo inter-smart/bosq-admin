@@ -175,7 +175,7 @@ export default function LoginRegisterCmsForm() {
         }
       }
     } catch (error) {
-      console.log("No existing data found, starting with empty form");
+
       toast({
         title: error.message,
         description: "Failed to load login register data",

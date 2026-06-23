@@ -102,7 +102,7 @@ export default function ProjectCategoryForm() {
 
       navigate("/project-category");
     } catch (error: any) {
-      console.log(error.message);
+
       toast({
         title: "Error",
         description: error.message || `Failed to ${isEditing ? "update" : "create"} category`,

@@ -108,7 +108,7 @@ export default function FaqCategoryForm() {
       navigate("/faq-category");
     } catch (error) {
 
-      console.log(error.message)
+
       toast({
         title: "Error",
         description:error.message||`Failed to ${isEditing ? "update" : "create"} category`,

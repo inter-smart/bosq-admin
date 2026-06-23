@@ -78,7 +78,7 @@ export default function BlogCmsForm() {
         });
       }
     } catch (error) {
-      console.log("No existing data found, starting with empty form");
+
     } finally {
       setInitialLoading(false);
     }

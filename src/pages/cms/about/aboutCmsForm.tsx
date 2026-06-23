@@ -174,7 +174,7 @@ export default function AboutCmsForm() {
         });
       }
     } catch (error) {
-      console.log("No existing data found, starting with empty form");
+
     } finally {
       setInitialLoading(false);
     }
@@ -189,7 +189,6 @@ export default function AboutCmsForm() {
     // Error callback - runs when validation fails
     (errors) => {
       // Get the first error field and focus it
-      console.log(errors)
       const firstErrorField = Object.keys(errors)[0] as keyof AboutCmsFormData;
 
       if (firstErrorField) {

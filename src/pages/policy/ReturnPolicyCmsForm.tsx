@@ -51,7 +51,7 @@ export default function ReturnPolicyCmsForm() {
         });
       }
     } catch (error) {
-      console.log("No existing data found, starting with empty form");
+
     } finally {
       setInitialLoading(false);
     }

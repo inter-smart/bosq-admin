@@ -110,7 +110,7 @@ export default function PrivacyPolicyForm() {
 
       navigate("/privacy-policy");
     } catch (error: any) {
-      console.log(error.message);
+
       toast({
         title: "Error",
         description:

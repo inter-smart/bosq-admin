@@ -15,12 +15,12 @@ import { generateSlug } from "@/utils/formUtils";
 
 // TODO: Replace with actual API functions
 const createItem = async (data: any): Promise<any> => {
-  console.log("Creating item:", data);
+
   return new Promise((resolve) => setTimeout(resolve, 1000));
 };
 
 const updateItem = async (id: string, data: any): Promise<any> => {
-  console.log("Updating item:", id, data);
+
   return new Promise((resolve) => setTimeout(resolve, 1000));
 };
 

@@ -208,7 +208,7 @@ export const resendOtp = async (email: string): Promise<{ success: boolean; mess
   const data = await response.json();
 
   if (!response.ok) {
-    console.log("error ", data)
+
     throw new Error(data?.error?.message || 'Failed to resend OTP');
   }
 

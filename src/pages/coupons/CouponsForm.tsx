@@ -558,9 +558,7 @@ export default function CouponsForm() {
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit, (err) =>
-            console.log("error", err),
-          )}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-6"
         >
           {/* Coupon Information */}

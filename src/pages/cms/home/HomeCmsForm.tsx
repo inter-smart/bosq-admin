@@ -127,7 +127,7 @@ export default function HomeCmsForm() {
         });
       }
     } catch (error) {
-      console.log("No existing data found, starting with empty form");
+
     } finally {
       setInitialLoading(false);
     }
@@ -220,9 +220,7 @@ export default function HomeCmsForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit, (error)=>{
-          console.log(error)
-        })} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* About Section */}
           <Card>
             <CardHeader>

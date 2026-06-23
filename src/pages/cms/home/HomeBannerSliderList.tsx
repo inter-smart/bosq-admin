@@ -78,7 +78,7 @@ export default function HomeBannerSliderList() {
         debouncedSearchQuery
       );
 
-      console.log(response.data);
+
 
       setBannerItems(response.data.list);
     } catch (error) {

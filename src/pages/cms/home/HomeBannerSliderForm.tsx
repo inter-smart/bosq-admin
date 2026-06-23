@@ -140,7 +140,7 @@ export default function HomeBannerSliderForm() {
     try {
       setLoading(true);
 
-      console.log(data);
+
       const formData = new FormData();
 
       // English fields

@@ -522,7 +522,7 @@ export default function OrderDetails() {
   };
 
 
-  console.log("orders",order.user)
+
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-10 px-2 sm:px-0">

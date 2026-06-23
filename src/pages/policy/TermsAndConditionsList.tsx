@@ -85,7 +85,7 @@ export default function FaqListList() {
         categoryParam
       );
 
-      console.log(response.data);
+
 
       setFaqItems(response.data.list);
       setTotalCount(response.data.pagination.totalCount);

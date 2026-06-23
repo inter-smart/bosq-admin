@@ -89,7 +89,7 @@ export default function AuthCmsForm() {
         });
       }
     } catch (error) {
-      console.log("No existing data found, starting with empty form");
+
     } finally {
       setInitialLoading(false);
     }

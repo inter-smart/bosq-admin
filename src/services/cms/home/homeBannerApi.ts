@@ -66,7 +66,7 @@ export const fetchHomeBannerList = async (
 
 
 
-  console.log("PARAMS => ",search)
+
 
   return apiCall('/cms/home/home-banner', { params });
 };
