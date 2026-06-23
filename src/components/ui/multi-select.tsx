@@ -42,6 +42,17 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const handleUnselect = (item: number | string) => {
     onChange(selected.filter((s) => s !== item));
   };
@@ -114,10 +125,11 @@ export function MultiSelect({
       <PopoverContent
         className="w-[--radix-popover-trigger-width] p-0"
         align="start"
+        style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
       >
-        <Command>
+        <Command style={{ maxHeight: "var(--radix-popover-content-available-height)" }}>
           <CommandInput placeholder="Search options..." />
-          <CommandList>
+          <CommandList style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 50px)" }}>
             <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (

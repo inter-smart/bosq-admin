@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useNavigate } from "react-router-dom";
@@ -75,6 +75,52 @@ export default function ProductTypeForm() {
     number | null
   >(null);
   const [categoryOpen, setCategoryOpen] = useState(false);
+
+  const [categorySearchQuery, setCategorySearchQuery] = useState("");
+  const [categoryVisibleCount, setCategoryVisibleCount] = useState(10);
+
+  // Reset categoryVisibleCount when search query changes
+  useEffect(() => {
+    setCategoryVisibleCount(10);
+  }, [categorySearchQuery]);
+
+  // Reset search and count when categoryOpen changes
+  useEffect(() => {
+    if (!categoryOpen) {
+      setCategorySearchQuery("");
+      setCategoryVisibleCount(10);
+    }
+  }, [categoryOpen]);
+
+  const filteredCategories = useMemo(() => {
+    if (!categorySearchQuery) return categories;
+    const query = categorySearchQuery.toLowerCase();
+    return categories.filter((cat) =>
+      cat.name.toLowerCase().includes(query)
+    );
+  }, [categories, categorySearchQuery]);
+
+  const displayedCategories = useMemo(() => {
+    return filteredCategories.slice(0, categoryVisibleCount);
+  }, [filteredCategories, categoryVisibleCount]);
+
+  const handleCategoryScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 10) {
+      setCategoryVisibleCount((prev) => prev + 10);
+    }
+  };
+
+  useEffect(() => {
+    if (categoryOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [categoryOpen]);
 
   const isLoadingRef = useRef(false);
 
@@ -618,12 +664,22 @@ export default function ProductTypeForm() {
                       align="start"
                       style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
                     >
-                      <Command style={{ maxHeight: "var(--radix-popover-content-available-height)" }}>
-                        <CommandInput placeholder="Search category..." />
-                        <CommandList style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 50px)" }}>
-                          <CommandEmpty>No category found.</CommandEmpty>
+                      <Command
+                        shouldFilter={false}
+                        style={{ maxHeight: "var(--radix-popover-content-available-height)" }}
+                      >
+                        <CommandInput
+                          placeholder="Search category..."
+                          value={categorySearchQuery}
+                          onValueChange={setCategorySearchQuery}
+                        />
+                        <CommandList
+                          onScroll={handleCategoryScroll}
+                          style={{ maxHeight: "calc(var(--radix-popover-content-available-height) - 50px)" }}
+                        >
+                          {displayedCategories.length === 0 && <CommandEmpty>No category found.</CommandEmpty>}
                           <CommandGroup>
-                            {categories.map((cat) => (
+                            {displayedCategories.map((cat) => (
                               <CommandItem
                                 key={cat.id}
                                 onSelect={() => {
