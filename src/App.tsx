@@ -2,9 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { isAuthenticated } from "@/services/auth/authApi";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { getModuleForPath } from "@/utils/permissionModules";
 
 import { lazy } from "react";
 
@@ -25,6 +27,13 @@ const ManageMailers = lazy(() => import("./pages/common/ManageMailers"));
 // coupons
 const CouponsList = lazy(() => import("./pages/coupons/CouponsList"));
 const CouponsForm = lazy(() => import("./pages/coupons/CouponsForm"));
+
+// Admin Access (super admin only)
+const RolesList = lazy(() => import("./pages/roles/RolesList"));
+const RoleForm = lazy(() => import("./pages/roles/RoleForm"));
+const AdminUsersList = lazy(() => import("./pages/adminUsers/AdminUsersList"));
+const AdminUserForm = lazy(() => import("./pages/adminUsers/AdminUserForm"));
+const AdminUserResetPassword = lazy(() => import("./pages/adminUsers/AdminUserResetPassword"));
 
 // Product pages
 const ProductCategoriesList = lazy(
@@ -394,9 +403,28 @@ const queryClient = new QueryClient();
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const authenticated = isAuthenticated();
+  const { isLoading, hasPermission } = useAuth();
+  const location = useLocation();
+
   if (!authenticated) {
     return <Navigate to="/login" replace />;
   }
+
+  if (isLoading) {
+    return <DashboardLayout>{null}</DashboardLayout>;
+  }
+
+  const moduleKey = getModuleForPath(location.pathname);
+  if (!hasPermission(moduleKey)) {
+    return (
+      <DashboardLayout>
+        <div className="flex h-full items-center justify-center p-10 text-center text-muted-foreground">
+          You don't have permission to access this page.
+        </div>
+      </DashboardLayout>
+    );
+  }
+
   return <DashboardLayout>{children}</DashboardLayout>;
 }
 
@@ -406,6 +434,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AuthProvider>
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -2025,6 +2054,64 @@ const App = () => (
               }
             />
 
+            {/* Admin Access (super admin only) */}
+            <Route
+              path="/admin-roles"
+              element={
+                <ProtectedRoute>
+                  <RolesList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-roles/create"
+              element={
+                <ProtectedRoute>
+                  <RoleForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-roles/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <RoleForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-users"
+              element={
+                <ProtectedRoute>
+                  <AdminUsersList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-users/create"
+              element={
+                <ProtectedRoute>
+                  <AdminUserForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-users/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <AdminUserForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-users/:id/reset-password"
+              element={
+                <ProtectedRoute>
+                  <AdminUserResetPassword />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/landing-page"
               element={
@@ -2081,6 +2168,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

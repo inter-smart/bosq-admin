@@ -12,14 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { logout, getCurrentUser } from "@/services/auth/authApi";
+import { logout } from "@/services/auth/authApi";
+import { useAuth } from "@/context/AuthContext";
 
 export function AppHeader() {
   const navigate = useNavigate();
-  const currentUser = getCurrentUser();
+  const { user: currentUser, roles, clear } = useAuth();
 
   const handleLogout = () => {
     logout();
+    clear();
     navigate("/login");
   };
   return (
@@ -60,7 +62,7 @@ export function AppHeader() {
                 </div>
                 <div className="hidden md:block text-left">
                   <div className="text-sm font-medium">{currentUser?.username || 'Admin'}</div>
-                  <div className="text-xs text-muted-foreground">{currentUser?.role || 'Admin'}</div>
+                  <div className="text-xs text-muted-foreground">{roles[0]?.name || 'Admin'}</div>
                 </div>
               </Button>
             </DropdownMenuTrigger>

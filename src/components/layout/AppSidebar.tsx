@@ -41,6 +41,7 @@ import {
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useAuth } from "@/context/AuthContext";
 
 const bosqLogo = "/bosq-logo-light.png";
 
@@ -301,6 +302,10 @@ const policiesSection = [
 ];
 
 const usersSection = [{ title: "Users List", url: "/users", icon: Users }];
+const adminAccessSection = [
+  { title: "Staff Users", url: "/admin-users", icon: Users },
+  { title: "Roles & Permissions", url: "/admin-roles", icon: ShieldCheck },
+];
 const couponsSection = [
   { title: "Coupons", url: "/coupons", icon: Tags },
   // { title: "Coupon Usage", url: "/coupon-usage", icon: PieChart },
@@ -309,6 +314,7 @@ const couponsSection = [
 export function AppSidebar() {
   const { state , isMobile} = useSidebar();
   const location = useLocation();
+  const { hasPermission, isSuperAdmin } = useAuth();
 
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
@@ -338,6 +344,7 @@ export function AppSidebar() {
   const [couponsOpen, setCouponsOpen] = useState(false);
   const [masterOpen, setMasterOpen] = useState(false);
   const [ordersOpen, setOrdersOpen] = useState(false);
+  const [adminAccessOpen, setAdminAccessOpen] = useState(false);
 
   const isCollapsed =!isMobile && state === "collapsed";
 
@@ -371,6 +378,7 @@ export function AppSidebar() {
     setCouponsOpen(false);
     setMasterOpen(false);
     setOrdersOpen(false);
+    setAdminAccessOpen(false);
   };
 
   // Auto-open based on current path and close others
@@ -573,6 +581,12 @@ export function AppSidebar() {
       setCouponsOpen(true);
       return;
     }
+
+    // Auto-open Admin Access section
+    if (["/admin-users", "/admin-roles"].some((r) => path.includes(r))) {
+      setAdminAccessOpen(true);
+      return;
+    }
   }, [location.pathname]);
 
   return (
@@ -609,6 +623,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Orders */}
+        {hasPermission("orders") && (
         <SidebarCollapsibleSection
           title="Orders"
           icon={ShoppingBag}
@@ -616,8 +631,10 @@ export function AppSidebar() {
           setOpen={setOrdersOpen}
           items={ordersSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* Enquiries */}
+        {hasPermission("enquiries") && (
         <SidebarCollapsibleSection
           title="Enquiries"
           icon={Inbox}
@@ -625,8 +642,10 @@ export function AppSidebar() {
           setOpen={setEnquiriesOpen}
           items={enquiriesSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* CMS Section with Nested Structure */}
+        {(hasPermission("cms") || hasPermission("master")) && (
         <SidebarGroup>
           <Collapsible open={!isCollapsed && cmsOpen} onOpenChange={setCmsOpen}>
             <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
@@ -640,7 +659,7 @@ export function AppSidebar() {
             </CollapsibleTrigger>
             {!isCollapsed && (
               <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                {cmsSection.map((section) => {
+                {cmsSection.filter((section) => (section.title === "Master" ? hasPermission("master") : hasPermission("cms"))).map((section) => {
                   let sectionOpen = homeOpen;
                   let setSectionOpen = setHomeOpen;
 
@@ -694,8 +713,10 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
+        )}
 
         {/* Products */}
+        {hasPermission("products") && (
         <SidebarCollapsibleSection
           title="Products"
           icon={ShoppingBag}
@@ -703,8 +724,10 @@ export function AppSidebar() {
           setOpen={setProductsOpen}
           items={productsSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* Projects */}
+        {hasPermission("projects") && (
         <SidebarCollapsibleSection
           title="Projects"
           icon={Briefcase}
@@ -712,8 +735,10 @@ export function AppSidebar() {
           setOpen={setProjectsOpen}
           items={projectsSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* Blog Section */}
+        {hasPermission("blog") && (
         <SidebarCollapsibleSection
           title="Blog"
           icon={BookOpen}
@@ -721,8 +746,10 @@ export function AppSidebar() {
           setOpen={setBlogOpen}
           items={blogsSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* News */}
+        {hasPermission("news") && (
         <SidebarCollapsibleSection
           title="News"
           icon={Newspaper}
@@ -730,17 +757,21 @@ export function AppSidebar() {
           setOpen={setNewsOpen}
           items={newsSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* Landing Pages */}
+        {hasPermission("landing_pages") && (
          <SidebarCollapsibleSection
           title="Landing Pages"
           icon={Layers}
           open={landingPagesOpen}
           setOpen={setLandingPagesOpen}
           items={landingPagesSection}
-          isCollapsed={isCollapsed}        /> 
+          isCollapsed={isCollapsed}        />
+        )}
 
         {/* Settings */}
+        {hasPermission("settings") && (
         <SidebarCollapsibleSection
           title="Settings & Content"
           icon={Settings}
@@ -748,8 +779,10 @@ export function AppSidebar() {
           setOpen={setCommonOpen}
           items={commonSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* Users */}
+        {hasPermission("users") && (
         <SidebarCollapsibleSection
           title="Users"
           icon={Users}
@@ -757,7 +790,9 @@ export function AppSidebar() {
           setOpen={setUsersOpen}
           items={usersSection}
           isCollapsed={isCollapsed}        />
+        )}
 
+        {hasPermission("coupons") && (
         <SidebarCollapsibleSection
           title="Coupons"
           icon={Tags}
@@ -765,8 +800,10 @@ export function AppSidebar() {
           setOpen={setCouponsOpen}
           items={couponsSection}
           isCollapsed={isCollapsed}        />
+        )}
 
         {/* Policies */}
+        {hasPermission("policies") && (
         <SidebarGroup>
           <Collapsible open={!isCollapsed && policiesOpen} onOpenChange={setPoliciesOpen}>
             <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
@@ -816,6 +853,18 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
+        )}
+
+        {/* Admin Access (super admin only) */}
+        {isSuperAdmin && (
+        <SidebarCollapsibleSection
+          title="Admin Access"
+          icon={ShieldCheck}
+          open={adminAccessOpen}
+          setOpen={setAdminAccessOpen}
+          items={adminAccessSection}
+          isCollapsed={isCollapsed}        />
+        )}
       </SidebarContent>
     </Sidebar>
   );

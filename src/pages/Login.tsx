@@ -8,8 +8,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { login, isAuthenticated } from "@/services/auth/authApi";
+import { useAuth } from "@/context/AuthContext";
 const bosqLogo = "/bosq-logo-light.png";
 export default function Login() {
+  const { setAuthData } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -29,6 +31,12 @@ export default function Login() {
         if (rememberMe) {
           localStorage.setItem("bosq_remember", "true");
         }
+        setAuthData({
+          user: response.data.user,
+          roles: response.data.roles,
+          permissions: response.data.permissions,
+          isSuperAdmin: response.data.isSuperAdmin,
+        });
       } else {
         setError(response.message || "Login failed");
       }

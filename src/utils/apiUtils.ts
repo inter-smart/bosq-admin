@@ -95,6 +95,8 @@ export const apiCall = async (
       localStorage.removeItem("auth_token");
       localStorage.removeItem("user_data");
       localStorage.removeItem("token_expires_at");
+      localStorage.removeItem("permissions");
+      localStorage.removeItem("is_super_admin");
       localStorage.removeItem("bosq_auth");
       localStorage.removeItem("bosq_remember");
 
