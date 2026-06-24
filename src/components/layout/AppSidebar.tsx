@@ -64,11 +64,6 @@ const enquiriesSection = [
 
 const cmsSection = [
   {
-    title: "Master",
-    icon: List,
-    subItems: [{ title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List }],
-  },
-  {
     title: "Home",
     icon: Home,
     subItems: [
@@ -123,15 +118,25 @@ const cmsSection = [
     ],
   },
   {
-    title: "Ergonomics",
-    icon: Award,
+    title: "Customisation",
+    icon: Palette,
     subItems: [
-      { title: "Ergonomics CMS", url: "/ergonomic-guide-cms", icon: FileText },
+      { title: "Customisation CMS", url: "/customization-cms", icon: FileText },
+      { title: "Features", url: "/customization-features", icon: List },
+      { title: "Process", url: "/customization-process", icon: List },
+      { title: "Options", url: "/customization-options", icon: List },
+    ],
+  },
+  {
+    title: "Sustainability",
+    icon: Briefcase,
+    subItems: [
       {
-        title: "Ergonomic Chair Features",
-        url: "/ergonomic-chair-features",
-        icon: List,
+        title: "Sustainability CMS",
+        url: "/sustainability-cms",
+        icon: FileText,
       },
+      { title: "Sustainability", url: "/sustainability", icon: List },
     ],
   },
   {
@@ -171,26 +176,21 @@ const cmsSection = [
   //   ],
   // },
   {
-    title: "Customisation",
-    icon: Palette,
+    title: "Ergonomics",
+    icon: Award,
     subItems: [
-      { title: "Customisation CMS", url: "/customization-cms", icon: FileText },
-      { title: "Features", url: "/customization-features", icon: List },
-      { title: "Process", url: "/customization-process", icon: List },
-      { title: "Options", url: "/customization-options", icon: List },
+      { title: "Ergonomics CMS", url: "/ergonomic-guide-cms", icon: FileText },
+      {
+        title: "Ergonomic Chair Features",
+        url: "/ergonomic-chair-features",
+        icon: List,
+      },
     ],
   },
   {
-    title: "Sustainability",
-    icon: Briefcase,
-    subItems: [
-      {
-        title: "Sustainability CMS",
-        url: "/sustainability-cms",
-        icon: FileText,
-      },
-      { title: "Sustainability", url: "/sustainability", icon: List },
-    ],
+    title: "Master",
+    icon: List,
+    subItems: [{ title: "Enquiry Dropdown", url: "/master/enquiry-dropdown", icon: List }],
   },
 ];
 
@@ -316,69 +316,69 @@ export function AppSidebar() {
   const location = useLocation();
   const { hasPermission, isSuperAdmin } = useAuth();
 
+  const [adminAccessOpen, setAdminAccessOpen] = useState(false);
+  const [usersOpen, setUsersOpen] = useState(false);
+  const [ordersOpen, setOrdersOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
+  const [enquiriesOpen, setEnquiriesOpen] = useState(false);
   const [cmsOpen, setCmsOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [ergonomicOpen, setErgonomicOpen] = useState(false);
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [deliveryOpen, setDeliveryOpen] = useState(false);
+  const [customisationOpen, setCustomisationOpen] = useState(false);
+  const [sustainabilityOpen, setSustainabilityOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
-  const [projectsOpen, setProjectsOpen] = useState(false);
   const [loginRegisterOpen, setLoginRegisterOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [customisationOpen, setCustomisationOpen] = useState(false);
+  const [ergonomicOpen, setErgonomicOpen] = useState(false);
+  const [masterOpen, setMasterOpen] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
   const [landingPagesOpen, setLandingPagesOpen] = useState(false);
+  const [couponsOpen, setCouponsOpen] = useState(false);
   const [commonOpen, setCommonOpen] = useState(false);
   const [policiesOpen, setPoliciesOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [warrantyOpen, setWarrantyOpen] = useState(false);
   const [returnPolicyOpen, setReturnPolicyOpen] = useState(false);
-  const [sustainabilityOpen, setSustainabilityOpen] = useState(false);
-  const [productsOpen, setProductsOpen] = useState(false);
-  const [enquiriesOpen, setEnquiriesOpen] = useState(false);
-  const [usersOpen, setUsersOpen] = useState(false);
-  const [couponsOpen, setCouponsOpen] = useState(false);
-  const [masterOpen, setMasterOpen] = useState(false);
-  const [ordersOpen, setOrdersOpen] = useState(false);
-  const [adminAccessOpen, setAdminAccessOpen] = useState(false);
 
   const isCollapsed =!isMobile && state === "collapsed";
 
   // Helper function to close all sections
   const closeAllSections = () => {
+    setAdminAccessOpen(false);
+    setUsersOpen(false);
+    setOrdersOpen(false);
+    setProductsOpen(false);
+    setEnquiriesOpen(false);
     setCmsOpen(false);
     setHomeOpen(false);
     setAboutOpen(false);
-    setErgonomicOpen(false);
     setMaterialsOpen(false);
     setDeliveryOpen(false);
+    setCustomisationOpen(false);
+    setSustainabilityOpen(false);
     setFaqOpen(false);
     setContactOpen(false);
-    setProjectsOpen(false);
     setLoginRegisterOpen(false);
     setAuthOpen(false);
-    setCustomisationOpen(false);
+    setErgonomicOpen(false);
+    setMasterOpen(false);
+    setProjectsOpen(false);
     setBlogOpen(false);
     setNewsOpen(false);
     setLandingPagesOpen(false);
+    setCouponsOpen(false);
     setCommonOpen(false);
     setPoliciesOpen(false);
     setPrivacyOpen(false);
     setTermsOpen(false);
     setWarrantyOpen(false);
     setReturnPolicyOpen(false);
-    setSustainabilityOpen(false);
-    setProductsOpen(false);
-    setEnquiriesOpen(false);
-    setUsersOpen(false);
-    setCouponsOpen(false);
-    setMasterOpen(false);
-    setOrdersOpen(false);
-    setAdminAccessOpen(false);
   };
 
   // Auto-open based on current path and close others
@@ -388,77 +388,25 @@ export function AppSidebar() {
     // Close all first
     closeAllSections();
 
+    // Admin Access
+    if (["/admin-users", "/admin-roles"].some((r) => path.includes(r))) {
+      setAdminAccessOpen(true);
+      return;
+    }
+
+    // Users
+    if (["/users"].some((r) => path.includes(r))) {
+      setUsersOpen(true);
+      return;
+    }
+
     // Orders
     if (path.includes("/orders")) {
       setOrdersOpen(true);
       return;
     }
 
-    // Auto-open Enquiries section
-    if (
-      [
-        "/contact-enquiries",
-        "/product-enquiries",
-        "/customization-enquiries",
-        "/lead-generation",
-        "/newsletter-subscriptions",
-        "/project-enquiries",
-      ].some((r) => path.includes(r))
-    ) {
-      setEnquiriesOpen(true);
-      return;
-    }
-
-    // Auto-open Home section
-    if (["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setHomeOpen(true);
-      return;
-    }
-
-    // Auto-open About section
-    if (["/about-cms", "/about-testimonials", "/about-journeys", "/about-our-clients", "/why-bosq"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setAboutOpen(true);
-      return;
-    }
-
-    // Auto-open Ergonomic section
-    if (["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setErgonomicOpen(true);
-      return;
-    }
-
-    // Auto-open Materials section
-    if (["/materials-cms", "/materials-category", "/materials", "/extra-materials"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setMaterialsOpen(true);
-      return;
-    }
-
-    // Auto-open Delivery section
-    if (["/delivery-cms", "/delivery-charges", "/delivery-time", "/delivery-method"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setDeliveryOpen(true);
-      return;
-    }
-
-    // Auto-open FAQ section
-    if (["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setFaqOpen(true);
-      return;
-    }
-
-    // Auto-open Contact section
-    if (["/contact-cms"].some((r) => path.includes(r))) {
-      setCmsOpen(true);
-      setContactOpen(true);
-      return;
-    }
-
-    // Auto-open Products section
+    // Products
     if (
       [
         "/product-categories",
@@ -477,114 +425,166 @@ export function AppSidebar() {
       return;
     }
 
-    // Auto-open Projects section
-    if (["/projects-cms", "/project-category", "/projects"].some((r) => path.includes(r))) {
-      setProjectsOpen(true);
+    // Enquiries
+    if (
+      [
+        "/contact-enquiries",
+        "/product-enquiries",
+        "/customization-enquiries",
+        "/lead-generation",
+        "/newsletter-subscriptions",
+        "/project-enquiries",
+      ].some((r) => path.includes(r))
+    ) {
+      setEnquiriesOpen(true);
       return;
     }
 
-    // Auto-open Login/Register section
-    if (["/login-register-cms"].some((r) => path.includes(r))) {
+    // Home (CMS)
+    if (["/home-cms", "/home-banner-slider", "/home-brands", "/smart-space-calculator", "/find-your-fits"].some((r) => path.includes(r))) {
       setCmsOpen(true);
-      setLoginRegisterOpen(true);
+      setHomeOpen(true);
       return;
     }
 
-    // Auto-open Auth section
-    if (["/auth-cms"].some((r) => path.includes(r))) {
+    // About (CMS)
+    if (["/about-cms", "/about-testimonials", "/about-journeys", "/about-our-clients", "/why-bosq"].some((r) => path.includes(r))) {
       setCmsOpen(true);
-      setAuthOpen(true);
+      setAboutOpen(true);
       return;
     }
 
-    // Auto-open Customisation section
+    // Materials (CMS)
+    if (["/materials-cms", "/materials-category", "/materials", "/extra-materials"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setMaterialsOpen(true);
+      return;
+    }
+
+    // Delivery (CMS)
+    if (["/delivery-cms", "/delivery-charges", "/delivery-time", "/delivery-method"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setDeliveryOpen(true);
+      return;
+    }
+
+    // Customisation (CMS)
     if (["/customization-cms", "/customization-features", "/customization-process", "/customization-options"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setCustomisationOpen(true);
       return;
     }
 
-    // Auto-open Sustainability section
+    // Sustainability (CMS)
     if (["/sustainability-cms", "/sustainability"].some((r) => path.includes(r))) {
       setCmsOpen(true);
       setSustainabilityOpen(true);
       return;
     }
 
-    // Auto-open Blog section
-    if (["/blog-cms", "/blogs"].some((r) => path.includes(r))) {
-      setBlogOpen(true);
+    // FAQ (CMS)
+    if (["/faq-cms", "/faq-category", "/faq-list"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setFaqOpen(true);
       return;
     }
 
-    // Auto-open News section
-    if (["/news-cms", "/news"].some((r) => path.includes(r))) {
-      setNewsOpen(true);
+    // Contact (CMS)
+    if (["/contact-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setContactOpen(true);
       return;
     }
 
-    // Auto-open Landing Pages section
-    if (["/landing-page-cms", "/landing-pages", "/landing-page", "/product-types"].some((r) => path.includes(r))) {
-      setLandingPagesOpen(true);
+    // Login/Register (CMS)
+    if (["/login-register-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setLoginRegisterOpen(true);
       return;
     }
 
-    // Auto-open Common section
-    if (["/site-settings", "/social-media", "/payment-methods", "/meta-tags", "/mailer-settings"].some((r) => path.includes(r))) {
-      setCommonOpen(true);
+    // Auth (CMS)
+    if (["/auth-cms"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setAuthOpen(true);
       return;
     }
 
-    // Auto-open Master section (nested inside CMS)
+    // Ergonomics (CMS)
+    if (["/ergonomic-guide-cms", "/ergonomic-chair-features"].some((r) => path.includes(r))) {
+      setCmsOpen(true);
+      setErgonomicOpen(true);
+      return;
+    }
+
+    // Master (CMS)
     if (path.includes("/master/enquiry-dropdown")) {
       setCmsOpen(true);
       setMasterOpen(true);
       return;
     }
 
-    // Auto-open Privacy Policy section
+    // Projects
+    if (["/projects-cms", "/project-category", "/projects"].some((r) => path.includes(r))) {
+      setProjectsOpen(true);
+      return;
+    }
+
+    // Blog
+    if (["/blog-cms", "/blogs"].some((r) => path.includes(r))) {
+      setBlogOpen(true);
+      return;
+    }
+
+    // News
+    if (["/news-cms", "/news"].some((r) => path.includes(r))) {
+      setNewsOpen(true);
+      return;
+    }
+
+    // Landing Pages
+    if (["/landing-page-cms", "/landing-pages", "/landing-page", "/product-types"].some((r) => path.includes(r))) {
+      setLandingPagesOpen(true);
+      return;
+    }
+
+    // Coupons
+    if (["/coupons"].some((r) => path.includes(r))) {
+      setCouponsOpen(true);
+      return;
+    }
+
+    // Settings
+    if (["/site-settings", "/social-media", "/payment-methods", "/meta-tags", "/mailer-settings"].some((r) => path.includes(r))) {
+      setCommonOpen(true);
+      return;
+    }
+
+    // Privacy Policy (Policies)
     if (["/privacy-policy-cms", "/privacy-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setPrivacyOpen(true);
       return;
     }
 
-    // Auto-open Terms and Conditions section
+    // Terms and Conditions (Policies)
     if (["/terms-and-conditions-cms", "/terms-and-conditions-faq"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setTermsOpen(true);
       return;
     }
 
-    // Auto-open Warranty Policy section
+    // Warranty Policy (Policies)
     if (["/warranty-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setWarrantyOpen(true);
       return;
     }
 
-    // Auto-open Return Policy section
+    // Return Policy (Policies)
     if (["/return-policy-cms", "/return-policy"].some((r) => path.includes(r))) {
       setPoliciesOpen(true);
       setReturnPolicyOpen(true);
-      return;
-    }
-
-    // Auto-open Users section
-    if (["/users"].some((r) => path.includes(r))) {
-      setUsersOpen(true);
-      return;
-    }
-
-    // Auto-open Coupons section
-    if (["/coupons"].some((r) => path.includes(r))) {
-      setCouponsOpen(true);
-      return;
-    }
-
-    // Auto-open Admin Access section
-    if (["/admin-users", "/admin-roles"].some((r) => path.includes(r))) {
-      setAdminAccessOpen(true);
       return;
     }
   }, [location.pathname]);
@@ -622,6 +622,28 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
 
+        {/* Admin Access (super admin only) */}
+        {isSuperAdmin && (
+        <SidebarCollapsibleSection
+          title="Admin Access"
+          icon={ShieldCheck}
+          open={adminAccessOpen}
+          setOpen={setAdminAccessOpen}
+          items={adminAccessSection}
+          isCollapsed={isCollapsed}        />
+        )}
+
+        {/* Users */}
+        {hasPermission("users") && (
+        <SidebarCollapsibleSection
+          title="Users"
+          icon={Users}
+          open={usersOpen}
+          setOpen={setUsersOpen}
+          items={usersSection}
+          isCollapsed={isCollapsed}        />
+        )}
+
         {/* Orders */}
         {hasPermission("orders") && (
         <SidebarCollapsibleSection
@@ -630,6 +652,17 @@ export function AppSidebar() {
           open={ordersOpen}
           setOpen={setOrdersOpen}
           items={ordersSection}
+          isCollapsed={isCollapsed}        />
+        )}
+
+        {/* Products */}
+        {hasPermission("products") && (
+        <SidebarCollapsibleSection
+          title="Products"
+          icon={ShoppingBag}
+          open={productsOpen}
+          setOpen={setProductsOpen}
+          items={productsSection}
           isCollapsed={isCollapsed}        />
         )}
 
@@ -672,12 +705,15 @@ export function AppSidebar() {
                   } else if (section.title === "Delivery") {
                     sectionOpen = deliveryOpen;
                     setSectionOpen = setDeliveryOpen;
+                  } else if (section.title === "Customisation") {
+                    sectionOpen = customisationOpen;
+                    setSectionOpen = setCustomisationOpen;
+                  } else if (section.title === "Sustainability") {
+                    sectionOpen = sustainabilityOpen;
+                    setSectionOpen = setSustainabilityOpen;
                   } else if (section.title === "FAQ") {
                     sectionOpen = faqOpen;
                     setSectionOpen = setFaqOpen;
-                  } else if (section.title === "Ergonomics") {
-                    sectionOpen = ergonomicOpen;
-                    setSectionOpen = setErgonomicOpen;
                   } else if (section.title === "Contact") {
                     sectionOpen = contactOpen;
                     setSectionOpen = setContactOpen;
@@ -687,12 +723,9 @@ export function AppSidebar() {
                   } else if (section.title === "Auth") {
                     sectionOpen = authOpen;
                     setSectionOpen = setAuthOpen;
-                  } else if (section.title === "Customisation") {
-                    sectionOpen = customisationOpen;
-                    setSectionOpen = setCustomisationOpen;
-                  } else if (section.title === "Sustainability") {
-                    sectionOpen = sustainabilityOpen;
-                    setSectionOpen = setSustainabilityOpen;
+                  } else if (section.title === "Ergonomics") {
+                    sectionOpen = ergonomicOpen;
+                    setSectionOpen = setErgonomicOpen;
                   } else if (section.title === "Master") {
                     sectionOpen = masterOpen;
                     setSectionOpen = setMasterOpen;
@@ -713,17 +746,6 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
-        )}
-
-        {/* Products */}
-        {hasPermission("products") && (
-        <SidebarCollapsibleSection
-          title="Products"
-          icon={ShoppingBag}
-          open={productsOpen}
-          setOpen={setProductsOpen}
-          items={productsSection}
-          isCollapsed={isCollapsed}        />
         )}
 
         {/* Projects */}
@@ -770,6 +792,17 @@ export function AppSidebar() {
           isCollapsed={isCollapsed}        />
         )}
 
+        {/* Coupons */}
+        {hasPermission("coupons") && (
+        <SidebarCollapsibleSection
+          title="Coupons"
+          icon={Tags}
+          open={couponsOpen}
+          setOpen={setCouponsOpen}
+          items={couponsSection}
+          isCollapsed={isCollapsed}        />
+        )}
+
         {/* Settings */}
         {hasPermission("settings") && (
         <SidebarCollapsibleSection
@@ -778,27 +811,6 @@ export function AppSidebar() {
           open={commonOpen}
           setOpen={setCommonOpen}
           items={commonSection}
-          isCollapsed={isCollapsed}        />
-        )}
-
-        {/* Users */}
-        {hasPermission("users") && (
-        <SidebarCollapsibleSection
-          title="Users"
-          icon={Users}
-          open={usersOpen}
-          setOpen={setUsersOpen}
-          items={usersSection}
-          isCollapsed={isCollapsed}        />
-        )}
-
-        {hasPermission("coupons") && (
-        <SidebarCollapsibleSection
-          title="Coupons"
-          icon={Tags}
-          open={couponsOpen}
-          setOpen={setCouponsOpen}
-          items={couponsSection}
           isCollapsed={isCollapsed}        />
         )}
 
@@ -853,17 +865,6 @@ export function AppSidebar() {
             )}
           </Collapsible>
         </SidebarGroup>
-        )}
-
-        {/* Admin Access (super admin only) */}
-        {isSuperAdmin && (
-        <SidebarCollapsibleSection
-          title="Admin Access"
-          icon={ShieldCheck}
-          open={adminAccessOpen}
-          setOpen={setAdminAccessOpen}
-          items={adminAccessSection}
-          isCollapsed={isCollapsed}        />
         )}
       </SidebarContent>
     </Sidebar>
