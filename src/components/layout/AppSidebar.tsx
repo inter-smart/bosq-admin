@@ -37,6 +37,7 @@ import {
   Box,
   Inbox,
   Upload,
+  Tag,
 } from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
@@ -209,6 +210,7 @@ const productsSection = [
   { title: "Product FAQs", url: "/product-faqs", icon: HelpCircle },
   { title: "Bulk Product Upload", url: "/product-bulk-upload", icon: Upload },
   { title: "Bulk Image Upload", url: "/product-bulk-image-upload", icon: Image },
+  { title: "Variant Meta Tags", url: "/product-variant-meta-tags", icon: Tag },
 ];
 
 const projectsSection = [
@@ -419,6 +421,7 @@ export function AppSidebar() {
         "/product-faqs",
         "/product-bulk-upload",
         "/product-bulk-image-upload",
+        "/product-variant-meta-tags",
       ].some((r) => path.includes(r))
     ) {
       setProductsOpen(true);

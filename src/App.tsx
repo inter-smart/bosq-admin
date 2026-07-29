@@ -106,6 +106,12 @@ const ProductBulkUpload = lazy(
 const ProductBulkImageUpload = lazy(
   () => import("./pages/product/ProductBulkImageUpload"),
 );
+const ProductVariantMetaList = lazy(
+  () => import("./pages/product/ProductVariantMetaList"),
+);
+const ProductVariantMetaForm = lazy(
+  () => import("./pages/product/ProductVariantMetaForm"),
+);
 
 // Home pages
 const HomeCmsForm = lazy(() => import("./pages/cms/home/HomeCmsForm"));
@@ -829,6 +835,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <ProductVariantImagesForm />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Product Variant Meta Tags Routes */}
+            <Route
+              path="/product-variant-meta-tags"
+              element={
+                <ProtectedRoute>
+                  <ProductVariantMetaList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/product-variant-meta-tags/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <ProductVariantMetaForm />
                 </ProtectedRoute>
               }
             />

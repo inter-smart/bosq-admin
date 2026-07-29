@@ -68,6 +68,7 @@ export const PATH_MODULE_RULES: { module: string; prefixes: string[] }[] = [
       "/product-bulk-image-upload",
       "/product-variant-images",
       "/product-project-images",
+      "/product-variant-meta-tags",
     ],
   },
   { module: "projects", prefixes: ["/projects-cms", "/project-category", "/projects"] },
