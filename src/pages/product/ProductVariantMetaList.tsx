@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { useNavigate } from "react-router-dom";
-import { Edit, Tags } from "lucide-react";
+import { Edit, Tags, Download, UploadCloud } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/common/DataTable";
@@ -9,6 +9,7 @@ import {
   fetchProductVariantMetaList,
   ProductVariantMeta,
 } from "@/services/product/productVariantMetaApi";
+import { MetaExportDialog, MetaUploadDialog } from "./ProductVariantMetaBulkDialogs";
 
 export default function ProductVariantMetaList() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function ProductVariantMetaList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const pageSize = 15;
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export default function ProductVariantMetaList() {
       }
     };
     loadData();
-  }, [currentPage, debouncedSearchQuery]);
+  }, [currentPage, debouncedSearchQuery, refreshKey]);
 
   const columns: ColumnDef<ProductVariantMeta>[] = [
     {
@@ -136,6 +140,16 @@ export default function ProductVariantMetaList() {
               <Tags className="h-6 w-6" />
               <h1 className="text-2xl font-bold">Variant Meta Tags</h1>
             </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setExportDialogOpen(true)}>
+                <Download className="h-4 w-4 mr-1" />
+                Download Sheet
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setUploadDialogOpen(true)}>
+                <UploadCloud className="h-4 w-4 mr-1" />
+                Bulk Upload
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -157,6 +171,13 @@ export default function ProductVariantMetaList() {
           />
         </CardContent>
       </Card>
+
+      <MetaExportDialog open={exportDialogOpen} onClose={() => setExportDialogOpen(false)} />
+      <MetaUploadDialog
+        open={uploadDialogOpen}
+        onClose={() => setUploadDialogOpen(false)}
+        onCompleted={() => setRefreshKey((k) => k + 1)}
+      />
     </div>
   );
 }
