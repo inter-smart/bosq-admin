@@ -40,7 +40,16 @@ import {
   Tag,
 } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useAuth } from "@/context/AuthContext";
 
@@ -210,7 +219,7 @@ const productsSection = [
   { title: "Product FAQs", url: "/product-faqs", icon: HelpCircle },
   { title: "Bulk Product Upload", url: "/product-bulk-upload", icon: Upload },
   { title: "Bulk Image Upload", url: "/product-bulk-image-upload", icon: Image },
-  { title: "Variant Meta Tags", url: "/product-variant-meta-tags", icon: Tag },
+  // { title: "Variant Meta Tags", url: "/product-variant-meta-tags", icon: Tag },
 ];
 
 const projectsSection = [
@@ -229,9 +238,7 @@ const newsSection = [
   { title: "News", url: "/news", icon: List },
 ];
 
-const landingPagesSection = [
-  { title: "Landing Pages", url: "/landing-page", icon: List },
-];
+const landingPagesSection = [{ title: "Landing Pages", url: "/landing-page", icon: List }];
 
 const commonSection = [
   { title: "Site Settings", url: "/site-settings", icon: Settings },
@@ -314,7 +321,7 @@ const couponsSection = [
 ];
 
 export function AppSidebar() {
-  const { state , isMobile} = useSidebar();
+  const { state, isMobile } = useSidebar();
   const location = useLocation();
   const { hasPermission, isSuperAdmin } = useAuth();
 
@@ -348,7 +355,7 @@ export function AppSidebar() {
   const [warrantyOpen, setWarrantyOpen] = useState(false);
   const [returnPolicyOpen, setReturnPolicyOpen] = useState(false);
 
-  const isCollapsed =!isMobile && state === "collapsed";
+  const isCollapsed = !isMobile && state === "collapsed";
 
   // Helper function to close all sections
   const closeAllSections = () => {
@@ -627,247 +634,260 @@ export function AppSidebar() {
 
         {/* Admin Access (super admin only) */}
         {isSuperAdmin && (
-        <SidebarCollapsibleSection
-          title="Admin Access"
-          icon={ShieldCheck}
-          open={adminAccessOpen}
-          setOpen={setAdminAccessOpen}
-          items={adminAccessSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Admin Access"
+            icon={ShieldCheck}
+            open={adminAccessOpen}
+            setOpen={setAdminAccessOpen}
+            items={adminAccessSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Users */}
         {hasPermission("users") && (
-        <SidebarCollapsibleSection
-          title="Users"
-          icon={Users}
-          open={usersOpen}
-          setOpen={setUsersOpen}
-          items={usersSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Users"
+            icon={Users}
+            open={usersOpen}
+            setOpen={setUsersOpen}
+            items={usersSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Orders */}
         {hasPermission("orders") && (
-        <SidebarCollapsibleSection
-          title="Orders"
-          icon={ShoppingBag}
-          open={ordersOpen}
-          setOpen={setOrdersOpen}
-          items={ordersSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Orders"
+            icon={ShoppingBag}
+            open={ordersOpen}
+            setOpen={setOrdersOpen}
+            items={ordersSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Products */}
         {hasPermission("products") && (
-        <SidebarCollapsibleSection
-          title="Products"
-          icon={ShoppingBag}
-          open={productsOpen}
-          setOpen={setProductsOpen}
-          items={productsSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Products"
+            icon={ShoppingBag}
+            open={productsOpen}
+            setOpen={setProductsOpen}
+            items={productsSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Enquiries */}
         {hasPermission("enquiries") && (
-        <SidebarCollapsibleSection
-          title="Enquiries"
-          icon={Inbox}
-          open={enquiriesOpen}
-          setOpen={setEnquiriesOpen}
-          items={enquiriesSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Enquiries"
+            icon={Inbox}
+            open={enquiriesOpen}
+            setOpen={setEnquiriesOpen}
+            items={enquiriesSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* CMS Section with Nested Structure */}
         {(hasPermission("cms") || hasPermission("master")) && (
-        <SidebarGroup>
-          <Collapsible open={!isCollapsed && cmsOpen} onOpenChange={setCmsOpen}>
-            <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
-              <FileText className="h-4 w-4" />
+          <SidebarGroup>
+            <Collapsible open={!isCollapsed && cmsOpen} onOpenChange={setCmsOpen}>
+              <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
+                <FileText className="h-4 w-4" />
+                {!isCollapsed && (
+                  <>
+                    <span className="ml-2">CMS</span>
+                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${cmsOpen ? "rotate-90" : ""}`} />
+                  </>
+                )}
+              </CollapsibleTrigger>
               {!isCollapsed && (
-                <>
-                  <span className="ml-2">CMS</span>
-                  <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${cmsOpen ? "rotate-90" : ""}`} />
-                </>
+                <CollapsibleContent className="ml-4 mt-1 space-y-1">
+                  {cmsSection
+                    .filter((section) => (section.title === "Master" ? hasPermission("master") : hasPermission("cms")))
+                    .map((section) => {
+                      let sectionOpen = homeOpen;
+                      let setSectionOpen = setHomeOpen;
+
+                      if (section.title === "About") {
+                        sectionOpen = aboutOpen;
+                        setSectionOpen = setAboutOpen;
+                      } else if (section.title === "Materials") {
+                        sectionOpen = materialsOpen;
+                        setSectionOpen = setMaterialsOpen;
+                      } else if (section.title === "Delivery") {
+                        sectionOpen = deliveryOpen;
+                        setSectionOpen = setDeliveryOpen;
+                      } else if (section.title === "Customisation") {
+                        sectionOpen = customisationOpen;
+                        setSectionOpen = setCustomisationOpen;
+                      } else if (section.title === "Sustainability") {
+                        sectionOpen = sustainabilityOpen;
+                        setSectionOpen = setSustainabilityOpen;
+                      } else if (section.title === "FAQ") {
+                        sectionOpen = faqOpen;
+                        setSectionOpen = setFaqOpen;
+                      } else if (section.title === "Contact") {
+                        sectionOpen = contactOpen;
+                        setSectionOpen = setContactOpen;
+                      } else if (section.title === "Login/Register") {
+                        sectionOpen = loginRegisterOpen;
+                        setSectionOpen = setLoginRegisterOpen;
+                      } else if (section.title === "Auth") {
+                        sectionOpen = authOpen;
+                        setSectionOpen = setAuthOpen;
+                      } else if (section.title === "Ergonomics") {
+                        sectionOpen = ergonomicOpen;
+                        setSectionOpen = setErgonomicOpen;
+                      } else if (section.title === "Master") {
+                        sectionOpen = masterOpen;
+                        setSectionOpen = setMasterOpen;
+                      }
+
+                      return (
+                        <NestedSection
+                          key={section.title}
+                          title={section.title}
+                          icon={section.icon}
+                          open={sectionOpen}
+                          setOpen={setSectionOpen}
+                          items={section.subItems}
+                        />
+                      );
+                    })}
+                </CollapsibleContent>
               )}
-            </CollapsibleTrigger>
-            {!isCollapsed && (
-              <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                {cmsSection.filter((section) => (section.title === "Master" ? hasPermission("master") : hasPermission("cms"))).map((section) => {
-                  let sectionOpen = homeOpen;
-                  let setSectionOpen = setHomeOpen;
-
-                  if (section.title === "About") {
-                    sectionOpen = aboutOpen;
-                    setSectionOpen = setAboutOpen;
-                  } else if (section.title === "Materials") {
-                    sectionOpen = materialsOpen;
-                    setSectionOpen = setMaterialsOpen;
-                  } else if (section.title === "Delivery") {
-                    sectionOpen = deliveryOpen;
-                    setSectionOpen = setDeliveryOpen;
-                  } else if (section.title === "Customisation") {
-                    sectionOpen = customisationOpen;
-                    setSectionOpen = setCustomisationOpen;
-                  } else if (section.title === "Sustainability") {
-                    sectionOpen = sustainabilityOpen;
-                    setSectionOpen = setSustainabilityOpen;
-                  } else if (section.title === "FAQ") {
-                    sectionOpen = faqOpen;
-                    setSectionOpen = setFaqOpen;
-                  } else if (section.title === "Contact") {
-                    sectionOpen = contactOpen;
-                    setSectionOpen = setContactOpen;
-                  } else if (section.title === "Login/Register") {
-                    sectionOpen = loginRegisterOpen;
-                    setSectionOpen = setLoginRegisterOpen;
-                  } else if (section.title === "Auth") {
-                    sectionOpen = authOpen;
-                    setSectionOpen = setAuthOpen;
-                  } else if (section.title === "Ergonomics") {
-                    sectionOpen = ergonomicOpen;
-                    setSectionOpen = setErgonomicOpen;
-                  } else if (section.title === "Master") {
-                    sectionOpen = masterOpen;
-                    setSectionOpen = setMasterOpen;
-                  }
-
-                  return (
-                    <NestedSection
-                      key={section.title}
-                      title={section.title}
-                      icon={section.icon}
-                      open={sectionOpen}
-                      setOpen={setSectionOpen}
-                      items={section.subItems}
-                    />
-                  );
-                })}
-              </CollapsibleContent>
-            )}
-          </Collapsible>
-        </SidebarGroup>
+            </Collapsible>
+          </SidebarGroup>
         )}
 
         {/* Projects */}
         {hasPermission("projects") && (
-        <SidebarCollapsibleSection
-          title="Projects"
-          icon={Briefcase}
-          open={projectsOpen}
-          setOpen={setProjectsOpen}
-          items={projectsSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Projects"
+            icon={Briefcase}
+            open={projectsOpen}
+            setOpen={setProjectsOpen}
+            items={projectsSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Blog Section */}
         {hasPermission("blog") && (
-        <SidebarCollapsibleSection
-          title="Blog"
-          icon={BookOpen}
-          open={blogOpen}
-          setOpen={setBlogOpen}
-          items={blogsSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Blog"
+            icon={BookOpen}
+            open={blogOpen}
+            setOpen={setBlogOpen}
+            items={blogsSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* News */}
         {hasPermission("news") && (
-        <SidebarCollapsibleSection
-          title="News"
-          icon={Newspaper}
-          open={newsOpen}
-          setOpen={setNewsOpen}
-          items={newsSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="News"
+            icon={Newspaper}
+            open={newsOpen}
+            setOpen={setNewsOpen}
+            items={newsSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Landing Pages */}
         {hasPermission("landing_pages") && (
-         <SidebarCollapsibleSection
-          title="Landing Pages"
-          icon={Layers}
-          open={landingPagesOpen}
-          setOpen={setLandingPagesOpen}
-          items={landingPagesSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Landing Pages"
+            icon={Layers}
+            open={landingPagesOpen}
+            setOpen={setLandingPagesOpen}
+            items={landingPagesSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Coupons */}
         {hasPermission("coupons") && (
-        <SidebarCollapsibleSection
-          title="Coupons"
-          icon={Tags}
-          open={couponsOpen}
-          setOpen={setCouponsOpen}
-          items={couponsSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Coupons"
+            icon={Tags}
+            open={couponsOpen}
+            setOpen={setCouponsOpen}
+            items={couponsSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Settings */}
         {hasPermission("settings") && (
-        <SidebarCollapsibleSection
-          title="Settings & Content"
-          icon={Settings}
-          open={commonOpen}
-          setOpen={setCommonOpen}
-          items={commonSection}
-          isCollapsed={isCollapsed}        />
+          <SidebarCollapsibleSection
+            title="Settings & Content"
+            icon={Settings}
+            open={commonOpen}
+            setOpen={setCommonOpen}
+            items={commonSection}
+            isCollapsed={isCollapsed}
+          />
         )}
 
         {/* Policies */}
         {hasPermission("policies") && (
-        <SidebarGroup>
-          <Collapsible open={!isCollapsed && policiesOpen} onOpenChange={setPoliciesOpen}>
-            <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
-              <ShieldCheck className="h-4 w-4" />
+          <SidebarGroup>
+            <Collapsible open={!isCollapsed && policiesOpen} onOpenChange={setPoliciesOpen}>
+              <CollapsibleTrigger className="flex items-center w-full p-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/50 rounded-md">
+                <ShieldCheck className="h-4 w-4" />
+                {!isCollapsed && (
+                  <>
+                    <span className="ml-2">Policies</span>
+                    <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${policiesOpen ? "rotate-90" : ""}`} />
+                  </>
+                )}
+              </CollapsibleTrigger>
+
               {!isCollapsed && (
-                <>
-                  <span className="ml-2">Policies</span>
-                  <ChevronRight className={`h-4 w-4 ml-auto transition-transform ${policiesOpen ? "rotate-90" : ""}`} />
-                </>
+                <CollapsibleContent className="ml-4 mt-1 space-y-1">
+                  <NestedSection
+                    title="Privacy Policy"
+                    icon={ShieldCheck}
+                    open={privacyOpen}
+                    setOpen={setPrivacyOpen}
+                    items={policiesSection[0].subItems}
+                  />
+
+                  <NestedSection
+                    title="Terms & Conditions"
+                    icon={ScrollText}
+                    open={termsOpen}
+                    setOpen={setTermsOpen}
+                    items={policiesSection[1].subItems}
+                  />
+
+                  <NestedSection
+                    title="Warranty Policy"
+                    icon={Award}
+                    open={warrantyOpen}
+                    setOpen={setWarrantyOpen}
+                    items={policiesSection[2].subItems}
+                  />
+
+                  <NestedSection
+                    title="Return Policy"
+                    icon={RotateCcw}
+                    open={returnPolicyOpen}
+                    setOpen={setReturnPolicyOpen}
+                    items={policiesSection[3].subItems}
+                  />
+                </CollapsibleContent>
               )}
-            </CollapsibleTrigger>
-
-            {!isCollapsed && (
-              <CollapsibleContent className="ml-4 mt-1 space-y-1">
-                <NestedSection
-                  title="Privacy Policy"
-                  icon={ShieldCheck}
-                  open={privacyOpen}
-                  setOpen={setPrivacyOpen}
-                  items={policiesSection[0].subItems}
-                />
-
-                <NestedSection
-                  title="Terms & Conditions"
-                  icon={ScrollText}
-                  open={termsOpen}
-                  setOpen={setTermsOpen}
-                  items={policiesSection[1].subItems}
-                />
-
-                <NestedSection
-                  title="Warranty Policy"
-                  icon={Award}
-                  open={warrantyOpen}
-                  setOpen={setWarrantyOpen}
-                  items={policiesSection[2].subItems}
-                />
-
-                <NestedSection
-                  title="Return Policy"
-                  icon={RotateCcw}
-                  open={returnPolicyOpen}
-                  setOpen={setReturnPolicyOpen}
-                  items={policiesSection[3].subItems}
-                />
-              </CollapsibleContent>
-            )}
-          </Collapsible>
-        </SidebarGroup>
+            </Collapsible>
+          </SidebarGroup>
         )}
       </SidebarContent>
     </Sidebar>
