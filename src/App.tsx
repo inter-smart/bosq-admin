@@ -662,22 +662,22 @@ const App = () => (
               />
 
               {/* Product Variant Meta Tags Routes */}
-              {/* <Route
-              path="/product-variant-meta-tags"
-              element={
-                <ProtectedRoute>
-                  <ProductVariantMetaList />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/product-variant-meta-tags/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <ProductVariantMetaForm />
-                </ProtectedRoute>
-              }
-            /> */}
+              <Route
+                path="/product-variant-meta-tags"
+                element={
+                  <ProtectedRoute>
+                    <ProductVariantMetaList />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/product-variant-meta-tags/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <ProductVariantMetaForm />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Product Project Images Routes */}
               <Route

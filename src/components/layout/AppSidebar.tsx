@@ -219,7 +219,7 @@ const productsSection = [
   { title: "Product FAQs", url: "/product-faqs", icon: HelpCircle },
   { title: "Bulk Product Upload", url: "/product-bulk-upload", icon: Upload },
   { title: "Bulk Image Upload", url: "/product-bulk-image-upload", icon: Image },
-  // { title: "Variant Meta Tags", url: "/product-variant-meta-tags", icon: Tag },
+  { title: "Variant Meta Tags", url: "/product-variant-meta-tags", icon: Tag },
 ];
 
 const projectsSection = [
