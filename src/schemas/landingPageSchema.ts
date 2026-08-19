@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { commonValidations } from "@/utils/formUtils";
+import { isReservedSlug } from "@/constants/reservedSlugs";
 
 export const landingPageSchema = z.object({
   // English fields
@@ -7,7 +8,9 @@ export const landingPageSchema = z.object({
   description: commonValidations.requiredText("Description"),
   button_label: commonValidations.optionalString("Button Label"),
   link: commonValidations.optionalString("Link"),
-  slug: commonValidations.slug,
+  slug: commonValidations.slug.refine((slug) => !isReservedSlug(slug), {
+    message: "This slug is reserved for an existing site page — choose a different one.",
+  }),
   media_alt: commonValidations.optionalString("Media Alt Text"),
 
   // Arabic fields
@@ -33,6 +36,7 @@ export const landingPageSchema = z.object({
   // Settings
   sort_order: commonValidations.sortOrder(),
   status: z.boolean(),
+  show_in_footer: z.boolean(),
 });
 
 export type LandingPageFormData = z.infer<typeof landingPageSchema>;

@@ -15,8 +15,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { FileUpload } from "@/components/common/FileUpload";
-import { Save, ArrowLeft } from "lucide-react";
+import { Save, ArrowLeft, TriangleAlert } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   fetchLandingPageById,
@@ -27,6 +28,7 @@ import {
   landingPageSchema,
   LandingPageFormData,
 } from "@/schemas/landingPageSchema";
+import { RESERVED_SLUGS } from "@/constants/reservedSlugs";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/common/RichTextEditor";
 
@@ -69,6 +71,7 @@ export default function LandingPageForm() {
       link: "",
       sort_order: 1,
       status: true,
+      show_in_footer: true,
     },
   });
 
@@ -126,6 +129,7 @@ export default function LandingPageForm() {
           link: data.link || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
+          show_in_footer: data.show_in_footer ?? true,
         });
 
         if (data.media_desktop_path) {
@@ -181,6 +185,7 @@ export default function LandingPageForm() {
       // Other fields
       formData.append("sort_order", (data.sort_order || 0).toString());
       formData.append("status", (data.status ?? true).toString());
+      formData.append("show_in_footer", (data.show_in_footer ?? true).toString());
 
       if (desktopImageFile instanceof File) {
         formData.append("media_desktop_path", desktopImageFile);
@@ -246,6 +251,16 @@ export default function LandingPageForm() {
           </p>
         </div>
       </div>
+
+      <Alert>
+        <TriangleAlert className="h-4 w-4" />
+        <AlertTitle>Slug becomes this page's live URL</AlertTitle>
+        <AlertDescription>
+          The slug is published as <code>bosq.ae/&lt;slug&gt;</code>. It must not match a name
+          already used by another page on the site, or this landing page will never be reachable.
+          Reserved names: {RESERVED_SLUGS.join(", ")}.
+        </AlertDescription>
+      </Alert>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -694,6 +709,27 @@ export default function LandingPageForm() {
                         <FormLabel className="text-base">Status</FormLabel>
                         <FormDescription>
                           Enable or disable this landing page
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="show_in_footer"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Show in Footer</FormLabel>
+                        <FormDescription>
+                          Display this landing page link in the site footer
                         </FormDescription>
                       </div>
                       <FormControl>

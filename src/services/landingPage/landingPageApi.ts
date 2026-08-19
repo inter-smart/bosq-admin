@@ -16,6 +16,7 @@ export interface LandingPage {
   slug?: string;
   sort_order: number;
   status: boolean;
+  show_in_footer: boolean;
   meta_title?: string;
   meta_description?: string;
   meta_keywords?: string;

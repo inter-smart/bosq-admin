@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { updateStatus, updateSortOrder, updateIsPrimary } from "@/services/commonApi";
+import { updateStatus, updateSortOrder, updateIsPrimary, updateShowInFooter } from "@/services/commonApi";
 
 interface UseCommonTableActionsProps<T> {
   modelName: string;
@@ -62,6 +62,28 @@ export const useCommonTableActions = <T extends { id?: number }>({
     }
   };
 
+  const handleShowInFooterChange = async (id: number, currentShowInFooter: boolean) => {
+    const newShowInFooter = !currentShowInFooter;
+
+    try {
+      await updateShowInFooter({
+        model_name: modelName,
+        row_id: id,
+        show_in_footer: newShowInFooter,
+      });
+
+      setData((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, show_in_footer: newShowInFooter } : item
+        )
+      );
+
+      toast({ title: "Success", description: "Show in footer updated successfully" });
+    } catch {
+      toast({ title: "Error", description: "Failed to update show in footer", variant: "destructive" });
+    }
+  };
+
 
 
 
@@ -108,5 +130,6 @@ export const useCommonTableActions = <T extends { id?: number }>({
     handleStatusChange,
     handleSortOrderChange,
     handleIsPrimaryChange,
+    handleShowInFooterChange,
   };
 };

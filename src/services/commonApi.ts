@@ -18,6 +18,12 @@ export interface IsPrimaryUpdatePayload {
   is_primary: boolean;
 }
 
+export interface ShowInFooterUpdatePayload {
+  model_name: string;
+  row_id?: number;
+  show_in_footer: boolean;
+}
+
 export interface CommonResponse<T = any> {
   success: boolean;
   message: string;
@@ -54,5 +60,15 @@ export const updateIsPrimary = async (
   return apiCall(`/common-actions/is-primary/${payload.model_name}/${payload.row_id}`, {
     method: "PUT",
     data: { is_primary: payload.is_primary },
+  });
+};
+
+// 🔥 Update Show In Footer (common)
+export const updateShowInFooter = async (
+  payload: ShowInFooterUpdatePayload
+): Promise<CommonResponse> => {
+  return apiCall(`/common-actions/show-in-footer/${payload.model_name}/${payload.row_id}`, {
+    method: "PUT",
+    data: { show_in_footer: payload.show_in_footer },
   });
 };

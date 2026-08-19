@@ -34,7 +34,7 @@ export default function LandingPageList() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [pageSize, setPageSize] = useState(10);
 
-  const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<LandingPage>({
+  const { editingSortOrder, handleStatusChange, handleSortOrderChange, handleShowInFooterChange } = useCommonTableActions<LandingPage>({
     modelName: "LandingPage",
     data: items,
     setData: setItems,
@@ -181,6 +181,19 @@ export default function LandingPageList() {
         return (
           <div className="flex items-center gap-2">
             <Switch checked={status} onCheckedChange={() => handleStatusChange(item.id!, status)} />
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "show_in_footer",
+      header: "Show in Footer",
+      cell: ({ row }) => {
+        const item = row.original;
+        const showInFooter = row.getValue("show_in_footer") as boolean;
+        return (
+          <div className="flex items-center gap-2">
+            <Switch checked={showInFooter} onCheckedChange={() => handleShowInFooterChange(item.id!, showInFooter)} />
           </div>
         );
       },
