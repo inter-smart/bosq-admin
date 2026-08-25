@@ -14,6 +14,13 @@ export interface LandingPage {
   button_label_ar?: string;
   link?: string;
   slug?: string;
+  form_title?: string;
+  form_title_ar?: string;
+  form_description?: string;
+  form_description_ar?: string;
+  form_media_path?: string | null;
+  form_media_alt?: string;
+  form_media_alt_ar?: string;
   sort_order: number;
   status: boolean;
   show_in_footer: boolean;

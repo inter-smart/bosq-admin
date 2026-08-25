@@ -23,6 +23,15 @@ export const landingPageSchema = z.object({
   media_desktop_path:commonValidations.validateFileUpload("Desktop Image"),
   media_mobile_path:commonValidations.validateFileUpload("Mobile Image"),
 
+  // Form Section
+  form_title: commonValidations.optionalString("Form Title"),
+  form_title_ar: commonValidations.optionalString("Form Title (Arabic)"),
+  form_description: commonValidations.optionalString("Form Description"),
+  form_description_ar: commonValidations.optionalString("Form Description (Arabic)"),
+  form_media_path: commonValidations.fileUpload,
+  form_media_alt: commonValidations.optionalString("Form Media Alt Text"),
+  form_media_alt_ar: commonValidations.optionalString("Form Media Alt Text (Arabic)"),
+
   // SEO Meta
   meta_title: commonValidations.optionalString("Meta Title"),
   meta_description: commonValidations.optionalString("Meta Description"),

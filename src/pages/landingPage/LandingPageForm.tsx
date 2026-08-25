@@ -46,6 +46,9 @@ export default function LandingPageForm() {
   const [mobileImageFile, setMobileImageFile] = useState<File | string | null>(
     null,
   );
+  const [formImageFile, setFormImageFile] = useState<File | string | null>(
+    null,
+  );
 
   const form = useForm<LandingPageFormData>({
     resolver: zodResolver(landingPageSchema),
@@ -69,6 +72,12 @@ export default function LandingPageForm() {
       button_label: "",
       button_label_ar: "",
       link: "",
+      form_title: "",
+      form_title_ar: "",
+      form_description: "",
+      form_description_ar: "",
+      form_media_alt: "",
+      form_media_alt_ar: "",
       sort_order: 1,
       status: true,
       show_in_footer: true,
@@ -127,6 +136,12 @@ export default function LandingPageForm() {
           button_label: data.button_label || "",
           button_label_ar: data.button_label_ar || "",
           link: data.link || "",
+          form_title: data.form_title || "",
+          form_title_ar: data.form_title_ar || "",
+          form_description: data.form_description || "",
+          form_description_ar: data.form_description_ar || "",
+          form_media_alt: data.form_media_alt || "",
+          form_media_alt_ar: data.form_media_alt_ar || "",
           sort_order: data.sort_order || 1,
           status: data.status ?? true,
           show_in_footer: data.show_in_footer ?? true,
@@ -141,6 +156,11 @@ export default function LandingPageForm() {
           const mobileUrl = `${MEDIA_URL}/${data.media_mobile_path}`;
           setMobileImageFile(mobileUrl);
           form.setValue("media_mobile_path", mobileUrl);
+        }
+        if (data.form_media_path) {
+          const formMediaUrl = `${MEDIA_URL}/${data.form_media_path}`;
+          setFormImageFile(formMediaUrl);
+          form.setValue("form_media_path", formMediaUrl);
         }
       }
     } catch (error) {
@@ -171,6 +191,9 @@ export default function LandingPageForm() {
       formData.append("media_alt", data.media_alt);
       formData.append("button_label", data.button_label);
       formData.append("link", data.link);
+      formData.append("form_title", data.form_title || "");
+      formData.append("form_description", data.form_description || "");
+      formData.append("form_media_alt", data.form_media_alt || "");
 
       // Arabic fields
       formData.append("title_ar", data.title_ar);
@@ -181,6 +204,9 @@ export default function LandingPageForm() {
       formData.append("other_meta_ar", data.other_meta_ar || "");
       formData.append("media_alt_ar", data.media_alt_ar);
       formData.append("button_label_ar", data.button_label_ar);
+      formData.append("form_title_ar", data.form_title_ar || "");
+      formData.append("form_description_ar", data.form_description_ar || "");
+      formData.append("form_media_alt_ar", data.form_media_alt_ar || "");
 
       // Other fields
       formData.append("sort_order", (data.sort_order || 0).toString());
@@ -192,6 +218,9 @@ export default function LandingPageForm() {
       }
       if (mobileImageFile instanceof File) {
         formData.append("media_mobile_path", mobileImageFile);
+      }
+      if (formImageFile instanceof File) {
+        formData.append("form_media_path", formImageFile);
       }
 
       if (isEditing && id) {
@@ -509,6 +538,136 @@ export default function LandingPageForm() {
                     </FormItem>
                   )}
                 />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Form Section Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Form Section</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* English Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="form_title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter form title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="form_description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Enter form description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Arabic Fields */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="form_title_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title (AR)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="أدخل عنوان النموذج" {...field} dir="rtl" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="form_description_ar"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description (AR)</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="أدخل وصف النموذج" {...field} dir="rtl" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="form_media_path"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Form Media</FormLabel>
+                        <FormControl>
+                          <FileUpload
+                            value={field.value}
+                            onChange={(file) => {
+                              field.onChange(file);
+                              setFormImageFile(file);
+                            }}
+                            accept="image/*"
+                            placeholder="Upload form media"
+                            preview={true}
+                            recommendedDimensions="541px × 348px"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="form_media_alt"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Media Alt Text (English)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter media alt text" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="form_media_alt_ar"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Alt Text (AR)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="أدخل النص البديل" {...field} dir="rtl" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
