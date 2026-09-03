@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryStates, parseAsString, parseAsInteger } from "nuqs";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
@@ -75,21 +76,33 @@ export default function AllProductVariantsList() {
   const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
   const [models, setModels] = useState<ProductModel[]>([]);
   const [allCategories, setAllCategories] = useState<ProductCategory[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState<string>("all");
-  const [selectedModelId, setSelectedModelId] = useState<string>("all");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
   const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
   const [tableKey, setTableKey] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [pageSize, setPageSize] = useState(10);
   const [deleteType, setDeleteType] = useState<"soft" | "force">("soft");
   const requestIdRef = useRef(0);
+
+  // Filters, search, and pagination live in the URL query string so the view
+  // is bookmarkable/shareable and survives navigating away and back.
+  const [filters, setFilters] = useQueryStates(
+    {
+      product: parseAsString.withDefault("all"),
+      model: parseAsString.withDefault("all"),
+      category: parseAsString.withDefault("all"),
+      search: parseAsString.withDefault(""),
+      page: parseAsInteger.withDefault(1),
+      pageSize: parseAsInteger.withDefault(10),
+    },
+    { history: "replace" },
+  );
+  const { product: selectedProductId, model: selectedModelId, category: selectedCategoryId, page: currentPage, pageSize } = filters;
+
+  // Local mirror of the search input so typing stays instant; only the
+  // settled value (after the debounce below) is written to the URL/fetched.
+  const [searchQuery, setSearchQuery] = useState(filters.search);
 
   // Load base products and categories on mount
   useEffect(() => {
@@ -99,8 +112,6 @@ export default function AllProductVariantsList() {
 
   // Load models when base product changes
   useEffect(() => {
-    setSelectedModelId("all");
-    setCurrentPage(1);
     if (selectedProductId !== "all") {
       loadModels(parseInt(selectedProductId));
     } else {
@@ -146,27 +157,24 @@ export default function AllProductVariantsList() {
     }
   };
 
-  // Debounce search query
+  // Debounce search query into the URL — only the settled value is fetched/shared.
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-      setCurrentPage(1);
+      if (searchQuery !== filters.search) {
+        setFilters({ search: searchQuery, page: 1 });
+      }
     }, 600);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
-
-  // Reset to page 1 when model or category filter changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedModelId, selectedCategoryId]);
 
   useEffect(() => {
     loadVariants();
   }, [
     currentPage,
     pageSize,
-    debouncedSearchQuery,
+    filters.search,
     selectedProductId,
     selectedModelId,
     selectedCategoryId,
@@ -176,7 +184,7 @@ export default function AllProductVariantsList() {
     const requestId = ++requestIdRef.current;
 
     try {
-      if (debouncedSearchQuery) {
+      if (filters.search) {
         setSearching(true);
       } else {
         setLoading(true);
@@ -185,7 +193,7 @@ export default function AllProductVariantsList() {
       const response = await fetchProductVariantList(
         currentPage,
         pageSize,
-        debouncedSearchQuery,
+        filters.search,
         selectedModelId === "all" ? undefined : parseInt(selectedModelId),
         selectedProductId === "all" ? undefined : parseInt(selectedProductId),
         selectedCategoryId === "all" ? undefined : parseInt(selectedCategoryId),
@@ -538,7 +546,7 @@ export default function AllProductVariantsList() {
               <div className="w-56">
                 <Select
                   value={selectedProductId}
-                  onValueChange={setSelectedProductId}
+                  onValueChange={(value) => setFilters({ product: value, model: "all", page: 1 })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Base Product" />
@@ -557,10 +565,7 @@ export default function AllProductVariantsList() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => {
-                    setSelectedProductId("all");
-                    setSelectedModelId("all");
-                  }}
+                  onClick={() => setFilters({ product: "all", model: "all", page: 1 })}
                   title="Clear Product Filter"
                 >
                   <XCircle className="h-4 w-4 text-muted-foreground" />
@@ -572,7 +577,7 @@ export default function AllProductVariantsList() {
               <div className="w-56">
                 <Select
                   value={selectedModelId}
-                  onValueChange={setSelectedModelId}
+                  onValueChange={(value) => setFilters({ model: value, page: 1 })}
                   disabled={selectedProductId === "all"}
                 >
                   <SelectTrigger>
@@ -592,7 +597,7 @@ export default function AllProductVariantsList() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setSelectedModelId("all")}
+                  onClick={() => setFilters({ model: "all", page: 1 })}
                   title="Clear Model Filter"
                 >
                   <XCircle className="h-4 w-4 text-muted-foreground" />
@@ -603,7 +608,7 @@ export default function AllProductVariantsList() {
               <div className="w-48">
                 <Select
                   value={selectedCategoryId}
-                  onValueChange={setSelectedCategoryId}
+                  onValueChange={(value) => setFilters({ category: value, page: 1 })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
@@ -640,7 +645,7 @@ export default function AllProductVariantsList() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setSelectedCategoryId("all")}
+                  onClick={() => setFilters({ category: "all", page: 1 })}
                   title="Clear Category Filter"
                 >
                   <XCircle className="h-4 w-4 text-muted-foreground" />
@@ -678,8 +683,8 @@ export default function AllProductVariantsList() {
             pageSize,
             totalCount,
             totalPages: Math.ceil(totalCount / pageSize),
-            onPageChange: setCurrentPage,
-            onPageSizeChange: setPageSize,
+            onPageChange: (page: number) => setFilters({ page }),
+            onPageSizeChange: (size: number) => setFilters({ pageSize: size, page: 1 }),
           }}
           title=""
           searchPlaceholder="Search variants by title or SKU"

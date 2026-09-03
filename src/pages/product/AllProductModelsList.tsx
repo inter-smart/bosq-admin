@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryStates, parseAsString, parseAsInteger } from "nuqs";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/common/DataTable";
 import { Button } from "@/components/ui/button";
@@ -32,18 +33,30 @@ export default function AllProductModelsList() {
   const { toast } = useToast();
   const [models, setModels] = useState<ProductModel[]>([]);
   const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([]);
-  const [selectedProductId, setSelectedProductId] = useState<string>("all");
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
   const [bulkDeleteIds, setBulkDeleteIds] = useState<number[]>([]);
   const [tableKey, setTableKey] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [pageSize, setPageSize] = useState(10);
   const [deleteType, setDeleteType] = useState<"soft" | "force">("soft");
+
+  // Filters, search, and pagination live in the URL query string so the view
+  // is bookmarkable/shareable and survives navigating away and back.
+  const [filters, setFilters] = useQueryStates(
+    {
+      product: parseAsString.withDefault("all"),
+      search: parseAsString.withDefault(""),
+      page: parseAsInteger.withDefault(1),
+      pageSize: parseAsInteger.withDefault(10),
+    },
+    { history: "replace" },
+  );
+  const { product: selectedProductId, page: currentPage, pageSize } = filters;
+
+  // Local mirror of the search input so typing stays instant; only the
+  // settled value (after the debounce below) is written to the URL/fetched.
+  const [searchQuery, setSearchQuery] = useState(filters.search);
 
   // Load base products for filtering
   useEffect(() => {
@@ -61,23 +74,25 @@ export default function AllProductModelsList() {
     }
   };
 
-  // Debounce search query
+  // Debounce search query into the URL — only the settled value is fetched/shared.
   useEffect(() => {
     const timer = setTimeout(() => {
-      setCurrentPage(1);
-      setDebouncedSearchQuery(searchQuery);
+      if (searchQuery !== filters.search) {
+        setFilters({ search: searchQuery, page: 1 });
+      }
     }, 600);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   useEffect(() => {
     loadModels();
-  }, [currentPage, pageSize, debouncedSearchQuery, selectedProductId]);
+  }, [currentPage, pageSize, filters.search, selectedProductId]);
 
   const loadModels = async () => {
     try {
-      if (debouncedSearchQuery) {
+      if (filters.search) {
         setSearching(true);
       } else {
         setLoading(true);
@@ -86,7 +101,7 @@ export default function AllProductModelsList() {
       const response = await fetchProductModelList(
         currentPage,
         pageSize,
-        debouncedSearchQuery,
+        filters.search,
         selectedProductId === "all" ? undefined : parseInt(selectedProductId),
       );
 
@@ -136,8 +151,7 @@ export default function AllProductModelsList() {
   };
 
   const handleProductFilterChange = (value: string) => {
-    setSelectedProductId(value);
-    setCurrentPage(1);
+    setFilters({ product: value, page: 1 });
   };
 
   const { editingSortOrder, handleStatusChange, handleSortOrderChange } = useCommonTableActions<ProductModel>({
@@ -326,8 +340,8 @@ export default function AllProductModelsList() {
             pageSize,
             totalCount,
             totalPages: Math.ceil(totalCount / pageSize),
-            onPageChange: setCurrentPage,
-            onPageSizeChange: (size) => { setPageSize(size); setCurrentPage(1); },
+            onPageChange: (page: number) => setFilters({ page }),
+            onPageSizeChange: (size: number) => setFilters({ pageSize: size, page: 1 }),
           }}
           title=""
           searchPlaceholder="Search models..."

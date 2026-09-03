@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { NuqsAdapter } from "nuqs/adapters/react-router/v6";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { isAuthenticated } from "@/services/auth/authApi";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
@@ -262,6 +263,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <NuqsAdapter>
         <AuthProvider>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -2015,6 +2017,7 @@ const App = () => (
             </Routes>
           </Suspense>
         </AuthProvider>
+        </NuqsAdapter>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
