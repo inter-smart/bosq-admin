@@ -15,11 +15,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image, ImagePlus, ChevronUp, ChevronDown } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, ArrowLeft, Image, ImagePlus, ChevronUp, ChevronDown, Star } from "lucide-react";
 import { fetchProductVariantList, deleteProductVariant, ProductVariant } from "@/services/product/productVariantApi";
 import { fetchProductModelById, ProductModel } from "@/services/product/productModelApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { updateIsPrimary } from "@/services/commonApi";
 import { Input } from "@/components/ui/input";
 
 export default function ProductVariantList() {
@@ -128,6 +129,26 @@ export default function ProductVariantList() {
     setData: setVariants,
   });
 
+  // A model always has at most one primary variant — the one shown for it in
+  // storefront listings. Setting a new primary always replaces the old one;
+  // there's no "unset" (the backend rejects that), matching the pattern in
+  // ProductVariantImagesList.tsx.
+  const handleSetPrimary = async (variantId: number) => {
+    try {
+      await updateIsPrimary({ model_name: "ProductVariants", row_id: variantId, is_primary: true });
+
+      setVariants((prev) => prev.map((v) => ({ ...v, is_primary: v.id === variantId })));
+
+      toast({ title: "Success", description: "Primary variant updated" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update primary variant",
+        variant: "destructive",
+      });
+    }
+  };
+
   const columns: ColumnDef<ProductVariant>[] = [
     {
       accessorKey: "id",
@@ -193,25 +214,24 @@ export default function ProductVariantList() {
         );
       },
     },
-    // {
-    //   accessorKey: "is_primary",
-    //   header: "Primary",
-    //   cell: ({ row }) => {
-    //     const item = row.original;
-    //     const isPrimary = row.getValue("is_primary") as boolean;
-    //     return (
-    //       <div className="flex items-center gap-2">
-    //         <Switch
-    //           checked={isPrimary}
-    //           onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
-    //         />
-    //         <Badge variant={isPrimary ? "default" : "secondary"}>
-    //           {isPrimary ? "Yes" : "No"}
-    //         </Badge>
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      accessorKey: "is_primary",
+      header: "Primary",
+      cell: ({ row }) => {
+        const item = row.original;
+        const isPrimary = row.getValue("is_primary") as boolean;
+        return isPrimary ? (
+          <Badge variant="default" className="gap-1">
+            <Star className="h-3 w-3 fill-current" />
+            Primary
+          </Badge>
+        ) : (
+          <Button variant="outline" size="sm" onClick={() => handleSetPrimary(item.id!)}>
+            Set Primary
+          </Button>
+        );
+      },
+    },
     {
       accessorKey: "sort_order",
       header: "Sort Order",

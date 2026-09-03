@@ -35,6 +35,7 @@ import {
   ChevronDown,
   ImagePlus,
   TriangleAlert,
+  Star,
 } from "lucide-react";
 import {
   fetchProductVariantList,
@@ -56,6 +57,7 @@ import {
 } from "@/services/product/productCategoriesApi";
 import { useToast } from "@/hooks/use-toast";
 import { useCommonTableActions } from "@/hooks/useCommonTableActions";
+import { updateIsPrimary } from "@/services/commonApi";
 import {
   Select,
   SelectContent,
@@ -246,6 +248,29 @@ export default function AllProductVariantsList() {
       setData: setVariants,
     });
 
+  // Same "exactly one primary per model" rule as ProductVariantList.tsx, but
+  // this table spans multiple models, so only flip siblings under the same
+  // product_model_id as the row that was clicked.
+  const handleSetPrimary = async (variant: ProductVariant) => {
+    try {
+      await updateIsPrimary({ model_name: "ProductVariants", row_id: variant.id, is_primary: true });
+
+      setVariants((prev) =>
+        prev.map((v) =>
+          v.product_model_id === variant.product_model_id ? { ...v, is_primary: v.id === variant.id } : v,
+        ),
+      );
+
+      toast({ title: "Success", description: "Primary variant updated" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update primary variant",
+        variant: "destructive",
+      });
+    }
+  };
+
   const columns: ColumnDef<ProductVariant>[] = [
     {
       id: "select",
@@ -365,22 +390,24 @@ export default function AllProductVariantsList() {
         );
       },
     },
-    // {
-    //   accessorKey: "is_primary",
-    //   header: "Primary",
-    //   cell: ({ row }) => {
-    //     const item = row.original;
-    //     const isPrimary = row.getValue("is_primary") as boolean;
-    //     return (
-    //       <div className="flex items-center gap-2">
-    //         <Switch
-    //           checked={isPrimary}
-    //           onCheckedChange={() => handleIsPrimaryChange(item.id!, isPrimary)}
-    //         />
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      accessorKey: "is_primary",
+      header: "Primary",
+      cell: ({ row }) => {
+        const item = row.original;
+        const isPrimary = row.getValue("is_primary") as boolean;
+        return isPrimary ? (
+          <Badge variant="default" className="gap-1">
+            <Star className="h-3 w-3 fill-current" />
+            Primary
+          </Badge>
+        ) : (
+          <Button variant="outline" size="sm" onClick={() => handleSetPrimary(item)}>
+            Set Primary
+          </Button>
+        );
+      },
+    },
     {
       accessorKey: "sort_order",
       header: "Sort Order",
