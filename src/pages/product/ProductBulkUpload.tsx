@@ -121,6 +121,8 @@ function downloadTemplate() {
   // ── Sheet 3: product_variants ──────────────────────────────────────────
   // SKU is auto-generated from {model.code}-{attr_value_slug1}-{attr_value_slug2}... (all uppercase)
   // Do NOT include a "sku" column — it is computed server-side during validation.
+  // "attributes" is required — every variant row must have at least one attr:value pair,
+  // or the upload is rejected during validation (a variant can't have an empty attributes cell).
   // Content fields (description, details, enhance_title, etc.) now live here (moved from product_base)
   // cover_image / hover_image / brochure: single filename from uploads/bulk/
   // images: comma-separated filenames (images + videos in display order)
@@ -703,7 +705,8 @@ function ColumnReference() {
       name: "product_variants",
       // base_title + model_title identify the parent model
       // sku is auto-generated — do NOT include a sku column
-      required: ["base_title", "model_title"],
+      // attributes is required — every variant must have at least one attr:value pair
+      required: ["base_title", "model_title", "attributes (attr_slug:value_slug:price | separated)"],
       optional: [
         "title",
         "title_ar",
@@ -714,7 +717,6 @@ function ColumnReference() {
         "sort_order",
         "status",
         "categories (comma-separated slugs)",
-        "attributes (attr_slug:value_slug:price | separated)",
         "description",
         "description_ar",
         "enhance_title",
@@ -784,6 +786,8 @@ function ColumnReference() {
             <p>
               <strong>SKU (product_variants):</strong> Auto-generated — do not include a <code className="bg-muted px-1 rounded">sku</code> column.
               Formula: <code className="bg-muted px-1 rounded">{"{model_code}-{attr_value_slug1}-{attr_value_slug2}"}</code> (all uppercase).
+              Every variant row must have at least one attribute pair in <code className="bg-muted px-1 rounded">attributes</code> — rows with no
+              attributes are rejected during validation.
             </p>
             <p className="text-blue-700 dark:text-blue-400">
               <strong>FAQs</strong> are uploaded separately — use the FAQ Upload section below after your products are in the system.
